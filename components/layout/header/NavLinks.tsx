@@ -26,7 +26,7 @@ export function NavLinks() {
             className={clsx(
               'px-2 transition-all',
               isActive && 'text-black font-extrabold',
-              isParentActive && 'text-blue-600 border-b-2 border-blue-600',
+              isParentActive && 'text-blue-400 border-b-2 border-blue-400 pb-2',
               !isActive &&
                 !isParentActive &&
                 'text-muted-foreground hover:text-blue-600 hover:border-b hover:border-blue-600'
