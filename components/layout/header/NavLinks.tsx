@@ -1,0 +1,41 @@
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
+
+const links = [
+  { href: '/', label: 'خانه' },
+  { href: '/products', label: 'محصولات' },
+  { href: '/blog', label: 'بلاگ' },
+  { href: '/faq', label: 'سوالات' },
+  { href: '/contact', label: 'تماس با ما' },
+];
+
+export function NavLinks() {
+  const pathname = usePathname();
+  return (
+    <nav className="hidden md:flex gap-6 text-sm font-medium">
+      {links.map(link => {
+        const isActive = pathname === link.href;
+        // فقط برای لینک‌های غیر "/" حالت selected رو فعال کن
+        const isParentActive = link.href !== '/' && pathname.startsWith(link.href);
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={clsx(
+              'px-2 transition-all',
+              isActive && 'text-black font-extrabold',
+              isParentActive && 'text-blue-600 border-b-2 border-blue-600',
+              !isActive &&
+                !isParentActive &&
+                'text-muted-foreground hover:text-blue-600 hover:border-b hover:border-blue-600'
+            )}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
