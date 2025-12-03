@@ -2,7 +2,7 @@ import { Button } from '@/components/ui';
 
 export function HeroText() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 px-4 py-1 lg:px-6  ">
       <h1 className="text-2xl sm:text-5xl font-medium leading-tight">Tech View</h1>
       <p className="text-lg sm:text-xl">
         Join the
