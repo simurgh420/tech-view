@@ -1,5 +1,7 @@
+import { PromoBanners } from '@/components/PromoBanner/PromoBanners';
 import { CategoriesSection } from '@/components/sections/categories/CategoriesSection';
 import { HeroSection } from '@/components/sections/hero/HeroSection';
+import { NewProducts } from '@/components/sections/products/NewProducts';
 import { ProductsOnSale } from '@/components/sections/products/ProductsOnSale';
 
 export default function Home() {
@@ -12,6 +14,10 @@ export default function Home() {
         <CategoriesSection />
         {/* Products On Sale */}
         <ProductsOnSale />
+        {/* NewProducts */}
+        <NewProducts />
+        {/* Banners */}
+        <PromoBanners />
       </div>
     </main>
   );

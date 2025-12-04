@@ -58,11 +58,11 @@ export function FooterColumns() {
           <Button
             type="button"
             aria-label="Submit email"
-            className="absolute inset-y-0 right-2 flex items-center justify-center rounded-md
+            className="absolute inset-y-0 right-1 top-0.5 flex items-center justify-center rounded-md
                        text-[#179BD7] hover:text-white bg-transparent hover:bg-[#179BD7]
                        transition-colors px-2"
           >
-            <LiaArrowRightSolid className="size-5" />
+            <LiaArrowRightSolid className="size-4" />
           </Button>
         </div>
 

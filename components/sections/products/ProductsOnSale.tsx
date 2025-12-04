@@ -1,32 +1,12 @@
 'use client';
-import { useEffect, useRef } from 'react';
-import { saleProducts } from './dummyProducts';
-import { ProductCard } from './ProductCard';
+
+import { saleProducts } from '../dummy/dummyProducts';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { useHorizontalScroll } from '@/hooks/useHorizontalScroll';
+import { DiscountProductCard } from './DiscountProductCard';
 export function ProductsOnSale() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -300 : 300,
-        behavior: 'smooth',
-      });
-    }
-  };
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY === 0) return;
-      e.preventDefault();
-      el.scrollBy({ left: e.deltaY, behavior: 'smooth' });
-    };
-
-    el.addEventListener('wheel', handleWheel, { passive: false });
-    return () => el.removeEventListener('wheel', handleWheel);
-  }, []);
+  const { scrollRef, scroll } = useHorizontalScroll();
 
   return (
     <section className="py-2 px-4 sm:px-6 lg:px-8">
@@ -53,7 +33,7 @@ export function ProductsOnSale() {
             <div className="flex gap-6 min-h-full">
               {saleProducts.map(product => (
                 <div key={product.title} className="min-w-[200px] shrink-0">
-                  <ProductCard {...product} />
+                  <DiscountProductCard {...product} />
                 </div>
               ))}
             </div>
