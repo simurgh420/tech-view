@@ -4,6 +4,7 @@ import { HeroSection } from '@/components/sections/hero/HeroSection';
 import { BestSellers } from '@/components/sections/products/BestSellers';
 import { NewProducts } from '@/components/sections/products/NewProducts';
 import { ProductsOnSale } from '@/components/sections/products/ProductsOnSale';
+import { TopBrands } from '@/components/sections/products/TopBrands';
 
 export default function Home() {
   return (
@@ -21,6 +22,8 @@ export default function Home() {
         <PromoBanners />
         {/* Best Sellers */}
         <BestSellers />
+        {/* Top Brands */}
+        <TopBrands />
       </div>
     </main>
   );
