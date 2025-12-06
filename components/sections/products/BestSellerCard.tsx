@@ -1,0 +1,46 @@
+import Image from 'next/image';
+
+interface Props {
+  title: string;
+  image: string;
+  originalPrice?: number;
+  salePrice?: number;
+  discount?: number;
+  price?: number;
+  rating: number;
+}
+
+export function BestSellerCard({
+  title,
+  image,
+  originalPrice,
+  salePrice,
+  discount,
+  price,
+  rating,
+}: Props) {
+  return (
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition px-4 text-center h-[300px] flex flex-col justify-between">
+      <div className="relative w-full h-[150px] mb-3">
+        <Image src={image} alt={title} fill className="object-contain" />
+        {discount !== undefined && (
+          <div className="absolute top-2 left-2 bg-orange-500 text-white text-sm font-bold px-2 py-1 rounded">
+            -{discount}%
+          </div>
+        )}
+      </div>
+      <h3 className="text-sm font-semibold text-gray-800 mb-2">{title} </h3>
+      {/* قیمت ها */}
+      {originalPrice !== undefined && salePrice !== undefined ? (
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)};</div>
+          <div className="text-base font-bold text-[#179BD7]">${salePrice.toFixed(2)}</div>
+        </div>
+      ) : price !== undefined ? (
+        <div className="text-base font-bold text-[#179BD7]">${price.toFixed(2)}</div>
+      ) : null}
+      {/* امتیاز */}
+      <div className="text-yellow-500 text-sm font-semibold mt-2">★{rating.toFixed(1)} </div>
+    </div>
+  );
+}

@@ -1,6 +1,7 @@
 import { PromoBanners } from '@/components/PromoBanner/PromoBanners';
 import { CategoriesSection } from '@/components/sections/categories/CategoriesSection';
 import { HeroSection } from '@/components/sections/hero/HeroSection';
+import { BestSellers } from '@/components/sections/products/BestSellers';
 import { NewProducts } from '@/components/sections/products/NewProducts';
 import { ProductsOnSale } from '@/components/sections/products/ProductsOnSale';
 
@@ -18,6 +19,8 @@ export default function Home() {
         <NewProducts />
         {/* Banners */}
         <PromoBanners />
+        {/* Best Sellers */}
+        <BestSellers />
       </div>
     </main>
   );
