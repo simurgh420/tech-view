@@ -1,3 +1,7 @@
 {
-  "cSpell.words": ["macbook", "Simurgh"]
+  "cSpell.words": ["macbook", "Simurgh"],
+  "atlascode.enableHttpsTunnel": true,
+  "atlascode.enableCurlLogging": true,
+  "atlascode.jira.showCreateIssueProblems": true,
+  "atlascode.enableCharles": false
 }

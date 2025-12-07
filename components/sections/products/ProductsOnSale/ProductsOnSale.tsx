@@ -1,6 +1,6 @@
 'use client';
 
-import { saleProducts } from '../dummy/dummyProducts';
+import { saleProducts } from '../../dummy/dummyProducts';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useHorizontalScroll } from '@/hooks/useHorizontalScroll';

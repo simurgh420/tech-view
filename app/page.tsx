@@ -1,10 +1,13 @@
-import { PromoBanners } from '@/components/PromoBanner/PromoBanners';
+import { PromoBanners } from '@/components/sections/products/banner/PromoBanner/PromoBanners';
 import { CategoriesSection } from '@/components/sections/categories/CategoriesSection';
 import { HeroSection } from '@/components/sections/hero/HeroSection';
-import { BestSellers } from '@/components/sections/products/BestSellers';
-import { NewProducts } from '@/components/sections/products/NewProducts';
-import { ProductsOnSale } from '@/components/sections/products/ProductsOnSale';
-import { TopBrands } from '@/components/sections/products/TopBrands';
+import { BestSellers } from '@/components/sections/products/BestSeller/BestSellers';
+import { NewProducts } from '@/components/sections/products/NewProducts/NewProducts';
+import { ProductsOnSale } from '@/components/sections/products/ProductsOnSale/ProductsOnSale';
+import { TopBrands } from '@/components/sections/products/TopBrands/TopBrands';
+import { ProductBanner } from '@/components/sections/products/banner/ProductBanner/ProductBanner';
+import { BlogSection } from '@/components/sections/blog/BlogSection';
+import { FeatureBar } from '@/components/sections/services/FeatureBar';
 
 export default function Home() {
   return (
@@ -24,6 +27,12 @@ export default function Home() {
         <BestSellers />
         {/* Top Brands */}
         <TopBrands />
+        {/* Product Banner */}
+        <ProductBanner />
+        {/* Blog Section */}
+        <BlogSection />
+        {/* Feature Bar */}
+        <FeatureBar />
       </div>
     </main>
   );
