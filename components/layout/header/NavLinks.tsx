@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { useMegaMenuStore } from '@/stores/useMegaMenuStore';
 
 const links = [
   { href: '/', label: 'خانه' },
@@ -13,6 +14,7 @@ const links = [
 
 export function NavLinks() {
   const pathname = usePathname();
+  const { open } = useMegaMenuStore();
   return (
     <nav className="hidden md:flex gap-6 text-sm font-medium">
       {links.map(link => {
@@ -23,6 +25,7 @@ export function NavLinks() {
           <Link
             key={link.href}
             href={link.href}
+            onMouseEnter={link.href === '/products' ? open : undefined}
             className={clsx(
               'px-2 transition-all',
               isActive && 'text-black font-extrabold',

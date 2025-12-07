@@ -18,6 +18,7 @@ export function CategoryCard({ title, image, slug }: Props) {
           height={148}
           className="object-contain mb-3 transition-transform group-hover:scale-105"
         />
+        <div className="w-0 h-0.5 bg-transparent group-hover:w-20 group-hover:bg-blue-500 group-hover:shadow-blue-500/50 group-hover:shadow-lg transition-all duration-700 ease-in-out" />
         <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">{title}</span>
       </div>
     </Link>
