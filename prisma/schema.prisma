@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model BlogPost {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  excerpt       String    @db.Text
+  content       String    @db.Text
+  coverImageUrl String
+  readingMinutes Int
+  publishedAt   DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  author        String
+  tags          TagOnPost[]
+  status        PostStatus @default(PUBLISHED)
+  videoUrls     String[]   // برای سکشن ویدیوها (اختیاری)
+  comments      Comment[]
+}
+
+model Tag {
+  id   String  @id @default(cuid())
+  name String  @unique
+  slug String  @unique
+  posts TagOnPost[]
+}
+
+model TagOnPost {
+  postId String
+  tagId  String
+  post   BlogPost @relation(fields: [postId], references: [id])
+  tag    Tag      @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId])
+}
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  rating    Int      @default(0)
+  avatar    String?
+  author    String
+  likes     Int      @default(0)
+  dislikes  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // رابطه با BlogPost
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id])
+}
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
