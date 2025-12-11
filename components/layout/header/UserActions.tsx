@@ -9,9 +9,7 @@ export function UserActions({ isLoggedIn }: { isLoggedIn?: boolean }) {
       {isLoggedIn ? (
         <User className="size-6 cursor-pointer text-muted-foreground" />
       ) : (
-        <Button variant="blue-filled" size="sm">
-          ورود / ثبت‌نام
-        </Button>
+        <Button size="sm">ورود / ثبت‌نام</Button>
       )}
     </div>
   );

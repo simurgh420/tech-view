@@ -11,7 +11,8 @@ type Props = { params: { slug: string } };
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const deCodeSlug = decodeURIComponent(slug);
+  const post = await getPostBySlug(deCodeSlug);
   if (!post) return { title: 'Post Not Found' };
   return {
     title: `${post.title} • Tech Heim`,
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: Props) {
 }
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const deCodeSlug = decodeURIComponent(slug);
+  const post = await getPostBySlug(deCodeSlug);
   if (!post) {
     return <div>Not found</div>;
   }

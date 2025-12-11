@@ -73,6 +73,7 @@ export async function getPostBySlug(slug: string) {
 }
 export async function getRecentPosts(limit = 3) {
   return prisma.blogPost.findMany({
+    where: { status: 'PUBLISHED' },
     orderBy: { publishedAt: 'desc' },
     take: limit,
     select: {

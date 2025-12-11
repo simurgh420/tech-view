@@ -8,9 +8,7 @@ export function HeroText() {
         Join the
         <span className="text-orange-400 font-semibold ml-2">digital revolution</span>
       </p>
-      <Button variant={'orange-filled'} className="font-medium px-6 py-3 rounded-md transition">
-        Explore More
-      </Button>
+      <Button className="font-medium px-6 py-3 rounded-md transition">Explore More</Button>
     </div>
   );
 }
