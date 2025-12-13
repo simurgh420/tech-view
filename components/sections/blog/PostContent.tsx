@@ -5,7 +5,7 @@ type Props = {
 };
 export function PostContent({ post }: Props) {
   return (
-    <main className="container mx-auto max-w-[1224px] px-4 py-10">
+    <main className="container mx-auto max-w-[1224px] px-4 py-10" dir="auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-3">{post.title}</h1>
       <div className="text-sm text-gray-500 mb-6 flex items-center gap-4">
         <span>🖊 {post.author}</span>
@@ -21,11 +21,10 @@ export function PostContent({ post }: Props) {
           className="object-cover"
         />
       </div>
-      <div className="prose prose-neutral max-w-none text-justify leading-relaxed">
-        {post.content.split('\n').map((para, i) => (
-          <p key={i}>{para.trim()}</p>
-        ))}
-      </div>
+      <div
+        className="prose prose-neutral max-w-none text-justify leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
       {post.tags.length > 0 && (
         <div className="mt-10">
           <h4 className="text-sm font-semibold text-gray-700 mb-2">برچسب‌ها:</h4>

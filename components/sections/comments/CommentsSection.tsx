@@ -11,7 +11,7 @@ export function CommentsSection({ postId }: { postId: string }) {
   if (isLoading) return <p>در حال بارگذاری...</p>;
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 " dir="auto">
       <h3 className="text-lg font-semibold mb-4">💬 کامنت‌ها</h3>
 
       {/* لیست کامنت‌ها */}

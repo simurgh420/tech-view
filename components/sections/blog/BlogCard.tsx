@@ -1,6 +1,7 @@
 // src/components/blog/BlogCard.tsx
 
 import { BlogPostSafe } from '@/services/blog/queries';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export function BlogCard({ post }: { post: BlogPostSafe }) {
@@ -10,8 +11,7 @@ export function BlogCard({ post }: { post: BlogPostSafe }) {
       className="group bg-white rounded-lg shadow-sm hover:shadow-md transition overflow-hidden"
     >
       <div className="relative h-40">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={post.coverImageUrl} alt={post.title} className="w-full h-full object-cover" />
+        <Image src={post.coverImageUrl} alt={post.title} fill className=" object-cover" />
       </div>
       <div className="p-3">
         <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600">

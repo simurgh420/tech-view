@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
+import RichTextEditor from '@/components/editors/RichTextEditor';
 const schema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
@@ -50,7 +51,7 @@ export function BlogForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>عنوان</FormLabel>
+              <FormLabel htmlFor="title-form-item">عنوان</FormLabel>
               <FormControl>
                 <Input placeholder="مثلاً: تجربه من با هدفون‌های استریو" {...field} />
               </FormControl>
@@ -91,7 +92,8 @@ export function BlogForm() {
             <FormItem>
               <FormLabel>محتوا</FormLabel>
               <FormControl>
-                <Textarea placeholder="متن کامل بلاگ را اینجا بنویسید..." {...field} />
+                {/* TipTap only on client */}
+                <RichTextEditor value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
