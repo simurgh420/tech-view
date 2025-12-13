@@ -43,7 +43,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <div className="container mx-auto max-w-[1224px] px-4 py-10 grid grid-cols-1 lg:grid-cols-[880px_1fr] gap-12">
       <PostContent post={post} />
-      <Sidebar />
+      <Sidebar postId={post.id} />
       <Hydrate state={dehydratedState}>
         <CommentsSection postId={post.id} />
       </Hydrate>

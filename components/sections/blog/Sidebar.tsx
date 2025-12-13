@@ -1,14 +1,14 @@
 // src/components/blog/Sidebar.tsx
 
-import { getRecentPosts, getUsedTags } from '@/services/blog/queries';
+import { getRecentPosts, getTagsByPostId } from '@/services/blog/queries';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export async function Sidebar() {
+export async function Sidebar({ postId }: { postId: string }) {
   const categories = ['Technology Trends', 'Gaming Insights', 'Security & Privacy'];
 
   const recentPosts = await getRecentPosts();
-  const tags = await getUsedTags();
+  const tags = await getTagsByPostId(postId);
   return (
     <aside className="w-full lg-x-[300px] flex flex-col gap-8">
       {/* دسته‌بندی‌ها */}

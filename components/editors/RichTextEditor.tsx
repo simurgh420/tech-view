@@ -36,30 +36,35 @@ function RichTextEditor({ value, onChange }: Props) {
       {/* Toolbar */}
       <div className="flex flex-wrap gap-2 mb-2">
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive('bold') ? 'bg-gray-300 px-2' : 'px-2'}
         >
           Bold
         </button>
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={editor.isActive('italic') ? 'bg-gray-300 px-2' : 'px-2'}
         >
           Italic
         </button>
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           className={editor.isActive('underline') ? 'bg-gray-300 px-2' : 'px-2'}
         >
           Underline
         </button>
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={editor.isActive('heading', { level: 2 }) ? 'bg-gray-300 px-2' : 'px-2'}
         >
           H2
         </button>
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive('bulletList') ? 'bg-gray-300 px-2' : 'px-2'}
         >
@@ -68,23 +73,29 @@ function RichTextEditor({ value, onChange }: Props) {
 
         {/* رنگ متن */}
         <button
+          type="button"
           onClick={() => editor.chain().focus().setColor('#ef4444').run()}
           className="px-2 text-red-500"
         >
           Red
         </button>
         <button
+          type="button"
           onClick={() => editor.chain().focus().setColor('#3b82f6').run()}
           className="px-2 text-blue-500"
         >
           Blue
         </button>
-        <button onClick={() => editor.chain().focus().unsetColor().run()} className="px-2">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().unsetColor().run()}
+          className="px-2"
+        >
           Clear
         </button>
 
         {/* لینک */}
-        <button onClick={setLink} className="px-2">
+        <button type="button" onClick={setLink} className="px-2">
           Link
         </button>
         <button onClick={() => editor.chain().focus().unsetLink().run()} className="px-2">
@@ -92,10 +103,10 @@ function RichTextEditor({ value, onChange }: Props) {
         </button>
 
         {/* Undo/Redo */}
-        <button onClick={() => editor.chain().focus().undo().run()} className="px-2">
+        <button type="button" onClick={() => editor.chain().focus().undo().run()} className="px-2">
           Undo
         </button>
-        <button onClick={() => editor.chain().focus().redo().run()} className="px-2">
+        <button type="button" onClick={() => editor.chain().focus().redo().run()} className="px-2">
           Redo
         </button>
       </div>

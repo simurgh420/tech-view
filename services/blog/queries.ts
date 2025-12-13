@@ -83,6 +83,16 @@ export async function getRecentPosts(limit = 3) {
       excerpt: true,
       publishedAt: true,
       coverImageUrl: true,
+      tags: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 }
@@ -105,4 +115,19 @@ export async function getUsedTags() {
   });
 
   return tags;
+}
+
+export async function getTagsByPostId(postId: string) {
+  const post = await prisma.blogPost.findUnique({
+    where: { id: postId },
+    include: {
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
+  });
+  if (!post) return [];
+  return post.tags.map(t => t.tag);
 }

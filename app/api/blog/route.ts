@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // ساخت بلاگ جدید
 export async function POST(req: Request) {
   const body = await req.json();
-  const { title, excerpt, content, coverImageUrl, author } = body;
-  const blog = await createBlogPost({ title, excerpt, content, coverImageUrl, author });
+  const { title, excerpt, content, coverImageUrl, author, tags } = body;
+  const blog = await createBlogPost({ title, excerpt, content, coverImageUrl, author, tags });
   return NextResponse.json(blog);
 }
