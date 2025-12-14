@@ -1,10 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+
 import { useForm } from 'react-hook-form';
 import z from 'zod';
-
 import {
   Form,
   FormField,
@@ -16,7 +15,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import axios from 'axios';
 import RichTextEditor from '@/components/editors/RichTextEditor';
 import { TagsInput } from '@/components/Tags/TagsInput';
 const schema = z.object({
@@ -27,12 +25,16 @@ const schema = z.object({
   author: z.string().min(3, 'نام نویسنده باید حداقل ۳ کاراکتر باشد'),
   tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
 });
-type BlogForm = z.infer<typeof schema>;
-
-export function BlogForm() {
-  const form = useForm<BlogForm>({
+export type BlogFormType = z.infer<typeof schema>;
+type Props = {
+  initialValues?: BlogFormType;
+  onSubmit: (data: BlogFormType) => void; // دیگه Promise لازم نیست، چون React Query خودش مدیریت می‌کنه
+  isLoading?: boolean;
+};
+export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
+  const form = useForm<BlogFormType>({
     resolver: zodResolver(schema),
-    defaultValues: {
+    defaultValues: initialValues || {
       title: '',
       excerpt: '',
       coverImageUrl: '',
@@ -41,11 +43,7 @@ export function BlogForm() {
       tags: [],
     },
   });
-  const router = useRouter();
-  const onSubmit = async (data: BlogForm) => {
-    await axios.post(`/api/blog`, data);
-    router.push('/blog');
-  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -128,7 +126,10 @@ export function BlogForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">ثبت بلاگ</Button>
+        {/* دکمه ارسال */}
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'در حال ذخیره...' : initialValues?.title ? 'ویرایش بلاگ' : 'ثبت بلاگ'}
+        </Button>
       </form>
     </Form>
   );
