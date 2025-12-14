@@ -1,4 +1,4 @@
-import { dislikeComment } from '@/services/comments/queries';
+import { dislikeComment } from '@/services/comments/mutations';
 import { NextResponse } from 'next/server';
 
 // app/api/comments/[id]/like/route.ts

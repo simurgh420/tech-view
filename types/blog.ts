@@ -25,3 +25,10 @@ export type BlogPostRecent = {
   publishedAt: Date;
   coverImageUrl: string;
 };
+export type BlogListResponse = {
+  items: BlogPost[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pages: number;
+};

@@ -24,7 +24,7 @@ export default async function BlogPage() {
   const recent = await getRecentPosts(3);
 
   return (
-    <main className="container mx-auto max-w-[1224px] px04 py-8">
+    <main className="container mx-auto max-w-[1224px] px-4 py-8">
       <BlogGrid posts={items} />
       <RecentPosts items={recent} />
     </main>

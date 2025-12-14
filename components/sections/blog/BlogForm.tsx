@@ -93,7 +93,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             <FormItem>
               <FormLabel>محتوا</FormLabel>
               <FormControl>
-                {/* TipTap only on client */}
+                {/* TipTap */}
                 <RichTextEditor value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />

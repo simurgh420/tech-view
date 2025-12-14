@@ -1,6 +1,6 @@
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
-import Link from 'next/link';
+import { PostActions } from './PostActions';
 type Props = {
   post: BlogPost;
 };
@@ -14,12 +14,7 @@ export function PostContent({ post }: Props) {
         <span>⏱ {post.readingMinutes} دقیقه مطالعه</span>
       </div>
       <div className="mb-6">
-        <Link
-          href={`/blog/edit/${post.slug}`}
-          className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-        >
-          ✏️ ویرایش بلاگ
-        </Link>
+        <PostActions slug={post.slug} />
       </div>
       <div className="relative w-full h-[360px] rounded-lg overflow-hidden mb-8 shadow-md">
         <Image

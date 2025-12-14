@@ -6,8 +6,8 @@ import { use } from 'react';
 
 export default function EditBlogPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const { useGetBlog, useUpdateBlog } = useBlogs();
   const router = useRouter();
+  const { useGetBlog, useUpdateBlog } = useBlogs();
 
   const { data: blog, isLoading } = useGetBlog(slug);
   const updateMutation = useUpdateBlog(slug);
