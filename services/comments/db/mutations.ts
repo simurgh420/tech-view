@@ -15,6 +15,8 @@ export async function createComment(
       author: true,
       avatar: true,
       rating: true,
+      likes: true,
+      dislikes: true,
       createdAt: true,
     },
   });

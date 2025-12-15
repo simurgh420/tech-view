@@ -32,3 +32,22 @@ export type BlogListResponse = {
   pageSize: number;
   pages: number;
 };
+export type UpdateBlogData = Partial<{
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImageUrl: string;
+  author: string;
+  slug: string;
+  readingMinutes: number;
+  tags: {
+    create: {
+      tag: {
+        connectOrCreate: {
+          where: { slug: string };
+          create: { name: string; slug: string };
+        };
+      };
+    }[];
+  };
+}>;

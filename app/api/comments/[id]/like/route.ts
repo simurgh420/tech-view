@@ -1,7 +1,7 @@
+// app/api/comments/[id]/like/route.ts
 import { likeComment } from '@/services/comments/db/mutations';
 import { NextResponse } from 'next/server';
 
-// app/api/comments/[id]/like/route.ts
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {

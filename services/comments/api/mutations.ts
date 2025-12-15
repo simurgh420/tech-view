@@ -17,7 +17,7 @@ export async function addComment(
 }
 
 export async function likeCommentApi(commentId: string): Promise<CommentSafe> {
-  const { data } = await axios.post(`/api/comments/${commentId}/dislike`);
+  const { data } = await axios.post(`/api/comments/${commentId}/like`);
   return data;
 }
 export async function dislikeCommentApi(commentId: string): Promise<CommentSafe> {
