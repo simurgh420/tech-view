@@ -3,8 +3,8 @@ import { PostContent } from '@/components/sections/blog/PostContent';
 import { Sidebar } from '@/components/sections/blog/Sidebar';
 import { CommentsSection } from '@/components/sections/comments/CommentsSection';
 import { getQueryClient } from '@/lib/query/query-client';
-import { getPostBySlug } from '@/services/blog/queries';
-import { getCommentsByPostId } from '@/services/comments/queries';
+import { getPostBySlug } from '@/services/blog/db/queries';
+import { getCommentsByPostId } from '@/services/comments/db/queries';
 import { dehydrate } from '@tanstack/react-query';
 
 type Props = { params: { slug: string } };

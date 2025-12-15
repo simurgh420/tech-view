@@ -1,7 +1,7 @@
 // src/app/api/blog/[slug]/route.ts
 
-import { deletePost, updatePost } from '@/services/blog/mutations';
-import { getPostBySlug } from '@/services/blog/queries';
+import { deletePost, updatePost } from '@/services/blog/db/mutations';
+import { getPostBySlug } from '@/services/blog/db/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {

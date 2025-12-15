@@ -1,17 +1,18 @@
 'use client';
 import { useComments } from '@/hooks/useComments';
-import { CommentSafe } from '@/services/comments/queries';
+import { CommentSafe } from '@/services/comments/db/queries';
 import Image from 'next/image';
 import { CommentForm } from '@/components/sections/comments/CommentForm';
 import { Button } from '@/components/ui';
 
 export function CommentsSection({ postId }: { postId: string }) {
-  const { comments, isLoading, likeComment, dislikeComment } = useComments(postId);
+  const { comments, isLoading, likeComment, dislikeComment, error } = useComments(postId);
 
   if (isLoading) return <p>در حال بارگذاری...</p>;
+  if (error) return <p>خطا در گرفتن کامنت‌ها: {error.message}</p>;
 
   return (
-    <div className="mt-10 " dir="auto">
+    <div className="mt-10 ">
       <h3 className="text-lg font-semibold mb-4">💬 کامنت‌ها</h3>
 
       {/* لیست کامنت‌ها */}

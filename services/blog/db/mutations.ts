@@ -1,6 +1,6 @@
 //services/blog/mutations
 import { calculateReadingMinutes, toSlug } from '@/lib/slug';
-import prisma from '../db/client';
+import prisma from '../../db/client';
 
 // ساخت بلاگ جدید
 export async function createBlogPost({
@@ -89,11 +89,5 @@ export async function updatePost(
 }
 // حذف بلاگ
 export async function deletePost(slug: string) {
-  const post = await prisma.blogPost.findUnique({ where: { slug } });
-  if (!post) return null;
-
-  await prisma.comment.deleteMany({ where: { postId: post.id } });
-  await prisma.tagOnPost.deleteMany({ where: { postId: post.id } });
-
   return prisma.blogPost.delete({ where: { slug } });
 }

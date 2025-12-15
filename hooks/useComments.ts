@@ -1,46 +1,59 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+// hooks/useComments.ts
+
+import { addComment, dislikeCommentApi, likeCommentApi } from '@/services/comments/api/mutations';
+import { fetchComments } from '@/services/comments/api/queries';
+import { CommentSafe } from '@/services/comments/db/queries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useComments(postId: string) {
   const queryClient = useQueryClient();
-  const { data: comments, isLoading } = useQuery({
+
+  const {
+    data: comments = [],
+    isLoading,
+    error,
+  } = useQuery<CommentSafe[]>({
     queryKey: ['comments', postId],
-    queryFn: async () => {
-      const res = await axios.get(`/api/posts/${postId}/comments`);
-      return res.data;
-    },
+    queryFn: () => fetchComments(postId),
   });
-  const addComment = useMutation({
-    mutationFn: async (newComment: {
+  const addCommentMutation = useMutation({
+    mutationFn: (newComment: {
       author: string;
       content: string;
       avatar?: string;
       rating: number;
-    }) => {
-      const res = await axios.post(`/api/posts/${postId}/comments`, newComment);
-      return res.data;
-    },
+    }) => addComment(postId, newComment),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
     },
-  });
-  const likeComment = useMutation({
-    mutationFn: async (commentId: string) => {
-      const res = await axios.post(`/api/comments/${commentId}/like`);
-      return res.data;
+    onError: err => {
+      console.error('خطا در افزودن کامنت:', err);
     },
+  });
+  const likeCommentMutation = useMutation({
+    mutationFn: (commentId: string) => likeCommentApi(commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
     },
-  });
-  const dislikeComment = useMutation({
-    mutationFn: async (commentId: string) => {
-      const res = await axios.post(`/api/comments/${commentId}/dislike`);
-      return res.data;
+    onError: err => {
+      console.error('خطا در لایک کامنت:', err);
     },
+  });
+  const dislikeCommentMutation = useMutation({
+    mutationFn: (commentId: string) => dislikeCommentApi(commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
     },
+    onError: err => {
+      console.error('خطا در دیسلایک کامنت:', err);
+    },
   });
-  return { comments, isLoading, addComment, likeComment, dislikeComment };
+  return {
+    comments,
+    isLoading,
+    error,
+    addComment: addCommentMutation,
+    likeComment: likeCommentMutation,
+    dislikeComment: dislikeCommentMutation,
+  };
 }

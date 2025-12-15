@@ -1,6 +1,6 @@
 // src/components/blog/BlogCard.tsx
 
-import { BlogPostSafe } from '@/services/blog/queries';
+import { BlogPostSafe } from '@/services/blog/db/queries';
 import Image from 'next/image';
 import Link from 'next/link';
 

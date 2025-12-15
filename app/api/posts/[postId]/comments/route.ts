@@ -1,5 +1,5 @@
-import { createComment } from '@/services/comments/mutations';
-import { getCommentsByPostId } from '@/services/comments/queries';
+import { createComment } from '@/services/comments/db/mutations';
+import { getCommentsByPostId } from '@/services/comments/db/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ postId: string }> }) {

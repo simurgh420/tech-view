@@ -45,7 +45,12 @@ export function CommentForm({ postId }: { postId: string }) {
         className="space-y-5 p-5 border rounded-xl bg-white shadow-md"
       >
         <h3 className="text-lg font-bold">✍️ ارسال کامنت جدید</h3>
-
+        {/* نمایش خطا در ارسال کامنت */}
+        {addComment.error && (
+          <p className="text-red-600 text-sm">
+            خطا در ارسال کامنت: {(addComment.error as Error).message}
+          </p>
+        )}
         <FormField
           control={form.control}
           name="author"
@@ -94,7 +99,7 @@ export function CommentForm({ postId }: { postId: string }) {
           )}
         />
 
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <Button
             type="submit"
             disabled={addComment.isPending}

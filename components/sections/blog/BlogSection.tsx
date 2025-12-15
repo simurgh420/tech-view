@@ -1,4 +1,4 @@
-import { getRecentPosts } from '@/services/blog/queries';
+import { getRecentPosts } from '@/services/blog/db/queries';
 import Image from 'next/image';
 import Link from 'next/link';
 
