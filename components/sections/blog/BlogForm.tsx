@@ -46,7 +46,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form data-testid="blog-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="title"
@@ -134,3 +134,4 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
     </Form>
   );
 }
+//

@@ -1,6 +1,6 @@
 //services/blog/mutations
 import { calculateReadingMinutes, toSlug } from '@/lib/slug';
-import prisma from '../../db/client';
+import prisma from '@/services/db/client';
 import { UpdateBlogData } from '@/types/blog';
 
 // ساخت بلاگ جدید
