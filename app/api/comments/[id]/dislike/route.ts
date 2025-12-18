@@ -8,6 +8,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const updated = await dislikeComment(id);
     return NextResponse.json(updated);
   } catch (error) {
-    return NextResponse.json({ error: `Failed to dislike comment${error}` }, { status: 500 });
+    console.error('dislike comment failed:', error);
+    return NextResponse.json({ error: 'Failed to dislike comment' }, { status: 500 });
   }
 }

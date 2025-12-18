@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { CommentSafe } from '../db/queries';
 
-export async function addComment(
+export async function addCommentApi(
   postId: string,
   newComment: {
     author: string;
@@ -15,7 +15,17 @@ export async function addComment(
   const { data } = await axios.post(`/api/posts/${postId}/comments`, newComment);
   return data;
 }
-
+export async function updateCommentApi(
+  commentId: string,
+  data: { content?: string; rating?: number; avatar?: string }
+): Promise<CommentSafe> {
+  const { data: res } = await axios.put(`/api/comments/${commentId}`, data);
+  return res;
+}
+export async function deleteCommentApi(commentId: string): Promise<{ success: boolean }> {
+  const { data } = await axios.delete(`/api/comments/${commentId}`);
+  return data;
+}
 export async function likeCommentApi(commentId: string): Promise<CommentSafe> {
   const { data } = await axios.post(`/api/comments/${commentId}/like`);
   return data;

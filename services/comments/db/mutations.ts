@@ -21,15 +21,48 @@ export async function createComment(
     },
   });
 }
+// ویرایش کامنت
+export async function updateComment(
+  commentId: string,
+  data: {
+    content?: string;
+    rating?: number;
+    avatar?: string;
+  }
+) {
+  return prisma.comment.update({
+    where: { id: commentId },
+    data,
+    select: {
+      id: true,
+      content: true,
+      author: true,
+      avatar: true,
+      rating: true,
+      likes: true,
+      dislikes: true,
+      createdAt: true,
+    },
+  });
+}
 export async function likeComment(commentId: string) {
   return prisma.comment.update({
     where: { id: commentId },
     data: { likes: { increment: 1 } },
+    select: { id: true, likes: true },
   });
 }
 export async function dislikeComment(commentId: string) {
   return prisma.comment.update({
     where: { id: commentId },
     data: { dislikes: { increment: 1 } },
+    select: { id: true, dislikes: true },
+  });
+}
+// حذف کامنت
+export async function deleteComment(commentId: string) {
+  return prisma.comment.delete({
+    where: { id: commentId },
+    select: { id: true },
   });
 }

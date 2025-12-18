@@ -8,6 +8,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const updated = await likeComment(id);
     return NextResponse.json(updated);
   } catch (error) {
-    return NextResponse.json({ error: `Failed to like comment${error}` }, { status: 500 });
+    console.error('like comment failed:', error);
+    return NextResponse.json({ error: 'Failed to like comment' }, { status: 500 });
   }
 }
