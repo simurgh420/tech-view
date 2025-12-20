@@ -17,8 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import RichTextEditor from '@/components/editors/RichTextEditor';
 import { TagsInput } from '@/components/Tags/TagsInput';
-import { useState } from 'react';
-import Image from 'next/image';
+import { ImageUploader } from '../image/ImageUploader';
 const schema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
@@ -41,7 +40,6 @@ type Props = {
   isLoading?: boolean;
 };
 export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
-  const [preview, setPreview] = useState<string | null>(initialValues?.coverImageUrl ?? null);
   const form = useForm<BlogFormType>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -89,32 +87,12 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>تصویر کاور</FormLabel>
-
-              {preview && (
-                <Image
-                  src={preview}
-                  alt="preview"
-                  width={40}
-                  height={40}
-                  className="object-cover rounded mb-2 border"
-                />
-              )}
-
               <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={e => {
-                    const file = e.target.files?.[0];
-                    field.onChange(file || undefined);
-
-                    if (file) {
-                      setPreview(URL.createObjectURL(file));
-                    }
-                  }}
+                <ImageUploader
+                  initialUrl={initialValues?.coverImageUrl}
+                  onChange={file => field.onChange(file)}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
