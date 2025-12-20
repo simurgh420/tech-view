@@ -11,7 +11,10 @@ export function MegaMenu() {
   if (!isOpen) return null;
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300" />
+      <div
+        className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"
+        onClick={close}
+      />
       <div
         onMouseLeave={close}
         className="absolute top-full left-1/2 -translate-x-1/2 z-50 border-t border-gray-200 bg-white shadow-2xl 

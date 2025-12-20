@@ -36,7 +36,7 @@ type Props = {
     author: string;
     tags: string[];
   };
-  onSubmit: (data: BlogFormType) => void; // دیگه Promise لازم نیست، چون React Query خودش مدیریت می‌کنه
+  onSubmit: (data: BlogFormType) => void;
   isLoading?: boolean;
 };
 export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
