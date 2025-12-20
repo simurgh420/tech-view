@@ -1,8 +1,7 @@
 // hooks/useBlogs.ts
 'use client';
-import { BlogFormType } from '@/components/sections/blog/BlogForm';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BlogListResponse, BlogPost } from '@/types/blog';
+import { BlogListResponse, BlogPayload, BlogPost } from '@/types/blog';
 import { fetchBlogs, fetchBlogBySlug } from '@/services/blog/api/queries';
 import { createBlog, updateBlog, deleteBlog } from '@/services/blog/api/mutations';
 export function useBlogs() {
@@ -25,7 +24,7 @@ export function useBlogs() {
 
   // 📌 ایجاد بلاگ
   const useCreateBlog = () =>
-    useMutation<BlogPost, Error, BlogFormType>({
+    useMutation<BlogPost, Error, BlogPayload>({
       mutationFn: createBlog,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['blogs'] });
@@ -35,8 +34,8 @@ export function useBlogs() {
 
   // 📌 ویرایش بلاگ
   const useUpdateBlog = (slug: string) =>
-    useMutation<BlogPost, Error, BlogFormType>({
-      mutationFn: async (data: BlogFormType) => updateBlog(slug, data),
+    useMutation<BlogPost, Error, BlogPayload>({
+      mutationFn: data => updateBlog(slug, data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['blogs'] });
         queryClient.invalidateQueries({ queryKey: ['blog', slug] });

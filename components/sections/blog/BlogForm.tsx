@@ -17,30 +17,40 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import RichTextEditor from '@/components/editors/RichTextEditor';
 import { TagsInput } from '@/components/Tags/TagsInput';
+import { useState } from 'react';
+import Image from 'next/image';
 const schema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
-  coverImageUrl: z.url('آدرس تصویر معتبر نیست'),
+  coverImageUrl: z.union([z.instanceof(File), z.string()]).optional(),
   content: z.string().min(20, 'محتوا باید حداقل ۲۰ کاراکتر باشد'),
   author: z.string().min(3, 'نام نویسنده باید حداقل ۳ کاراکتر باشد'),
   tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
 });
 export type BlogFormType = z.infer<typeof schema>;
 type Props = {
-  initialValues?: BlogFormType;
+  initialValues?: {
+    title: string;
+    excerpt: string;
+    coverImageUrl?: string;
+    content: string;
+    author: string;
+    tags: string[];
+  };
   onSubmit: (data: BlogFormType) => void; // دیگه Promise لازم نیست، چون React Query خودش مدیریت می‌کنه
   isLoading?: boolean;
 };
 export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
+  const [preview, setPreview] = useState<string | null>(initialValues?.coverImageUrl ?? null);
   const form = useForm<BlogFormType>({
     resolver: zodResolver(schema),
-    defaultValues: initialValues || {
-      title: '',
-      excerpt: '',
-      coverImageUrl: '',
-      content: '',
-      author: '',
-      tags: [],
+    defaultValues: {
+      title: initialValues?.title ?? '',
+      excerpt: initialValues?.excerpt ?? '',
+      coverImageUrl: undefined,
+      content: initialValues?.content ?? '',
+      author: initialValues?.author ?? '',
+      tags: initialValues?.tags ?? [],
     },
   });
 
@@ -78,10 +88,33 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
           name="coverImageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>آدرس تصویر کاور</FormLabel>
+              <FormLabel>تصویر کاور</FormLabel>
+
+              {preview && (
+                <Image
+                  src={preview}
+                  alt="preview"
+                  width={40}
+                  height={40}
+                  className="object-cover rounded mb-2 border"
+                />
+              )}
+
               <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    field.onChange(file || undefined);
+
+                    if (file) {
+                      setPreview(URL.createObjectURL(file));
+                    }
+                  }}
+                />
               </FormControl>
+
               <FormMessage />
             </FormItem>
           )}

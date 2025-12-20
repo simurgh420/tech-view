@@ -51,3 +51,12 @@ export type UpdateBlogData = Partial<{
     }[];
   };
 }>;
+
+export type BlogPayload = {
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  tags: string[];
+  coverImageUrl: string;
+};
