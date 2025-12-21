@@ -8,11 +8,18 @@ type Props = {
 
 export function TagsInput({ value, onChange }: Props) {
   const [input, setInput] = useState('');
+  const normalizeTag = (tag: string) => {
+    const trimmed = tag.trim();
+    if (trimmed.includes('_')) return trimmed;
+    if (trimmed.includes(' ')) return trimmed.replace(/\s+/g, '_');
+    return trimmed;
+  };
   const addTag = () => {
-    const newTag = input.trim();
-    if (newTag !== '' && !value.includes(newTag)) {
-      const updated = [...(value ?? []), newTag];
-      onChange(updated);
+    const rawTag = input.trim();
+    if (!rawTag) return;
+    const newTag = normalizeTag(rawTag);
+    if (!value.includes(newTag)) {
+      onChange([...value, newTag]);
     }
     setInput('');
   };

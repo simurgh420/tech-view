@@ -39,12 +39,13 @@ export function CommentForm({ postId }: { postId: string }) {
   return (
     <Form {...form}>
       <form
+        dir="rtl"
         onSubmit={form.handleSubmit(values =>
           addComment.mutate(values, { onSuccess: () => form.reset() })
         )}
         className="space-y-5 p-5 border rounded-xl bg-white shadow-md"
       >
-        <h3 className="text-lg font-bold">✍️ ارسال کامنت جدید</h3>
+        <h3 className="text-lg font-bold mb-2">✍️ ارسال کامنت جدید</h3>
         {/* نمایش خطا در ارسال کامنت */}
         {addComment.error && (
           <p className="text-red-600 text-sm">
@@ -56,9 +57,9 @@ export function CommentForm({ postId }: { postId: string }) {
           name="author"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>نام شما</FormLabel>
+              <FormLabel className="font-semibold">نام شما</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="نام شما..." />
+                <Input {...field} placeholder="نام شما..." className="text-right" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,9 +71,14 @@ export function CommentForm({ postId }: { postId: string }) {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>متن کامنت</FormLabel>
+              <FormLabel className="font-semibold">متن کامنت</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="نظر خود را بنویسید..." rows={4} />
+                <Textarea
+                  {...field}
+                  placeholder="نظر خود را بنویسید..."
+                  rows={4}
+                  className="text-right leading-7"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,7 +90,7 @@ export function CommentForm({ postId }: { postId: string }) {
           name="rating"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>امتیاز (۱ تا ۵)</FormLabel>
+              <FormLabel className="font-semibold">امتیاز (۱ تا ۵)</FormLabel>
               <FormControl>
                 <Input
                   type="number"

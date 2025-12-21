@@ -16,7 +16,7 @@ export function PostContent({ post }: Props) {
       <div className="mb-6">
         <PostActions slug={post.slug} />
       </div>
-      <div className="relative w-full h-[360px] rounded-lg overflow-hidden mb-8 shadow-md">
+      <div className="relative w-full h-[450px] rounded-lg overflow-hidden mb-8 shadow-md">
         <Image
           src={post.coverImageUrl}
           alt={post.title}

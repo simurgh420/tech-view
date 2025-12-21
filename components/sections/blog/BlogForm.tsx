@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useForm } from 'react-hook-form';
 import z from 'zod';
+import { useWatch } from 'react-hook-form';
 import {
   Form,
   FormField,
@@ -18,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import RichTextEditor from '@/components/editors/RichTextEditor';
 import { TagsInput } from '@/components/Tags/TagsInput';
 import { ImageUploader } from '../image/ImageUploader';
+import { toSlug } from '@/lib/slug';
 const schema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
@@ -51,6 +53,8 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
       tags: initialValues?.tags ?? [],
     },
   });
+  const title = useWatch({ control: form.control, name: 'title' });
+  const slug = toSlug(title || '');
 
   return (
     <Form {...form}>
@@ -105,7 +109,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
               <FormLabel>محتوا</FormLabel>
               <FormControl>
                 {/* TipTap */}
-                <RichTextEditor value={field.value} onChange={field.onChange} />
+                <RichTextEditor value={field.value} onChange={field.onChange} slug={slug} />
               </FormControl>
               <FormMessage />
             </FormItem>

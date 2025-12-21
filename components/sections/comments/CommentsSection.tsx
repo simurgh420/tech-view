@@ -12,7 +12,7 @@ export function CommentsSection({ postId }: { postId: string }) {
   if (error) return <p>خطا در گرفتن کامنت‌ها: {error.message}</p>;
 
   return (
-    <div className="mt-10 ">
+    <div className="mt-10" dir="rtl">
       <h3 className="text-lg font-semibold mb-4">💬 کامنت‌ها</h3>
 
       {/* لیست کامنت‌ها */}
@@ -36,7 +36,7 @@ export function CommentsSection({ postId }: { postId: string }) {
                   {new Date(c.createdAt).toLocaleDateString('fa-IR')}
                 </span>
               </div>
-              <div className="ml-auto text-sm font-semibold text-yellow-600">
+              <div className="mr-auto text-sm font-semibold text-yellow-600">
                 ★ {c.rating.toFixed(1)}
               </div>
             </div>

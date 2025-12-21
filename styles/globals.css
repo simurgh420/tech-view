@@ -172,3 +172,27 @@
     @apply bg-background text-foreground;
   }
 }
+.tiptap img {
+  position: relative;
+  display: inline-block;
+}
+.tiptap img.selected {
+  outline: 2px solid #3b82f6;
+  border-radius: 4px;
+}
+.tiptap .image-delete-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}

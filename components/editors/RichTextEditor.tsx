@@ -1,123 +1,260 @@
 'use client';
 
-import { EditorContent, useEditor } from '@tiptap/react';
-import { StarterKit } from '@tiptap/starter-kit';
-import { Underline } from '@tiptap/extension-underline';
-import { Link } from '@tiptap/extension-link';
+import { Editor, EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
+import Placeholder from '@tiptap/extension-placeholder';
+import Dropcursor from '@tiptap/extension-dropcursor';
+import Highlight from '@tiptap/extension-highlight';
+import Image from '@tiptap/extension-image';
+import TextAlign from '@tiptap/extension-text-align';
+import axios from 'axios';
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  Highlighter,
+  ImageIcon,
+  Italic,
+  List,
+  Minus,
+  Quote,
+  Redo,
+  UnderlineIcon,
+  Undo,
+} from 'lucide-react';
 
 type Props = {
   value: string;
   onChange: (val: string) => void;
+  slug: string;
 };
 
-function RichTextEditor({ value, onChange }: Props) {
-  // فقط روی کلاینت اجازه ساختن ادیتور بده
-  const isClient = typeof window !== 'undefined';
+export default function RichTextEditor({ value, onChange, slug }: Props) {
+  // ✅ آپلود عکس با Axios
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', `blogs/${slug}`);
+    formData.append('baseName', file.name);
+
+    const res = await axios.post('/api/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    return res.data.imageUrl; // ✅ خروجی API تو
+  };
+
+  const handleImageInsert = async (file: File, editor: Editor) => {
+    const url = await uploadImage(file);
+    editor.chain().focus().setImage({ src: url }).run();
+  };
 
   const editor = useEditor({
-    extensions: [StarterKit, Underline, Link.configure({ openOnClick: false }), TextStyle],
     content: value,
-    immediatelyRender: false, // جلوگیری از hydration mismatch
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({}),
+      Underline,
+      Link.configure({ openOnClick: false }),
+      TextStyle,
+      Highlight,
+      Dropcursor,
+      Placeholder.configure({
+        placeholder: 'شروع به نوشتن کنید...',
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+
+      // ✅ اکستنشن عکس با پشتیبانی از Paste و Drag & Drop
+      Image.extend({
+        addNodeView() {
+          return ({ node, editor }) => {
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.display = 'inline-block';
+            const img = document.createElement('img');
+            img.src = node.attrs.src;
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '4px';
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-delete-btn';
+            deleteBtn.innerText = '×';
+            deleteBtn.onclick = () => {
+              editor.chain().focus().deleteSelection().run();
+            };
+            container.appendChild(img);
+            container.appendChild(deleteBtn);
+            return { dom: container };
+          };
+        },
+      }),
+    ],
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
   });
-  if (!isClient || !editor) return null;
-  const setLink = () => {
-    const url = window.prompt('آدرس لینک را وارد کنید:', 'https://example.com');
-    if (url) {
-      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-    }
+
+  if (!editor) return null;
+
+  // ✅ دکمه انتخاب عکس
+  const addImage = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) await handleImageInsert(file, editor);
+    };
+
+    input.click();
   };
 
   return (
-    <div className="border rounded p-2 min-h-[200px]">
+    <div className="border rounded p-2">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-2 mb-2">
+      <div className="flex flex-wrap gap-2 mb-3">
+        {/* Bold */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive('bold') ? 'bg-gray-300 px-2' : 'px-2'}
+          className={`p-2 rounded border ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
         >
-          Bold
+          <Bold size={18} />
         </button>
+        {/* Italic */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive('italic') ? 'bg-gray-300 px-2' : 'px-2'}
+          className={`p-2 rounded border ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
         >
-          Italic
+          <Italic size={18} />
         </button>
+        {/* Underline */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={editor.isActive('underline') ? 'bg-gray-300 px-2' : 'px-2'}
+          className={`p-2 rounded border ${editor.isActive('underline') ? 'bg-gray-200' : ''}`}
         >
-          Underline
+          <UnderlineIcon size={18} />
+        </button>
+        {/* Highlight */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          className={`p-2 rounded border ${editor.isActive('highlight') ? 'bg-yellow-200' : ''}`}
+        >
+          <Highlighter size={18} />
+        </button>
+        {/* Headings */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={`p-2 rounded border ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}`}
+        >
+          <Heading1 size={18} />
         </button>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive('heading', { level: 2 }) ? 'bg-gray-300 px-2' : 'px-2'}
+          className={`p-2 rounded border ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''}`}
         >
-          H2
+          <Heading2 size={18} />
         </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          className={`p-2 rounded border ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''}`}
+        >
+          <Heading3 size={18} />
+        </button>
+        {/* List */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'bg-gray-300 px-2' : 'px-2'}
+          className={`p-2 rounded border ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
         >
-          List
+          <List size={18} />
         </button>
-
-        {/* رنگ متن */}
+        {/* Quote */}
         <button
           type="button"
-          onClick={() => editor.chain().focus().setColor('#ef4444').run()}
-          className="px-2 text-red-500"
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={`p-2 rounded border ${editor.isActive('blockquote') ? 'bg-gray-200' : ''}`}
         >
-          Red
+          <Quote size={18} />
         </button>
+        {/* Code */}
         <button
           type="button"
-          onClick={() => editor.chain().focus().setColor('#3b82f6').run()}
-          className="px-2 text-blue-500"
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={`p-2 rounded border ${editor.isActive('codeBlock') ? 'bg-gray-200' : ''}`}
         >
-          Blue
+          <Code size={18} />
         </button>
+        {/* Divider */}
         <button
           type="button"
-          onClick={() => editor.chain().focus().unsetColor().run()}
-          className="px-2"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="p-2 rounded border"
         >
-          Clear
+          <Minus size={18} />
         </button>
-
-        {/* لینک */}
-        <button type="button" onClick={setLink} className="px-2">
-          Link
+        {/* Align Left */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className={`p-2 rounded border ${editor.isActive({ textAlign: 'left' }) ? 'bg-gray-200' : ''}`}
+        >
+          <AlignLeft size={18} />
         </button>
-        <button onClick={() => editor.chain().focus().unsetLink().run()} className="px-2">
-          Unlink
+        {/* Align Center */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={`p-2 rounded border ${editor.isActive({ textAlign: 'center' }) ? 'bg-gray-200' : ''}`}
+        >
+          <AlignCenter size={18} />
         </button>
-
-        {/* Undo/Redo */}
-        <button type="button" onClick={() => editor.chain().focus().undo().run()} className="px-2">
-          Undo
+        {/* Align Right */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className={`p-2 rounded border ${editor.isActive({ textAlign: 'right' }) ? 'bg-gray-200' : ''}`}
+        >
+          <AlignRight size={18} />
         </button>
-        <button type="button" onClick={() => editor.chain().focus().redo().run()} className="px-2">
-          Redo
+        {/* Image */}
+        <button type="button" onClick={addImage} className="p-2 rounded border">
+          <ImageIcon size={18} />
+        </button>
+        {/* Undo */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().undo().run()}
+          className="p-2 rounded border"
+        >
+          <Undo size={18} />
+        </button>
+        {/* Redo */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().redo().run()}
+          className="p-2 rounded border"
+        >
+          <Redo size={18} />
         </button>
       </div>
-
-      {/* Editor */}
-      <EditorContent
-        editor={editor}
-        className="tiptap min-h-[200px] p-4 outline-none whitespace-pre-wrap wrap-break"
-      />
+      <EditorContent editor={editor} className="tiptap min-h-[250px] p-4" />
     </div>
   );
 }
-
-export default RichTextEditor;
