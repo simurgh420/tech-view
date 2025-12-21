@@ -51,7 +51,15 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
 
     return res.data.imageUrl; // ✅ خروجی API تو
   };
-
+  const deleteImageRequest = async (imageUrl: string) => {
+    try {
+      await axios.post(`/api/delete-file`, {
+        imagePath: imageUrl,
+      });
+    } catch (err) {
+      console.error('Error deleting image from server:', err);
+    }
+  };
   const handleImageInsert = async (file: File, editor: Editor) => {
     const url = await uploadImage(file);
     editor.chain().focus().setImage({ src: url }).run();
@@ -88,8 +96,10 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
             const deleteBtn = document.createElement('div');
             deleteBtn.className = 'image-delete-btn';
             deleteBtn.innerText = '×';
-            deleteBtn.onclick = () => {
+            deleteBtn.onclick = async () => {
+              const imageUrl = node.attrs.src;
               editor.chain().focus().deleteSelection().run();
+              await deleteImageRequest(imageUrl);
             };
             container.appendChild(img);
             container.appendChild(deleteBtn);
