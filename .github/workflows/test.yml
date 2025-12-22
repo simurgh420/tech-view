@@ -29,6 +29,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: 'file:./:memory:'
         run: npx prisma generate
 
       - name: Run tests with coverage
@@ -66,7 +68,7 @@ jobs:
 
       - name: Generate Prisma Client
         env:
-          DATABASE_URL: 'file:./dev.db'
+          DATABASE_URL: 'file:./:memory:'
         run: npx prisma generate
 
       - name: Build app
