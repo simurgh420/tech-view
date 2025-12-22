@@ -1,7 +1,6 @@
 import { getRecentPosts } from '@/services/blog/db/queries';
 import Image from 'next/image';
 import Link from 'next/link';
-
 export async function BlogSection() {
   const recent = await getRecentPosts(3);
   if (!recent || recent.length === 0) {

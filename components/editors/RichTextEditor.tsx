@@ -157,7 +157,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <UnderlineIcon size={18} />
         </button>
-        {/* Highlight */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHighlight().run()}
@@ -165,7 +165,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Highlighter size={18} />
         </button>
-        {/* Headings */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -187,7 +187,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Heading3 size={18} />
         </button>
-        {/* List */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -195,7 +195,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <List size={18} />
         </button>
-        {/* Quote */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -203,7 +203,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Quote size={18} />
         </button>
-        {/* Code */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -211,7 +211,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Code size={18} />
         </button>
-        {/* Divider */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
@@ -219,7 +219,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Minus size={18} />
         </button>
-        {/* Align Left */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
@@ -227,7 +227,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <AlignLeft size={18} />
         </button>
-        {/* Align Center */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
@@ -235,7 +235,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <AlignCenter size={18} />
         </button>
-        {/* Align Right */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
@@ -243,11 +243,11 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <AlignRight size={18} />
         </button>
-        {/* Image */}
+
         <button type="button" onClick={addImage} className="p-2 rounded border">
           <ImageIcon size={18} />
         </button>
-        {/* Undo */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().undo().run()}
@@ -255,7 +255,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Undo size={18} />
         </button>
-        {/* Redo */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().redo().run()}
