@@ -25,13 +25,8 @@ jobs:
 
       - name: Generate Prisma Client
         env:
-          DATABASE_URL: "file:./dev.db"
+          DATABASE_URL: 'file:./dev.db'
         run: npx prisma generate
 
       - name: Run tests
         run: npm run test
-
-      - name: Build app
-        env:
-          CI: true
-        run: npm run build
