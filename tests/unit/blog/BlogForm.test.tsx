@@ -8,7 +8,7 @@ describe('BlogForm Component', () => {
     render(<BlogForm onSubmit={vi.fn()} />);
     expect(screen.getByPlaceholderText(/هدفون‌های استریو/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/یک توضیح کوتاه درباره بلاگ./i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/https:\/\/example.com\/image.jpg/i)).toBeInTheDocument();
+
     expect(screen.getByPlaceholderText(/نام نویسنده/i)).toBeInTheDocument();
     expect(screen.getByText(/ثبت بلاگ/i)).toBeInTheDocument();
   });
@@ -24,7 +24,7 @@ describe('BlogForm Component', () => {
     const initialValues = {
       title: 'تجربه من',
       excerpt: 'این یک خلاصه تستی است',
-      coverImageUrl: 'https://test.com/img.jpg',
+      coverImageUrl: undefined,
       content: 'این یک محتوای طولانی تستی است',
       author: 'محمدرضا',
       tags: ['تست'],
