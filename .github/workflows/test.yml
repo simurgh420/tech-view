@@ -2,27 +2,20 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   test:
-    name: Unit & Integration Tests
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20]   # فقط Node 20
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
@@ -33,34 +26,19 @@ jobs:
           DATABASE_URL: "file:./dev.db"
         run: npx prisma generate
 
-      - name: Run tests with coverage
-        run: npm run test -- --coverage
-
-      - name: Upload coverage artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-${{ matrix.node-version }}
-          path: coverage
-          if-no-files-found: ignore
+      - name: Run tests
+        run: npm run test
 
   build:
-    name: Build check (Next.js 16 + React 19)
     runs-on: ubuntu-latest
     needs: test
 
-    strategy:
-      matrix:
-        node-version: [20]   # فقط Node 20
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
