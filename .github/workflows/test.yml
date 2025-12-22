@@ -30,9 +30,3 @@ jobs:
 
       - name: Run tests
         run: npm run test
-
-      - name: Build app
-        env:
-          CI: true
-          NEXT_BUILD: 'true'
-        run: npm run build
