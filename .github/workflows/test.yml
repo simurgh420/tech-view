@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [20]   # فقط Node 20
 
     steps:
       - name: Checkout repository
@@ -51,7 +51,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [20]   # فقط Node 20
 
     steps:
       - name: Checkout repository
