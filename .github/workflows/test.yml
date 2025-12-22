@@ -8,14 +8,21 @@ on:
 
 jobs:
   test:
+    name: Unit & Integration Tests
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    strategy:
+      matrix:
+        node-version: [18, 20]
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -23,22 +30,37 @@ jobs:
 
       - name: Generate Prisma Client
         env:
-          DATABASE_URL: "file:./dev.db"
+          DATABASE_URL: 'file:./:memory:'
         run: npx prisma generate
 
-      - name: Run tests
-        run: npm run test
+      - name: Run tests with coverage
+        run: npm run test -- --coverage
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.node-version }}
+          path: coverage
+          if-no-files-found: ignore
 
   build:
+    name: Build check (Next.js 16 + React 19)
     runs-on: ubuntu-latest
     needs: test
 
-    steps:
-      - uses: actions/checkout@v4
+    strategy:
+      matrix:
+        node-version: [20]
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -46,7 +68,7 @@ jobs:
 
       - name: Generate Prisma Client
         env:
-          DATABASE_URL: "file:./dev.db"
+          DATABASE_URL: 'file:./:memory:'
         run: npx prisma generate
 
       - name: Build app
