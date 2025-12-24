@@ -20,16 +20,14 @@ export async function BlogSection() {
           href={`/blog/${recent[0].slug}`}
           className="group col-span-1 md:col-span-2 row-span-2 rounded-xl overflow-hidden shadow-lg"
         >
-          {recent[0].coverImageUrl && (
-            <div className="relative w-full h-[300px] md:h-[420]">
-              <Image
-                src={recent[0].coverImageUrl}
-                alt={recent[0].title}
-                fill
-                className="object-cover group-hover:scale-105 transition"
-              />
-            </div>
-          )}
+          <div className="relative w-full h-[300px] md:h-[420]">
+            <Image
+              src={recent[0].coverImageUrl || ''}
+              alt={recent[0].title}
+              fill
+              className="object-cover group-hover:scale-105 transition"
+            />
+          </div>
 
           <div className="p-4">
             <p className="text-sm text-gray-500">
@@ -46,16 +44,15 @@ export async function BlogSection() {
             href={`/blog/${blog.slug}`}
             className="group rounded-xl overflow-hidden shadow-lg"
           >
-            {blog.coverImageUrl && (
-              <div className="relative w-full h-[200px]">
-                <Image
-                  src={blog.coverImageUrl}
-                  alt={blog.title}
-                  fill
-                  className="object-cover group-hover:scale-100 transition-transform-duration-300"
-                />
-              </div>
-            )}
+            <div className="relative w-full h-[200px]">
+              <Image
+                src={blog.coverImageUrl || ''}
+                alt={blog.title}
+                fill
+                className="object-cover group-hover:scale-100 transition-transform-duration-300"
+              />
+            </div>
+
             <div className="p-4">
               <p className="text-sm text-gray-500">
                 {new Date(blog.publishedAt).toLocaleDateString('fa-IR')}
