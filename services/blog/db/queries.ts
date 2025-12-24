@@ -5,7 +5,7 @@ export type BlogPostSafe = {
   title: string;
   slug: string;
   excerpt: string;
-  coverImageUrl: string;
+  coverImageUrl: string | null;
   readingMinutes: number;
   publishedAt: Date;
   author: string;
