@@ -26,7 +26,7 @@ export async function BlogSection() {
           href={`/blog/${recent[0].slug}`}
           className="group lg:flex-2 rounded-xl overflow-hidden border bg-white hover:shadow-sm transition flex flex-col"
         >
-          <div className="relative h-70 sm:h-60 w-full">
+          <div className="relative h-50 sm:h-70 w-full">
             <Image
               src={recent[0].coverImageUrl || ''}
               alt={recent[0].title}
@@ -60,8 +60,7 @@ export async function BlogSection() {
                 flex-1 flex flex-col
               "
             >
-              {/* تصویر بالا، ارتفاع ثابت نسبی */}
-              <div className="relative w-full h-28 sm:h-32">
+              <div className="relative w-full h-28 sm:h-50">
                 <Image
                   src={blog.coverImageUrl || ''}
                   alt={blog.title}
@@ -79,7 +78,7 @@ export async function BlogSection() {
                   <p className="text-xs text-gray-500 line-clamp-2">{blog.excerpt}</p>
                 </div>
 
-                <span className="text-[11px] text-gray-400 mt-auto">
+                <span className="text-sm text-gray-400 mt-auto">
                   {new Date(blog.publishedAt).toLocaleDateString('fa-IR')}
                 </span>
               </div>
