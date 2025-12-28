@@ -33,7 +33,7 @@ type Props = {
   initialValues?: {
     title: string;
     excerpt: string;
-    coverImageUrl?: string;
+    coverImageUrl: string | null;
     content: string;
     author: string;
     tags: string[];
@@ -93,7 +93,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
               <FormLabel>تصویر کاور</FormLabel>
               <FormControl>
                 <ImageUploader
-                  initialUrl={initialValues?.coverImageUrl}
+                  initialUrl={initialValues?.coverImageUrl ?? null}
                   onChange={file => field.onChange(file)}
                 />
               </FormControl>

@@ -16,15 +16,17 @@ export function PostContent({ post }: Props) {
       <div className="mb-6">
         <PostActions slug={post.slug} />
       </div>
+
       <div className="relative w-full h-[450px] rounded-lg overflow-hidden mb-8 shadow-md">
         <Image
-          src={post.coverImageUrl}
+          src={post.coverImageUrl || ''}
           alt={post.title}
           width={808}
           height={414}
           className="object-cover"
         />
       </div>
+
       <div
         className="prose prose-neutral max-w-none text-justify leading-relaxed"
         dangerouslySetInnerHTML={{ __html: post.content }}

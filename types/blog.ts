@@ -5,7 +5,7 @@ export type BlogPost = {
   slug: string;
   excerpt: string;
   content: string;
-  coverImageUrl: string;
+  coverImageUrl: string | null;
   readingMinutes: number;
   publishedAt: Date;
   author: string;
@@ -23,7 +23,7 @@ export type BlogPostRecent = {
   title: string;
   excerpt: string;
   publishedAt: Date;
-  coverImageUrl: string;
+  coverImageUrl: string | null;
 };
 export type BlogListResponse = {
   items: BlogPost[];

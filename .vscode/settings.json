@@ -3,5 +3,6 @@
   "atlascode.enableHttpsTunnel": true,
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
-  "atlascode.enableCharles": false
+  "atlascode.enableCharles": false,
+  "conventionalCommits.scopes": ["blug"]
 }
