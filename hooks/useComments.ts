@@ -8,7 +8,8 @@ import {
   updateCommentApi,
 } from '@/services/comments/api/mutations';
 import { fetchComments } from '@/services/comments/api/queries';
-import { CommentSafe } from '@/services/comments/db/queries';
+import { CommentSafe } from '@/types/comment';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useComments(postId: string) {

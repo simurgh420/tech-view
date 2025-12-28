@@ -32,23 +32,19 @@ export async function createReview(data: {
 
 export async function updateReview(
   id: string,
-  data: Partial<{
-    rating: number;
-    title: string;
-    content: string;
-  }>
+  data: Partial<{ rating: number; title: string; content: string }>
 ) {
-  return prisma.review.update({
+  const review = await prisma.review.update({
     where: { id },
     data,
-    include: {
-      user: {
-        select: { id: true, name: true, avatar: true },
-      },
-    },
+    include: { user: { select: { id: true, name: true, avatar: true } } },
   });
+  return {
+    ...review,
+    createdAt: review.createdAt.toISOString(),
+    updatedAt: review.updatedAt.toISOString(),
+  };
 }
-
 export async function deleteReview(id: string) {
   await prisma.review.delete({
     where: { id },

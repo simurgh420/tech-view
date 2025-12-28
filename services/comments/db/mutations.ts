@@ -1,4 +1,4 @@
-import prisma from '../../db/client';
+import prisma from '@/services/db/client';
 
 export async function createComment(data: {
   postId: string;
@@ -48,6 +48,7 @@ export async function updateComment(
       likes: true,
       dislikes: true,
       createdAt: true,
+      updatedAt: true,
     },
   });
 }
@@ -72,6 +73,11 @@ export async function dislikeComment(commentId: string) {
     select: { id: true, dislikes: true },
   });
 }
+
 export async function undislikeComment(id: string) {
-  return prisma.comment.update({ where: { id }, data: { dislikes: { decrement: 1 } } });
+  return prisma.comment.update({
+    where: { id },
+    data: { dislikes: { decrement: 1 } },
+    select: { id: true, dislikes: true },
+  });
 }

@@ -7,7 +7,14 @@ import prisma from '@/services/db/client';
 export async function getUsers() {
   return prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
       reviews: true,
     },
   });
@@ -18,7 +25,14 @@ export async function getUsers() {
 export async function getUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
       reviews: true,
     },
   });
@@ -26,6 +40,15 @@ export async function getUserById(id: string) {
 export async function getUserByEmail(email: string) {
   return prisma.user.findUnique({
     where: { email },
-    include: { reviews: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+      reviews: true,
+    },
   });
 }

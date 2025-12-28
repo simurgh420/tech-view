@@ -24,9 +24,9 @@ export async function getCart(userId: string) {
     },
   });
 }
-export async function getCartItems(id: string) {
+export async function getCartItems(cartId: string) {
   return prisma.cartItem.findMany({
-    where: { id },
+    where: { cartId },
     orderBy: { createdAt: 'desc' },
     include: {
       product: {

@@ -1,7 +1,7 @@
 // services/comments/api/mutations.ts
 
+import { CommentSafe } from '@/types/comment';
 import axios from 'axios';
-import { CommentSafe } from '../db/queries';
 
 export async function addCommentApi(
   postId: string,

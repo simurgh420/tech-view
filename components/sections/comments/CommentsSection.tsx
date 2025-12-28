@@ -1,9 +1,9 @@
 'use client';
 import { useComments } from '@/hooks/useComments';
-import { CommentSafe } from '@/services/comments/db/queries';
 import Image from 'next/image';
 import { CommentForm } from '@/components/sections/comments/CommentForm';
 import { Button } from '@/components/ui';
+import { CommentSafe } from '@/types/comment';
 
 export function CommentsSection({ postId }: { postId: string }) {
   const { comments, isLoading, likeComment, dislikeComment, error } = useComments(postId);

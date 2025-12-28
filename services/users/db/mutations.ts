@@ -32,6 +32,15 @@ export async function updateUser(
   return prisma.user.update({
     where: { id },
     data,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
 }
 export async function deleteUser(id: string) {
