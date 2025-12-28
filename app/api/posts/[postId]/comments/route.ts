@@ -18,9 +18,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ postId:
   try {
     const { postId } = await params;
     const body = await req.json();
-    const { author, content, avatar, rating } = body;
-
-    const comment = await createComment(postId, author, content, avatar, rating);
+    const comment = await createComment({
+      postId,
+      author: body.author,
+      content: body.content,
+      avatar: body.avatar,
+      rating: body.rating,
+    });
     return NextResponse.json(comment);
   } catch (error) {
     console.error('Failed to create comment:', error);

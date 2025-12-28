@@ -7,13 +7,8 @@ import prisma from '@/services/db/client';
 export async function getUsers() {
   return prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      avatar: true,
-      role: true,
-      createdAt: true,
+    include: {
+      reviews: true,
     },
   });
 }
@@ -23,13 +18,14 @@ export async function getUsers() {
 export async function getUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      avatar: true,
-      role: true,
-      createdAt: true,
+    include: {
+      reviews: true,
     },
+  });
+}
+export async function getUserByEmail(email: string) {
+  return prisma.user.findUnique({
+    where: { email },
+    include: { reviews: true },
   });
 }

@@ -1,23 +1,23 @@
 // services/wishlist/api/mutations.ts
 
-import { WishlistItem, WishlistPayload } from '@/types/wishlist';
 import axios from 'axios';
+import { WishlistPayload } from '@/types/wishlist';
 
-export async function addWishlistItem(payload: WishlistPayload): Promise<WishlistItem> {
+// اضافه کردن به لیست علاقه‌مندی‌ها
+export async function addWishlistItem(payload: WishlistPayload) {
   const res = await axios.post('/api/wishlist', payload);
   return res.data;
 }
-// حذف بر اساس خود WishlistItem.id
-export async function deleteWishlistItem(id: string): Promise<{ success: boolean }> {
+
+// حذف بر اساس wishlistItem.id
+export async function deleteWishlistItem(id: string) {
   const res = await axios.delete(`/api/wishlist/${id}`);
   return res.data;
 }
 
-// حذف بر اساس userId + productId (برای دکمه toggle روی کارت محصول)
-export async function deleteWishlistItemByUserAndProduct(
-  payload: WishlistPayload
-): Promise<{ success: boolean }> {
-  const res = await axios.request<{ success: boolean }>({
+// حذف بر اساس userId + productId (برای toggle)
+export async function deleteWishlistItemByUserAndProduct(payload: WishlistPayload) {
+  const res = await axios.request({
     url: '/api/wishlist',
     method: 'DELETE',
     data: payload,

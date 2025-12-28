@@ -6,11 +6,11 @@ export async function createCategory(data: CategoryPayload) {
   return prisma.category.create({ data });
 }
 
-export async function updateCategoryBySlug(slug: string, data: Partial<CategoryPayload>) {
+export async function updateCategory(slug: string, data: Partial<CategoryPayload>) {
   return prisma.category.update({ where: { slug }, data });
 }
 
-export async function deleteCategoryBySlug(slug: string) {
+export async function deleteCategory(slug: string) {
   await prisma.category.delete({ where: { slug } });
   return { success: true };
 }

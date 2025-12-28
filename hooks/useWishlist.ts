@@ -1,5 +1,4 @@
 // hooks/useWishlist.ts
-
 import {
   addWishlistItem,
   deleteWishlistItem,
@@ -18,22 +17,20 @@ export function useWishlist(userId: string) {
       queryFn: () => fetchWishlist(userId),
       enabled: !!userId,
     });
+
   const useAddToWishlist = () =>
     useMutation({
       mutationFn: (payload: WishlistPayload) => addWishlistItem(payload),
       onSuccess: () => {
-        if (userId) {
-          queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
-        }
+        queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
+
   const useRemoveFromWishlist = () =>
     useMutation({
       mutationFn: (id: string) => deleteWishlistItem(id),
       onSuccess: () => {
-        if (userId) {
-          queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
-        }
+        queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
 
@@ -46,11 +43,10 @@ export function useWishlist(userId: string) {
         return addWishlistItem(payload);
       },
       onSuccess: () => {
-        if (userId) {
-          queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
-        }
+        queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
+
   return {
     useGetWishlist,
     useAddToWishlist,

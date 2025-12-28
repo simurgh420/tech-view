@@ -1,4 +1,4 @@
-// services/brands/api.ts
+// services/brands/api/queries.ts
 import axios from 'axios';
 import { Brand } from '@/types/brand';
 

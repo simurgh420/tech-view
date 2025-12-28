@@ -1,9 +1,9 @@
 // app/api/wishlist/route.ts
 import {
   addToWishlist,
-  removeFromWishlistByUserAndProduct,
+  deleteWishlistItemByUserAndProduct,
 } from '@/services/wishlist/db/mutations';
-import { getWishlistByUserId } from '@/services/wishlist/db/queries';
+import { getWishlist } from '@/services/wishlist/db/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   if (!userId) {
     return NextResponse.json({ error: 'userId is required' }, { status: 400 });
   }
-  const item = await getWishlistByUserId(userId);
+  const item = await getWishlist(userId);
   return NextResponse.json(item);
 }
 export async function POST(req: Request) {
@@ -24,6 +24,6 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const body = await req.json();
-  const result = await removeFromWishlistByUserAndProduct(body.userId, body.productId);
+  const result = await deleteWishlistItemByUserAndProduct(body);
   return NextResponse.json(result);
 }

@@ -1,5 +1,4 @@
 // types/product.ts
-export type ProductSpecifications = Record<string, unknown>;
 export interface Product {
   id: string;
   title: string;
@@ -17,8 +16,8 @@ export interface Product {
   reviewCount: number;
   thumbnail?: string | null;
   images: string[];
-
-  specifications: ProductSpecifications;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  specifications: any;
   brandId: string;
   categoryId: string;
   subCategoryId?: string | null;
@@ -41,8 +40,8 @@ export interface ProductPayload {
   isInStock?: boolean;
   thumbnail?: string | null;
   images?: string[];
-
-  specifications?: ProductSpecifications;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  specifications?: any;
   brandSlug: string; // connect by slug
   categorySlug: string; // connect by slug
   subCategorySlug?: string | null;

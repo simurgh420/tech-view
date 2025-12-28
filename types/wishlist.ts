@@ -8,12 +8,10 @@ export interface WishlistItem {
     id: string;
     title: string;
     slug: string;
-    thumbnail?: string;
-    price: number;
-    discountPrice?: number;
+    thumbnail?: string | null;
+    price: string;
+    discountPrice?: string | null;
     isDiscounted: boolean;
-    rating?: number;
-    reviewCount: number;
   };
 }
 export interface WishlistPayload {

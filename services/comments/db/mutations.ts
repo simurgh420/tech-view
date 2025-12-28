@@ -1,14 +1,20 @@
 import prisma from '../../db/client';
 
-export async function createComment(
-  postId: string,
-  author: string,
-  content: string,
-  avatar?: string,
-  rating: number = 5
-) {
+export async function createComment(data: {
+  postId: string;
+  author: string;
+  content: string;
+  avatar?: string;
+  rating: number;
+}) {
   return prisma.comment.create({
-    data: { postId, author, content, avatar, rating },
+    data: {
+      postId: data.postId,
+      content: data.content,
+      rating: data.rating ?? 5,
+      avatar: data.avatar ?? null,
+      author: data.author,
+    },
     select: {
       id: true,
       content: true,
@@ -45,6 +51,13 @@ export async function updateComment(
     },
   });
 }
+// حذف کامنت
+export async function deleteComment(commentId: string) {
+  return prisma.comment.delete({
+    where: { id: commentId },
+    select: { id: true },
+  });
+}
 export async function likeComment(commentId: string) {
   return prisma.comment.update({
     where: { id: commentId },
@@ -59,10 +72,6 @@ export async function dislikeComment(commentId: string) {
     select: { id: true, dislikes: true },
   });
 }
-// حذف کامنت
-export async function deleteComment(commentId: string) {
-  return prisma.comment.delete({
-    where: { id: commentId },
-    select: { id: true },
-  });
+export async function undislikeComment(id: string) {
+  return prisma.comment.update({ where: { id }, data: { dislikes: { decrement: 1 } } });
 }

@@ -1,7 +1,7 @@
 // app/api/products/[slug]/route.ts
 import { NextResponse } from 'next/server';
 import { getProductBySlug } from '@/services/products/db/queries';
-import { updateProductBySlug, deleteProductBySlug } from '@/services/products/db/mutations';
+import { deleteProduct, updateProduct } from '@/services/products/db/mutations';
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -24,7 +24,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
 
   try {
     const body = await req.json();
-    const product = await updateProductBySlug(slug, body);
+    const product = await updateProduct(slug, body);
     return NextResponse.json(product);
   } catch (error) {
     console.error(`PATCH /api/products/${slug} Error:`, error);
@@ -38,7 +38,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
 export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   try {
-    const result = await deleteProductBySlug(slug);
+    const result = await deleteProduct(slug);
     return NextResponse.json(result);
   } catch (error) {
     console.error(`DELETE /api/products/${slug} Error:`, error);

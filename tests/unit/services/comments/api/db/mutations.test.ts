@@ -33,7 +33,12 @@ vi.mock('@/services/db/client', () => ({
 }));
 describe('Comment Mutations (mocked)', () => {
   it('should create a comment', async () => {
-    const comment = await createComment('fake-post-id', 'reza', 'تست');
+    const comment = await createComment({
+      postId: 'fake-post-id',
+      author: 'reza',
+      content: 'تست',
+      rating: 5,
+    });
     expect(comment.author).toBe('reza');
     expect(comment.content).toBe('تست');
   });

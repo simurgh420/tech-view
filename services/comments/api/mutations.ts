@@ -8,7 +8,7 @@ export async function addCommentApi(
   newComment: {
     author: string;
     content: string;
-    avatar?: string;
+    avatar?: string | null;
     rating: number;
   }
 ): Promise<CommentSafe> {

@@ -1,9 +1,9 @@
 // services/products/db/mutations.ts
 import prisma from '@/services/db/client';
-import { ProductPayload } from '@/types/product';
+import { Product, ProductPayload } from '@/types/product';
 
-export async function createProduct(data: ProductPayload) {
-  return prisma.product.create({
+export async function createProduct(data: ProductPayload): Promise<Product> {
+  const product = await prisma.product.create({
     data: {
       title: data.title,
       slug: data.slug,
@@ -26,10 +26,18 @@ export async function createProduct(data: ProductPayload) {
       ...(data.subCategorySlug ? { subCategory: { connect: { slug: data.subCategorySlug } } } : {}),
     },
   });
+  return {
+    ...product,
+    price: product.price.toString(),
+    discountPrice: product.discountPrice ? product.discountPrice.toString() : null,
+    rating: product.rating ? product.rating.toString() : null,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    publishedAt: product.publishedAt ? product.publishedAt.toISOString() : null,
+  };
 }
-
-export async function updateProductBySlug(slug: string, data: Partial<ProductPayload>) {
-  return prisma.product.update({
+export async function updateProduct(slug: string, data: Partial<ProductPayload>): Promise<Product> {
+  const product = await prisma.product.update({
     where: { slug },
     data: {
       ...(data.title && { title: data.title }),
@@ -57,8 +65,17 @@ export async function updateProductBySlug(slug: string, data: Partial<ProductPay
           : { subCategory: { disconnect: true } })),
     },
   });
+  return {
+    ...product,
+    price: product.price.toString(),
+    discountPrice: product.discountPrice ? product.discountPrice.toString() : null,
+    rating: product.rating ? product.rating.toString() : null,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    publishedAt: product.publishedAt ? product.publishedAt.toISOString() : null,
+  };
 }
-export async function deleteProductBySlug(slug: string) {
+export async function deleteProduct(slug: string) {
   await prisma.product.delete({ where: { slug } });
   return { success: true };
 }

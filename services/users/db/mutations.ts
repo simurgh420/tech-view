@@ -32,7 +32,6 @@ export async function updateUser(
   return prisma.user.update({
     where: { id },
     data,
-    select: { id: true, name: true, email: true, avatar: true, role: true, createdAt: true },
   });
 }
 export async function deleteUser(id: string) {
@@ -40,4 +39,7 @@ export async function deleteUser(id: string) {
     where: { id },
   });
   return { success: true };
+}
+export async function updateUserRole(id: string, role: 'ADMIN' | 'USER') {
+  return prisma.user.update({ where: { id }, data: { role } });
 }
