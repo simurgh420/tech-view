@@ -15,7 +15,7 @@ export function useCart(cartId: string | undefined) {
   const useGetCartItems = () =>
     useQuery<CartItem[]>({
       queryKey: ['cart', cartId],
-      queryFn: () => fetchCartItems(cartId as string),
+      queryFn: () => fetchCartItems(cartId!),
       enabled: !!cartId,
     });
   const useAddToCart = () =>

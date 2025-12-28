@@ -38,15 +38,17 @@ export function useWishlist(userId: string) {
     useMutation({
       mutationFn: async (payload: WishlistPayload & { exists: boolean }) => {
         if (payload.exists) {
-          return deleteWishlistItemByUserAndProduct(payload);
+          return deleteWishlistItemByUserAndProduct({
+            userId: payload.userId,
+            productId: payload.productId,
+          });
         }
-        return addWishlistItem(payload);
+        return addWishlistItem({ userId: payload.userId, productId: payload.productId });
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
-
   return {
     useGetWishlist,
     useAddToWishlist,

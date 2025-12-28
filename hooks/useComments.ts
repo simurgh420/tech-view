@@ -34,7 +34,7 @@ export function useComments(postId: string) {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
     },
     onError: error => {
-      console.error('خطا در حذف کامنت:', error);
+      console.error('خطا در ایجاد کامنت:', error);
     },
   });
 

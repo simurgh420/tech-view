@@ -8,7 +8,11 @@ import {
   fetchProductsByBrand,
   fetchProductsByCategory,
 } from '@/services/products/api/queries';
-import { createProduct, deleteProduct, updateProduct } from '@/services/products/db/mutations';
+import {
+  createProductَApi,
+  deleteProductApi,
+  updateProductApi,
+} from '@/services/products/api/mutations';
 
 export function useProducts() {
   const qc = useQueryClient();
@@ -28,13 +32,13 @@ export function useProducts() {
 
   const useCreateProduct = () =>
     useMutation<Product, Error, ProductPayload>({
-      mutationFn: payload => createProduct(payload),
+      mutationFn: payload => createProductَApi(payload),
       onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
     });
 
   const useUpdateProduct = () =>
     useMutation<Product, Error, { slug: string; data: Partial<ProductPayload> }>({
-      mutationFn: ({ slug, data }) => updateProduct(slug, data),
+      mutationFn: ({ slug, data }) => updateProductApi(slug, data),
       onSuccess: (_res, vars) => {
         qc.invalidateQueries({ queryKey: ['products'] });
         qc.invalidateQueries({ queryKey: ['product', vars.slug] });
@@ -43,7 +47,7 @@ export function useProducts() {
 
   const useDeleteProduct = () =>
     useMutation<{ success: boolean }, Error, string>({
-      mutationFn: slug => deleteProduct(slug),
+      mutationFn: slug => deleteProductApi(slug),
       onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
     });
 

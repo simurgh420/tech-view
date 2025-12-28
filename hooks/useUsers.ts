@@ -1,7 +1,7 @@
 // hooks/useUsers.ts
 
+import { createUserApi, deleteUserApi, updateUserApi } from '@/services/users/api/mutations';
 import { fetchUserById, fetchUsers } from '@/services/users/api/queries';
-import { createUser, deleteUser, updateUser } from '@/services/users/db/mutations';
 import { User, UserPayload } from '@/types/user';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -20,13 +20,13 @@ export function useUsers() {
     });
   const useCreateUser = () =>
     useMutation({
-      mutationFn: (payload: UserPayload) => createUser(payload),
+      mutationFn: (payload: UserPayload) => createUserApi(payload),
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
     });
   const useUpdateUser = () =>
     useMutation({
       mutationFn: ({ id, data }: { id: string; data: Partial<UserPayload> }) =>
-        updateUser(id, data),
+        updateUserApi(id, data),
       onSuccess: (_, { id }) => {
         queryClient.invalidateQueries({ queryKey: ['user', id] });
         queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -34,7 +34,7 @@ export function useUsers() {
     });
   const useDeleteUser = () =>
     useMutation({
-      mutationFn: (id: string) => deleteUser(id),
+      mutationFn: (id: string) => deleteUserApi(id),
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
     });
   return {

@@ -1,7 +1,12 @@
 // hooks/useReviews.ts
 
+import {
+  createReviewApi,
+  deleteReviewApi,
+  updateReviewApi,
+} from '@/services/reviews/api/mutations';
 import { fetchReviewsByProduct } from '@/services/reviews/api/queries';
-import { createReview, deleteReview, updateReview } from '@/services/reviews/db/mutations';
+
 import { Review, ReviewPayload } from '@/types/review';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -15,19 +20,21 @@ export function useReviews(slug: string) {
     });
   const useCreateReview = () =>
     useMutation({
-      mutationFn: (payload: ReviewPayload) => createReview(payload),
+      mutationFn: (payload: ReviewPayload) => createReviewApi(payload),
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reviews', slug] }),
     });
-  const useUpdateReview = () =>
+  const useUpdateReview = (slug: string) =>
     useMutation({
       mutationFn: ({ id, data }: { id: string; data: Partial<ReviewPayload> }) =>
-        updateReview(id, data),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reviews', slug] }),
+        updateReviewApi(id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['reviews', slug] });
+      },
     });
 
   const useDeleteReview = () =>
     useMutation({
-      mutationFn: (id: string) => deleteReview(id),
+      mutationFn: (id: string) => deleteReviewApi(id),
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reviews', slug] }),
     });
   return {
