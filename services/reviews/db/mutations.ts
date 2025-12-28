@@ -10,7 +10,14 @@ export async function createReview(data: {
   content: string;
 }) {
   return prisma.review.create({
-    data,
+    data: {
+      productId: data.productId,
+      rating: data.rating,
+      title: data.title,
+      content: data.content,
+      ...(data.authorId && { authorId: data.authorId }), // ← مهم
+    },
+
     include: {
       user: {
         select: {
@@ -43,7 +50,7 @@ export async function updateReview(
 }
 
 export async function deleteReview(id: string) {
-  prisma.review.delete({
+  await prisma.review.delete({
     where: { id },
   });
   return { success: true };

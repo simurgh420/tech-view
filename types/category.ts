@@ -1,28 +1,21 @@
 // types/category.ts
-
 export interface Category {
   id: string;
   title: string;
   slug: string;
-  icon?: string;
-  description?: string;
+  icon?: string | null;
+  order: number;
   isActive: boolean;
-  order?: number;
+  parentId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CategoryProductCard {
-  id: string;
+export interface CategoryPayload {
   title: string;
   slug: string;
-  price: number;
-  discountPrice?: number;
-  thumbnail?: string;
-  rating?: number;
-  reviewCount: number;
-}
-
-export interface CategoryWithProducts extends Category {
-  products: CategoryProductCard[];
+  icon?: string | null;
+  order?: number;
+  isActive?: boolean;
+  parentId?: string | null;
 }

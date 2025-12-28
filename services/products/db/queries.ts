@@ -1,78 +1,43 @@
 // services/products/db/queries.ts
+import prisma from '@/services/db/client';
 
-import { Prisma } from '@/app/generated/prisma/client';
-import prisma from '../../db/client';
-
-// 📌 گرفتن لیست محصولات با فیلتر و pagination
-export async function getProducts(filters: {
-  page?: number;
-  pageSize?: number;
-  brand?: string;
-  category?: string;
-  subCategory?: string;
-  isDiscounted?: boolean;
-  isFeatured?: boolean;
-  isNew?: boolean;
-  inStock?: boolean;
-  sort?: 'price_asc' | 'price_desc' | 'newest' | 'rating_desc';
-}) {
-  const {
-    page = 1,
-    pageSize = 20,
-    brand,
-    category,
-    subCategory,
-    isDiscounted,
-    isFeatured,
-    isNew,
-    inStock,
-    sort,
-  } = filters;
-  const skip = (page - 1) * pageSize;
-  const where: Prisma.ProductWhereInput = {
-    status: 'PUBLISHED',
-    brand: brand ? { slug: brand } : undefined,
-    category: category ? { slug: category } : undefined,
-    subCategory: subCategory ? { slug: subCategory } : undefined,
-    isDiscounted,
-    isFeatured,
-    isNew,
-    isInStock: inStock,
-  };
-  const orderBy: Prisma.ProductOrderByWithRelationInput =
-    sort === 'price_asc'
-      ? { price: 'asc' }
-      : sort === 'price_desc'
-        ? { price: 'desc' }
-        : sort === 'newest'
-          ? { publishedAt: 'desc' }
-          : sort === 'rating_desc'
-            ? { rating: 'desc' }
-            : { createdAt: 'desc' };
-  const [items, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      orderBy,
-      skip,
-      take: pageSize,
-      include: {
-        brand: { select: { name: true, slug: true } },
-        category: { select: { title: true, slug: true, icon: true } },
-      },
-    }),
-    prisma.product.count({ where }),
-  ]);
-  return { items, total, page, pageSize, pageCount: Math.ceil(total / pageSize) };
+export async function getProducts() {
+  return prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
 }
 
-// 📌 گرفتن یک محصول با slug
 export async function getProductBySlug(slug: string) {
   return prisma.product.findUnique({
     where: { slug },
     include: {
       brand: true,
       category: true,
-      reviews: true,
+      subCategory: true,
+      reviews: {
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true, avatar: true } } },
+      },
+      prices: true,
     },
+  });
+}
+
+export async function getProductsByBrand(slug: string) {
+  return prisma.product.findMany({
+    where: { brand: { slug } },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function getProductsByCategory(slug: string) {
+  return prisma.product.findMany({
+    where: { category: { slug } },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function getFeaturedProducts() {
+  return prisma.product.findMany({
+    where: { isFeatured: true, status: 'PUBLISHED' },
+    orderBy: { createdAt: 'desc' },
   });
 }

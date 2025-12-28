@@ -1,19 +1,24 @@
 // services/products/api/queries.ts
 
-import { Product, ProductListResponse } from '@/types/product';
+import { Product } from '@/types/product';
 import axios from 'axios';
-
-// 📌 گرفتن لیست محصولات
-
-export async function fetchProducts(
-  params: Record<string, string | number | boolean>
-): Promise<ProductListResponse> {
-  const res = await axios.get('/api/products', { params });
+export async function fetchProducts(): Promise<Product[]> {
+  const res = await axios.get('/api/products');
   return res.data;
 }
-// 📌 گرفتن یک محصول با slug
-
 export async function fetchProductBySlug(slug: string): Promise<Product> {
   const res = await axios.get(`/api/products/${slug}`);
+  return res.data;
+}
+export async function fetchProductsByCategory(slug: string): Promise<Product[]> {
+  const res = await axios.get(`/api/products/category/${slug}`);
+  return res.data;
+}
+export async function fetchProductsByBrand(slug: string): Promise<Product[]> {
+  const res = await axios.get(`/api/products/brand/${slug}`);
+  return res.data;
+}
+export async function fetchFeaturedProducts(): Promise<Product[]> {
+  const res = await axios.get('/api/products/featured');
   return res.data;
 }

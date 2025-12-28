@@ -10,17 +10,9 @@ export interface Brand {
   updatedAt: string;
 }
 
-export interface BrandProductCard {
-  id: string;
-  title: string;
+export interface BrandPayload {
+  name: string;
   slug: string;
-  price: number;
-  discountPrice?: number;
-  thumbnail?: string;
-  rating?: number;
-  reviewCount: number;
-}
-
-export interface BrandWithProducts extends Brand {
-  products: BrandProductCard[];
+  logo?: string;
+  isActive?: boolean;
 }
