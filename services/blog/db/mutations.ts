@@ -1,4 +1,4 @@
-//services/blog/mutations
+//services/blog/db/mutations
 import { calculateReadingMinutes, toSlug } from '@/lib/slug';
 import prisma from '@/services/db/client';
 import { deleteImage } from '@/services/upload/deleteImage';

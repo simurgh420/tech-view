@@ -1,4 +1,4 @@
-// src/server/blog/queries.ts
+// src/server/blog/db/queries.ts
 import prisma from '@/services/db/client';
 export type BlogPostSafe = {
   id: string;
