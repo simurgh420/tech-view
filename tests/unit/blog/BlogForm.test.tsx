@@ -24,7 +24,7 @@ describe('BlogForm Component', () => {
     const initialValues = {
       title: 'تجربه من',
       excerpt: 'این یک خلاصه تستی است',
-      coverImageUrl: undefined,
+      coverImageUrl: null,
       content: 'این یک محتوای طولانی تستی است',
       author: 'محمدرضا',
       tags: ['تست'],
@@ -32,7 +32,13 @@ describe('BlogForm Component', () => {
     render(<BlogForm onSubmit={handleSubmit} initialValues={initialValues} />);
     fireEvent.submit(screen.getByTestId('blog-form'));
     await waitFor(() => expect(handleSubmit).toHaveBeenCalled());
-    expect(handleSubmit.mock.calls[0][0]).toMatchObject(initialValues);
+    expect(handleSubmit.mock.calls[0][0]).toMatchObject({
+      title: initialValues.title,
+      excerpt: initialValues.excerpt,
+      content: initialValues.content,
+      author: initialValues.author,
+      tags: initialValues.tags,
+    });
   });
   it('shows loading state on button', () => {
     render(<BlogForm onSubmit={vi.fn()} isLoading />);

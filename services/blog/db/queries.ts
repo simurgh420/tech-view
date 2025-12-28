@@ -1,11 +1,11 @@
-// src/server/blog/queries.ts
+// src/server/blog/db/queries.ts
 import prisma from '@/services/db/client';
 export type BlogPostSafe = {
   id: string;
   title: string;
   slug: string;
   excerpt: string;
-  coverImageUrl: string;
+  coverImageUrl: string | null;
   readingMinutes: number;
   publishedAt: Date;
   author: string;

@@ -1,38 +1,27 @@
-//services/blog/mutations
+//services/blog/db/mutations
 import { calculateReadingMinutes, toSlug } from '@/lib/slug';
 import prisma from '@/services/db/client';
 import { deleteImage } from '@/services/upload/deleteImage';
 import { UpdateBlogData } from '@/types/blog';
+import { createBlogSchema } from './schemas/createBlog.schema';
+import { updateBlogSchema } from './schemas/updateBlog.schema';
 
 // ساخت بلاگ جدید
-export async function createBlogPost({
-  title,
-  excerpt,
-  content,
-  coverImageUrl,
-  author,
-  tags,
-}: {
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImageUrl: string;
-  author: string;
-  tags: string[];
-}) {
+export async function createBlogPost(input: unknown) {
+  const data = createBlogSchema.parse(input);
   return prisma.blogPost.create({
     data: {
-      title,
-      slug: toSlug(title),
-      excerpt,
-      content,
-      coverImageUrl,
-      readingMinutes: calculateReadingMinutes(content),
+      title: data.title,
+      slug: toSlug(data.title),
+      excerpt: data.excerpt,
+      content: data.content,
+      coverImageUrl: data.coverImageUrl ?? null,
+      readingMinutes: calculateReadingMinutes(data.content),
       publishedAt: new Date(),
-      author,
+      author: data.author,
       status: 'PUBLISHED',
       tags: {
-        create: tags.map(tagName => ({
+        create: data.tags.map(tagName => ({
           tag: {
             connectOrCreate: {
               where: { slug: toSlug(tagName) },
@@ -46,17 +35,8 @@ export async function createBlogPost({
 }
 // ویرایش بلاگ
 
-export async function updatePost(
-  slug: string,
-  data: {
-    title?: string;
-    excerpt?: string;
-    content?: string;
-    coverImageUrl?: string;
-    author?: string;
-    tags?: string[];
-  }
-) {
+export async function updatePost(slug: string, input: unknown) {
+  const data = updateBlogSchema.parse(input);
   const post = await prisma.blogPost.findUnique({ where: { slug } });
   if (!post) return null;
 

@@ -1,9 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// ---------------------------
+// Generator و datasource
+// ---------------------------
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -12,27 +10,62 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ---------------------------
+// Enums (وضعیت‌ها، ارز و قیمت‌ها)
+// ---------------------------
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum Currency {
+  USD
+  EUR
+  IRR
+}
+
+enum PriceType {
+  BASE       // قیمت پایه
+  DISCOUNT   // قیمت تخفیفی
+}
+
+// ---------------------------
+// بلاگ
+// ---------------------------
 model BlogPost {
-  id            String    @id @default(cuid())
-  title         String
-  slug          String    @unique
-  excerpt       String    @db.Text
-  content       String    @db.Text
-  coverImageUrl String
-  readingMinutes Int
-  publishedAt   DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  author        String
-  tags          TagOnPost[]
-  status        PostStatus @default(PUBLISHED)
-  videoUrls     String[]   // برای سکشن ویدیوها (اختیاری)
-  comments      Comment[]
+  id             String      @id @default(cuid())
+  title          String
+  slug           String      @unique
+  excerpt        String      @db.Text           // خلاصه متن برای کارت‌ها
+  content        String      @db.Text           // محتوای کامل (Rich text/MD)
+  coverImageUrl  String?                        // تصویر شاخص
+  readingMinutes Int                              // مدت مطالعه
+  publishedAt    DateTime    @default(now())    // زمان انتشار
+  updatedAt      DateTime    @updatedAt
+  author         String                          // نام نویسنده
+  status         PostStatus  @default(PUBLISHED)
+  videoUrls      String[]                        // لینک‌های ویدیو (اختیاری)
+
+  // تگ‌ها و کامنت‌ها
+  tags           TagOnPost[]
+  comments       Comment[]
+
+  @@index([publishedAt])
+  @@index([status])
 }
 
 model Tag {
-  id   String  @id @default(cuid())
-  name String  @unique
-  slug String  @unique
+  id    String     @id @default(cuid())
+  name  String     @unique
+  slug  String     @unique
   posts TagOnPost[]
 }
 
@@ -44,23 +77,176 @@ model TagOnPost {
 
   @@id([postId, tagId])
 }
+
 model Comment {
   id        String   @id @default(cuid())
   content   String   @db.Text
-  rating    Int      @default(0)
-  avatar    String?
-  author    String
+  rating    Int      @default(0)       // امتیاز کاربر (۱–۵) — اختیاری
+  avatar    String?                    // آواتار نویسنده کامنت
+  author    String                     // نام نویسنده کامنت
   likes     Int      @default(0)
   dislikes  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // رابطه با BlogPost
   postId    String
-  post      BlogPost @relation(fields: [postId], references: [id],  onDelete: Cascade)
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([rating])
 }
-enum PostStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
+
+// ---------------------------
+// فروشگاه: برند، دسته‌بندی، محصول
+// ---------------------------
+model Brand {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  logo      String?   // آدرس لوگو
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isActive])
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  title     String
+  slug      String     @unique
+  icon      String?    // کلید آیکن یا مسیر SVG
+  order     Int        @default(0)     // برای ترتیب نمایش آیکن‌ها
+  isActive  Boolean    @default(true)
+
+  // سلسله‌مراتب (Top-Level و Sub)
+  parentId  String?
+  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Category[] @relation("CategoryHierarchy")
+
+  // ارتباط با محصولات
+  products            Product[]
+  subCategoryProducts Product[]  @relation("SubCategoryProducts")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([parentId])
+  @@index([order])
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  title            String
+  slug             String         @unique
+  description      String         @db.Text
+  brandId          String
+  brand            Brand          @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  categoryId       String
+  category         Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subCategoryId    String?
+  subCategory      Category?      @relation("SubCategoryProducts", fields: [subCategoryId], references: [id], onDelete: SetNull)
+
+  // Pricing
+  price            Decimal        @db.Decimal(12,2)
+  discountPrice    Decimal?       @db.Decimal(12,2)
+  discountPercentage Int?
+  isDiscounted     Boolean        @default(false)
+
+  // Flags
+  isFeatured       Boolean        @default(false)
+  isNew            Boolean        @default(false)
+
+  // Stock
+  stockQuantity    Int            @default(0)
+  isInStock        Boolean        @default(false)
+
+  // Rating aggregate
+  rating           Decimal?       @db.Decimal(3,2)
+  reviewCount      Int            @default(0)
+
+  // Media
+  thumbnail        String?
+  images           String[]
+
+  specifications   Json
+
+  status           ProductStatus  @default(DRAFT)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  publishedAt      DateTime?
+
+  // Relations
+  prices           ProductPrice[]
+  wishlistItems    WishlistItem[]
+  cartItems        CartItem[]
+  reviews          Review[]       // ← اضافه شد
+
+  // Indexes
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([subCategoryId])
+  @@index([isDiscounted])
+  @@index([isFeatured])
+  @@index([isNew])
+  @@index([isInStock])
+  @@index([price])
+  @@index([rating])
+  @@index([status])
+  @@index([publishedAt])
+}
+model ProductPrice {
+  id          String       @id @default(cuid())
+  productId   String
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  currency    Currency
+  type        PriceType    @default(BASE)
+  amount      Decimal      @db.Decimal(12,2)
+  validFrom   DateTime?    // شروع اعتبار قیمت/پروموشن
+  validTo     DateTime?    // پایان اعتبار
+
+  @@index([productId, currency, type])
+}
+
+model Review {
+  id         String    @id @default(cuid())
+  productId  String
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorId   String?
+  rating     Int
+  title      String?
+  content    String    @db.Text
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([productId])
+  @@index([rating])
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  userId     String   // اتصال به کاربر در آینده
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([productId])
+}
+
+model CartItem {
+  id         String   @id @default(cuid())
+  cartId     String   // اتصال به سبد/جلسه کاربر در آینده
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int      @default(1)
+  priceAtAdd Decimal  @db.Decimal(12,2) // اسنپ‌شات قیمت در زمان افزودن
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([cartId])
+  @@index([productId])
 }

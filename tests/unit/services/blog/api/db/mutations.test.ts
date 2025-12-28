@@ -16,16 +16,30 @@ describe('blog mutations', async () => {
     const mockData = { id: 1, title: 'Test Blog' };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (prisma.blogPost.create as any).mockResolvedValue(mockData);
+
     const result = await createBlogPost({
       title: 'Test Blog',
-      excerpt: 'Summary',
+      excerpt: 'This is a valid summary',
       content: 'This is a long content for reading minutes calculation',
       coverImageUrl: '/test.jpg',
       author: 'Mohammadreza',
       tags: ['tag1', 'tag2'],
     });
-    expect(prisma.blogPost.create).toHaveBeenCalled();
     expect(result).toEqual(mockData);
+    expect(prisma.blogPost.create).toHaveBeenCalled();
+    expect(prisma.blogPost.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          title: 'Test Blog',
+          excerpt: 'This is a valid summary',
+          content: expect.any(String),
+          coverImageUrl: '/test.jpg',
+          author: 'Mohammadreza',
+          status: 'PUBLISHED',
+          tags: expect.any(Object),
+        }),
+      })
+    );
   });
   it('updatePost returns null if post not found', async () => {
     const mockPost = { id: 1, slug: 'text-slug' };
