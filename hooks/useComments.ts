@@ -5,6 +5,8 @@ import {
   deleteCommentApi,
   dislikeCommentApi,
   likeCommentApi,
+  undislikeCommentApi,
+  unlikeCommentApi,
   updateCommentApi,
 } from '@/services/comments/api/mutations';
 import { fetchComments } from '@/services/comments/api/queries';
@@ -72,6 +74,15 @@ export function useComments(postId: string) {
       console.error('خطا در لایک کامنت:', err);
     },
   });
+  const unlikeComment = useMutation({
+    mutationFn: (commentId: string) => unlikeCommentApi(commentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
+    },
+    onError: err => {
+      console.error('خطا در انلایک کامنت:', err);
+    },
+  });
   const dislikeCommentMutation = useMutation({
     mutationFn: (commentId: string) => dislikeCommentApi(commentId),
     onSuccess: () => {
@@ -79,6 +90,15 @@ export function useComments(postId: string) {
     },
     onError: err => {
       console.error('خطا در دیسلایک کامنت:', err);
+    },
+  });
+  const undislikeComment = useMutation({
+    mutationFn: (commentId: string) => undislikeCommentApi(commentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
+    },
+    onError: err => {
+      console.error('خطا در اندیسلایک کامنت:', err);
     },
   });
   return {
@@ -90,5 +110,7 @@ export function useComments(postId: string) {
     deleteComment: deleteCommentMutation,
     likeComment: likeCommentMutation,
     dislikeComment: dislikeCommentMutation,
+    unlikeComment: unlikeComment,
+    undislikeComment: undislikeComment,
   };
 }

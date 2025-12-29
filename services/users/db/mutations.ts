@@ -49,6 +49,7 @@ export async function deleteUser(id: string) {
   });
   return { success: true };
 }
+//برای داشبورد
 export async function updateUserRole(id: string, role: 'ADMIN' | 'USER') {
   return prisma.user.update({ where: { id }, data: { role } });
 }

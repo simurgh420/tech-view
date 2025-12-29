@@ -2,8 +2,7 @@
 
 import prisma from '@/services/db/client';
 
-// 📌 گرفتن همه کاربران (برای پنل ادمین)
-
+//گرفتن همه کاربر ها برای داشبورد
 export async function getUsers() {
   return prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
@@ -37,6 +36,8 @@ export async function getUserById(id: string) {
     },
   });
 }
+//برای داشبورد
+
 export async function getUserByEmail(email: string) {
   return prisma.user.findUnique({
     where: { email },

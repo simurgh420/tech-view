@@ -23,6 +23,7 @@ export async function deleteWishlistItemByUserAndProduct(payload: {
   await prisma.wishlistItem.delete({ where: { userId_productId: { userId, productId } } });
   return { success: true };
 }
+//برای داشبورد
 export async function clearWishlist(userId: string) {
   await prisma.wishlistItem.deleteMany({ where: { userId } });
   return { success: true };

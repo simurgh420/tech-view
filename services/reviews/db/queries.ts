@@ -19,7 +19,7 @@ export async function getReviewsByProductSlug(slug: string) {
     },
   });
 }
-
+// برای داشبورد
 export async function getReviewById(id: string) {
   return prisma.review.findUnique({
     where: { id },
@@ -29,6 +29,7 @@ export async function getReviewById(id: string) {
     },
   });
 }
+// برای داشبورد
 export async function getReviewsByUser(userId: string) {
   return prisma.review.findMany({
     where: { authorId: userId },

@@ -66,6 +66,20 @@ export async function likeComment(commentId: string) {
     select: { id: true, likes: true },
   });
 }
+export async function unlikeComment(commentId: string) {
+  const comment = await prisma.comment.findUnique({
+    where: { id: commentId },
+    select: { likes: true },
+  });
+  if (!comment || comment.likes <= 0) {
+    return { id: commentId, likes: 0 };
+  }
+  return prisma.comment.update({
+    where: { id: commentId },
+    data: { likes: { decrement: 1 } },
+    select: { id: true, likes: true },
+  });
+}
 export async function dislikeComment(commentId: string) {
   return prisma.comment.update({
     where: { id: commentId },
@@ -74,9 +88,16 @@ export async function dislikeComment(commentId: string) {
   });
 }
 
-export async function undislikeComment(id: string) {
+export async function undislikeComment(commentId: string) {
+  const comment = await prisma.comment.findUnique({
+    where: { id: commentId },
+    select: { dislikes: true },
+  });
+  if (!comment || comment.dislikes <= 0) {
+    return { id: commentId, dislikes: 0 };
+  }
   return prisma.comment.update({
-    where: { id },
+    where: { id: commentId },
     data: { dislikes: { decrement: 1 } },
     select: { id: true, dislikes: true },
   });

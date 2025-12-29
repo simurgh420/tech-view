@@ -23,12 +23,16 @@ export async function getWishlist(userId: string) {
     },
   });
 }
+//برای داشبورد
+
 export async function getWishlistItem(id: string) {
   return prisma.wishlistItem.findUnique({
     where: { id },
     include: { product: { select: { id: true, title: true, slug: true, thumbnail: true } } },
   });
 }
+//برای داشبورد
+
 export async function isProductInWishlist(userId: string, productId: string) {
   const item = await prisma.wishlistItem.findUnique({
     where: { userId_productId: { userId, productId } },
