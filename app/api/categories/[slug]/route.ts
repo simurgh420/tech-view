@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
   try {
     const category = await getCategoryBySlug(slug);
     if (!category) {
@@ -23,6 +24,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
   try {
     const body = await req.json();
     const category = await updateCategory(slug, body);

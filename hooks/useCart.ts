@@ -1,10 +1,10 @@
 // hooks/useCart.ts
 
 import {
-  addCartItemRequest,
-  clearCartRequest,
-  removeCartItemRequest,
-  updateCartItemQuantityRequest,
+  addCartItemApi,
+  clearCartApi,
+  removeCartItemApi,
+  updateCartItemQuantityApi,
 } from '@/services/cart/api/mutations';
 import { fetchCartItems } from '@/services/cart/api/queries';
 import { CartItem, CartItemPayload } from '@/types/cart';
@@ -20,7 +20,7 @@ export function useCart(cartId: string | undefined) {
     });
   const useAddToCart = () =>
     useMutation({
-      mutationFn: (payload: CartItemPayload) => addCartItemRequest(payload),
+      mutationFn: (payload: CartItemPayload) => addCartItemApi(payload),
       onSuccess: () => {
         if (cartId) queryClient.invalidateQueries({ queryKey: ['cart', cartId] });
       },
@@ -28,21 +28,21 @@ export function useCart(cartId: string | undefined) {
   const useUpdateCartItemQuantity = () =>
     useMutation({
       mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
-        updateCartItemQuantityRequest(id, quantity),
+        updateCartItemQuantityApi(id, quantity),
       onSuccess: () => {
         if (cartId) queryClient.invalidateQueries({ queryKey: ['cart', cartId] });
       },
     });
   const useRemoveFromCart = () =>
     useMutation({
-      mutationFn: (id: string) => removeCartItemRequest(id),
+      mutationFn: (id: string) => removeCartItemApi(id),
       onSuccess: () => {
         if (cartId) queryClient.invalidateQueries({ queryKey: ['cart', cartId] });
       },
     });
   const useClearCart = () =>
     useMutation({
-      mutationFn: () => clearCartRequest(cartId as string),
+      mutationFn: () => clearCartApi(cartId as string),
       onSuccess: () => {
         if (cartId) queryClient.invalidateQueries({ queryKey: ['cart', cartId] });
       },
