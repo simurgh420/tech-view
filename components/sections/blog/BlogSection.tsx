@@ -10,81 +10,61 @@ export async function BlogSection() {
     <section className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Our Blogs</h2>
+        <h2 className="text-lg font-semibold text-gray-900">آخرین مطالب بلاگ</h2>
         <Link
           href="/blog"
-          className="text-xs sm:text-sm text-gray-500 hover:text-gray-900 transition"
+          className="text-sm text-indigo-600 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-300 rounded"
         >
-          View all →
+          مشاهده همه →
         </Link>
       </div>
 
-      {/* Layout: در دسکتاپ مثل فیگما، در موبایل استک‌شده */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left: Main Card */}
-        <Link
-          href={`/blog/${recent[0].slug}`}
-          className="group lg:flex-2 rounded-xl overflow-hidden border bg-white hover:shadow-sm transition flex flex-col"
-        >
-          <div className="relative h-50 sm:h-70 w-full">
-            <Image
-              src={recent[0].coverImageUrl || ''}
-              alt={recent[0].title}
-              fill
-              className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
-              priority
-            />
-          </div>
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recent.map(post => (
+          <Link
+            key={post.id}
+            href={`/blog/${post.slug}`}
+            className="group rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 duration-300 flex flex-col"
+            aria-label={post.title}
+          >
+            {/* Image */}
+            <div className="relative w-full aspect-4/3">
+              <Image
+                src={post.coverImageUrl || '/images/blog-fallback.jpg'}
+                alt={post.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
+            </div>
 
-          <div className="p-4 space-y-1.5">
-            <p className="text-xs text-gray-400">
-              {new Date(recent[0].publishedAt).toLocaleDateString('fa-IR')}
-            </p>
+            {/* Content */}
+            <div className="p-4 flex flex-col gap-2 flex-1">
+              {/* Category */}
+              <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded w-fit">
+                بلاگ
+              </span>
 
-            <h3 className="text-base font-semibold text-gray-900 line-clamp-2 group-hover:underline underline-offset-4">
-              {recent[0].title}
-            </h3>
+              {/* Title */}
+              <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:underline underline-offset-4">
+                {post.title}
+              </h3>
 
-            <p className="text-sm text-gray-600 line-clamp-3">{recent[0].excerpt}</p>
-          </div>
-        </Link>
+              {/* Excerpt */}
+              <p className="text-xs text-gray-600 line-clamp-2">{post.excerpt}</p>
 
-        {/* Right: Two stacked cards filling full height */}
-        <div className="lg:flex-1 flex flex-col gap-6 lg:h-auto">
-          {recent.slice(1).map(blog => (
-            <Link
-              key={blog.id}
-              href={`/blog/${blog.slug}`}
-              className="
-                group rounded-xl overflow-hidden border bg-white hover:shadow-sm transition
-                flex-1 flex flex-col
-              "
-            >
-              <div className="relative w-full h-28 sm:h-50">
-                <Image
-                  src={blog.coverImageUrl || ''}
-                  alt={blog.title}
-                  fill
-                  className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                />
-              </div>
-
-              {/* متن بقیه فضا را می‌گیرد */}
-              <div className="p-4 flex flex-col justify-between gap-2 flex-1">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:underline underline-offset-4">
-                    {blog.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 line-clamp-2">{blog.excerpt}</p>
+              {/* Footer */}
+              <div className="mt-auto pt-3 flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center gap-2">
+                  <span>نویسنده</span>
                 </div>
-
-                <span className="text-sm text-gray-400 mt-auto">
-                  {new Date(blog.publishedAt).toLocaleDateString('fa-IR')}
-                </span>
+                <time>{new Date(post.publishedAt).toLocaleDateString('fa-IR')}</time>
               </div>
-            </Link>
-          ))}
-        </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );
