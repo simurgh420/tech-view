@@ -26,20 +26,3 @@ export async function deleteCommentApi(commentId: string): Promise<{ success: bo
   const { data } = await axios.delete(`/api/comments/${commentId}`);
   return data;
 }
-export async function likeCommentApi(commentId: string): Promise<CommentSafe> {
-  const { data } = await axios.post(`/api/comments/${commentId}/like`);
-  return data;
-}
-export async function unlikeCommentApi(commentId: string): Promise<CommentSafe> {
-  const { data } = await axios.post(`/api/comments/${commentId}/unlike`);
-  return data;
-}
-export async function dislikeCommentApi(commentId: string): Promise<CommentSafe> {
-  const { data } = await axios.post(`/api/comments/${commentId}/dislike`);
-  return data;
-}
-
-export async function undislikeCommentApi(commentId: string): Promise<CommentSafe> {
-  const { data } = await axios.post(`/api/comments/${commentId}/undislike`);
-  return data;
-}

@@ -11,8 +11,7 @@ export async function getCommentsByPostId(postId: string): Promise<CommentSafe[]
       rating: true,
       avatar: true,
       author: true,
-      likes: true,
-      dislikes: true,
+
       createdAt: true,
     },
   });
@@ -27,8 +26,6 @@ export async function getAllCommentsWithPost() {
       rating: true,
       avatar: true,
       author: true,
-      likes: true,
-      dislikes: true,
       createdAt: true,
       updatedAt: true,
       post: {

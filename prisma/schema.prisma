@@ -87,8 +87,6 @@ model Comment {
   rating    Int      @default(0)       // امتیاز کاربر (۱–۵) — اختیاری
   avatar    String?                    // آواتار نویسنده کامنت
   author    String                     // نام نویسنده کامنت
-  likes     Int      @default(0)
-  dislikes  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

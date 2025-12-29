@@ -4,7 +4,5 @@ export type CommentSafe = {
   rating: number;
   avatar?: string | null;
   author: string;
-  likes: number;
-  dislikes: number;
   createdAt: Date;
 };
