@@ -4,8 +4,6 @@ import {
   addCommentApi,
   updateCommentApi,
   deleteCommentApi,
-  likeCommentApi,
-  dislikeCommentApi,
 } from '@/services/comments/api/mutations';
 vi.mock('axios');
 const mockedAxios = vi.mocked(axios, { deep: true });
@@ -55,19 +53,5 @@ describe('Comments API mutations', () => {
     const result = await deleteCommentApi('1');
     expect(mockedAxios.delete).toHaveBeenCalledWith('/api/comments/1');
     expect(result).toEqual({ success: true });
-  });
-  it('should like a comment', async () => {
-    const fakeResponse = { id: '1', likes: 1 };
-    mockedAxios.post.mockResolvedValueOnce({ data: fakeResponse });
-    const result = await likeCommentApi('1');
-    expect(mockedAxios.post).toHaveBeenCalledWith('/api/comments/1/like');
-    expect(result).toEqual(fakeResponse);
-  });
-  it('should dislike a comment', async () => {
-    const fakeResponse = { id: '1', dislikes: 1 };
-    mockedAxios.post.mockResolvedValueOnce({ data: fakeResponse });
-    const result = await dislikeCommentApi('1');
-    expect(mockedAxios.post).toHaveBeenCalledWith('/api/comments/1/dislike');
-    expect(result).toEqual(fakeResponse);
   });
 });

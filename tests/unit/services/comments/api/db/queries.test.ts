@@ -20,8 +20,6 @@ describe('Comment Queries (mocked)', () => {
         rating: 5,
         avatar: 'avatar.png',
         author: 'reza',
-        likes: 0,
-        dislikes: 0,
         createdAt: new Date(),
       },
     ];
@@ -40,8 +38,7 @@ describe('Comment Queries (mocked)', () => {
         rating: true,
         avatar: true,
         author: true,
-        likes: true,
-        dislikes: true,
+
         createdAt: true,
       },
     });
@@ -56,8 +53,6 @@ describe('Comment Queries (mocked)', () => {
         rating: 5,
         avatar: 'avatar.png',
         author: 'reza',
-        likes: 0,
-        dislikes: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
         post: { id: 'p1', slug: 'test-post', title: 'Test Post' },
@@ -77,8 +72,6 @@ describe('Comment Queries (mocked)', () => {
         rating: true,
         avatar: true,
         author: true,
-        likes: true,
-        dislikes: true,
         createdAt: true,
         updatedAt: true,
         post: {

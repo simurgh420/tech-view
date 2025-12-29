@@ -1,11 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import {
-  createComment,
-  updateComment,
-  likeComment,
-  dislikeComment,
-  deleteComment,
-} from '@/services/comments/db/mutations';
+import { createComment, updateComment, deleteComment } from '@/services/comments/db/mutations';
 vi.mock('@/services/db/client', () => ({
   default: {
     comment: {
@@ -46,14 +40,6 @@ describe('Comment Mutations (mocked)', () => {
     const updated = await updateComment('1', { content: 'ویرایش شده', rating: 4 });
     expect(updated.content).toBe('ویرایش شده');
     expect(updated.rating).toBe(4);
-  });
-  it('should like a comment', async () => {
-    const liked = await likeComment('1');
-    expect(liked.likes).toBe(1);
-  });
-  it('should dislike a comment', async () => {
-    const disliked = await dislikeComment('1');
-    expect(disliked.dislikes).toBe(1);
   });
   it('should delete a comment', async () => {
     const deleted = await deleteComment('1');

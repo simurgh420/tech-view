@@ -2,11 +2,11 @@
 import { useComments } from '@/hooks/useComments';
 import Image from 'next/image';
 import { CommentForm } from '@/components/sections/comments/CommentForm';
-import { Button } from '@/components/ui';
+
 import { CommentSafe } from '@/types/comment';
 
 export function CommentsSection({ postId }: { postId: string }) {
-  const { comments, isLoading, likeComment, dislikeComment, error } = useComments(postId);
+  const { comments, isLoading, error } = useComments(postId);
 
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (error) return <p>خطا در گرفتن کامنت‌ها: {error.message}</p>;
@@ -43,22 +43,6 @@ export function CommentsSection({ postId }: { postId: string }) {
 
             {/* متن کامنت */}
             <p className="text-sm leading-6 text-gray-800">{c.content}</p>
-
-            {/* ری‌اکشن‌ها */}
-            <div className="flex items-center gap-6 mt-3 text-xs text-gray-500">
-              <Button
-                onClick={() => likeComment.mutate(c.id)}
-                className="flex items-center gap-1 hover:text-red-500 transition-colors"
-              >
-                ❤️ {c.likes}
-              </Button>
-              <Button
-                onClick={() => dislikeComment.mutate(c.id)}
-                className="flex items-center gap-1 hover:text-red-500 transition-colors"
-              >
-                👎 {c.dislikes}
-              </Button>
-            </div>
           </li>
         ))}
       </ul>
