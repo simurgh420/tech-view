@@ -9,6 +9,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  
 }
 
 // ---------------------------
@@ -226,23 +227,67 @@ model Review {
   @@index([productId])
   @@index([rating])
 }
+// ---------------------------
+// Auth.js + User System
+// ---------------------------
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  avatar    String?
-  password  String   // اگر auth داخلی داری
-  role      UserRole @default(USER)   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String      @id @default(cuid())
+  name          String?     // برای Auth.js بهتره اختیاری باشه
+  email         String      @unique
+  emailVerified DateTime?   // برای Verification Token / تایید ایمیل
+  image         String?     // برای Auth.js (avatar عمومی)
+  avatar        String?     // اگر جای دیگه جدا استفاده می‌کنی، نگهش دار
+  password      String?     // چون Auth.js می‌تونه OAuth هم داشته باشه، اختیاری
+  role          UserRole    @default(USER)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+    // روابط Auth.js
+  accounts      Account[]
+  sessions      Session[]
 
-  reviews   Review[]
+   // روابط بیزنسی
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+}
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 model WishlistItem {
   id         String   @id @default(cuid())
-  userId     String   // اتصال به کاربر در آینده
+  userId     String
   productId  String
   product    Product  @relation(fields: [productId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 
   @@unique([userId, productId])
@@ -251,11 +296,11 @@ model WishlistItem {
 
 model CartItem {
   id         String   @id @default(cuid())
-  cartId     String   // اتصال به سبد/جلسه کاربر در آینده
+  cartId     String   // برای الان می‌تونه sessionId یا userId باشه
   productId  String
   product    Product  @relation(fields: [productId], references: [id])
   quantity   Int      @default(1)
-  priceAtAdd Decimal  @db.Decimal(12,2) // اسنپ‌شات قیمت در زمان افزودن
+  priceAtAdd Decimal  @db.Decimal(12, 2) // اسنپ‌شات قیمت در زمان افزودن
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

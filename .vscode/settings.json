@@ -4,5 +4,5 @@
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug", "comment "]
+  "conventionalCommits.scopes": ["blug", "comment ", "user"]
 }
