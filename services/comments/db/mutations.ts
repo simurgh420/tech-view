@@ -21,8 +21,6 @@ export async function createComment(data: {
       author: true,
       avatar: true,
       rating: true,
-      likes: true,
-      dislikes: true,
       createdAt: true,
     },
   });
@@ -45,8 +43,6 @@ export async function updateComment(
       author: true,
       avatar: true,
       rating: true,
-      likes: true,
-      dislikes: true,
       createdAt: true,
       updatedAt: true,
     },
