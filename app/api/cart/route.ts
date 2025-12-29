@@ -4,22 +4,44 @@ import { getCartItems } from '@/services/cart/db/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const cartId = url.searchParams.get('cartId');
-  if (!cartId) {
-    return NextResponse.json({ error: 'cartId is required' }, { status: 400 });
+  try {
+    const url = new URL(req.url);
+    const cartId = url.searchParams.get('cartId');
+    if (!cartId) {
+      return NextResponse.json({ success: false, message: 'cartId is required' }, { status: 400 });
+    }
+    const items = await getCartItems(cartId);
+    return NextResponse.json(items);
+  } catch (error) {
+    console.error('GET /api/cart Error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to load cart items' },
+      { status: 500 }
+    );
   }
-  const items = await getCartItems(cartId);
-  return NextResponse.json(items);
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const item = await addCartItem(body);
-  return NextResponse.json(item);
+  try {
+    const body = await req.json();
+    const item = await addCartItem(body);
+    return NextResponse.json(item);
+  } catch (error) {
+    console.error('POST /api/cart Error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to add cart item' },
+      { status: 500 }
+    );
+  }
 }
+
 export async function DELETE(req: Request) {
-  const body = await req.json();
-  const result = await clearCart(body.cartId);
-  return NextResponse.json(result);
+  try {
+    const body = await req.json();
+    const result = await clearCart(body.cartId);
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('DELETE /api/cart Error:', error);
+    return NextResponse.json({ success: false, message: 'Failed to clear cart' }, { status: 500 });
+  }
 }
