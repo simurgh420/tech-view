@@ -1,4 +1,4 @@
-//app/api/upload/route.ts
+//app/api/images/upload/route.ts
 import { uploadImage } from '@/services/upload/uploadImage';
 
 export async function POST(req: Request) {

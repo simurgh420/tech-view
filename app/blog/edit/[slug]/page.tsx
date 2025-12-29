@@ -33,17 +33,17 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
     if (data.coverImageUrl instanceof File) {
       const formData = new FormData();
       formData.append('file', data.coverImageUrl);
-      formData.append('folder', 'blog');
+      formData.append('folder', `blogs/${slug}/cover`);
       formData.append('baseName', data.title);
 
-      const res = await axios.post('/api/upload', formData, {
+      const res = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       imageUrl = res.data.imageUrl;
 
       // ✅ حذف عکس قبلی
-      await axios.post('/api/delete-file', {
+      await axios.post('/api/images/delete', {
         imagePath: blog?.coverImageUrl,
       });
     }

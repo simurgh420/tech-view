@@ -1,3 +1,4 @@
+///app/api/images/delete/route.ts
 import { deleteImage } from '@/services/upload/deleteImage';
 
 export async function POST(req: Request) {

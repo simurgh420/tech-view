@@ -42,10 +42,10 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
   const uploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('folder', `blogs/${slug}`);
+    formData.append('folder', `blogs/${slug}/editor`);
     formData.append('baseName', file.name);
 
-    const res = await axios.post('/api/upload', formData, {
+    const res = await axios.post('/api/images/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
@@ -53,7 +53,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
   };
   const deleteImageRequest = async (imageUrl: string) => {
     try {
-      await axios.post(`/api/delete-file`, {
+      await axios.post(`/api/images/delete`, {
         imagePath: imageUrl,
       });
     } catch (err) {

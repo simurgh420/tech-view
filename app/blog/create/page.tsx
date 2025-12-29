@@ -2,6 +2,7 @@
 
 import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
+import { toSlug } from '@/lib/slug';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -11,16 +12,17 @@ export default function CreateBlogPage() {
   const createMutation = useCreateBlog();
 
   async function handleSubmit(data: BlogFormType) {
+    const slug = toSlug(data.title);
     let imageUrl = '';
 
     // ✅ اگر فایل انتخاب شده بود → آپلود کن
     if (data.coverImageUrl instanceof File) {
       const formData = new FormData();
       formData.append('file', data.coverImageUrl);
-      formData.append('folder', 'blog');
+      formData.append('folder', `blogs/${slug}/cover`);
       formData.append('baseName', data.title);
 
-      const res = await axios.post('/api/upload', formData, {
+      const res = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
