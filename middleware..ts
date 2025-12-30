@@ -2,10 +2,7 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-// user در session + attributes
-type ExtendedUser = { role?: 'ADMIN' | 'USER'; avatar?: string | null };
-
+import { withAuthUser } from './lib/auth-user';
 export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession(request);
 
@@ -21,7 +18,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // اینجا به TS می‌گیم user همون AuthUser ـه
-  const user = { ...session.user, ...(session.user as ExtendedUser) };
+  const user = withAuthUser(session.user);
 
   // مسیرهای فقط ADMIN
   const adminRoutes = ['/admin', '/admin/dashboard', '/admin/products'];

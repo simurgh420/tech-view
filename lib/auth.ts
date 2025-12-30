@@ -43,4 +43,5 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30,
   },
+  redirects: { login: '/dashboard', logout: '/', register: '/welcome' },
 });
