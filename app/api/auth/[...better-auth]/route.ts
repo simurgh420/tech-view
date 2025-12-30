@@ -1,5 +1,5 @@
 // app/api/auth/[...better-auth]/route.ts
-export const runtime = 'nodejs';
 import { auth } from '@/lib/auth';
+import { toNextJsHandler } from 'better-auth/next-js';
 
-export const handler = auth.handler;
+export const { GET, POST } = toNextJsHandler(auth);
