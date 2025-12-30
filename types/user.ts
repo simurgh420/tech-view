@@ -18,3 +18,16 @@ export interface UserPayload {
   avatar?: string;
   role?: UserRole;
 }
+
+export type AppUser = {
+  id: string;
+  name: string | null;
+  email: string;
+  password: string | null;
+  avatar: string | null;
+  image: string | null;
+  role: 'USER' | 'ADMIN';
+  emailVerified: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};

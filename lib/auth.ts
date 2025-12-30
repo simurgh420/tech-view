@@ -1,24 +1,20 @@
-// lib/Auth.ts
+// lib/auth.ts
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import prisma from '@/services/db/client';
+import { AppUser } from '@/types/user';
 
 export const auth = betterAuth({
-  // اتصال به دیتابیس از طریق Prisma Adapter
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
 
-  // Secret برای امضای session/token
   secret: process.env.BETTER_AUTH_SECRET!,
 
-  // فعال‌سازی Email + Password
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // اگر تایید ایمیل می‌خوای true کن
   },
 
-  // فعال‌سازی Google OAuth
   oauth: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -26,7 +22,6 @@ export const auth = betterAuth({
     },
   },
 
-  // تعریف مدل User و فیلدهای مورد نیاز
   user: {
     model: 'User',
     fields: {
@@ -37,10 +32,15 @@ export const auth = betterAuth({
       createdAt: 'createdAt',
       updatedAt: 'updatedAt',
     },
+
+    // 🔥 اینجا role و avatar را به user اضافه می‌کنیم
+    attributes: async (user: AppUser) => ({
+      role: user.role,
+      avatar: user.avatar,
+    }),
   },
 
-  // تنظیمات session
   session: {
-    expiresIn: 60 * 60 * 24 * 30, // 30 روز
+    expiresIn: 60 * 60 * 24 * 30,
   },
 });
