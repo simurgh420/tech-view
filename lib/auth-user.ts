@@ -7,6 +7,8 @@ export type AuthUserExtras = {
 };
 
 // helper برای extend کردن session.user
-export function withAuthUser<T>(user: T): T & AuthUserExtras {
-  return user as T & AuthUserExtras;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function withAuthUser(data: any) {
+  if (!data) return null;
+  return { user: data.user ?? null, session: data.session ?? null };
 }

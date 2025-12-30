@@ -10,65 +10,49 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { registerUser } from '@/hooks/auth/useRegister';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { loginUser } from '@/hooks/auth/useLogin';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useNotify } from '@/hooks/useNotify';
 
-export const RegisterSchema = z.object({
-  name: z.string().trim().min(1, 'نام الزامی است').max(100),
-  email: z.string().email('ایمیل معتبر نیست').trim(),
-  password: z.string().min(8, 'رمز عبور حداقل ۸ کاراکتر باشد').max(128, 'رمز عبور خیلی طولانی است'),
+const LoginSchema = z.object({
+  email: z.string().email('ایمیل معتبر نیست'),
+  password: z.string().min(1, 'رمز عبور الزامی است'),
 });
 
-export function RegisterForm() {
+export function LoginForm() {
   const router = useRouter();
   const notify = useNotify();
 
-  const form = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
-      name: '',
       email: '',
       password: '',
     },
   });
 
-  async function onSubmit(values: z.infer<typeof RegisterSchema>) {
+  async function onSubmit(values: z.infer<typeof LoginSchema>) {
     try {
-      const result = await registerUser(values);
-      console.log('register result', result);
-      notify.success('ثبت‌نام با موفقیت انجام شد', 'در حال انتقال به داشبورد...');
+      const result = await loginUser(values);
+      console.log('login result', result);
+      notify.success('ورود موفقیت‌آمیز بود', 'در حال انتقال به داشبورد...');
       router.push('/dashboard');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      const message = err?.message ?? 'ثبت‌نام ناموفق بود';
+      const message = err?.message ?? 'ایمیل یا رمز عبور اشتباه است';
       form.setError('email', { message });
-      notify.error('خطا در ثبت‌نام', message);
+      notify.error('ورود ناموفق', message);
     }
   }
   return (
     <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
-      <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">ایجاد حساب کاربری</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">ورود به حساب</h2>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>نام</FormLabel>
-                <FormControl>
-                  <Input placeholder="نام شما" {...field} className="h-11 text-base" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="email"
@@ -108,7 +92,7 @@ export function RegisterForm() {
           />
 
           <Button type="submit" className="w-full h-11 text-base font-medium">
-            ثبت نام
+            ورود
           </Button>
         </form>
       </Form>

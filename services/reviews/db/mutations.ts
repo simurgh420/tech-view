@@ -23,7 +23,6 @@ export async function createReview(data: {
         select: {
           id: true,
           name: true,
-          avatar: true,
         },
       },
     },
@@ -37,7 +36,7 @@ export async function updateReview(
   const review = await prisma.review.update({
     where: { id },
     data,
-    include: { user: { select: { id: true, name: true, avatar: true } } },
+    include: { user: { select: { id: true, name: true } } },
   });
   return {
     ...review,

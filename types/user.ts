@@ -31,3 +31,9 @@ export type AppUser = {
   createdAt: Date;
   updatedAt: Date;
 };
+export type RegisterResponse = {
+  success: boolean;
+  data?: { id: string; email: string; name: string };
+  error?: string;
+  code?: string;
+};

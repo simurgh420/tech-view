@@ -12,7 +12,7 @@ export function Header() {
           <NavLinks />
           <MegaMenu />
         </div>
-        <UserActions isLoggedIn={false} />
+        <UserActions />
       </div>
     </header>
   );

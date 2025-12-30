@@ -11,7 +11,9 @@
     "test": "vitest",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "fix:accounts": "tsx scripts/fix-missing-accounts.ts",
+    "check:accounts": "tsx scripts/check-account-details.ts"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
@@ -25,6 +27,7 @@
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.4",

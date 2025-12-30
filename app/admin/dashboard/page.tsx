@@ -1,7 +1,7 @@
 // admin/dashboard/page.tsx
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { withAuthUser } from '@/lib/auth-user';
+
 import { headers } from 'next/headers';
 
 export default async function AdminDashboard() {
@@ -12,10 +12,6 @@ export default async function AdminDashboard() {
   });
 
   if (!session) redirect('/login');
-
-  const user = withAuthUser(session.user);
-
-  if (user.role !== 'ADMIN') redirect('/');
 
   return (
     <div>

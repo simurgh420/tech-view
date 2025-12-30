@@ -15,7 +15,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       subCategory: true,
       reviews: {
         orderBy: { createdAt: 'desc' },
-        include: { user: { select: { id: true, name: true, avatar: true } } },
+        include: { user: { select: { id: true, name: true } } },
       },
       prices: true,
     },

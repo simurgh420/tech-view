@@ -2,7 +2,6 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import prisma from '@/services/db/client';
-import { AppUser } from '@/types/user';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,6 +12,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
   },
 
   oauth: {
@@ -23,7 +23,7 @@ export const auth = betterAuth({
   },
 
   user: {
-    model: 'User',
+    modelName: 'User',
     fields: {
       email: 'email',
       emailVerified: 'emailVerified',
@@ -32,16 +32,14 @@ export const auth = betterAuth({
       createdAt: 'createdAt',
       updatedAt: 'updatedAt',
     },
-
-    // 🔥 اینجا role و avatar را به user اضافه می‌کنیم
-    attributes: async (user: AppUser) => ({
-      role: user.role,
-      avatar: user.avatar,
-    }),
   },
 
   session: {
     expiresIn: 60 * 60 * 24 * 30,
   },
-  redirects: { login: '/dashboard', logout: '/', register: '/welcome' },
+  redirects: {
+    login: '/dashboard',
+    logout: '/',
+    register: '/welcome',
+  },
 });

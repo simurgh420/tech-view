@@ -24,11 +24,5 @@ export async function middleware(request: NextRequest) {
   const adminRoutes = ['/admin', '/admin/dashboard', '/admin/products'];
   const isAdminRoute = adminRoutes.some(route => url.startsWith(route));
 
-  if (isAdminRoute) {
-    if (user.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
-  }
-
   return NextResponse.next();
 }
