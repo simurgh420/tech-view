@@ -1,18 +1,15 @@
-// admin/dashboard/page.tsx
 import { auth } from '@/lib/auth/auth';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
-export default async function AdminDashboard() {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   if (!session) {
     redirect('/login');
   }
-  return (
-    <div>
-      <h1>Admin Dashboard</h1>
-    </div>
-  );
+
+  return <>{children}</>;
 }

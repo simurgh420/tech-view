@@ -4,6 +4,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 
 import prisma from '@/services/db/client';
 import { hashPassword, verifyPassword } from './hash';
+import { normalizeName } from '../utils';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -20,6 +21,15 @@ export const auth = betterAuth({
       verify: verifyPassword,
     },
   },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async user => {
+          return { data: { ...user, name: user.name ? normalizeName(user.name) : undefined } };
+        },
+      },
+    },
+  },
   advanced: {
     database: {
       generateId: false,
@@ -32,24 +42,12 @@ export const auth = betterAuth({
     },
   },
 
-  user: {
-    modelName: 'User',
-    fields: {
-      email: 'email',
-      emailVerified: 'emailVerified',
-      name: 'name',
-      image: 'image',
-      createdAt: 'createdAt',
-      updatedAt: 'updatedAt',
-    },
-  },
-
   session: {
     expiresIn: 60 * 60 * 24 * 30,
   },
   redirects: {
-    login: '/dashboard',
+    login: '/admin/dashboard',
     logout: '/',
-    register: '/welcome',
+    register: '/',
   },
 });
