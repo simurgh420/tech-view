@@ -1,5 +1,5 @@
 // services/auth/register.service.ts
-import { authClient } from '@/lib/auth/auth-client';
+import { authClient } from '@/lib/auth-client';
 
 export type RegisterInput = {
   name: string;

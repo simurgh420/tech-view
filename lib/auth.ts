@@ -1,10 +1,13 @@
 // lib/auth.ts
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { admin } from 'better-auth/plugins';
 
 import prisma from '@/services/db/client';
-import { hashPassword, verifyPassword } from './hash';
-import { normalizeName } from '../utils';
+import { hashPassword, verifyPassword } from './auth/hash';
+import { normalizeName } from './utils';
+import { nextCookies } from 'better-auth/next-js';
+import { UserRole } from '@/app/generated/prisma/enums';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -57,5 +60,12 @@ export const auth = betterAuth({
     logout: '/',
     register: '/',
   },
+  plugins: [
+    nextCookies(),
+    admin({
+      defaultRole: UserRole.USER,
+      adminRoles: [UserRole.ADMIN],
+    }),
+  ],
 });
 export type Auth = typeof auth;

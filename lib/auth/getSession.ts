@@ -1,5 +1,5 @@
 // lib/auth/getSession.ts
-import { auth } from '@/lib/auth/auth';
+import { auth } from '@/lib/auth';
 
 export async function getSessionFromRequest(req: Request) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
