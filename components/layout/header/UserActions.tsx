@@ -58,9 +58,16 @@ export function UserActions() {
               </AvatarFallback>
             </Avatar>
 
-            <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
-              {user.name}
-            </span>
+            <div className="flex items-center gap-2">
+              {/* دایره نقش کاربر */}
+              <span
+                className={` inline-block size-2 rounded-full ${user.role === 'ADMIN' ? 'bg-green-500' : 'bg-amber-700'} `}
+              />
+              {/* نام کاربر */}
+              <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
+                {user.name}
+              </span>
+            </div>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent

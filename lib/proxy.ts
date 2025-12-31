@@ -9,6 +9,11 @@ export async function proxy(request: NextRequest) {
   if (!session) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (session.user.role !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
 
   return NextResponse.next();
 }

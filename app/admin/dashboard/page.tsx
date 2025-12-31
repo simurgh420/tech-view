@@ -1,6 +1,7 @@
 // admin/dashboard/page.tsx
 import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function AdminDashboard() {
@@ -12,7 +13,12 @@ export default async function AdminDashboard() {
   }
   return (
     <div>
-      <h1>Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold flex items-center gap-3">
+        <span>Admin Dashboard</span>
+        <Link href="/admin/dashboard/users" className="text-sm text-blue-600 hover:underline">
+          کاربران
+        </Link>
+      </h1>
     </div>
   );
 }

@@ -41,7 +41,14 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
-
+  user: {
+    additionalFields: {
+      role: {
+        type: ['USER', 'ADMIN'],
+        input: false,
+      },
+    },
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 30,
   },
@@ -51,3 +58,4 @@ export const auth = betterAuth({
     register: '/',
   },
 });
+export type Auth = typeof auth;
