@@ -1,10 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Search, User } from 'lucide-react';
+import { ShoppingCart, Search } from 'lucide-react';
 import { useSession } from '@/hooks/auth/useSession';
 import Link from 'next/link';
-import { withAuthUser } from '@/lib/auth-user';
 import { useLogout } from '@/hooks/auth/useLogout';
 import {
   DropdownMenu,
@@ -14,44 +13,67 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function UserActions() {
-  const { data, isLoading } = useSession();
-  const auth = withAuthUser(data);
-  const user = auth?.user;
+  const { data, isPending } = useSession();
+  const user = data?.user;
   const logoutMutation = useLogout();
 
   return (
-    <div className="flex items-center gap-4">
-      <Search className="size-5 cursor-pointer" />
-      <ShoppingCart className="size-5 cursor-pointer" />
+    <div className="flex items-center gap-5">
+      {/* Search */}
+      <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+        <Search className="size-5 text-gray-600" />
+      </button>
 
-      {/* Loading state */}
-      {isLoading && <div className="w-20 h-6 bg-gray-200 animate-pulse rounded-md" />}
+      {/* Cart */}
+      <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+        <ShoppingCart className="size-5 text-gray-600" />
+      </button>
+
+      {/* Loading skeleton */}
+      {isPending && <div className="w-24 h-8 bg-gray-200 animate-pulse rounded-lg" />}
 
       {/* Not logged in */}
-      {!isLoading && !user && (
+      {!isPending && !user && (
         <Link href="/login">
-          <Button size="sm">ورود / ثبت‌نام</Button>
+          <Button
+            size="sm"
+            className="rounded-full px-5 py-2 text-sm font-medium shadow-sm hover:shadow transition-all"
+          >
+            ورود / ثبت‌نام
+          </Button>
         </Link>
       )}
 
       {/* Logged in */}
-      {!isLoading && user && (
+      {!isPending && user && (
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 cursor-pointer">
-            <User className="size-6 text-muted-foreground" />
-            <span className="text-sm font-medium">{user.name}</span>
+          <DropdownMenuTrigger className="flex items-center gap-3 cursor-pointer group">
+            <Avatar className="size-9 ring-1 ring-gray-200 group-hover:ring-gray-300 transition-all">
+              <AvatarImage src={user.image ?? ''} alt={user.name} />
+              <AvatarFallback className="bg-gray-100 text-gray-600">
+                {user.name?.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+
+            <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
+              {user.name}
+            </span>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>حساب کاربری</DropdownMenuLabel>
+          <DropdownMenuContent
+            align="end"
+            className="w-56 rounded-xl shadow-lg border border-gray-100"
+          >
+            <DropdownMenuLabel className="text-xs text-gray-500">حساب کاربری</DropdownMenuLabel>
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/dashboard">داشبورد</Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/profile">پروفایل</Link>
             </DropdownMenuItem>
 
@@ -59,7 +81,7 @@ export function UserActions() {
 
             <DropdownMenuItem
               onClick={() => logoutMutation.mutate()}
-              className="text-red-600 cursor-pointer"
+              className="text-red-600 cursor-pointer hover:bg-red-50"
             >
               خروج از حساب
             </DropdownMenuItem>

@@ -167,57 +167,77 @@ model Review {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  name          String?
+  id            String    @id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
   image         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  avatar        String?
-  role          UserRole       @default(USER)
-  emailVerified DateTime?
+
+  sessions      Session[]
+  accounts      Account[]
+
   reviews       Review[]
   wishlistItems WishlistItem[]
-  accounts      Account[]
-  sessions      Session[]
-
-  @@map("user")
-}
-
-model Account {
-  id                String    @id @default(cuid())
-  userId            String
-  provider          String
-  providerAccountId String
-  type              String
-  password          String?
-  accessToken       String?
-  refreshToken      String?
-  expiresAt         DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("account")
+ 
+  @@map("Users")
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  userId       String
-  expiresAt    DateTime
-  sessionToken String   @unique
-  createdAt    DateTime @default(now())
-  token        String   @unique
-  updatedAt    DateTime @updatedAt
-  ipAddress    String?
-  userAgent    String?
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+ 
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  accountId             String
+  providerId            String
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
 
   @@index([userId])
-  @@map("session")
+  @@map("accounts")
 }
+
+model Verification {
+  id         String   @id
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  identifier String
+  value      String
+  expiresAt  DateTime
+
+  @@index([identifier])
+  @@map("verifications")
+}
+
 
 model WishlistItem {
   id        String   @id @default(cuid())
@@ -243,18 +263,6 @@ model CartItem {
 
   @@index([cartId])
   @@index([productId])
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
 }
 
 enum PostStatus {

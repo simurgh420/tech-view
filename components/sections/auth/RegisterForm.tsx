@@ -1,5 +1,11 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -10,51 +16,73 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { registerUser } from '@/hooks/auth/useRegister';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useRouter } from 'next/navigation';
+
+import { useRegister } from '@/hooks/auth/useRegister';
 import { useNotify } from '@/hooks/useNotify';
 
+/* ---------------------------------------------
+ *  Schema (Validation Layer)
+ * --------------------------------------------- */
 export const RegisterSchema = z.object({
   name: z.string().trim().min(1, 'نام الزامی است').max(100),
   email: z.string().email('ایمیل معتبر نیست').trim(),
-  password: z.string().min(8, 'رمز عبور حداقل ۸ کاراکتر باشد').max(128, 'رمز عبور خیلی طولانی است'),
+  password: z.string().min(8, 'رمز عبور حداقل ۸ کاراکتر باشد').max(128),
 });
 
+/* ---------------------------------------------
+ *  Component
+ * --------------------------------------------- */
 export function RegisterForm() {
   const router = useRouter();
   const notify = useNotify();
+  const registerMutation = useRegister();
+
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-    },
+    defaultValues: { name: '', email: '', password: '' },
+    mode: 'onSubmit',
   });
 
-  async function onSubmit(values: z.infer<typeof RegisterSchema>) {
-    try {
-      const result = await registerUser(values);
-      console.log('register result', result);
-      notify.success('ثبت‌نام با موفقیت انجام شد', 'در حال انتقال به داشبورد...');
-      router.push('/dashboard');
+  /* ---------------------------------------------
+   *  Submit Handler
+   * --------------------------------------------- */
+  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+    setGlobalError(null);
+
+    registerMutation.mutate(values, {
+      onSuccess: () => {
+        notify.success('ثبت‌نام با موفقیت انجام شد', 'در حال انتقال به داشبورد...');
+        router.push('/admin/dashboard');
+      },
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      const message = err?.message ?? 'ثبت‌نام ناموفق بود';
-      form.setError('email', { message });
-      notify.error('خطا در ثبت‌نام', message);
-    }
-  }
+      onError: (err: any) => {
+        const message = err?.message ?? 'ثبت‌نام ناموفق بود';
+        setGlobalError(message);
+        notify.error('خطا در ثبت‌نام', message);
+      },
+    });
+  };
+
+  /* ---------------------------------------------
+   *  UI
+   * --------------------------------------------- */
   return (
-    <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg bg-white/80 backdrop-blur-sm">
-      <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">ایجاد حساب کاربری</h2>
+    <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg bg-white/90 backdrop-blur-md">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">ایجاد حساب کاربری</h2>
+
+      {/* Global Error */}
+      {globalError && (
+        <div className="mb-6 text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
+          {globalError}
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Name */}
           <FormField
             control={form.control}
             name="name"
@@ -69,6 +97,7 @@ export function RegisterForm() {
             )}
           />
 
+          {/* Email */}
           <FormField
             control={form.control}
             name="email"
@@ -88,6 +117,7 @@ export function RegisterForm() {
             )}
           />
 
+          {/* Password */}
           <FormField
             control={form.control}
             name="password"
@@ -107,11 +137,27 @@ export function RegisterForm() {
             )}
           />
 
-          <Button type="submit" className="w-full h-11 text-base font-medium">
-            ثبت نام
+          {/* Submit */}
+          <Button
+            type="submit"
+            className="w-full h-11 text-base font-medium"
+            disabled={registerMutation.isPending}
+          >
+            {registerMutation.isPending ? 'در حال ثبت‌نام...' : 'ثبت نام'}
           </Button>
         </form>
       </Form>
+
+      {/* Footer Link */}
+      <p className="mt-6 text-center text-sm text-gray-600">
+        Already have an account?{' '}
+        <a
+          href="/login"
+          className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+        >
+          Sign in
+        </a>
+      </p>
     </div>
   );
 }

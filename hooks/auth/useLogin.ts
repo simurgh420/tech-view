@@ -1,14 +1,11 @@
 // hooks/auth/useLogin.ts
 'use client';
 
-import { authClient } from '@/lib/auth-client';
-type LoginPayload = { email: string; password: string };
-export async function loginUser(payload: LoginPayload) {
-  const { error, data } = await authClient.signIn.email({
-    ...payload,
-    callbackURL: '/dashboard',
-    rememberMe: true,
+import { useMutation } from '@tanstack/react-query';
+import { loginService, LoginInput } from '@/services/auth/login.service';
+
+export function useLogin() {
+  return useMutation({
+    mutationFn: (data: LoginInput) => loginService(data),
   });
-  if (error) throw new Error(error.message);
-  return data;
 }
