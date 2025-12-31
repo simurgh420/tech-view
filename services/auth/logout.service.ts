@@ -1,7 +1,6 @@
 // services/auth/logout.service.ts
-'use client';
 
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth/auth-client';
 
 export async function logoutService() {
   const { error } = await authClient.signOut({});

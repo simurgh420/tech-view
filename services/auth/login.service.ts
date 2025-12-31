@@ -1,7 +1,5 @@
 //services/auth/login.service.ts
-'use client';
-
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth/auth-client';
 
 export type LoginInput = {
   email: string;

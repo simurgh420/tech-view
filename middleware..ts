@@ -1,8 +1,8 @@
 // middleware.ts
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { withAuthUser } from './lib/auth-user';
+import { withAuthUser } from './lib/auth/auth-user';
 export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession(request);
 
