@@ -11,6 +11,7 @@ export default async function AdminDashboard() {
   if (!session) {
     redirect('/login');
   }
+
   return (
     <div>
       <h1 className="text-2xl font-bold flex items-center gap-3">

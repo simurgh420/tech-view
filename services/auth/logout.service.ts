@@ -1,9 +1,9 @@
 // services/auth/logout.service.ts
 
-import { authClient } from '@/lib/auth-client';
+import { signOut } from '@/lib/auth-client';
 
 export async function logoutService() {
-  const { error } = await authClient.signOut({});
+  const { error } = await signOut({});
 
   if (error) {
     throw new Error(error.message ?? 'خطا در خروج از حساب');

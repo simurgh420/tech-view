@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Search } from 'lucide-react';
-import { useSession } from '@/hooks/auth/useSession';
 import Link from 'next/link';
 import { useLogout } from '@/hooks/auth/useLogout';
 import {
@@ -14,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useSession } from '@/lib/auth-client';
 
 export function UserActions() {
   const { data, isPending } = useSession();
@@ -59,11 +59,11 @@ export function UserActions() {
             </Avatar>
 
             <div className="flex items-center gap-2">
-              {/* دایره نقش کاربر */}
               <span
-                className={` inline-block size-2 rounded-full ${user.role === 'ADMIN' ? 'bg-green-500' : 'bg-amber-700'} `}
+                className={`inline-block size-2 rounded-full ${
+                  user.role === 'ADMIN' ? 'bg-green-500' : 'bg-amber-700'
+                }`}
               />
-              {/* نام کاربر */}
               <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
                 {user.name}
               </span>
@@ -76,12 +76,16 @@ export function UserActions() {
           >
             <DropdownMenuLabel className="text-xs text-gray-500">حساب کاربری</DropdownMenuLabel>
 
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/dashboard">داشبورد</Link>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/dashboard">داشبورد</Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/profile">پروفایل</Link>
+            <DropdownMenuItem asChild>
+              <Link href="/profile">ویرایش پروفایل</Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link href="/profile/change-password">تغییر رمز عبور</Link>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

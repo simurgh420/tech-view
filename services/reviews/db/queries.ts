@@ -13,7 +13,6 @@ export async function getReviewsByProductSlug(slug: string) {
         select: {
           id: true,
           name: true,
-          avatar: true,
         },
       },
     },
@@ -24,7 +23,7 @@ export async function getReviewById(id: string) {
   return prisma.review.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, name: true, avatar: true } },
+      user: { select: { id: true, name: true } },
       product: { select: { id: true, slug: true, title: true } },
     },
   });

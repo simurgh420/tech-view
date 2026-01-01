@@ -1,5 +1,5 @@
 // services/auth/register.service.ts
-import { authClient } from '@/lib/auth-client';
+import { signUp } from '@/lib/auth-client';
 
 export type RegisterInput = {
   name: string;
@@ -8,7 +8,7 @@ export type RegisterInput = {
 };
 
 export async function registerService(input: RegisterInput) {
-  const { data, error } = await authClient.signUp.email({
+  const { data, error } = await signUp.email({
     email: input.email,
     password: input.password,
     name: input.name,

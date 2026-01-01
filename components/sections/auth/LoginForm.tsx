@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useNotify } from '@/hooks/useNotify';
 import { useLogin } from '@/hooks/auth/useLogin';
+import Link from 'next/link';
 
 /* ---------------------------------------------
  *  Schema (Validation Layer)
@@ -104,7 +105,16 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>رمز عبور</FormLabel>
+                <div className="flex justify-between items-center">
+                  <FormLabel>رمز عبور</FormLabel>
+                  <Link
+                    href="/auth/forgot-password"
+                    tabIndex={-1}
+                    className="text-sm italic text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    فراموش کردید؟
+                  </Link>
+                </div>
                 <FormControl>
                   <Input
                     type="password"

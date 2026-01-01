@@ -1,15 +1,19 @@
 // types/user.ts
 
 export type UserRole = 'ADMIN' | 'USER';
-
-export interface User {
+export type User = {
   id: string;
-  name: string;
+  createdAt: Date;
+  updatedAt: Date;
   email: string;
-  avatar?: string;
+  emailVerified: boolean;
+  name: string;
+  image?: string | null;
   role: UserRole;
-  createdAt: string;
-}
+  banned?: boolean | null;
+  banReason?: string | null;
+  banExpires?: Date | null;
+};
 
 export interface UserPayload {
   name: string;

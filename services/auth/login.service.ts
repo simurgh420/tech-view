@@ -1,5 +1,5 @@
 //services/auth/login.service.ts
-import { authClient } from '@/lib/auth-client';
+import { signIn } from '@/lib/auth-client';
 
 export type LoginInput = {
   email: string;
@@ -7,7 +7,7 @@ export type LoginInput = {
 };
 
 export async function loginService(input: LoginInput) {
-  const { data, error } = await authClient.signIn.email({
+  const { data, error } = await signIn.email({
     email: input.email,
     password: input.password,
     rememberMe: true,
