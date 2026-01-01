@@ -7,21 +7,39 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
 import { changePasswordAction } from '@/services/action/user/change-password.action';
 import { toast } from 'sonner';
 
+// ✅ ولیدیشن قوی‌تر
 const schema = z
   .object({
-    currentPassword: z.string().min(6, 'Current password is too short'),
-    newPassword: z.string().min(6, 'New password must be at least 6 characters'),
-    confirmPassword: z.string().min(6, 'Confirm password must be at least 6 characters'),
+    currentPassword: z.string().min(8, 'رمز عبور فعلی باید حداقل ۸ کاراکتر باشد'),
+    newPassword: z
+      .string()
+      .min(8, 'رمز عبور جدید باید حداقل ۸ کاراکتر باشد')
+      .regex(/[A-Z]/, 'رمز عبور باید حداقل یک حرف بزرگ داشته باشد')
+      .regex(/[a-z]/, 'رمز عبور باید حداقل یک حرف کوچک داشته باشد')
+      .regex(/[0-9]/, 'رمز عبور باید حداقل یک عدد داشته باشد')
+      .regex(/[^A-Za-z0-9]/, 'رمز عبور باید حداقل یک کاراکتر خاص داشته باشد'),
+    confirmPassword: z.string().min(8, 'تکرار رمز عبور باید حداقل ۸ کاراکتر باشد'),
   })
   .refine(data => data.newPassword === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'رمزهای عبور یکسان نیستند',
     path: ['confirmPassword'],
+  })
+  .refine(data => data.currentPassword !== data.newPassword, {
+    message: 'رمز جدید نباید همان رمز فعلی باشد',
+    path: ['newPassword'],
   });
 
 type FormValues = z.infer<typeof schema>;
@@ -50,7 +68,7 @@ export const ChangePasswordForm = () => {
     if (error) {
       toast.error(error);
     } else {
-      toast.success('Password changed successfully');
+      toast.success('رمز عبور با موفقیت تغییر کرد');
       form.reset();
     }
 
@@ -63,20 +81,23 @@ export const ChangePasswordForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold text-gray-900">Change Password</h2>
+        <h2 className="text-xl font-semibold text-gray-900">تغییر رمز عبور</h2>
+        <p className="text-sm text-gray-500">
+          لطفاً رمز عبور فعلی و رمز جدید خود را وارد کنید. رمز جدید باید قوی و امن باشد.
+        </p>
 
-        {/* Current Password */}
+        {/* رمز عبور فعلی */}
         <FormField
           control={form.control}
           name="currentPassword"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="currentPassword">Current Password</Label>
+              <FormLabel htmlFor="currentPassword">رمز عبور فعلی</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   id="currentPassword"
-                  placeholder="Enter current password"
+                  placeholder="رمز عبور فعلی را وارد کنید"
                   {...field}
                 />
               </FormControl>
@@ -85,18 +106,18 @@ export const ChangePasswordForm = () => {
           )}
         />
 
-        {/* New Password */}
+        {/* رمز عبور جدید */}
         <FormField
           control={form.control}
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="newPassword">New Password</Label>
+              <FormLabel htmlFor="newPassword">رمز عبور جدید</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   id="newPassword"
-                  placeholder="Enter new password"
+                  placeholder="رمز عبور جدید را وارد کنید"
                   {...field}
                 />
               </FormControl>
@@ -105,18 +126,18 @@ export const ChangePasswordForm = () => {
           )}
         />
 
-        {/* Confirm Password */}
+        {/* تکرار رمز عبور */}
         <FormField
           control={form.control}
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <FormLabel htmlFor="confirmPassword">تکرار رمز عبور</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   id="confirmPassword"
-                  placeholder="Confirm new password"
+                  placeholder="رمز عبور جدید را دوباره وارد کنید"
                   {...field}
                 />
               </FormControl>
@@ -126,7 +147,7 @@ export const ChangePasswordForm = () => {
         />
 
         <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? 'Changing...' : 'Change Password'}
+          {isPending ? 'در حال تغییر...' : 'تغییر رمز عبور'}
         </Button>
       </form>
     </Form>

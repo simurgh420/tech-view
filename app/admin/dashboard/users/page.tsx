@@ -1,4 +1,4 @@
-import { ReturnButton } from '@/components/sections/button/return-button';
+import { ReturnButton } from '@/components/button/return-button';
 import { UsersTable } from '@/components/sections/users/users-table';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';

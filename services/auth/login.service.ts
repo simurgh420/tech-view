@@ -1,10 +1,7 @@
 //services/auth/login.service.ts
 import { signIn } from '@/lib/auth-client';
-
-export type LoginInput = {
-  email: string;
-  password: string;
-};
+import { LoginInput } from '@/lib/validation/auth';
+// سمت کلاینت
 
 export async function loginService(input: LoginInput) {
   const { data, error } = await signIn.email({

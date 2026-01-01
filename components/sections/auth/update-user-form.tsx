@@ -5,22 +5,38 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
-import { updateUser } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { updateUserAction } from '@/services/action/user/update-user-action';
+import { deleteUserImageAction } from '@/services/action/user/delete-user-image-action';
+import Image from 'next/image';
+import { ImageUploader } from '../image/ImageUploader';
 
 const schema = z
   .object({
     name: z.string().optional(),
-    image: z.string().url('Image must be a valid URL').optional().or(z.literal('')),
+    file: z
+      .any()
+      .optional()
+      .refine(file => !file?.[0] || file[0] instanceof File, 'فایل انتخاب‌شده معتبر نیست')
+      .refine(
+        file => !file?.[0] || ['image/jpeg', 'image/png', 'image/webp'].includes(file[0].type),
+        'فقط فرمت‌های JPG, PNG, WEBP مجاز هستند'
+      ),
   })
-  .refine(data => data.name || data.image, {
-    message: 'Please enter a name or image',
+  .refine(data => data.name || data.file, {
+    message: 'لطفاً نام یا تصویر را وارد کنید',
     path: ['name'],
   });
 
@@ -33,34 +49,52 @@ interface UpdateUserFormProps {
 
 export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
   const [isPending, setIsPending] = useState(false);
+  const [preview, setPreview] = useState<string | null>(image);
   const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name,
-      image,
+      file: undefined,
     },
   });
 
   async function onSubmit(values: FormValues) {
     setIsPending(true);
 
-    await updateUser({
-      ...(values.name && { name: values.name }),
-      ...(values.image && { image: values.image }),
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success('User updated successfully');
-          router.refresh();
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (ctx: any) => {
-          toast.error(ctx.error.message);
-        },
-        onResponse: () => setIsPending(false),
-      },
-    });
+    const formData = new FormData();
+    if (values.name) formData.append('name', values.name);
+    if (values.file?.[0]) formData.append('file', values.file[0]);
+
+    const { error, imageUrl } = await updateUserAction(formData);
+
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success('پروفایل با موفقیت به‌روزرسانی شد');
+      if (imageUrl) setPreview(imageUrl);
+      router.refresh();
+    }
+
+    setIsPending(false);
+  }
+
+  async function handleDeleteImage() {
+    if (!preview) return;
+    setIsPending(true);
+
+    const { error } = await deleteUserImageAction(preview); // ✅ پاس دادن URL تصویر
+
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success('تصویر پروفایل حذف شد');
+      setPreview(null);
+      router.refresh();
+    }
+
+    setIsPending(false);
   }
 
   return (
@@ -69,8 +103,30 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold text-gray-900">Update Profile</h2>
-        <p className="text-sm text-gray-500">Change your name or profile image.</p>
+        <h2 className="text-xl font-semibold text-gray-900">ویرایش پروفایل</h2>
+        <p className="text-sm text-gray-500">نام یا تصویر پروفایل خود را تغییر دهید.</p>
+
+        {/* Preview Image + Delete Button */}
+        {preview && (
+          <div className="flex flex-col items-center gap-2">
+            <Image
+              src={preview}
+              width={80}
+              height={80}
+              alt="Profile preview"
+              className="rounded-full border object-cover"
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={isPending}
+              onClick={handleDeleteImage}
+            >
+              حذف تصویر
+            </Button>
+          </div>
+        )}
 
         {/* Name */}
         <FormField
@@ -78,24 +134,27 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="name">Name</Label>
+              <FormLabel htmlFor="name">نام</FormLabel>
               <FormControl>
-                <Input id="name" placeholder="Your name" {...field} />
+                <Input id="name" placeholder="نام شما" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Image */}
+        {/* Image Upload */}
         <FormField
           control={form.control}
-          name="image"
+          name="file"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="image">Image URL</Label>
+              <FormLabel>تصویر پروفایل</FormLabel>
               <FormControl>
-                <Input id="image" placeholder="https://example.com/avatar.png" {...field} />
+                <ImageUploader
+                  initialUrl={image}
+                  onChange={file => field.onChange(file ? [file] : undefined)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,7 +162,7 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
         />
 
         <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? 'Updating...' : 'Update User'}
+          {isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
         </Button>
       </form>
     </Form>

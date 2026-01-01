@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useLogout } from '@/hooks/auth/useLogout';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,12 +12,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useSession } from '@/lib/auth-client';
+import { LogoutButton } from '@/components/button/LogoutButton';
 
-export function UserActions() {
-  const { data, isPending } = useSession();
-  const user = data?.user;
-  const logoutMutation = useLogout();
+interface UserActionsProps {
+  session: Awaited<ReturnType<typeof import('@/lib/auth').auth.api.getSession>> | null;
+}
+
+export function UserActions({ session }: UserActionsProps) {
+  const user = session?.user;
 
   return (
     <div className="flex items-center gap-5">
@@ -32,11 +33,8 @@ export function UserActions() {
         <ShoppingCart className="size-5 text-gray-600" />
       </button>
 
-      {/* Loading skeleton */}
-      {isPending && <div className="w-24 h-8 bg-gray-200 animate-pulse rounded-lg" />}
-
       {/* Not logged in */}
-      {!isPending && !user && (
+      {!user && (
         <Link href="/login">
           <Button
             size="sm"
@@ -48,26 +46,30 @@ export function UserActions() {
       )}
 
       {/* Logged in */}
-      {!isPending && user && (
+      {user && (
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3 cursor-pointer group">
-            <Avatar className="size-9 ring-1 ring-gray-200 group-hover:ring-gray-300 transition-all">
-              <AvatarImage src={user.image ?? ''} alt={user.name} />
-              <AvatarFallback className="bg-gray-100 text-gray-600">
-                {user.name?.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-3 cursor-pointer group">
+              <Avatar className="size-9 ring-1 ring-gray-200 group-hover:ring-gray-300 transition-all">
+                <AvatarImage src={user.image ?? ''} alt={user.name} />
+                <AvatarFallback className="bg-gray-100 text-gray-600">
+                  {user.name?.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
 
-            <div className="flex items-center gap-2">
-              <span
-                className={`inline-block size-2 rounded-full ${
-                  user.role === 'ADMIN' ? 'bg-green-500' : 'bg-amber-700'
-                }`}
-              />
-              <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
-                {user.name}
-              </span>
-            </div>
+              <div className="flex items-center gap-2">
+                {/* دایره نقش کاربر */}
+                <span
+                  className={`inline-block size-2 rounded-full ${
+                    user.role === 'ADMIN' ? 'bg-green-500' : 'bg-amber-700'
+                  }`}
+                />
+                {/* نام کاربر */}
+                <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
+                  {user.name}
+                </span>
+              </div>
+            </button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
@@ -85,16 +87,13 @@ export function UserActions() {
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
-              <Link href="/profile/change-password">تغییر رمز عبور</Link>
+              <Link href="/profile/password">تغییر رمز عبور</Link>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem
-              onClick={() => logoutMutation.mutate()}
-              className="text-red-600 cursor-pointer hover:bg-red-50"
-            >
-              خروج از حساب
+            <DropdownMenuItem asChild>
+              <LogoutButton className="w-full text-left text-red-600 cursor-pointer hover:bg-red-50" />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

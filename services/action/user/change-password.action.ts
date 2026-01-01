@@ -23,9 +23,9 @@ export async function changePasswordAction(formData: FormData) {
     return { error: null };
   } catch (err) {
     if (err instanceof APIError) {
-      return { error: err.message };
+      return { success: false, error: err.message };
     }
 
-    return { error: 'Internal Server Error' };
+    return { success: false, error: 'خطای داخلی سرور' };
   }
 }

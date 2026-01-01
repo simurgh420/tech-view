@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -17,17 +17,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { useRegister } from '@/hooks/auth/useRegister';
 import { useNotify } from '@/hooks/useNotify';
-
-/* ---------------------------------------------
- *  Schema (Validation Layer)
- * --------------------------------------------- */
-export const RegisterSchema = z.object({
-  name: z.string().trim().min(1, 'نام الزامی است').max(100),
-  email: z.email('ایمیل معتبر نیست').trim(),
-  password: z.string().min(8, 'رمز عبور حداقل ۸ کاراکتر باشد').max(128),
-});
+import { registerAction } from '@/services/action/user/register';
+import { RegisterInput, RegisterSchema } from '@/lib/validation/auth';
 
 /* ---------------------------------------------
  *  Component
@@ -35,11 +27,11 @@ export const RegisterSchema = z.object({
 export function RegisterForm() {
   const router = useRouter();
   const notify = useNotify();
-  const registerMutation = useRegister();
 
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof RegisterSchema>>({
+  const form = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: { name: '', email: '', password: '' },
     mode: 'onSubmit',
@@ -48,23 +40,20 @@ export function RegisterForm() {
   /* ---------------------------------------------
    *  Submit Handler
    * --------------------------------------------- */
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+  async function onSubmit(values: RegisterInput) {
     setGlobalError(null);
+    setLoading(true);
+    const { error } = await registerAction(values);
+    if (error) {
+      setGlobalError(error);
+      notify.error('خطا در ثبت‌نام', error);
+    } else {
+      notify.success('ثبت‌نام با موفقیت انجام شد', 'در حال انتقال به داشبورد...');
+      router.push('/admin/dashboard');
+    }
 
-    registerMutation.mutate(values, {
-      onSuccess: () => {
-        notify.success('ثبت‌نام با موفقیت انجام شد', 'در حال انتقال به داشبورد...');
-        router.push('/admin/dashboard');
-      },
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onError: (err: any) => {
-        const message = err?.message ?? 'ثبت‌نام ناموفق بود';
-        setGlobalError(message);
-        notify.error('خطا در ثبت‌نام', message);
-      },
-    });
-  };
+    setLoading(false);
+  }
 
   /* ---------------------------------------------
    *  UI
@@ -138,12 +127,8 @@ export function RegisterForm() {
           />
 
           {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full h-11 text-base font-medium"
-            disabled={registerMutation.isPending}
-          >
-            {registerMutation.isPending ? 'در حال ثبت‌نام...' : 'ثبت نام'}
+          <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
+            {loading ? 'در حال ثبت‌نام...' : 'ثبت نام'}
           </Button>
         </form>
       </Form>

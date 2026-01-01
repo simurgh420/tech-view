@@ -12,9 +12,9 @@ import {
 import {
   DeleteUserButton,
   PlaceholderDeleteUserButton,
-} from '@/components/sections/button/delete-user-button';
+} from '@/components/button/delete-user-button';
 
-import { UserRoleSelect } from '@/components/sections/button/user-role-select';
+import { UserRoleSelect } from '@/components/button/user-role-select';
 import type { UserRole } from '@/types/user';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

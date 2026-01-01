@@ -1,6 +1,6 @@
 // services/auth/register.service.ts
 import { signUp } from '@/lib/auth-client';
-
+// سمت کلاینت
 export type RegisterInput = {
   name: string;
   email: string;

@@ -2,7 +2,7 @@ import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import { nextCookies } from 'better-auth/next-js';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware, APIError } from 'better-auth/api';
-import { admin, customSession, magicLink } from 'better-auth/plugins';
+import { admin, customSession } from 'better-auth/plugins';
 
 import { normalizeName, VALID_DOMAINS } from '@/lib/utils';
 import { ac, roles } from '@/lib/permissions';
@@ -71,14 +71,6 @@ const options = {
         };
       }
 
-      if (ctx.path === '/sign-in/magic-link') {
-        const name = normalizeName(ctx.body.name);
-
-        return {
-          context: { ...ctx, body: { ...ctx.body, name } },
-        };
-      }
-
       if (ctx.path === '/update-user') {
         const name = normalizeName(ctx.body.name);
 
@@ -88,21 +80,7 @@ const options = {
       }
     }),
   },
-  databaseHooks: {
-    user: {
-      create: {
-        before: async user => {
-          const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(';') ?? [];
 
-          if (ADMIN_EMAILS.includes(user.email)) {
-            return { data: { ...user, role: 'ADMIN' } };
-          }
-
-          return { data: user };
-        },
-      },
-    },
-  },
   user: {
     additionalFields: {
       role: {
@@ -145,18 +123,6 @@ const options = {
       adminRoles: ['ADMIN'],
       ac,
       roles,
-    }),
-    magicLink({
-      sendMagicLink: async ({ email, url }) => {
-        await sendEmailAction({
-          to: email,
-          subject: 'Magic Link Login',
-          meta: {
-            description: 'Please click the link below to log in.',
-            link: String(url),
-          },
-        });
-      },
     }),
   ],
 } satisfies BetterAuthOptions;

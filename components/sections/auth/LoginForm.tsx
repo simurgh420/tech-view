@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -17,60 +16,43 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useNotify } from '@/hooks/useNotify';
-import { useLogin } from '@/hooks/auth/useLogin';
 import Link from 'next/link';
+import { LoginSchema, LoginInput } from '@/lib/validation/auth';
+import { loginAction } from '@/services/action/user/login';
 
-/* ---------------------------------------------
- *  Schema (Validation Layer)
- * --------------------------------------------- */
-const LoginSchema = z.object({
-  email: z.email('ایمیل معتبر نیست'),
-  password: z.string().min(1, 'رمز عبور الزامی است'),
-});
-
-/* ---------------------------------------------
- *  Component
- * --------------------------------------------- */
 export function LoginForm() {
   const router = useRouter();
   const notify = useNotify();
-  const loginMutation = useLogin();
-
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof LoginSchema>>({
+  const form = useForm<LoginInput>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { email: '', password: '' },
     mode: 'onSubmit',
   });
 
-  /* ---------------------------------------------
-   *  Submit Handler
-   * --------------------------------------------- */
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  async function onSubmit(values: LoginInput) {
     setGlobalError(null);
-    loginMutation.mutate(values, {
-      onSuccess: () => {
-        notify.success('ورود موفقیت‌آمیز بود', 'در حال انتقال به داشبورد...');
-        router.push('/admin/dashboard');
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onError: (err: any) => {
-        const message = err?.message ?? 'ورود ناموفق بود';
-        setGlobalError(message);
-        notify.error('ورود ناموفق', message);
-      },
-    });
-  };
+    setLoading(true);
 
-  /* ---------------------------------------------
-   *  UI
-   * --------------------------------------------- */
+    const { error } = await loginAction(values);
+
+    if (error) {
+      setGlobalError(error);
+      notify.error('ورود ناموفق', error);
+    } else {
+      notify.success('ورود موفقیت‌آمیز بود', 'در حال انتقال به داشبورد...');
+      router.push('/admin/dashboard');
+    }
+
+    setLoading(false);
+  }
+
   return (
     <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg bg-white/90 backdrop-blur-md">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">ورود به حساب</h2>
 
-      {/* Global Error */}
       {globalError && (
         <div className="mb-6 text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
           {globalError}
@@ -79,7 +61,6 @@ export function LoginForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Email */}
           <FormField
             control={form.control}
             name="email"
@@ -99,7 +80,6 @@ export function LoginForm() {
             )}
           />
 
-          {/* Password */}
           <FormField
             control={form.control}
             name="password"
@@ -128,13 +108,8 @@ export function LoginForm() {
             )}
           />
 
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full h-11 text-base font-medium"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting ? 'در حال ورود...' : 'ورود'}
+          <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
+            {loading ? 'در حال ورود...' : 'ورود'}
           </Button>
         </form>
       </Form>

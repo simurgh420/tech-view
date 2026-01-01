@@ -38,6 +38,7 @@ export async function deleteUserAction({ userId }: { userId: string }) {
     if (err instanceof APIError) {
       return { success: false, error: err.message };
     }
-    return { success: false, error: 'Internal Server Error' };
+
+    return { success: false, error: 'خطای داخلی سرور' };
   }
 }
