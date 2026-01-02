@@ -48,8 +48,8 @@ export function RegisterForm() {
       setGlobalError(error);
       notify.error('خطا در ثبت‌نام', error);
     } else {
-      notify.success('ثبت‌نام با موفقیت انجام شد', 'در حال انتقال به داشبورد...');
-      router.push('/admin/dashboard');
+      notify.success('ثبت‌نام با موفقیت انجام شد', 'طلفا ایمیل خود را تایید کنید ');
+      router.push('/register/success');
     }
 
     setLoading(false);

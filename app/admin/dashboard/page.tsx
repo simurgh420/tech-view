@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
     headers: await headers(),
   });
   if (!session) {
-    redirect('/login');
+    redirect('/unauthorized');
   }
 
   return (

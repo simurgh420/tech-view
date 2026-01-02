@@ -9,7 +9,7 @@ export default async function ProfilePage() {
   });
 
   if (!session) {
-    redirect('/login');
+    redirect('/unauthorized');
   }
 
   if (!session?.user) {

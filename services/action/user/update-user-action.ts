@@ -1,9 +1,9 @@
 'use server';
 
 import { auth } from '@/lib/auth';
+import { uploadImage } from '@/services/upload/uploadImage';
 import { APIError } from 'better-auth/api';
 import { headers } from 'next/headers';
-import { uploadImage } from '@/services/upload/uploadImage';
 
 export async function updateUserAction(formData: FormData) {
   const name = String(formData.get('name') ?? '');
