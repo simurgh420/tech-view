@@ -9,13 +9,24 @@ export default async function UsersPage() {
   const session = await auth.api.getSession({ headers: headersList });
 
   if (!session) redirect('/auth/login');
+
   if (session.user.role !== 'ADMIN') {
     return (
-      <div className="px-8 py-16 container mx-auto max-w-5xl space-y-8">
-        <div className="space-y-4">
+      <div className="container mx-auto max-w-5xl px-8 py-16 space-y-10">
+        <div className="space-y-6">
           <ReturnButton href="/profile" label="Profile" />
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="p-2 rounded-md text-lg bg-red-600 text-white font-bold">FORBIDDEN</p>
+
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+
+            <p className="inline-block px-4 py-2 rounded-lg text-base font-semibold bg-red-600 text-white shadow">
+              FORBIDDEN
+            </p>
+          </div>
+
+          <p className="text-gray-600 text-lg leading-relaxed">
+            شما اجازه دسترسی به این بخش را ندارید.
+          </p>
         </div>
       </div>
     );
@@ -33,14 +44,29 @@ export default async function UsersPage() {
   });
 
   return (
-    <div className="px-8 py-16 container mx-auto max-w-5xl space-y-8">
-      <div className="space-y-4">
+    <div className="container mx-auto max-w-6xl px-8 py-16 space-y-12" dir="rtl">
+      {/* Header */}
+      <div className="space-y-6">
         <ReturnButton href="/profile" label="Profile" />
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="p-2 rounded-md text-lg bg-green-600 text-white font-bold">ACCESS GRANTED</p>
+
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+        </div>
+
+        <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+          در این بخش می‌توانید کاربران را مدیریت کنید، نقش‌ها را تغییر دهید و دسترسی‌ها را کنترل
+          کنید.
+        </p>
+
+        <div className="border-b border-gray-200 pt-4" />
       </div>
 
-      <UsersTable users={sortedUsers} />
+      {/* Users Table */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">لیست کاربران</h2>
+
+        <UsersTable users={sortedUsers} />
+      </div>
     </div>
   );
 }

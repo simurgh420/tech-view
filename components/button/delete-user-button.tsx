@@ -16,7 +16,7 @@ export const DeleteUserButton = ({ userId }: DeleteUserButtonProps) => {
 
   async function handleClick() {
     setIsPending(true);
-    const res = await deleteUserAction({ userId });
+    const res = await deleteUserAction(userId);
 
     if (res.error) {
       toast.error(res.error);

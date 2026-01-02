@@ -77,10 +77,11 @@ export function UserActions({ session }: UserActionsProps) {
             className="w-56 rounded-xl shadow-lg border border-gray-100"
           >
             <DropdownMenuLabel className="text-xs text-gray-500">حساب کاربری</DropdownMenuLabel>
-
-            <DropdownMenuItem asChild>
-              <Link href="/admin/dashboard">داشبورد</Link>
-            </DropdownMenuItem>
+            {user.role === 'ADMIN' && (
+              <DropdownMenuItem asChild>
+                <Link href="/admin/dashboard">داشبورد</Link>
+              </DropdownMenuItem>
+            )}
 
             <DropdownMenuItem asChild>
               <Link href="/profile">ویرایش پروفایل</Link>

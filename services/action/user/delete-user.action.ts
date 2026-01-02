@@ -1,13 +1,12 @@
 'use server';
 
 import { auth } from '@/lib/auth';
-import prisma from '@/services/db/client';
 import { APIError } from 'better-auth/api';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export async function deleteUserAction({ userId }: { userId: string }) {
+export async function deleteUserAction(userId: string) {
   const headersList = await headers();
 
   const session = await auth.api.getSession({
@@ -21,15 +20,16 @@ export async function deleteUserAction({ userId }: { userId: string }) {
   }
 
   try {
-    await prisma.user.delete({
-      where: {
-        id: userId,
+    await auth.api.removeUser({
+      body: {
+        userId: userId,
       },
+      headers: await headers(),
     });
 
     if (session.user.id === userId) {
       await auth.api.signOut({ headers: headersList });
-      redirect('/auth/sign-in');
+      redirect('/login');
     }
 
     revalidatePath('/dashboard/admin');

@@ -82,11 +82,16 @@ const options = {
   },
 
   user: {
+    deleteUser: {
+      enabled: true,
+    },
     additionalFields: {
       role: {
         type: ['USER', 'ADMIN'],
         input: false,
       },
+      banReason: { type: 'string', input: false },
+      banExpiresAt: { type: 'date', input: false },
     },
   },
   session: {

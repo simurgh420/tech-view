@@ -2,6 +2,7 @@
 'use server';
 
 import { auth } from '@/lib/auth';
+import { APIError } from 'better-auth';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -16,8 +17,10 @@ export async function logoutAction() {
     // بعد از خروج، کاربر رو به صفحه ورود هدایت کن
     revalidatePath('/');
     redirect('/auth/login');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    return { success: false, message: err?.message ?? 'خطا در خروج از حساب' };
+  } catch (err) {
+    if (err instanceof APIError) {
+      return { error: err.message };
+    }
+    return { error: 'خطای داخلی سرور' };
   }
 }
