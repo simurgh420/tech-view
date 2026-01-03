@@ -11,7 +11,6 @@ export interface Product {
   isFeatured: boolean;
   isNew: boolean;
   stockQuantity: number;
-  isInStock: boolean;
   rating?: string | null;
   reviewCount: number;
   thumbnail?: string | null;

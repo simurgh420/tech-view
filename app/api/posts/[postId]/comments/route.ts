@@ -20,9 +20,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ postId:
     const body = await req.json();
     const comment = await createComment({
       postId,
-      author: body.author,
+      authorId: body.authorId,
       content: body.content,
-      avatar: body.avatar,
       rating: body.rating,
     });
     return NextResponse.json(comment);

@@ -29,14 +29,15 @@ export function RecentPosts({ items }: { items: BlogPostRecent[] }) {
               <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
                 {post.title}
               </h3>
-
-              <span className="text-xs text-gray-500 mt-2">
-                {new Date(post.publishedAt).toLocaleDateString('fa-IR', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </span>
+              {post.publishedAt && (
+                <span className="text-xs text-gray-500 mt-2">
+                  {new Date(post.publishedAt).toLocaleDateString('fa-IR', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
+              )}
             </div>
           </Link>
         ))}

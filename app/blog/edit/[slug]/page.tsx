@@ -1,3 +1,4 @@
+// app/(whatever)/blog/[slug]/edit/page.tsx
 'use client';
 
 import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm';
@@ -22,14 +23,12 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
     excerpt: blog.excerpt,
     coverImageUrl: blog.coverImageUrl,
     content: blog.content,
-    author: blog.author,
-    tags: blog.tags.map((t: { tag: { name: string } }) => t.tag.name),
+    tags: blog.tags.map(t => t.tag.name),
   };
 
   async function handleSubmit(data: BlogFormType) {
     let imageUrl: string = blog?.coverImageUrl ?? '';
 
-    // ✅ اگر فایل جدید انتخاب شده بود → آپلود کن
     if (data.coverImageUrl instanceof File) {
       const formData = new FormData();
       formData.append('file', data.coverImageUrl);
@@ -42,20 +41,19 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
 
       imageUrl = res.data.imageUrl;
 
-      // ✅ حذف عکس قبلی
-      await axios.post('/api/images/delete', {
-        imagePath: blog?.coverImageUrl,
-      });
+      if (blog?.coverImageUrl) {
+        await axios.post('/api/images/delete', {
+          imagePath: blog.coverImageUrl,
+        });
+      }
     }
 
-    // ✅ ساخت payload صحیح برای API
     const payload = {
       title: data.title,
       excerpt: data.excerpt,
       content: data.content,
-      author: data.author,
       tags: data.tags,
-      coverImageUrl: imageUrl, // ✅ همیشه string
+      coverImageUrl: imageUrl,
     };
 
     updateMutation.mutate(payload, {

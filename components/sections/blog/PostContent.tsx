@@ -9,8 +9,10 @@ export function PostContent({ post }: Props) {
     <main className="container mx-auto max-w-[1224px] px-4 py-10" dir="auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-3">{post.title}</h1>
       <div className="text-sm text-gray-500 mb-6 flex items-center gap-4">
-        <span>🖊 {post.author}</span>
-        <span>📅 {new Date(post.publishedAt).toLocaleDateString('fa-IR')}</span>
+        <span>🖊 {post.author?.name}</span>
+        {post.publishedAt && (
+          <span>📅 {new Date(post.publishedAt).toLocaleDateString('fa-IR')}</span>
+        )}
         <span>⏱ {post.readingMinutes} دقیقه مطالعه</span>
       </div>
       <div className="mb-6">

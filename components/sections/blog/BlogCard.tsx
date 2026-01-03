@@ -1,4 +1,4 @@
-import { BlogPostSafe } from '@/services/blog/db/queries';
+import { BlogPostSafe } from '@/types/blog';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -39,9 +39,11 @@ export function BlogCard({ post }: { post: BlogPostSafe }) {
           <div className="flex items-center gap-2">
             <span>نویسنده</span>
           </div>
-          <time>
-            {new Date(post.publishedAt).toLocaleDateString('fa-IR')} • {post.readingMinutes} دقیقه
-          </time>
+          {post.publishedAt && (
+            <time>
+              {new Date(post.publishedAt).toLocaleDateString('fa-IR')} • {post.readingMinutes} دقیقه
+            </time>
+          )}
         </div>
       </div>
     </Link>

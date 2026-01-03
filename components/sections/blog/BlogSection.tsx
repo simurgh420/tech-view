@@ -60,7 +60,9 @@ export async function BlogSection() {
                 <div className="flex items-center gap-2">
                   <span>نویسنده</span>
                 </div>
-                <time>{new Date(post.publishedAt).toLocaleDateString('fa-IR')}</time>
+                {post.publishedAt && (
+                  <time>{new Date(post.publishedAt).toLocaleDateString('fa-IR')}</time>
+                )}
               </div>
             </div>
           </Link>

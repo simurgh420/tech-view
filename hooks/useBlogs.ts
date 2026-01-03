@@ -1,53 +1,48 @@
 // hooks/useBlogs.ts
 'use client';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BlogListResponse, BlogPayload, BlogPost } from '@/types/blog';
+import { BlogListResponse, BlogPayload, BlogPost, UpdateBlogData } from '@/types/blog';
 import { fetchBlogs, fetchBlogBySlug } from '@/services/blog/api/queries';
 import { createBlog, updateBlog, deleteBlog } from '@/services/blog/api/mutations';
+
 export function useBlogs() {
   const queryClient = useQueryClient();
 
-  // 📌 گرفتن لیست بلاگ‌ها
   const useGetBlogs = (page = 1, pageSize = 10) =>
     useQuery<BlogListResponse>({
       queryKey: ['blogs', page, pageSize],
-      queryFn: async () => fetchBlogs(page, pageSize),
+      queryFn: () => fetchBlogs(page, pageSize),
     });
 
-  // 📌 گرفتن یک بلاگ
   const useGetBlog = (slug: string) =>
     useQuery<BlogPost>({
       queryKey: ['blog', slug],
-      queryFn: async () => fetchBlogBySlug(slug),
+      queryFn: () => fetchBlogBySlug(slug),
       enabled: !!slug,
     });
 
-  // 📌 ایجاد بلاگ
   const useCreateBlog = () =>
     useMutation<BlogPost, Error, BlogPayload>({
       mutationFn: createBlog,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['blogs'] });
       },
-      onError: err => console.error('خطا در ایجاد بلاگ:', err),
     });
 
-  // 📌 ویرایش بلاگ
   const useUpdateBlog = (slug: string) =>
-    useMutation<BlogPost, Error, BlogPayload>({
+    useMutation<BlogPost, Error, UpdateBlogData>({
       mutationFn: data => updateBlog(slug, data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['blogs'] });
         queryClient.invalidateQueries({ queryKey: ['blog', slug] });
       },
-      onError: err => console.error('خطا در ویرایش بلاگ:', err),
     });
 
-  // 📌 حذف بلاگ
   const useDeleteBlog = () =>
     useMutation<unknown, Error, string, { prevBlogs?: BlogListResponse }>({
       mutationFn: deleteBlog,
-      onMutate: async (slug: string) => {
+      onMutate: async slug => {
         await queryClient.cancelQueries({ queryKey: ['blogs'] });
         const prevBlogs = queryClient.getQueryData<BlogListResponse>(['blogs']);
         queryClient.setQueryData<BlogListResponse>(['blogs'], old =>

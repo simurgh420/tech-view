@@ -1,10 +1,10 @@
+// services/comments/db/mutations.ts
 import prisma from '@/services/db/client';
 
 export async function createComment(data: {
   postId: string;
-  author: string;
+  authorId: string;
   content: string;
-  avatar?: string;
   rating: number;
 }) {
   return prisma.comment.create({
@@ -12,43 +12,30 @@ export async function createComment(data: {
       postId: data.postId,
       content: data.content,
       rating: data.rating ?? 5,
-      avatar: data.avatar ?? null,
-      author: data.author,
+      authorId: data.authorId,
     },
-    select: {
-      id: true,
-      content: true,
+    include: {
       author: true,
-      avatar: true,
-      rating: true,
-      createdAt: true,
     },
   });
 }
-// ویرایش کامنت
+
 export async function updateComment(
   commentId: string,
   data: {
     content?: string;
     rating?: number;
-    avatar?: string;
   }
 ) {
   return prisma.comment.update({
     where: { id: commentId },
     data,
-    select: {
-      id: true,
-      content: true,
+    include: {
       author: true,
-      avatar: true,
-      rating: true,
-      createdAt: true,
-      updatedAt: true,
     },
   });
 }
-// حذف کامنت
+
 export async function deleteComment(commentId: string) {
   return prisma.comment.delete({
     where: { id: commentId },

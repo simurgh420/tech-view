@@ -1,7 +1,7 @@
 // src/components/blog/BlogGrid.tsx
 
+import { BlogPostSafe } from '@/types/blog';
 import { BlogCard } from './BlogCard';
-import type { BlogPostSafe } from '@/services/blog/db/queries';
 
 export function BlogGrid({ posts }: { posts: BlogPostSafe[] }) {
   return (
