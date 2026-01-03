@@ -3,9 +3,10 @@
 
 import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
+import { useSession } from '@/lib/auth-client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { use } from 'react';
+import { use, useEffect } from 'react';
 
 export default function EditBlogPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -14,7 +15,14 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
 
   const { data: blog, isLoading } = useGetBlog(slug);
   const updateMutation = useUpdateBlog(slug);
+  const { data: session, isPending } = useSession();
 
+  useEffect(() => {
+    if (isPending) return;
+    if (!session?.user) {
+      router.push('/login');
+    }
+  }, [session, router, isPending]);
   if (isLoading) return <div>Loading...</div>;
   if (!blog) return <div>Not found</div>;
 

@@ -1,7 +1,9 @@
 // src/app/api/blog/[slug]/route.ts
 
+import { auth } from '@/lib/auth';
 import { deletePost, updatePost } from '@/services/blog/db/mutations';
 import { getPostBySlug } from '@/services/blog/db/queries';
+import prisma from '@/services/db/client';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -18,9 +20,25 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   }
 }
 export async function PUT(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const post = await prisma.blogPost.findUnique({ where: { slug } });
+  if (!post) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+  const action = post.authorId === session.user.id ? 'update:own' : 'update';
+  const canUpdate = await auth.api.userHasPermission({
+    headers: req.headers,
+    body: { userId: session.user.id, permission: { posts: [action] } },
+  });
+  if (!canUpdate) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const body = await req.json();
-    const { slug } = await params;
     const updated = await updatePost(slug, body);
     if (!updated) {
       return NextResponse.json({ error: 'Post Not found' }, { status: 404 });
@@ -33,8 +51,24 @@ export async function PUT(req: Request, { params }: { params: Promise<{ slug: st
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const post = await prisma.blogPost.findUnique({ where: { slug } });
+  if (!post) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+  const action = post.authorId === session.user.id ? 'delete:own' : 'delete';
+  const canDelete = await auth.api.userHasPermission({
+    headers: req.headers,
+    body: { userId: session.user.id, permission: { posts: [action] } },
+  });
+  if (!canDelete) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
-    const { slug } = await params;
     const deleted = await deletePost(slug);
     if (!deleted) {
       return NextResponse.json({ error: 'Post Not found' }, { status: 404 });
