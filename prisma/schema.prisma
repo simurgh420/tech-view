@@ -15,14 +15,20 @@ model BlogPost {
   content        String
   coverImageUrl  String?
   readingMinutes Int
-  publishedAt    DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  author         String
+    // انتشار
   status         PostStatus  @default(PUBLISHED)
+  publishedAt    DateTime?    
+  updatedAt      DateTime    @updatedAt
+    // نویسنده 
+  authorId String?
+  
+
+
   videoUrls      String[]
+    // روابط
   comments       Comment[]
   tags           TagOnPost[]
-
+  author   User? @relation("UserPosts", fields: [authorId], references: [id], onDelete: SetNull)
   @@index([publishedAt])
   @@index([status])
 }
@@ -46,16 +52,16 @@ model TagOnPost {
 model Comment {
   id        String   @id @default(cuid())
   content   String
-  author    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   postId    String
-  avatar    String?
   rating    Int      @default(0)
   post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-
+  authorId String?
+  author   User? @relation("UserComments", fields: [authorId], references: [id], onDelete: SetNull)
   @@index([postId])
   @@index([rating])
+  @@index([authorId])
 }
 
 model Brand {
@@ -81,7 +87,8 @@ model Category {
   parentId            String?
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
-  parent              Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  parent Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+
   children            Category[] @relation("CategoryHierarchy")
   products            Product[]
   subCategoryProducts Product[]  @relation("SubCategoryProducts")
@@ -106,7 +113,7 @@ model Product {
   isFeatured         Boolean        @default(false)
   isNew              Boolean        @default(false)
   stockQuantity      Int            @default(0)
-  isInStock          Boolean        @default(false)
+
   rating             Decimal?       @db.Decimal(3, 2)
   reviewCount        Int            @default(0)
   thumbnail          String?
@@ -130,7 +137,6 @@ model Product {
   @@index([isDiscounted])
   @@index([isFeatured])
   @@index([isNew])
-  @@index([isInStock])
   @@index([price])
   @@index([rating])
   @@index([status])
@@ -159,7 +165,7 @@ model Review {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User?    @relation(fields: [authorId], references: [id])
+  user User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
@@ -182,10 +188,11 @@ model User {
   role UserRole @default(USER)
   sessions      Session[]
   accounts      Account[]
-
+  cart          Cart?
   reviews       Review[]
   wishlistItems WishlistItem[]
- 
+  blogPosts     BlogPost[] @relation("UserPosts")
+  comments      Comment[] @relation("UserComments")
   @@map("Users")
 }
 
@@ -249,26 +256,45 @@ model WishlistItem {
   userId    String
   productId String
   createdAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@index([productId])
 }
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    @unique 
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+}
+
 
 model CartItem {
   id         String   @id @default(cuid())
+
   cartId     String
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
   productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
   quantity   Int      @default(1)
   priceAtAdd Decimal  @db.Decimal(12, 2)
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  product    Product  @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
 
   @@index([cartId])
   @@index([productId])
 }
+
 
 enum PostStatus {
   DRAFT

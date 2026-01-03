@@ -1,4 +1,3 @@
-// app/services/actions/user/register.ts
 'use server';
 
 import { auth } from '@/lib/auth';

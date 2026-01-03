@@ -11,9 +11,24 @@ export async function setUserRoleAction(userId: string, role: 'USER' | 'ADMIN') 
   const session = await auth.api.getSession({ headers: headersList });
   if (!session) return { success: false, error: 'Unauthorized' };
 
-  // فقط ادمین اجازه تغییر رول دارد
-  if (session.user.role !== 'ADMIN') {
-    return { success: false, error: 'Forbidden: فقط ادمین اجازه دارد' };
+  // جلوگیری از تغییر نقش خود کاربر
+  if (session.user.id === userId) {
+    return { success: false, error: 'You cannot change your own role' };
+  }
+
+  // 🔥 چک کردن دسترسی واقعی با Access Control
+  const permissionCheck = await auth.api.userHasPermission({
+    headers: headersList,
+    body: {
+      userId: session.user.id,
+      permissions: {
+        user: ['set-role'],
+      },
+    },
+  });
+
+  if (permissionCheck.error) {
+    return { success: false, error: 'Forbidden: شما اجازه تغییر نقش را ندارید' };
   }
 
   try {
@@ -25,11 +40,13 @@ export async function setUserRoleAction(userId: string, role: 'USER' | 'ADMIN') 
         role: role as any,
       },
     });
+
     return { success: true };
   } catch (err) {
     if (err instanceof APIError) {
-      return { error: err.message };
+      return { success: false, error: err.message };
     }
-    return { error: 'خطای داخلی سرور' };
+
+    return { success: false, error: 'خطای داخلی سرور' };
   }
 }

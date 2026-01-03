@@ -4,11 +4,12 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware, APIError } from 'better-auth/api';
 import { admin, customSession } from 'better-auth/plugins';
 
-import { normalizeName, VALID_DOMAINS } from '@/lib/utils';
+import { normalizeName } from '@/lib/utils';
 import { ac, roles } from '@/lib/permissions';
 import prisma from '@/services/db/client';
 import { sendEmailAction } from '@/services/action/user/send-email.action';
 import { hashPassword, verifyPassword } from './auth/hash';
+import { isValidEmailDomain } from '@/services/action/validation/isValidEmailDomain';
 
 const options = {
   database: prismaAdapter(prisma, {
@@ -56,12 +57,10 @@ const options = {
     before: createAuthMiddleware(async ctx => {
       if (ctx.path === '/sign-up/email') {
         const email = String(ctx.body.email);
-        const domain = email.split('@')[1].toLowerCase();
 
-        if (!VALID_DOMAINS().includes(domain)) {
-          throw new APIError('BAD_REQUEST', {
-            message: 'Invalid domain. Please use a valid email.',
-          });
+        const isReal = await isValidEmailDomain(email);
+        if (!isReal) {
+          throw new APIError('BAD_REQUEST', { message: 'Invalid email domain.' });
         }
 
         const name = normalizeName(ctx.body.name);
@@ -150,7 +149,6 @@ export const auth = betterAuth({
           image: user.image,
           createdAt: user.createdAt,
           role: user.role,
-          giraffeFact: 'giraffes can sometimes nap with one eye open',
         },
       };
     }, options),

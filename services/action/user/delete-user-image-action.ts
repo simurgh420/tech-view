@@ -1,4 +1,3 @@
-// services/action/user/delete-user-image-action.ts
 'use server';
 
 import { deleteImage } from '@/services/upload/deleteImage';
@@ -10,20 +9,26 @@ export async function deleteUserImageAction(imageUrl: string) {
   try {
     const imagePath = new URL(imageUrl, process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000')
       .pathname;
+
+    // حذف فایل از سرور
     await deleteImage(imagePath);
 
+    // گرفتن سشن کاربر فعلی
     const session = await auth.api.getSession({ headers: await headers() });
-    const currentName = session?.user?.name ?? '';
+    if (!session) {
+      return { success: false, error: 'Unauthorized' };
+    }
 
+    // آپدیت پروفایل کاربر
     await auth.api.updateUser({
       headers: await headers(),
       body: {
-        name: currentName,
+        name: session.user.name ?? '',
         image: null,
       },
     });
 
-    return { error: null };
+    return { success: true, error: null };
   } catch (err) {
     if (err instanceof APIError) {
       return { success: false, error: err.message };

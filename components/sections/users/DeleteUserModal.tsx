@@ -11,14 +11,23 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { deleteUserAction } from '@/services/action/user/delete-user.action';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function DeleteUserModal({ userId }: { userId: string }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const { handleSubmit } = useForm();
 
   async function onSubmit() {
-    await deleteUserAction(userId);
-    setOpen(false);
+    const res = await deleteUserAction(userId);
+    if (res.success) {
+      router.refresh();
+      toast.success('کاربر حذف شد');
+      setOpen(false);
+    } else {
+      toast.error(res.error);
+    }
   }
 
   return (

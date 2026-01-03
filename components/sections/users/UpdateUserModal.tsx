@@ -14,16 +14,25 @@ import { Input } from '@/components/ui/input';
 
 import { UserWithRole } from 'better-auth/plugins';
 import { updateAdminUserAction } from '@/services/action/user/updateAdminUserAction';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function UpdateUserModal({ user }: { user: UserWithRole }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit } = useForm<{ name: string; email: string }>({
     defaultValues: { name: user.name, email: user.email },
   });
 
   async function onSubmit(values: { name: string; email: string }) {
-    await updateAdminUserAction(user.id, values);
-    setOpen(false);
+    const res = await updateAdminUserAction(user.id, values);
+    if (res.success) {
+      router.refresh();
+      setOpen(false);
+      toast.success('اطلاعات کاربر با موفقیت بروزرسانی شد');
+    } else {
+      toast.error(res.error);
+    }
   }
 
   return (

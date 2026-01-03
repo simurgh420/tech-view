@@ -7,11 +7,18 @@ export async function banUserAction(userId: string, reason: string, expiresIn: n
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
 
-  if (!session) {
-    return { success: false, error: 'Unauthorized' };
-  }
-  if (session.user.role !== 'ADMIN') {
-    return { success: false, error: 'Forbidden: فقط ادمین اجازه دارد' };
+  const permissionCheck = await auth.api.userHasPermission({
+    headers: headersList,
+    body: {
+      userId: session?.user.id,
+      permission: {
+        user: ['ban'],
+      },
+    },
+  });
+
+  if (permissionCheck.error) {
+    return { success: false, error: 'Forbidden: شما اجازه بن کردن ندارید' };
   }
   try {
     await auth.api.banUser({
@@ -19,7 +26,7 @@ export async function banUserAction(userId: string, reason: string, expiresIn: n
       body: {
         userId,
         banReason: reason,
-        banExpiresIn: expiresIn ?? 0, // 0 یعنی همیشگی
+        banExpiresIn: expiresIn ?? 0,
       },
     });
     return { success: true };

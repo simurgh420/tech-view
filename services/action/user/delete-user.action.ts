@@ -4,7 +4,6 @@ import { auth } from '@/lib/auth';
 import { APIError } from 'better-auth/api';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 export async function deleteUserAction(userId: string) {
   const headersList = await headers();
@@ -15,24 +14,34 @@ export async function deleteUserAction(userId: string) {
 
   if (!session) throw new Error('Unauthorized');
 
-  if (session.user.role !== 'ADMIN' || session.user.id === userId) {
-    throw new Error('Forbidden');
+  // ❌ جلوگیری از حذف خود کاربر
+  if (session.user.id === userId) {
+    throw new Error('Forbidden: You cannot delete yourself');
+  }
+
+  // 🔥 چک کردن دسترسی واقعی با Access Control
+  const permissionCheck = await auth.api.userHasPermission({
+    headers: headersList,
+    body: {
+      userId: session.user.id,
+      permissions: {
+        user: ['delete'],
+      },
+    },
+  });
+
+  if (permissionCheck.error) {
+    throw new Error('Forbidden: شما اجازه حذف کاربر را ندارید');
   }
 
   try {
     await auth.api.removeUser({
-      body: {
-        userId: userId,
-      },
-      headers: await headers(),
+      headers: headersList,
+      body: { userId },
     });
 
-    if (session.user.id === userId) {
-      await auth.api.signOut({ headers: headersList });
-      redirect('/login');
-    }
-
     revalidatePath('/dashboard/admin');
+
     return { success: true, error: null };
   } catch (err) {
     if (err instanceof APIError) {

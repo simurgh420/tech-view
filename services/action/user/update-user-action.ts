@@ -10,11 +10,16 @@ export async function updateUserAction(formData: FormData) {
   const file = formData.get('file') as File | null;
 
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
     let imageUrl: string | undefined;
 
     if (file) {
-      // آپلود فایل در پوشه user-avatars
-      imageUrl = await uploadImage(file, 'user-avatars');
+      // 🔥 ساخت نام فایل بر اساس userId
+      imageUrl = await uploadImage(file, 'user-avatars', `avatar-${session.user.id}`);
     }
 
     await auth.api.updateUser({
@@ -25,11 +30,12 @@ export async function updateUserAction(formData: FormData) {
       },
     });
 
-    return { error: null, imageUrl };
+    return { success: true, error: null, imageUrl };
   } catch (err) {
     if (err instanceof APIError) {
-      return { error: err.message };
+      return { success: false, error: err.message };
     }
-    return { error: 'خطای داخلی سرور' };
+
+    return { success: false, error: 'خطای داخلی سرور' };
   }
 }

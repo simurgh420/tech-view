@@ -20,7 +20,7 @@ export async function changePasswordAction(formData: FormData) {
       },
     });
 
-    return { error: null };
+    return { success: true, error: null };
   } catch (err) {
     if (err instanceof APIError) {
       return { success: false, error: err.message };

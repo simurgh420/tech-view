@@ -12,15 +12,26 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { banUserAction } from '@/services/action/user/banUserAction';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export function BanUserModal({ userId }: { userId: string }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit } = useForm<{ reason: string; duration: string }>();
 
   async function onSubmit(values: { reason: string; duration: string }) {
     const expiresIn = values.duration === 'forever' ? 0 : Number(values.duration) * 60 * 60 * 24;
-    await banUserAction(userId, values.reason, expiresIn);
-    setOpen(false);
+
+    const res = await banUserAction(userId, values.reason, expiresIn);
+
+    if (res.success) {
+      router.refresh(); // 🔥 UI فوراً آپدیت می‌شود
+      setOpen(false); // 🔥 مودال بسته می‌شود
+      toast.success('کاربر با موفقیت بن شد');
+    } else {
+      toast.error(res.error);
+    }
   }
 
   return (

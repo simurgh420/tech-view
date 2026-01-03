@@ -1,4 +1,3 @@
-// app/services/actions/user/login.ts
 'use server';
 
 import { auth } from '@/lib/auth';
@@ -16,7 +15,6 @@ export async function loginAction(values: unknown) {
       },
     });
 
-    // اگر موفق شد
     return { success: true, data: res };
   } catch (err) {
     if (err instanceof APIError) {
