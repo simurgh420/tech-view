@@ -14,25 +14,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
+      # Install pnpm first
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
           run_install: false
 
+      # Setup Node + enable pnpm cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Generate Prisma Client
       - name: Generate Prisma Client
         env:
-          DATABASE_URL: 'file:./dev.db'
+          DATABASE_URL: "file:./dev.db"
         run: pnpm prisma generate
 
+      # Run tests
       - name: Run tests
         run: pnpm test
