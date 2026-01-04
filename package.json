@@ -11,11 +11,7 @@
     "test": "vitest",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "type-check": "tsc --noEmit",
-    "fix:accounts": "tsx scripts/fix-missing-accounts.ts",
-    "check:accounts": "tsx scripts/check-account-details.ts",
-    "ci": "pnpm install --frozen-lockfile"
-
+    "type-check": "tsc --noEmit"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
