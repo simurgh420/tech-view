@@ -6,7 +6,6 @@ import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Placeholder from '@tiptap/extension-placeholder';
-import Dropcursor from '@tiptap/extension-dropcursor';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
@@ -38,7 +37,6 @@ type Props = {
 };
 
 export default function RichTextEditor({ value, onChange, slug }: Props) {
-  // ✅ آپلود عکس با Axios
   const uploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -49,8 +47,9 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    return res.data.imageUrl; // ✅ خروجی API تو
+    return res.data.imageUrl as string;
   };
+
   const deleteImageRequest = async (imageUrl: string) => {
     try {
       await axios.post(`/api/images/delete`, {
@@ -60,6 +59,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
       console.error('Error deleting image from server:', err);
     }
   };
+
   const handleImageInsert = async (file: File, editor: Editor) => {
     const url = await uploadImage(file);
     editor.chain().focus().setImage({ src: url }).run();
@@ -74,35 +74,52 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
       Link.configure({ openOnClick: false }),
       TextStyle,
       Highlight,
-      Dropcursor,
       Placeholder.configure({
         placeholder: 'شروع به نوشتن کنید...',
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-
-      // ✅ اکستنشن عکس با پشتیبانی از Paste و Drag & Drop
-      Image.extend({
+      Image.configure({
+        inline: false,
+      }).extend({
         addNodeView() {
           return ({ node, editor }) => {
             const container = document.createElement('div');
             container.style.position = 'relative';
             container.style.display = 'inline-block';
+
             const img = document.createElement('img');
             img.src = node.attrs.src;
             img.style.maxWidth = '100%';
             img.style.borderRadius = '4px';
+
             const deleteBtn = document.createElement('div');
             deleteBtn.className = 'image-delete-btn';
             deleteBtn.innerText = '×';
+            deleteBtn.style.position = 'absolute';
+            deleteBtn.style.top = '4px';
+            deleteBtn.style.right = '4px';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.style.background = 'rgba(0,0,0,0.6)';
+            deleteBtn.style.color = '#fff';
+            deleteBtn.style.borderRadius = '999px';
+            deleteBtn.style.width = '20px';
+            deleteBtn.style.height = '20px';
+            deleteBtn.style.display = 'flex';
+            deleteBtn.style.alignItems = 'center';
+            deleteBtn.style.justifyContent = 'center';
+            deleteBtn.style.fontSize = '14px';
+
             deleteBtn.onclick = async () => {
-              const imageUrl = node.attrs.src;
-              editor.chain().focus().deleteSelection().run();
+              const imageUrl = node.attrs.src as string;
+              editor.chain().focus().deleteNode('image').run();
               await deleteImageRequest(imageUrl);
             };
+
             container.appendChild(img);
             container.appendChild(deleteBtn);
+
             return { dom: container };
           };
         },
@@ -115,7 +132,6 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
 
   if (!editor) return null;
 
-  // ✅ دکمه انتخاب عکس
   const addImage = () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -131,9 +147,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
 
   return (
     <div className="border rounded p-2">
-      {/* Toolbar */}
       <div className="flex flex-wrap gap-2 mb-3">
-        {/* Bold */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -141,7 +155,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Bold size={18} />
         </button>
-        {/* Italic */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -149,7 +163,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Italic size={18} />
         </button>
-        {/* Underline */}
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
@@ -173,6 +187,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Heading1 size={18} />
         </button>
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
@@ -180,6 +195,7 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         >
           <Heading2 size={18} />
         </button>
+
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
@@ -264,7 +280,8 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
           <Redo size={18} />
         </button>
       </div>
-      <EditorContent editor={editor} className="tiptap min-h-[250px] p-4" />
+
+      <EditorContent editor={editor} className="tiptap min-h-62.5 p-4" />
     </div>
   );
 }

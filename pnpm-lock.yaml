@@ -17,6 +17,9 @@ importers:
       '@node-rs/argon2':
         specifier: ^1.8.3
         version: 1.8.3
+      '@persian-tools/persian-tools':
+        specifier: ^4.0.4
+        version: 4.0.4
       '@prisma/adapter-pg':
         specifier: ^7.1.0
         version: 7.2.0
@@ -134,6 +137,9 @@ importers:
       nodemailer:
         specifier: ^7.0.12
         version: 7.0.12
+      persian-tools:
+        specifier: ^0.0.5
+        version: 0.0.5
       pg:
         specifier: ^8.16.3
         version: 8.16.3
@@ -1225,6 +1231,10 @@ packages:
 
   '@panva/hkdf@1.2.1':
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
+
+  '@persian-tools/persian-tools@4.0.4':
+    resolution: {integrity: sha512-dGcyKFXFYWDZc6MtkvpYfZ3RYUp7QhH/1u6Tgpv7GY6zxjRsGmZJ9NOH/NxmO6+BEdfqBzCC9egLg6Xt9hZlNw==}
+    engines: {node: '>=14', npm: '>=7.0.0', pnpm: '>=9.0.0'}
 
   '@phc/format@1.0.0':
     resolution: {integrity: sha512-m7X9U6BG2+J+R1lSOdCiITLLrxm+cWlNI3HUFA92oLO77ObGNzaKdh8pMLqdZcshtkKuV84olNNXDfMc4FezBQ==}
@@ -3522,6 +3532,10 @@ packages:
     resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
     hasBin: true
 
+  fastest-levenshtein@1.0.16:
+    resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
+    engines: {node: '>= 4.9.1'}
+
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
 
@@ -4534,6 +4548,10 @@ packages:
 
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
+
+  persian-tools@0.0.5:
+    resolution: {integrity: sha512-8GuN58UvsEf8Iz7/uBgpdAtYojihOpJlGmI/502MLwqCskiuzrad8wfijWZkKbrY1POiW8HmEudA/A7nKRSjgw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   pg-cloudflare@1.2.7:
     resolution: {integrity: sha512-YgCtzMH0ptvZJslLM1ffsY4EuGaU0cx4XSdXLRFae8bPP4dS5xL1tNB3k2o/N64cHJpwU7dxKli/nZ2lUa5fLg==}
@@ -6723,6 +6741,10 @@ snapshots:
   '@open-draft/until@2.1.0': {}
 
   '@panva/hkdf@1.2.1': {}
+
+  '@persian-tools/persian-tools@4.0.4':
+    dependencies:
+      fastest-levenshtein: 1.0.16
 
   '@phc/format@1.0.0': {}
 
@@ -9236,6 +9258,8 @@ snapshots:
     dependencies:
       strnum: 2.1.2
 
+  fastest-levenshtein@1.0.16: {}
+
   fastq@1.20.1:
     dependencies:
       reusify: 1.1.0
@@ -10297,6 +10321,8 @@ snapshots:
   peberminta@0.9.0: {}
 
   perfect-debounce@1.0.0: {}
+
+  persian-tools@0.0.5: {}
 
   pg-cloudflare@1.2.7:
     optional: true

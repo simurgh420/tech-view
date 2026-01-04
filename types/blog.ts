@@ -68,4 +68,5 @@ export type UpdateBlogData = {
   content?: string;
   tags?: string[];
   coverImageUrl?: string;
+  slug?: string;
 };

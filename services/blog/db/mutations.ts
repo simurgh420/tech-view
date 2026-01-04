@@ -52,6 +52,9 @@ export async function updatePost(slug: string, input: unknown) {
     content: data.content,
     coverImageUrl: data.coverImageUrl,
   };
+  if (data.title) {
+    updateData.slug = toSlug(data.title);
+  }
 
   if (data.tags) {
     await prisma.tagOnPost.deleteMany({ where: { postId: post.id } });

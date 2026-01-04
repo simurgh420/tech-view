@@ -5,8 +5,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BlogListResponse, BlogPayload, BlogPost, UpdateBlogData } from '@/types/blog';
 import { fetchBlogs, fetchBlogBySlug } from '@/services/blog/api/queries';
 import { createBlog, updateBlog, deleteBlog } from '@/services/blog/api/mutations';
+import { useRouter } from 'next/navigation';
 
 export function useBlogs() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const useGetBlogs = (page = 1, pageSize = 10) =>
@@ -33,9 +35,15 @@ export function useBlogs() {
   const useUpdateBlog = (slug: string) =>
     useMutation<BlogPost, Error, UpdateBlogData>({
       mutationFn: data => updateBlog(slug, data),
-      onSuccess: () => {
+      onSuccess: updatedPost => {
         queryClient.invalidateQueries({ queryKey: ['blogs'] });
-        queryClient.invalidateQueries({ queryKey: ['blog', slug] });
+
+        // invalidate slug جدید
+        queryClient.invalidateQueries({ queryKey: ['blog', updatedPost.slug] });
+
+        if (updatedPost.slug !== slug) {
+          router.push(`/blog/${updatedPost.slug}`);
+        }
       },
     });
 
