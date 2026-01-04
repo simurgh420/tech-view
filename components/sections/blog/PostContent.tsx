@@ -1,12 +1,16 @@
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
 import { PostActions } from './PostActions';
+import { Breadcrumb } from '@/components/layout/breadcrumb';
 type Props = {
   post: BlogPost;
 };
 export function PostContent({ post }: Props) {
   return (
-    <main className="container mx-auto max-w-[1224px] px-4 py-10" dir="auto">
+    <main className="container mx-auto max-w-306 px-4 py-10" dir="auto">
+      <div className="mb-2">
+        <Breadcrumb />
+      </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-3">{post.title}</h1>
       <div className="text-sm text-gray-500 mb-6 flex items-center gap-4">
         <span>🖊 {post.author?.name}</span>
@@ -19,7 +23,7 @@ export function PostContent({ post }: Props) {
         <PostActions slug={post.slug} />
       </div>
 
-      <div className="relative w-full h-[450px] rounded-lg overflow-hidden mb-8 shadow-md">
+      <div className="relative w-full h-112.5 rounded-lg overflow-hidden mb-8 shadow-md">
         <Image
           src={post.coverImageUrl || ''}
           alt={post.title}

@@ -1,5 +1,5 @@
 'use client';
-
+import '@/styles/tiptap.css';
 import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';

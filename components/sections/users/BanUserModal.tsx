@@ -26,8 +26,8 @@ export function BanUserModal({ userId }: { userId: string }) {
     const res = await banUserAction(userId, values.reason, expiresIn);
 
     if (res.success) {
-      router.refresh(); // 🔥 UI فوراً آپدیت می‌شود
-      setOpen(false); // 🔥 مودال بسته می‌شود
+      router.refresh();
+      setOpen(false);
       toast.success('کاربر با موفقیت بن شد');
     } else {
       toast.error(res.error);

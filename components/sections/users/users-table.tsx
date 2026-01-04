@@ -37,6 +37,7 @@ export function UsersTable({ users }: { users: UserWithRole[] }) {
           value={filter}
           onChange={e => setFilter(e.target.value)}
           className="max-w-sm"
+          dir="rtl"
         />
         <Button variant="outline">ستون‌ها</Button>
       </div>

@@ -1,5 +1,6 @@
 // app/blog/page.tsx
 
+import { Breadcrumb } from '@/components/layout/breadcrumb';
 import { BlogGrid } from '@/components/sections/blog/BlogGrid';
 import { RecentPosts } from '@/components/sections/blog/RecentPosts';
 import { getPublishedPosts, getRecentPosts } from '@/services/blog/db/queries';
@@ -24,7 +25,11 @@ export default async function BlogPage() {
   const recent = await getRecentPosts(3);
 
   return (
-    <main className="container mx-auto max-w-[1224px] px-4 py-8">
+    <main className="container mx-auto max-w-306 px-4 py-8">
+      <div className="mb-2">
+        <Breadcrumb />
+      </div>
+
       <BlogGrid posts={items} />
       <RecentPosts items={recent} />
     </main>
