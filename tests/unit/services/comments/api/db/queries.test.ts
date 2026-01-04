@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import prisma from '@/services/db/client';
 import { getCommentsByPostId, getAllCommentsWithPost } from '@/services/comments/db/queries';
 
-// Mock کردن Prisma Client
 vi.mock('@/services/db/client', () => ({
   default: {
     comment: {
@@ -18,9 +17,11 @@ describe('Comment Queries (mocked)', () => {
         id: '1',
         content: 'کامنت تستی',
         rating: 5,
-        avatar: 'avatar.png',
-        author: 'reza',
         createdAt: new Date(),
+        author: {
+          name: 'reza',
+          image: 'avatar.png',
+        },
       },
     ];
 
@@ -32,17 +33,21 @@ describe('Comment Queries (mocked)', () => {
     expect(prisma.comment.findMany).toHaveBeenCalledWith({
       where: { postId: 'fake-post-id' },
       orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        content: true,
-        rating: true,
-        avatar: true,
+      include: {
         author: true,
-
-        createdAt: true,
       },
     });
-    expect(result).toEqual(fakeResponse);
+
+    expect(result).toEqual([
+      {
+        id: '1',
+        content: 'کامنت تستی',
+        rating: 5,
+        createdAt: fakeResponse[0].createdAt,
+        authorName: 'reza',
+        authorImage: 'avatar.png',
+      },
+    ]);
   });
 
   it('should fetch all comments with post info', async () => {
@@ -51,10 +56,12 @@ describe('Comment Queries (mocked)', () => {
         id: '1',
         content: 'کامنت تستی',
         rating: 5,
-        avatar: 'avatar.png',
-        author: 'reza',
         createdAt: new Date(),
         updatedAt: new Date(),
+        author: {
+          name: 'reza',
+          image: 'avatar.png',
+        },
         post: { id: 'p1', slug: 'test-post', title: 'Test Post' },
       },
     ];
@@ -66,14 +73,8 @@ describe('Comment Queries (mocked)', () => {
 
     expect(prisma.comment.findMany).toHaveBeenCalledWith({
       orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        content: true,
-        rating: true,
-        avatar: true,
+      include: {
         author: true,
-        createdAt: true,
-        updatedAt: true,
         post: {
           select: {
             id: true,
@@ -83,6 +84,7 @@ describe('Comment Queries (mocked)', () => {
         },
       },
     });
+
     expect(result).toEqual(fakeResponse);
   });
 });
