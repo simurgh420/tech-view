@@ -13,7 +13,9 @@
     "prisma:migrate": "prisma migrate deploy",
     "type-check": "tsc --noEmit",
     "fix:accounts": "tsx scripts/fix-missing-accounts.ts",
-    "check:accounts": "tsx scripts/check-account-details.ts"
+    "check:accounts": "tsx scripts/check-account-details.ts",
+    "ci": "pnpm install --frozen-lockfile"
+
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
