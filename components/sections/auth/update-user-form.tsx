@@ -1,0 +1,170 @@
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { updateUserAction } from '@/services/action/user/update-user-action';
+import { deleteUserImageAction } from '@/services/action/user/delete-user-image-action';
+import Image from 'next/image';
+import { ImageUploader } from '../image/ImageUploader';
+
+const schema = z
+  .object({
+    name: z.string().optional(),
+    file: z
+      .any()
+      .optional()
+      .refine(file => !file?.[0] || file[0] instanceof File, 'فایل انتخاب‌شده معتبر نیست')
+      .refine(
+        file => !file?.[0] || ['image/jpeg', 'image/png', 'image/webp'].includes(file[0].type),
+        'فقط فرمت‌های JPG, PNG, WEBP مجاز هستند'
+      ),
+  })
+  .refine(data => data.name || data.file, {
+    message: 'لطفاً نام یا تصویر را وارد کنید',
+    path: ['name'],
+  });
+
+type FormValues = z.infer<typeof schema>;
+
+interface UpdateUserFormProps {
+  name: string;
+  image: string;
+}
+
+export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
+  const [isPending, setIsPending] = useState(false);
+  const [preview, setPreview] = useState<string | null>(image);
+  const router = useRouter();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name,
+      file: undefined,
+    },
+  });
+
+  async function onSubmit(values: FormValues) {
+    setIsPending(true);
+
+    const formData = new FormData();
+    if (values.name) formData.append('name', values.name);
+    if (values.file?.[0]) formData.append('file', values.file[0]);
+
+    const { error, imageUrl } = await updateUserAction(formData);
+
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success('پروفایل با موفقیت به‌روزرسانی شد');
+      if (imageUrl) setPreview(imageUrl);
+      router.refresh();
+    }
+
+    setIsPending(false);
+  }
+
+  async function handleDeleteImage() {
+    if (!preview) return;
+    setIsPending(true);
+
+    const { error } = await deleteUserImageAction(preview); // ✅ پاس دادن URL تصویر
+
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success('تصویر پروفایل حذف شد');
+      setPreview(null);
+      router.refresh();
+    }
+
+    setIsPending(false);
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
+      >
+        <h2 className="text-xl font-semibold text-gray-900">ویرایش پروفایل</h2>
+        <p className="text-sm text-gray-500">نام یا تصویر پروفایل خود را تغییر دهید.</p>
+
+        {/* Preview Image + Delete Button */}
+        {preview && (
+          <div className="flex flex-col items-center gap-2">
+            <Image
+              src={preview}
+              width={80}
+              height={80}
+              alt="Profile preview"
+              className="rounded-full border object-cover"
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={isPending}
+              onClick={handleDeleteImage}
+            >
+              حذف تصویر
+            </Button>
+          </div>
+        )}
+
+        {/* Name */}
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="name">نام</FormLabel>
+              <FormControl>
+                <Input id="name" placeholder="نام شما" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Image Upload */}
+        <FormField
+          control={form.control}
+          name="file"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>تصویر پروفایل</FormLabel>
+              <FormControl>
+                <ImageUploader
+                  initialUrl={image}
+                  onChange={file => field.onChange(file ? [file] : undefined)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" disabled={isPending} className="w-full">
+          {isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+        </Button>
+      </form>
+    </Form>
+  );
+};

@@ -1,23 +1,31 @@
 // app/api/products/route.ts
-
-import { getProducts } from '@/services/products/db/queries';
 import { NextResponse } from 'next/server';
+import { getProducts } from '@/services/products/db/queries';
+import { createProduct } from '@/services/products/db/mutations';
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const params = Object.fromEntries(url.searchParams);
-  const data = await getProducts({
-    page: parseInt(params.page || '1'),
-    pageSize: parseInt(params.pageSize || '20'),
-    brand: params.brand,
-    category: params.category,
-    subCategory: params.subCategory,
-    isDiscounted: params.discounted === 'true',
-    isFeatured: params.featured === 'true',
-    isNew: params.new === 'true',
-    inStock: params.inStock === 'true',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    sort: params.sort as any,
-  });
-  return NextResponse.json(data);
+export async function GET() {
+  try {
+    const products = await getProducts();
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error('GET /api/products Error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to load products' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const product = await createProduct(body);
+    return NextResponse.json(product, { status: 201 });
+  } catch (error) {
+    console.error('POST /api/products Error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to create product' },
+      { status: 500 }
+    );
+  }
 }

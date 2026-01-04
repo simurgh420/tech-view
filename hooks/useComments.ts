@@ -1,14 +1,11 @@
 // hooks/useComments.ts
-
 import {
   addCommentApi,
   deleteCommentApi,
-  dislikeCommentApi,
-  likeCommentApi,
   updateCommentApi,
 } from '@/services/comments/api/mutations';
 import { fetchComments } from '@/services/comments/api/queries';
-import { CommentSafe } from '@/services/comments/db/queries';
+import { CommentSafe } from '@/types/comment';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useComments(postId: string) {
@@ -22,72 +19,23 @@ export function useComments(postId: string) {
     queryKey: ['comments', postId],
     queryFn: () => fetchComments(postId),
   });
-  const addCommentMutation = useMutation({
-    mutationFn: (newComment: {
-      author: string;
-      content: string;
-      avatar?: string;
-      rating: number;
-    }) => addCommentApi(postId, newComment),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-    },
-    onError: error => {
-      console.error('خطا در حذف کامنت:', error);
-    },
+
+  const addComment = useMutation({
+    mutationFn: (newComment: { authorId: string; content: string; rating: number }) =>
+      addCommentApi(postId, newComment),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments', postId] }),
   });
 
-  const updateCommentMutation = useMutation({
-    mutationFn: (params: {
-      commentId: string;
-      data: {
-        author?: string;
-        content?: string;
-        avatar?: string;
-      };
-    }) => updateCommentApi(params.commentId, params.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-    },
-    onError: error => {
-      console.error('خطا در ویرایش کامنت:', error);
-    },
+  const updateComment = useMutation({
+    mutationFn: (params: { commentId: string; data: { content?: string; rating?: number } }) =>
+      updateCommentApi(params.commentId, params.data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments', postId] }),
   });
-  const deleteCommentMutation = useMutation({
+
+  const deleteComment = useMutation({
     mutationFn: (commentId: string) => deleteCommentApi(commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-    },
-    onError: error => {
-      console.error('خطا در لایک کامنت:', error);
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments', postId] }),
   });
-  const likeCommentMutation = useMutation({
-    mutationFn: (commentId: string) => likeCommentApi(commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-    },
-    onError: err => {
-      console.error('خطا در لایک کامنت:', err);
-    },
-  });
-  const dislikeCommentMutation = useMutation({
-    mutationFn: (commentId: string) => dislikeCommentApi(commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-    },
-    onError: err => {
-      console.error('خطا در دیسلایک کامنت:', err);
-    },
-  });
-  return {
-    comments,
-    isLoading,
-    error,
-    addComment: addCommentMutation,
-    updateComment: updateCommentMutation,
-    deleteComment: deleteCommentMutation,
-    likeComment: likeCommentMutation,
-    dislikeComment: dislikeCommentMutation,
-  };
+
+  return { comments, isLoading, error, addComment, updateComment, deleteComment };
 }

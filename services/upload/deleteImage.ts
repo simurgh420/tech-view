@@ -1,13 +1,12 @@
+// services/upload/deleteImage.ts
 import { stat, unlink } from 'fs/promises';
 import path from 'path';
 
 export async function deleteImage(imagePath: string) {
   if (!imagePath) return false;
-  // جلوگیری از مسیرهای خطرناک
   if (imagePath.includes('..')) return false;
-  // حذف اسلش اول اگر وجود داشته باشد
-  const safePath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
 
+  const safePath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
   const fullPath = path.join(process.cwd(), 'public', safePath);
 
   try {
@@ -17,6 +16,7 @@ export async function deleteImage(imagePath: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.code === 'ENOENT') {
+      console.warn('deleteImage: file not found:', fullPath);
       return false;
     }
     console.error('Error deleting file:', err);

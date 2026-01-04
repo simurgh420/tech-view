@@ -43,9 +43,11 @@ export async function Sidebar({ postId }: { postId: string }) {
                   <span className="text-sm text-gray-700 group-hover:text-blue-600 line-clamp-2">
                     {post.title}
                   </span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(post.publishedAt).toLocaleDateString('fa-IR')}
-                  </span>
+                  {post.publishedAt && (
+                    <span className="text-xs text-gray-400">
+                      {new Date(post.publishedAt).toLocaleDateString('fa-IR')}
+                    </span>
+                  )}
                 </div>
               </Link>
             </li>

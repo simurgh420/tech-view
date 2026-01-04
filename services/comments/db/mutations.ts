@@ -1,65 +1,41 @@
-import prisma from '../../db/client';
+// services/comments/db/mutations.ts
+import prisma from '@/services/db/client';
 
-export async function createComment(
-  postId: string,
-  author: string,
-  content: string,
-  avatar?: string,
-  rating: number = 5
-) {
+export async function createComment(data: {
+  postId: string;
+  authorId: string;
+  content: string;
+  rating: number;
+}) {
   return prisma.comment.create({
-    data: { postId, author, content, avatar, rating },
-    select: {
-      id: true,
-      content: true,
+    data: {
+      postId: data.postId,
+      content: data.content,
+      rating: data.rating ?? 5,
+      authorId: data.authorId,
+    },
+    include: {
       author: true,
-      avatar: true,
-      rating: true,
-      likes: true,
-      dislikes: true,
-      createdAt: true,
     },
   });
 }
-// ویرایش کامنت
+
 export async function updateComment(
   commentId: string,
   data: {
     content?: string;
     rating?: number;
-    avatar?: string;
   }
 ) {
   return prisma.comment.update({
     where: { id: commentId },
     data,
-    select: {
-      id: true,
-      content: true,
+    include: {
       author: true,
-      avatar: true,
-      rating: true,
-      likes: true,
-      dislikes: true,
-      createdAt: true,
     },
   });
 }
-export async function likeComment(commentId: string) {
-  return prisma.comment.update({
-    where: { id: commentId },
-    data: { likes: { increment: 1 } },
-    select: { id: true, likes: true },
-  });
-}
-export async function dislikeComment(commentId: string) {
-  return prisma.comment.update({
-    where: { id: commentId },
-    data: { dislikes: { increment: 1 } },
-    select: { id: true, dislikes: true },
-  });
-}
-// حذف کامنت
+
 export async function deleteComment(commentId: string) {
   return prisma.comment.delete({
     where: { id: commentId },

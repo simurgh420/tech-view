@@ -1,82 +1,54 @@
 // services/products/db/queries.ts
+import prisma from '@/services/db/client';
+import { Product } from '@/types/product';
 
-import { Prisma } from '@/app/generated/prisma/client';
-import prisma from '../../db/client';
-
-// 📌 گرفتن لیست محصولات با فیلتر و pagination
-export async function getProducts({
-  page = 1,
-  pageSize = 20,
-  brand,
-  category,
-  subCategory,
-  isDiscounted,
-  isFeatured,
-  isNew,
-  inStock,
-  sort,
-}: {
-  page?: number;
-  pageSize?: number;
-  brand?: string;
-  category?: string;
-  subCategory?: string;
-  isDiscounted?: boolean;
-  isFeatured?: boolean;
-  isNew?: boolean;
-  inStock?: boolean;
-  sort?: 'price_asc' | 'price_desc' | 'newest' | 'rating_desc';
-}) {
-  const skip = (page - 1) * pageSize;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {
-    status: 'PUBLISHED',
-    brand: brand ? { slug: brand } : undefined,
-    category: category ? { slug: category } : undefined,
-    subCategory: subCategory ? { slug: subCategory } : undefined,
-    isDiscounted,
-    isFeatured,
-    isNew,
-    isInStock: inStock,
-  };
-
-  const orderBy: Prisma.ProductOrderByWithRelationInput =
-    sort === 'price_asc'
-      ? { price: Prisma.SortOrder.asc }
-      : sort === 'price_desc'
-        ? { price: Prisma.SortOrder.desc }
-        : sort === 'newest'
-          ? { publishedAt: Prisma.SortOrder.desc }
-          : sort === 'rating_desc'
-            ? { rating: Prisma.SortOrder.desc }
-            : { createdAt: Prisma.SortOrder.desc };
-
-  const [items, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      orderBy,
-      skip,
-      take: pageSize,
-      include: {
-        brand: { select: { name: true, slug: true } },
-        category: { select: { title: true, slug: true, icon: true } },
-      },
-    }),
-    prisma.product.count({ where }),
-  ]);
-
-  return { items, total, page, pageSize, pageCount: Math.ceil(total / pageSize) };
+export async function getProducts() {
+  return prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
 }
 
-// 📌 گرفتن یک محصول با slug
-export async function getProductBySlug(slug: string) {
-  return prisma.product.findUnique({
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const product = await prisma.product.findUnique({
     where: { slug },
     include: {
       brand: true,
       category: true,
-      reviews: true,
+      subCategory: true,
+      reviews: {
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+      },
+      prices: true,
     },
+  });
+  if (!product) return null;
+  return {
+    ...product,
+    price: product.price.toString(),
+    discountPrice: product.discountPrice ? product.discountPrice.toString() : null,
+    rating: product.rating ? product.rating.toString() : null,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    publishedAt: product.publishedAt ? product.publishedAt.toISOString() : null,
+  };
+}
+
+export async function getProductsByBrand(slug: string) {
+  return prisma.product.findMany({
+    where: { brand: { slug } },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function getProductsByCategory(slug: string) {
+  return prisma.product.findMany({
+    where: { category: { slug } },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function getFeaturedProducts() {
+  return prisma.product.findMany({
+    where: { isFeatured: true, status: 'PUBLISHED' },
+    orderBy: { createdAt: 'desc' },
   });
 }

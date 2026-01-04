@@ -1,10 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import z from 'zod';
-import { useWatch } from 'react-hook-form';
+
 import {
   Form,
   FormField,
@@ -20,27 +19,29 @@ import RichTextEditor from '@/components/editors/RichTextEditor';
 import { TagsInput } from '@/components/Tags/TagsInput';
 import { ImageUploader } from '../image/ImageUploader';
 import { toSlug } from '@/lib/slug';
+
 const schema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
   coverImageUrl: z.union([z.instanceof(File), z.string()]).optional(),
   content: z.string().min(20, 'محتوا باید حداقل ۲۰ کاراکتر باشد'),
-  author: z.string().min(3, 'نام نویسنده باید حداقل ۳ کاراکتر باشد'),
   tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
 });
+
 export type BlogFormType = z.infer<typeof schema>;
+
 type Props = {
   initialValues?: {
     title: string;
     excerpt: string;
     coverImageUrl: string | null;
     content: string;
-    author: string;
     tags: string[];
   };
   onSubmit: (data: BlogFormType) => void;
   isLoading?: boolean;
 };
+
 export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
   const form = useForm<BlogFormType>({
     resolver: zodResolver(schema),
@@ -49,10 +50,10 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
       excerpt: initialValues?.excerpt ?? '',
       coverImageUrl: undefined,
       content: initialValues?.content ?? '',
-      author: initialValues?.author ?? '',
       tags: initialValues?.tags ?? [],
     },
   });
+
   const title = useWatch({ control: form.control, name: 'title' });
   const slug = toSlug(title || '');
 
@@ -72,6 +73,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="excerpt"
@@ -85,6 +87,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="coverImageUrl"
@@ -101,6 +104,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="content"
@@ -108,26 +112,13 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             <FormItem>
               <FormLabel>محتوا</FormLabel>
               <FormControl>
-                {/* TipTap */}
                 <RichTextEditor value={field.value} onChange={field.onChange} slug={slug} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="author"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>نویسنده</FormLabel>
-              <FormControl>
-                <Input placeholder="نام نویسنده" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           control={form.control}
           name="tags"
@@ -141,7 +132,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             </FormItem>
           )}
         />
-        {/* دکمه ارسال */}
+
         <Button type="submit" disabled={isLoading}>
           {isLoading ? 'در حال ذخیره...' : initialValues?.title ? 'ویرایش بلاگ' : 'ثبت بلاگ'}
         </Button>
@@ -149,4 +140,3 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
     </Form>
   );
 }
-//

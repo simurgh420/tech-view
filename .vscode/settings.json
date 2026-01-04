@@ -1,8 +1,8 @@
 {
-  "cSpell.words": ["cuid", "Dropcursor", "macbook", "Simurgh"],
+  "cSpell.words": ["cuid", "Dropcursor", "macbook", "Simurgh", "Unban", "undislike", "usecases"],
   "atlascode.enableHttpsTunnel": true,
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug"]
+  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test"]
 }

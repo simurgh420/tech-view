@@ -1,37 +1,54 @@
+// app/(whatever)/blog/create/page.tsx
 'use client';
 
 import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
+import { useSession } from '@/lib/auth-client';
+import { toSlug } from '@/lib/slug';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function CreateBlogPage() {
   const router = useRouter();
+  const { data: session, isPending } = useSession();
+  const userId = session?.user?.id;
+  useEffect(() => {
+    if (isPending) return;
+    if (!session?.user) {
+      router.push('/login');
+    }
+  }, [session, isPending, router]);
   const { useCreateBlog } = useBlogs();
   const createMutation = useCreateBlog();
 
   async function handleSubmit(data: BlogFormType) {
+    if (!userId) return;
+
+    const slug = toSlug(data.title);
     let imageUrl = '';
 
-    // ✅ اگر فایل انتخاب شده بود → آپلود کن
     if (data.coverImageUrl instanceof File) {
       const formData = new FormData();
       formData.append('file', data.coverImageUrl);
-      formData.append('folder', 'blog');
+      formData.append('folder', `blogs/${slug}/cover`);
       formData.append('baseName', data.title);
 
-      const res = await axios.post('/api/upload', formData, {
+      const res = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       imageUrl = res.data.imageUrl;
     }
 
-    // ✅ ارسال داده‌ها به Mutation
     createMutation.mutate(
       {
-        ...data,
+        title: data.title,
+        excerpt: data.excerpt,
+        content: data.content,
+        tags: data.tags,
         coverImageUrl: imageUrl,
+        authorId: userId,
       },
       {
         onSuccess: () => router.push('/blog'),
