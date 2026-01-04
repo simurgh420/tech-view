@@ -1,9 +1,2 @@
-ignoredBuiltDependencies:
-  - '@prisma/engines'
-  - argon2
-  - esbuild
-  - msw
-  - prisma
-  - sharp
-  - sqlite3
-  - unrs-resolver
+packages:
+  - '.'
