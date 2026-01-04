@@ -6,8 +6,11 @@ const Editor = dynamic(() => import('./Editor'), {
   ssr: false,
   loading: () => <p>در حال بارگذاری ادیتور...</p>,
 });
+type Props = {
+  value: string;
+  onChange: (val: string) => void;
+};
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function EditorClient({ value, onChange, slug }: any) {
-  return <Editor value={value} onChange={onChange} slug={slug} />;
+export default function EditorClient({ value, onChange }: Props) {
+  return <Editor value={value} onChange={onChange} />;
 }
