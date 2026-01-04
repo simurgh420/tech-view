@@ -1,1 +1,1 @@
-pnpm run type-check
+pnpm type-check && pnpm lint
