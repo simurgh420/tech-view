@@ -69,5 +69,18 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
     });
   }
 
-  return <BlogForm initialValues={initialValues} onSubmit={handleSubmit} />;
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-10">
+      <h1 className="text-2xl font-bold mt-6">ویرایش بلاگ✏️</h1>
+      <BlogForm
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        isLoading={updateMutation.isPending}
+      />
+      {updateMutation.isError && <p className="text-red-500 mt-4">خطا در ویرایش بلاگ</p>}
+      {updateMutation.isSuccess && (
+        <p className="text-green-600 mt-4">بلاگ با موفقیت ویرایش شد ✅</p>
+      )}
+    </div>
+  );
 }
