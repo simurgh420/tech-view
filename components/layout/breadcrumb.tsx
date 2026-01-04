@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 export function Breadcrumb() {
-  const pathname = usePathname(); // مثل: /faqs/category/payment
+  const pathname = usePathname();
   const segments = pathname.split('/').filter(Boolean);
 
   const crumbs = segments.map((seg, index) => {
