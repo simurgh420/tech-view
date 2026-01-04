@@ -1,5 +1,14 @@
 {
-  "cSpell.words": ["cuid", "Dropcursor", "macbook", "Simurgh", "Unban", "undislike", "usecases"],
+  "cSpell.words": [
+    "cuid",
+    "Dropcursor",
+    "macbook",
+    "reactjs",
+    "Simurgh",
+    "Unban",
+    "undislike",
+    "usecases"
+  ],
   "atlascode.enableHttpsTunnel": true,
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,

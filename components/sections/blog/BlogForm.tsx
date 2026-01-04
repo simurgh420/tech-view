@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import z from 'zod';
 
 import {
@@ -15,10 +15,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import RichTextEditor from '@/components/editors/RichTextEditor';
 import { TagsInput } from '@/components/Tags/TagsInput';
 import { ImageUploader } from '../image/ImageUploader';
-import { toSlug } from '@/lib/slug';
+
+import EditorClient from '@/components/editors/EditorClient';
 
 const schema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
@@ -53,9 +53,6 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
       tags: initialValues?.tags ?? [],
     },
   });
-
-  const title = useWatch({ control: form.control, name: 'title' });
-  const slug = toSlug(title || '');
 
   return (
     <Form {...form}>
@@ -112,7 +109,7 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             <FormItem>
               <FormLabel>محتوا</FormLabel>
               <FormControl>
-                <RichTextEditor value={field.value} onChange={field.onChange} slug={slug} />
+                <EditorClient value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

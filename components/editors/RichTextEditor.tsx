@@ -84,37 +84,24 @@ export default function RichTextEditor({ value, onChange, slug }: Props) {
         inline: false,
       }).extend({
         addNodeView() {
-          return ({ node, editor }) => {
+          return ({ node, editor, getPos }) => {
             const container = document.createElement('div');
-            container.style.position = 'relative';
-            container.style.display = 'inline-block';
+            container.classList.add('tiptap-image-wrapper');
 
             const img = document.createElement('img');
             img.src = node.attrs.src;
-            img.style.maxWidth = '100%';
-            img.style.borderRadius = '4px';
 
             const deleteBtn = document.createElement('div');
             deleteBtn.className = 'image-delete-btn';
             deleteBtn.innerText = '×';
-            deleteBtn.style.position = 'absolute';
-            deleteBtn.style.top = '4px';
-            deleteBtn.style.right = '4px';
-            deleteBtn.style.cursor = 'pointer';
-            deleteBtn.style.background = 'rgba(0,0,0,0.6)';
-            deleteBtn.style.color = '#fff';
-            deleteBtn.style.borderRadius = '999px';
-            deleteBtn.style.width = '20px';
-            deleteBtn.style.height = '20px';
-            deleteBtn.style.display = 'flex';
-            deleteBtn.style.alignItems = 'center';
-            deleteBtn.style.justifyContent = 'center';
-            deleteBtn.style.fontSize = '14px';
 
             deleteBtn.onclick = async () => {
-              const imageUrl = node.attrs.src as string;
-              editor.chain().focus().deleteNode('image').run();
-              await deleteImageRequest(imageUrl);
+              const pos = getPos();
+              if (typeof pos === 'number') {
+                editor.chain().focus().setNodeSelection(pos).deleteSelection().run();
+              }
+
+              await deleteImageRequest(node.attrs.src);
             };
 
             container.appendChild(img);
