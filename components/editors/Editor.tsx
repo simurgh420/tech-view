@@ -213,7 +213,6 @@ export default function Editor({ value, onChange, slug }: Props) {
 
     Table,
 
-
     TextDirection,
     SlashCommand,
     Callout,
