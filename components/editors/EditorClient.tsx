@@ -9,8 +9,9 @@ const Editor = dynamic(() => import('./Editor'), {
 type Props = {
   value: string;
   onChange: (val: string) => void;
+  slug: string;
 };
 
-export default function EditorClient({ value, onChange }: Props) {
-  return <Editor value={value} onChange={onChange} />;
+export default function EditorClient({ value, onChange, slug }: Props) {
+  return <Editor value={value} onChange={onChange} slug={slug} />;
 }

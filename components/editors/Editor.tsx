@@ -20,24 +20,18 @@ import { BulletList, RichTextBulletList } from 'reactjs-tiptap-editor/bulletlist
 import { Clear, RichTextClear } from 'reactjs-tiptap-editor/clear';
 import { Code, RichTextCode } from 'reactjs-tiptap-editor/code';
 import { CodeBlock, RichTextCodeBlock } from 'reactjs-tiptap-editor/codeblock';
-import { CodeView } from 'reactjs-tiptap-editor/codeview';
 import { Color, RichTextColor } from 'reactjs-tiptap-editor/color';
-import { Column, ColumnNode, MultipleColumnNode } from 'reactjs-tiptap-editor/column';
 
 import { Emoji, RichTextEmoji } from 'reactjs-tiptap-editor/emoji';
 
-import { ExportPdf } from 'reactjs-tiptap-editor/exportpdf';
-import { ExportWord } from 'reactjs-tiptap-editor/exportword';
 import { FontFamily, RichTextFontFamily } from 'reactjs-tiptap-editor/fontfamily';
 import { FontSize, RichTextFontSize } from 'reactjs-tiptap-editor/fontsize';
 import { Heading, RichTextHeading } from 'reactjs-tiptap-editor/heading';
 import { Highlight, RichTextHighlight } from 'reactjs-tiptap-editor/highlight';
 import { History, RichTextRedo, RichTextUndo } from 'reactjs-tiptap-editor/history';
 import { HorizontalRule, RichTextHorizontalRule } from 'reactjs-tiptap-editor/horizontalrule';
-import { Iframe } from 'reactjs-tiptap-editor/iframe';
 import { Image, RichTextImage } from 'reactjs-tiptap-editor/image';
 import { ImageGif, RichTextImageGif } from 'reactjs-tiptap-editor/imagegif';
-import { ImportWord } from 'reactjs-tiptap-editor/importword';
 import { Indent, RichTextIndent } from 'reactjs-tiptap-editor/indent';
 import { Italic, RichTextItalic } from 'reactjs-tiptap-editor/italic';
 
@@ -53,7 +47,7 @@ import { RichTextTaskList, TaskList } from 'reactjs-tiptap-editor/tasklist';
 import { RichTextAlign, TextAlign } from 'reactjs-tiptap-editor/textalign';
 import { TextDirection } from 'reactjs-tiptap-editor/textdirection';
 import { RichTextUnderline, TextUnderline } from 'reactjs-tiptap-editor/textunderline';
-import { RichTextTwitter, Twitter } from 'reactjs-tiptap-editor/twitter';
+
 import { RichTextVideo, Video } from 'reactjs-tiptap-editor/video';
 import { RichTextCallout, Callout } from 'reactjs-tiptap-editor/callout';
 
@@ -62,12 +56,10 @@ import { SlashCommand, SlashCommandList } from 'reactjs-tiptap-editor/slashcomma
 
 // Bubble
 import {
-  RichTextBubbleColumns,
   RichTextBubbleImage,
   RichTextBubbleImageGif,
   RichTextBubbleLink,
   RichTextBubbleText,
-  RichTextBubbleTwitter,
   RichTextBubbleVideo,
   RichTextBubbleMenuDragHandle,
   RichTextBubbleCallout,
@@ -76,88 +68,6 @@ import {
 import 'reactjs-tiptap-editor/style.css';
 import { EditorContent, useEditor } from '@tiptap/react';
 import axios from 'axios';
-
-const BaseKit = [
-  Document,
-  Text,
-  Paragraph,
-  Dropcursor,
-  Gapcursor,
-  HardBreak,
-  ListItem,
-  TextStyle,
-  Placeholder.configure({
-    placeholder: "Press '/' for commands",
-  }),
-];
-
-const extensions = [
-  ...BaseKit,
-  History,
-  SearchAndReplace,
-  Clear,
-  FontFamily,
-  Heading,
-  FontSize,
-  Bold,
-  Italic,
-  TextUnderline,
-  Strike,
-  MoreMark,
-  Emoji,
-  Color,
-  Highlight,
-  BulletList,
-  OrderedList,
-  TextAlign,
-  Indent,
-  LineHeight,
-  TaskList,
-  Link,
-  Image.configure({
-    async upload(file: File) {
-      const formData = new FormData();
-      formData.append('file', file);
-      const base = file.name.replace(/\W+/g, '-');
-      formData.append('folder', `blogs/${base}/editor`);
-      formData.append('baseName', file.name);
-      const res = await axios.post('/api/images/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      return res.data.imageUrl as string;
-    },
-  }),
-  Video.configure({
-    upload: (files: File) => {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(URL.createObjectURL(files));
-        }, 300);
-      });
-    },
-  }),
-  ImageGif.configure({
-    provider: 'giphy',
-    API_KEY: process.env.NEXT_PUBLIC_GIPHY_API_KEY as string,
-  }),
-  Blockquote,
-  HorizontalRule,
-  Code,
-  CodeBlock,
-  Column,
-  ColumnNode,
-  MultipleColumnNode,
-  Table,
-  Iframe,
-  ExportPdf,
-  ImportWord,
-  ExportWord,
-  TextDirection,
-  Twitter,
-  SlashCommand,
-  CodeView,
-  Callout,
-];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
@@ -222,7 +132,6 @@ const RichTextToolbar = () => {
       <RichTextHorizontalRule />
       <RichTextCode />
       <RichTextCodeBlock />
-      <RichTextTwitter />
       <RichTextCallout />
     </div>
   );
@@ -230,10 +139,85 @@ const RichTextToolbar = () => {
 type Props = {
   value: string;
   onChange: (val: string) => void;
+  slug: string;
 };
 
-export default function Editor({ value, onChange }: Props) {
+export default function Editor({ value, onChange, slug }: Props) {
   const [content, setContent] = useState(value || '');
+  const BaseKit = [
+    Document,
+    Text,
+    Paragraph,
+    Dropcursor,
+    Gapcursor,
+    HardBreak,
+    ListItem,
+    TextStyle,
+    Placeholder.configure({
+      placeholder: "Press '/' for commands",
+    }),
+  ];
+
+  const extensions = [
+    ...BaseKit,
+    History,
+    SearchAndReplace,
+    Clear,
+    FontFamily,
+    Heading,
+    FontSize,
+    Bold,
+    Italic,
+    TextUnderline,
+    Strike,
+    MoreMark,
+    Emoji,
+    Color,
+    Highlight,
+    BulletList,
+    OrderedList,
+    TextAlign,
+    Indent,
+    LineHeight,
+    TaskList,
+    Link,
+    Image.configure({
+      async upload(file: File) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', `blogs/${slug}/editor`);
+        formData.append('baseName', file.name);
+        const res = await axios.post('/api/images/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return res.data.imageUrl as string;
+      },
+    }),
+    Video.configure({
+      upload: (files: File) => {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve(URL.createObjectURL(files));
+          }, 300);
+        });
+      },
+    }),
+    ImageGif.configure({
+      provider: 'giphy',
+      API_KEY: process.env.NEXT_PUBLIC_GIPHY_API_KEY as string,
+    }),
+    Blockquote,
+    HorizontalRule,
+    Code,
+    CodeBlock,
+
+    Table,
+
+
+    TextDirection,
+    SlashCommand,
+    Callout,
+  ];
 
   const debouncedUpdate = useMemo(
     () =>
@@ -289,13 +273,11 @@ export default function Editor({ value, onChange }: Props) {
             <div className="flex max-h-full w-full flex-col">
               <RichTextToolbar />
               <EditorContent editor={editor} />
-              <RichTextBubbleColumns />
               <RichTextBubbleLink />
               <RichTextBubbleImage />
               <RichTextBubbleVideo />
               <RichTextBubbleImageGif />
               <RichTextBubbleText />
-              <RichTextBubbleTwitter />
               <RichTextBubbleCallout />
               <SlashCommandList />
               <RichTextBubbleMenuDragHandle />
