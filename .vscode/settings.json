@@ -2,6 +2,7 @@
   "cSpell.words": [
     "cuid",
     "Dropcursor",
+    "gapcursor",
     "GIPHY",
     "macbook",
     "reactjs",
@@ -14,5 +15,5 @@
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test"]
+  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style"]
 }

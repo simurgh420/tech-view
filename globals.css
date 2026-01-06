@@ -125,38 +125,63 @@
 }
 
 .dark {
-  --background: oklch(0.13 0.028 261.692);
-  --foreground: oklch(0.985 0.002 247.839);
-  --card: oklch(0.21 0.034 264.665);
-  --card-foreground: oklch(0.985 0.002 247.839);
-  --popover: oklch(0.21 0.034 264.665);
-  --popover-foreground: oklch(0.985 0.002 247.839);
-  --primary: oklch(0.928 0.006 264.531);
-  --primary-foreground: oklch(0.21 0.034 264.665);
-  --secondary: oklch(0.278 0.033 256.848);
-  --secondary-foreground: oklch(0.985 0.002 247.839);
-  --muted: oklch(0.278 0.033 256.848);
-  --muted-foreground: oklch(0.707 0.022 261.325);
-  --accent: oklch(0.278 0.033 256.848);
-  --accent-foreground: oklch(0.985 0.002 247.839);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.034 264.665);
-  --sidebar-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-accent: oklch(0.278 0.033 256.848);
-  --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* Base */
+  --background: oklch(15% 0.01 270); /* پس‌زمینه تیره‌تر، نزدیک #232323 */
+  --foreground: oklch(85% 0.01 270); /* متن خاکستری روشن */
+
+  /* Surfaces */
+  --card: oklch(20% 0.015 270); /* کارت کمی روشن‌تر از پس‌زمینه */
+  --card-foreground: oklch(90% 0.01 270); /* متن کارت سفید/خاکستری روشن */
+
+  --popover: oklch(22% 0.015 270);
+  --popover-foreground: oklch(90% 0.01 270);
+
+  --primary: oklch(68% 0.22 280); /* آبی‑بنفش متعادل‌تر */
+  --primary-foreground: oklch(98% 0 0);
+
+  --secondary: oklch(55% 0.18 200); /* فیروزه‌ای/سبز آبی */
+  --secondary-foreground: oklch(98% 0 0);
+
+  --accent: oklch(70.959% 0.24265 319.772 / 0.594); /* صورتی-بنفش نئونی */
+  --accent-foreground: oklch(98% 0 0);
+
+  /* Muted */
+  --muted: oklch(30% 0.01 270);
+  --muted-foreground: oklch(70% 0.01 270);
+
+  /* Status */
+  --destructive: oklch(55% 0.18 25); /* قرمز هشدار */
+  --success: oklch(60% 0.15 150); /* سبز موفقیت */
+  --warning: oklch(75% 0.15 80); /* نارنجی هشدار */
+
+  --border: oklch(25% 0.01 270 / 0.5);
+  --input: oklch(25% 0.01 270 / 0.6);
+  --ring: oklch(65% 0.25 280);
+
+  /* Charts */
+  --chart-1: oklch(65% 0.25 280); /* آبی نئونی */
+  --chart-2: oklch(60% 0.2 200); /* فیروزه‌ای */
+  --chart-3: oklch(70% 0.25 320); /* صورتی نئونی */
+  --chart-4: oklch(55% 0.22 160); /* سبز آبی */
+  --chart-5: oklch(75% 0.25 40); /* زرد-نارنجی */
+
+  /* Sidebar */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
+
+/* انتخاب متن */
+.dark ::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
 .scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;

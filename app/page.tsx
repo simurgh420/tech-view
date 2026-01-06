@@ -11,7 +11,7 @@ import { FeatureBar } from '@/components/sections/services/FeatureBar';
 
 export default function Home() {
   return (
-    <main className="bg-white">
+    <main>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Hero Section */}
         <HeroSection />

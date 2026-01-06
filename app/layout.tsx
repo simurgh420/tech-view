@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 
-import '../styles/globals.css';
+import '../globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Providers } from './providers';
 import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,14 +18,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa">
+    <html lang="fa" suppressHydrationWarning>
       <body>
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster richColors position="top-center" />
-        </Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <Header />
+            {children}
+            <Footer />
+            <Toaster richColors position="top-center" />
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

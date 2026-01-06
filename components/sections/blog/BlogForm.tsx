@@ -46,6 +46,7 @@ type Props = {
 export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
   const form = useForm<BlogFormType>({
     resolver: zodResolver(schema),
+
     defaultValues: {
       title: initialValues?.title ?? '',
       excerpt: initialValues?.excerpt ?? '',

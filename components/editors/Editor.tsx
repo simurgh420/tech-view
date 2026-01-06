@@ -266,12 +266,22 @@ export default function Editor({ value, onChange, slug }: Props) {
         <div className="w-full max-w-300 p-4  mx-auto my-0"></div>
       </div>
 
-      <div className=" w-full max-w-300 mx-auto my-0 px-4">
+      <div className="w-full max-w-3xl mx-auto my-6 px-4 dark">
         <RichTextProvider editor={editor}>
-          <div className="overflow-hidden rounded-0.5rem bg-background border border-border">
-            <div className="flex max-h-full w-full flex-col">
-              <RichTextToolbar />
-              <EditorContent editor={editor} />
+          <div className="overflow-hidden rounded-xl bg-white dark:bg-black border border-gray-200 dark:border-zinc-700 shadow-lg">
+            <div className="flex flex-col">
+              {/* Toolbar */}
+              <div className="flex items-center flex-wrap gap-2 border-b border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 px-3 py-2">
+                <RichTextToolbar />
+              </div>
+
+              {/* Editor */}
+              <EditorContent
+                editor={editor}
+                className="prose dark:prose-invert max-w-none px-4 py-6 text-gray-900 dark:text-gray-100"
+              />
+
+              {/* Bubble & Slash */}
               <RichTextBubbleLink />
               <RichTextBubbleImage />
               <RichTextBubbleVideo />
