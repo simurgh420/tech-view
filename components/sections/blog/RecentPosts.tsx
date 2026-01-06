@@ -12,10 +12,10 @@ export function RecentPosts({ items }: { items: BlogPostRecent[] }) {
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="group flex gap-4 p-3 border rounded-lg hover:shadow-md transition-all bg-white"
+            className="group flex gap-4 p-3 border rounded-lg hover:shadow-md transition-all "
           >
             {/* تصویر کاور */}
-            <div className="relative w-24 h-24 shrink-0 rounded-md overflow-hidden bg-gray-100">
+            <div className="relative w-24 h-24 shrink-0 rounded-md overflow-hidden ">
               <Image
                 src={post.coverImageUrl || '/placeholder.jpg'}
                 alt={post.title}
@@ -26,11 +26,11 @@ export function RecentPosts({ items }: { items: BlogPostRecent[] }) {
 
             {/* متن */}
             <div className="flex flex-col justify-between">
-              <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-sm font-semibold  group-hover:text-gray-600 transition-colors">
                 {post.title}
               </h3>
               {post.publishedAt && (
-                <span className="text-xs text-gray-500 mt-2">
+                <span className="text-xs  mt-2">
                   {new Date(post.publishedAt).toLocaleDateString('fa-IR', {
                     year: 'numeric',
                     month: 'short',

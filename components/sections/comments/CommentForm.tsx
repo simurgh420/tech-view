@@ -59,7 +59,7 @@ export function CommentForm({ postId }: { postId: string }) {
       <form
         dir="rtl"
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-5 p-5 border rounded-xl bg-white shadow-md"
+        className="space-y-5 p-5 border rounded-xl  shadow-md"
       >
         <h3 className="text-lg font-bold mb-2">✍️ ارسال کامنت جدید</h3>
 
@@ -112,7 +112,7 @@ export function CommentForm({ postId }: { postId: string }) {
           <Button
             type="submit"
             disabled={addComment.isPending || !userId}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:bg-gray-700 font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {addComment.isPending ? 'در حال ارسال...' : 'ارسال کامنت'}
           </Button>

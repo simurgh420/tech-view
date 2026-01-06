@@ -3,7 +3,7 @@ import Image from 'next/image';
 export function ProductBanner() {
   return (
     <section>
-      <div className="py-10 px-4 sm:px-6 lg:px-8 h-auto">
+      <div className=" h-auto">
         {/* آیفون ۱۵ */}
         <Link href="/register">
           <Image

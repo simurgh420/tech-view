@@ -1,8 +1,19 @@
 {
-  "cSpell.words": ["cuid", "Dropcursor", "macbook", "Simurgh", "Unban", "undislike", "usecases"],
+  "cSpell.words": [
+    "cuid",
+    "Dropcursor",
+    "gapcursor",
+    "GIPHY",
+    "macbook",
+    "reactjs",
+    "Simurgh",
+    "Unban",
+    "undislike",
+    "usecases"
+  ],
   "atlascode.enableHttpsTunnel": true,
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test"]
+  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style"]
 }

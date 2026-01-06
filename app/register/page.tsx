@@ -13,7 +13,7 @@ export default async function RegisterPage() {
     redirect('/admin/dashboard');
   }
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center  p-6">
       <h1 className="text-2xl font-semibold mb-6">Create your account</h1>
 
       <RegisterForm />
@@ -25,11 +25,11 @@ export default async function RegisterPage() {
       </div>
 
       {/* لینک به صفحه ورود */}
-      <p className="mt-6 text-sm text-gray-600">
+      <p className="mt-6 text-sm ">
         Already have an account?
         <Link
           href="/login"
-          className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          className="font-medium text-gray-600 hover:text-gray-700 transition-colors"
         >
           Sign in
         </Link>

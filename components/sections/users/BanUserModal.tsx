@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogOverlay,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { banUserAction } from '@/services/action/user/banUserAction';
@@ -26,8 +27,8 @@ export function BanUserModal({ userId }: { userId: string }) {
     const res = await banUserAction(userId, values.reason, expiresIn);
 
     if (res.success) {
-      router.refresh(); // 🔥 UI فوراً آپدیت می‌شود
-      setOpen(false); // 🔥 مودال بسته می‌شود
+      router.refresh();
+      setOpen(false);
       toast.success('کاربر با موفقیت بن شد');
     } else {
       toast.error(res.error);
@@ -40,10 +41,12 @@ export function BanUserModal({ userId }: { userId: string }) {
         بن
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" />
         <DialogContent>
           <DialogHeader>
             <DialogTitle>بن کردن کاربر</DialogTitle>
           </DialogHeader>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input {...register('reason')} placeholder="دلیل بن" />
             <select {...register('duration')} className="w-full border rounded-md p-2">

@@ -17,9 +17,9 @@ export default async function UsersPage() {
           <ReturnButton href="/profile" label="Profile" />
 
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+            <h1 className="text-4xl font-bold tracking-tight ">Admin Dashboard</h1>
 
-            <p className="inline-block px-4 py-2 rounded-lg text-base font-semibold bg-red-600 text-white shadow">
+            <p className="inline-block px-4 py-2 rounded-lg text-base font-semibold bg-red-600  shadow">
               FORBIDDEN
             </p>
           </div>
@@ -50,20 +50,20 @@ export default async function UsersPage() {
         <ReturnButton href="/profile" label="Profile" />
 
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold tracking-tight ">Admin Dashboard</h1>
         </div>
 
-        <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+        <p className="text-lg leading-relaxed max-w-2xl">
           در این بخش می‌توانید کاربران را مدیریت کنید، نقش‌ها را تغییر دهید و دسترسی‌ها را کنترل
           کنید.
         </p>
 
-        <div className="border-b border-gray-200 pt-4" />
+        <div className="border-b  pt-4" />
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">لیست کاربران</h2>
+      <div className=" rounded-2xl shadow-lg border  p-6">
+        <h2 className="text-2xl font-semibold mb-6">لیست کاربران</h2>
 
         <UsersTable users={sortedUsers} />
       </div>

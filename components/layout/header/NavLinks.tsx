@@ -28,11 +28,11 @@ export function NavLinks() {
             onMouseEnter={link.href === '/products' ? open : undefined}
             className={clsx(
               'px-2 transition-all',
-              isActive && 'text-black font-extrabold',
-              isParentActive && 'text-blue-400 border-b-2 border-blue-400 pb-2',
+              isActive && 'text-black dark:text-white font-extrabold',
+              isParentActive && 'dark:text-blue-400 border-b-2 dark:border-blue-400 pb-2',
               !isActive &&
                 !isParentActive &&
-                'text-muted-foreground hover:text-blue-600 hover:border-b hover:border-blue-600'
+                'text-muted-foreground hover:text-gray-600 hover:border-b hover:border-gray-600'
             )}
           >
             {link.label}

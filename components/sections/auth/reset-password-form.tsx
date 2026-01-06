@@ -68,8 +68,8 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold text-gray-900">Reset Password</h2>
-        <p className="text-sm text-gray-500">Enter your new password below.</p>
+        <h2 className="text-xl font-semibold 0">Reset Password</h2>
+        <p className="text-sm ">Enter your new password below.</p>
 
         {/* Password */}
         <FormField

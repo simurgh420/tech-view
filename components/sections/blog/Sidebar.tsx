@@ -13,10 +13,10 @@ export async function Sidebar({ postId }: { postId: string }) {
     <aside className="w-full lg-x-[300px] flex flex-col gap-8">
       {/* دسته‌بندی‌ها */}
       <div>
-        <h4 className="text-sm font-bold text-gray-800 mb-3">📂 دسته‌بندی‌ها</h4>
-        <ul className="space-y-2 text-sm text-gray-600">
+        <h4 className="text-sm font-bold  mb-3">📂 دسته‌بندی‌ها</h4>
+        <ul className="space-y-2 text-sm ">
           {categories.map(cat => (
-            <li key={cat} className="hover:text-blue-600 cursor-pointer">
+            <li key={cat} className="hover:text-gray-600 cursor-pointer">
               {cat}
             </li>
           ))}
@@ -24,7 +24,7 @@ export async function Sidebar({ postId }: { postId: string }) {
       </div>
       {/* پست‌های اخیر */}
       <div>
-        <h4 className="text-sm font-bold text-gray-800 mb-3">🕘 پست‌های اخیر</h4>
+        <h4 className="text-sm font-bold  mb-3">🕘 پست‌های اخیر</h4>
         <ul className="space-y-4">
           {recentPosts.map(post => (
             <li key={post.slug} className="flex items-center gap-3">
@@ -40,11 +40,11 @@ export async function Sidebar({ postId }: { postId: string }) {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-700 group-hover:text-blue-600 line-clamp-2">
+                  <span className="text-sm  group-hover:text-gray-600 line-clamp-2">
                     {post.title}
                   </span>
                   {post.publishedAt && (
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs ">
                       {new Date(post.publishedAt).toLocaleDateString('fa-IR')}
                     </span>
                   )}
@@ -56,12 +56,12 @@ export async function Sidebar({ postId }: { postId: string }) {
       </div>
       {/* تگ‌ها */}
       <div>
-        <h4 className="text-sm font-bold text-gray-800 mb-3">🏷 تگ‌ها</h4>
+        <h4 className="text-sm font-bold  mb-3">🏷 تگ‌ها</h4>
         <div className="flex flex-wrap gap-2">
           {tags.map(tag => (
             <span
               key={tag.id}
-              className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600 cursor-pointer hover:bg-blue-100"
+              className="text-xs  px-2 py-1 rounded  cursor-pointer hover:bg-gray-600"
             >
               #{tag.name}
             </span>

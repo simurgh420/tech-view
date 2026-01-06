@@ -1,6 +1,6 @@
 export function FooterBottom() {
   return (
-    <div className="w-full bg-linear-to-r from-[#081438] via-[#00283a] to-[#081438] text-white text-xs px-4 py-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-linear-to-r text-xs px-4 py-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="text-center md:text-left">© 2025 Simurgh</div>
         <div className="flex gap-4 flex-wrap justify-center md:justify-end">
