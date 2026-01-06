@@ -6,7 +6,7 @@ export function BlogCard({ post }: { post: BlogPostSafe }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1 duration-300 overflow-hidden flex flex-col"
+      className="group  rounded-xl border  shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1 duration-300 overflow-hidden flex flex-col"
       aria-label={post.title}
     >
       {/* تصویر با نسبت ثابت و گرادیانت */}
@@ -19,23 +19,21 @@ export function BlogCard({ post }: { post: BlogPostSafe }) {
           loading="lazy"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
-        <div className="absolute top-2 left-2 bg-white/80 text-xs text-gray-700 px-2 py-0.5 rounded-md">
-          بلاگ
-        </div>
+        <div className="absolute top-2 left-2  text-xs  px-2 py-0.5 rounded-md">بلاگ</div>
       </div>
 
       {/* محتوا */}
       <div className="p-4 flex flex-col gap-2 flex-1">
         {/* عنوان */}
-        <h3 className="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 line-clamp-2">
+        <h3 className="text-sm font-semibold  group-hover:text-gray-600 line-clamp-2">
           {post.title}
         </h3>
 
         {/* توضیح کوتاه */}
-        <p className="text-xs text-gray-600 line-clamp-2">{post.excerpt}</p>
+        <p className="text-xs  line-clamp-2">{post.excerpt}</p>
 
         {/* نویسنده و زمان */}
-        <div className="mt-auto pt-2 flex items-center justify-between text-xs text-gray-500">
+        <div className="mt-auto pt-2 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <span>نویسنده</span>
           </div>

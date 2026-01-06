@@ -1,6 +1,7 @@
 // PostActions.tsx
 'use client';
 
+import { Button } from '@/components/ui';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useBlogs } from '@/hooks/useBlogs';
 import Link from 'next/link';
@@ -15,21 +16,20 @@ export function PostActions({ slug }: Props) {
   const { mutate: deleteBlog } = useDeleteBlog();
 
   return (
-    <div className="mb-6 flex gap-3">
+    <div className="flex gap-3">
       {/* دکمه ویرایش */}
       <Link
         href={`/blog/edit/${slug}`}
-        className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        className="inline-block px-3 py-1 rounded hover:bg-gray-600 transition"
       >
         ✏️ ویرایش بلاگ
       </Link>
-
       {/* دکمه حذف */}
       <ConfirmDialog
         trigger={
-          <button className="inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+          <Button variant="destructive" className="hover:text-red-500">
             🗑 حذف بلاگ
-          </button>
+          </Button>
         }
         title="حذف بلاگ"
         description="آیا مطمئن هستید که می‌خواهید این بلاگ را حذف کنید؟ این عملیات قابل بازگشت نیست."

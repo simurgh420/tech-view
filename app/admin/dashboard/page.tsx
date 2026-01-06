@@ -17,17 +17,17 @@ export default async function AdminDashboard() {
     <div className="container mx-auto max-w-6xl px-8 py-16 space-y-12" dir="rtl">
       {/* Header */}
       <div className="space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900 flex items-center gap-3">
+        <h1 className="text-4xl font-bold tracking-tight  flex items-center gap-3">
           <span className="text-green-600">🛡️</span>
           <span>داشبورد مدیریت</span>
         </h1>
 
-        <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+        <p className=" text-lg leading-relaxed max-w-2xl">
           به بخش مدیریت خوش آمدید. در اینجا می‌توانید کاربران را مدیریت کنید و پروفایل خود را ویرایش
           کنید.
         </p>
 
-        <div className="border-b border-gray-200 pt-4" />
+        <div className="border-b pt-4" />
       </div>
 
       {/* Cards Section */}
@@ -35,32 +35,28 @@ export default async function AdminDashboard() {
         {/* Users Card */}
         <Link
           href="/admin/dashboard/users"
-          className="group bg-white rounded-2xl shadow-md border border-gray-200 p-6 flex items-center gap-4 hover:shadow-lg hover:border-gray-300 transition-all"
+          className="rounded-2xl shadow-md border  p-6 flex items-center gap-4 hover:shadow-lg  transition-all"
         >
-          <div className="p-3 rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">
-            <Users className="size-6 text-blue-600" />
+          <div className="p-3 rounded-xl   transition-colors">
+            <Users className="size-6 " />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-gray-900">
-              مدیریت کاربران
-            </h2>
-            <p className="text-sm text-gray-500">مشاهده، ویرایش و حذف کاربران سیستم</p>
+            <h2 className="text-lg font-semibold  ">مدیریت کاربران</h2>
+            <p className="text-sm ">مشاهده، ویرایش و حذف کار بران سیستم</p>
           </div>
         </Link>
 
         {/* Profile Card */}
         <Link
           href="/profile"
-          className="group bg-white rounded-2xl shadow-md border border-gray-200 p-6 flex items-center gap-4 hover:shadow-lg hover:border-gray-300 transition-all"
+          className="rounded-2xl shadow-md border  p-6 flex items-center gap-4 hover:shadow-lg  transition-all"
         >
-          <div className="p-3 rounded-xl bg-purple-50 group-hover:bg-purple-100 transition-colors">
+          <div className="p-3 rounded-xl  transition-colors">
             <User className="size-6 text-purple-600" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-gray-900">
-              پروفایل
-            </h2>
-            <p className="text-sm text-gray-500">ویرایش اطلاعات شخصی و تغییر رمز عبور</p>
+            <h2 className="text-lg font-semibold ">پروفایل</h2>
+            <p className="text-sm ">ویرایش اطلاعات شخصی و تغییر رمز عبور</p>
           </div>
         </Link>
       </div>

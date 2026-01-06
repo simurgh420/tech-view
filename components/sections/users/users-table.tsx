@@ -43,37 +43,26 @@ export function UsersTable({ users }: { users: UserWithRole[] }) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-xl border  shadow-sm">
         <Table>
-          <TableHeader className="bg-gray-50">
+          <TableHeader>
             <TableRow>
-              <TableHead className="px-6 py-3 text-gray-700 font-semibold">ID</TableHead>
-              <TableHead className="px-6 py-3 text-gray-700 font-semibold">نام</TableHead>
-              <TableHead className="px-6 py-3 text-gray-700 font-semibold">ایمیل</TableHead>
-              <TableHead className="px-6 py-3 text-center text-gray-700 font-semibold">
-                نقش
-              </TableHead>
-              <TableHead className="px-6 py-3 text-center text-gray-700 font-semibold">
-                عملیات
-              </TableHead>
+              <TableHead className="px-6 py-3  font-semibold">ID</TableHead>
+              <TableHead className="px-6 py-3 font-semibold">نام</TableHead>
+              <TableHead className="px-6 py-3  font-semibold">ایمیل</TableHead>
+              <TableHead className="px-6 py-3 text-center  font-semibold">نقش</TableHead>
+              <TableHead className="px-6 py-3 text-center  font-semibold">عملیات</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {filteredUsers.map((user, index) => (
-              <TableRow
-                key={user.id}
-                className={`
-                  transition-colors
-                  ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                  hover:bg-gray-100
-                `}
-              >
+            {filteredUsers.map(user => (
+              <TableRow key={user.id}>
                 <TableCell className="px-6 py-3 font-mono text-sm text-gray-700">
                   {user.id.slice(0, 8)}
                 </TableCell>
-                <TableCell className="px-6 py-3 text-gray-800 font-medium">{user.name}</TableCell>
-                <TableCell className="px-6 py-3 text-gray-600">{user.email}</TableCell>
+                <TableCell className="px-6 py-3  font-medium">{user.name}</TableCell>
+                <TableCell className="px-6 py-3 ">{user.email}</TableCell>
                 <TableCell className="px-6 py-3 text-center">
                   <UserRoleSelect userId={user.id} role={user.role as UserRole} />
                 </TableCell>

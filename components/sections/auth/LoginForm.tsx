@@ -50,13 +50,9 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg bg-white/90 backdrop-blur-md">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">ورود به حساب</h2>
-
+    <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg backdrop-blur-md">
       {globalError && (
-        <div className="mb-6 text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
-          {globalError}
-        </div>
+        <div className="mb-6 text-red-600 text-sm  border  p-3 rounded-lg">{globalError}</div>
       )}
 
       <Form {...form}>

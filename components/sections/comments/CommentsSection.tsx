@@ -17,7 +17,7 @@ export function CommentsSection({ postId }: { postId: string }) {
 
       <ul className="space-y-6 mt-6">
         {comments.map(c => (
-          <li key={c.id} className="p-4 border rounded-xl shadow-sm bg-white">
+          <li key={c.id} className="p-4 border rounded-xl shadow-sm">
             <div className="flex items-center gap-3 mb-2">
               {c.authorImage && (
                 <Image
@@ -31,7 +31,7 @@ export function CommentsSection({ postId }: { postId: string }) {
 
               <div className="flex flex-col">
                 <span className="font-bold">{c.authorName ?? 'کاربر ناشناس'}</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs ">
                   {new Date(c.createdAt).toLocaleDateString('fa-IR')}
                 </span>
               </div>
@@ -41,7 +41,7 @@ export function CommentsSection({ postId }: { postId: string }) {
               </div>
             </div>
 
-            <p className="text-sm leading-6 text-gray-800">{c.content}</p>
+            <p className="text-sm leading-6 ">{c.content}</p>
           </li>
         ))}
       </ul>

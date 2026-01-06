@@ -13,13 +13,13 @@ export default async function loginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center  p-6">
       <LoginForm />
-      <p className="mt-6 text-sm text-gray-600">
+      <p className="mt-6 text-sm ">
         Don’t have an account?
         <Link
           href="/register"
-          className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          className="font-medium text-gray-600 hover:text-gray-700 transition-colors"
         >
           Create one
         </Link>

@@ -11,10 +11,10 @@ export async function BlogSection() {
       {/* Header */}
 
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">آخرین مطالب بلاگ</h2>
+        <h2 className="text-lg font-semibold ">آخرین مطالب بلاگ</h2>
         <Link
           href="/blog"
-          className="text-sm text-indigo-600 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-300 rounded"
+          className="text-sm  hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-300 rounded"
         >
           مشاهده همه →
         </Link>
@@ -26,7 +26,7 @@ export async function BlogSection() {
           <Link
             key={post.id}
             href={`/blog/${post.slug}`}
-            className="group rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 duration-300 flex flex-col"
+            className="group rounded-xl overflow-hidden  shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 duration-300 flex flex-col"
             aria-label={post.title}
           >
             {/* Image */}
@@ -44,20 +44,18 @@ export async function BlogSection() {
             {/* Content */}
             <div className="p-4 flex flex-col gap-2 flex-1">
               {/* Category */}
-              <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded w-fit">
-                بلاگ
-              </span>
+              <span className="text-xs font-medium   px-2 py-0.5 rounded w-fit">بلاگ</span>
 
               {/* Title */}
-              <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:underline underline-offset-4">
+              <h3 className="text-sm font-semibold 0 line-clamp-2 group-hover:underline underline-offset-4">
                 {post.title}
               </h3>
 
               {/* Excerpt */}
-              <p className="text-xs text-gray-600 line-clamp-2">{post.excerpt}</p>
+              <p className="text-xs  line-clamp-2">{post.excerpt}</p>
 
               {/* Footer */}
-              <div className="mt-auto pt-3 flex items-center justify-between text-xs text-gray-500">
+              <div className="mt-auto pt-3 flex items-center justify-between text-xs ">
                 <div className="flex items-center gap-2">
                   <span>نویسنده</span>
                 </div>

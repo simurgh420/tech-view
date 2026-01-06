@@ -24,13 +24,13 @@ export function UserActions({ session }: UserActionsProps) {
   return (
     <div className="flex items-center gap-5">
       {/* Search */}
-      <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-        <Search className="size-5 text-gray-600" />
+      <button className="p-2 rounded-full dark:hover:bg-gray-500 transition-colors">
+        <Search className="size-5 " />
       </button>
 
       {/* Cart */}
-      <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-        <ShoppingCart className="size-5 text-gray-600" />
+      <button className="p-2 rounded-full dark:hover:bg-gray-500 transition-colors">
+        <ShoppingCart className="size-5 " />
       </button>
 
       {/* Not logged in */}

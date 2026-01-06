@@ -18,8 +18,8 @@ export function Breadcrumb() {
   });
 
   return (
-    <nav className="text-sm text-gray-500 flex items-center gap-2">
-      <Link href="/" className="hover:text-gray-700">
+    <nav className="text-sm  flex items-center gap-2">
+      <Link href="/" className="dark:hover:text-gray-700">
         Home
       </Link>
 
@@ -28,9 +28,9 @@ export function Breadcrumb() {
           <span>{'>'}</span>
 
           {c.isLast ? (
-            <span className="text-gray-900 font-medium capitalize">{c.label}</span>
+            <span className=" font-medium capitalize">{c.label}</span>
           ) : (
-            <Link href={c.href} className="hover:text-gray-700 capitalize">
+            <Link href={c.href} className="dark:hover:text-gray-700 capitalize">
               {c.label}
             </Link>
           )}

@@ -76,9 +76,7 @@ export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
         htmlFor="file-upload"
         className={cn(
           'flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer shadow-sm transition text-sm font-medium',
-          preview
-            ? 'bg-blue-600 text-white hover:bg-blue-700'
-            : 'bg-green-600 text-white hover:bg-green-700'
+          preview ? 'bg-orange-600  hover:bg-orange-700' : 'bg-green-600  hover:bg-green-700'
         )}
       >
         <Upload className="h-4 w-4" />

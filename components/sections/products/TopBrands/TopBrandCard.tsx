@@ -10,7 +10,7 @@ interface Props {
 export function TopBrandCard({ name, logo, slug }: Props) {
   return (
     <Link href={`/brands/${slug}`} className="group">
-      <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col items-center text-center gap-3">
+      <div className=" rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col items-center text-center gap-3">
         {/* لوگو */}
         <div className="relative w-42 h-15">
           <Image
