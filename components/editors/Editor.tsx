@@ -262,34 +262,61 @@ export default function Editor({ value, onChange, slug }: Props) {
 
   return (
     <>
-      <div className="border-b border-border shadow-md">
-        <div className="w-full max-w-300 p-4  mx-auto my-0"></div>
+      {/* Header bar */}
+      <div className="border-b border-border shadow-md bg-white dark:bg-zinc-900">
+        <div className="w-full max-w-300 p-4 mx-auto my-0"></div>
       </div>
 
-      <div className="w-full max-w-3xl mx-auto my-6 px-4 dark">
+      {/* Editor container */}
+      <div className="w-full max-w-3xl mx-auto my-6 px-4">
         <RichTextProvider editor={editor}>
-          <div className="overflow-hidden rounded-xl bg-white dark:bg-black border border-gray-200 dark:border-zinc-700 shadow-lg">
+          <div
+            className="
+          overflow-hidden 
+          rounded-xl 
+          bg-white dark:bg-zinc-900 
+          border border-gray-200 dark:border-zinc-700 
+          shadow-md hover:shadow-lg 
+          transition-shadow duration-300 ease-in-out
+        "
+          >
             <div className="flex flex-col">
               {/* Toolbar */}
-              <div className="flex items-center flex-wrap gap-2 border-b border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 px-3 py-2">
+              <div
+                className="
+              flex items-center flex-wrap gap-2 
+              border-b border-gray-200 dark:border-zinc-700 
+              bg-gray-50 dark:bg-zinc-800 
+              px-3 py-2 
+              sticky top-0 z-10
+            "
+              >
                 <RichTextToolbar />
               </div>
 
               {/* Editor */}
               <EditorContent
                 editor={editor}
-                className="prose dark:prose-invert max-w-none px-4 py-6 text-gray-900 dark:text-gray-100"
+                className="
+              prose dark:prose-invert 
+              max-w-none 
+              px-4 py-6 
+              text-gray-900 dark:text-gray-100 
+              leading-relaxed 
+              focus:outline-none"
               />
 
-              {/* Bubble & Slash */}
-              <RichTextBubbleLink />
-              <RichTextBubbleImage />
-              <RichTextBubbleVideo />
-              <RichTextBubbleImageGif />
-              <RichTextBubbleText />
-              <RichTextBubbleCallout />
-              <SlashCommandList />
-              <RichTextBubbleMenuDragHandle />
+              {/* Bubble & Slash menus */}
+              <div className="relative">
+                <RichTextBubbleLink />
+                <RichTextBubbleImage />
+                <RichTextBubbleVideo />
+                <RichTextBubbleImageGif />
+                <RichTextBubbleText />
+                <RichTextBubbleCallout />
+                <SlashCommandList />
+                <RichTextBubbleMenuDragHandle />
+              </div>
             </div>
           </div>
         </RichTextProvider>
