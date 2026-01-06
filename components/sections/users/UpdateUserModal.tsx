@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogOverlay,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
@@ -41,6 +42,8 @@ export function UpdateUserModal({ user }: { user: UserWithRole }) {
         ویرایش
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" />
+
         <DialogContent>
           <DialogHeader>
             <DialogTitle>ویرایش کاربر</DialogTitle>

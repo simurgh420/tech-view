@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogOverlay,
 } from '@/components/ui/dialog';
 import { unbanUserAction } from '@/services/action/user/unbanUserAction';
 import { toast } from 'sonner';
@@ -34,6 +35,8 @@ export function UnbanUserModal({ userId }: { userId: string }) {
         رفع بن
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" />
+
         <DialogContent>
           <DialogHeader>
             <DialogTitle>رفع بن کاربر</DialogTitle>

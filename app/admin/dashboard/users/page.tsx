@@ -50,10 +50,10 @@ export default async function UsersPage() {
         <ReturnButton href="/profile" label="Profile" />
 
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold tracking-tight ">Admin Dashboard</h1>
         </div>
 
-        <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+        <p className="text-lg leading-relaxed max-w-2xl">
           در این بخش می‌توانید کاربران را مدیریت کنید، نقش‌ها را تغییر دهید و دسترسی‌ها را کنترل
           کنید.
         </p>

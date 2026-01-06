@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogOverlay,
 } from '@/components/ui/dialog';
 import { deleteUserAction } from '@/services/action/user/delete-user.action';
 import { toast } from 'sonner';
@@ -36,6 +37,8 @@ export function DeleteUserModal({ userId }: { userId: string }) {
         حذف
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" />
+
         <DialogContent>
           <DialogHeader>
             <DialogTitle>حذف کاربر</DialogTitle>
