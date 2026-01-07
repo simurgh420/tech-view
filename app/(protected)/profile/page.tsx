@@ -13,7 +13,7 @@ export default async function ProfilePage() {
   }
 
   if (!session?.user) {
-    return <div className="text-center text-gray-500">Not authenticated</div>;
+    return <div className="text-center ">Not authenticated</div>;
   }
 
   const { name, image } = session.user;

@@ -101,7 +101,7 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
+        className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
         <h2 className="text-xl font-semibold ">ویرایش پروفایل</h2>
         <p className="text-sm ">نام یا تصویر پروفایل خود را تغییر دهید.</p>
