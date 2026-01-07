@@ -13,19 +13,18 @@ export async function GET() {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) {
-      return { success: false, error: 'Unauthorized' };
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const data = await getContacts();
     return NextResponse.json(data);
   } catch (err) {
     if (err instanceof APIError) {
-      return { success: false, error: err.message };
+      return NextResponse.json({ success: false, error: err.message }, { status: 400 });
     }
     return NextResponse.json({ success: false, error: 'خطای داخلی سرور' }, { status: 500 });
   }
 }
-
 export async function POST(req: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (err) {
     if (err instanceof APIError) {
-      return { success: false, error: err.message };
+      return NextResponse.json({ success: false, error: err.message }, { status: 400 });
     }
     return NextResponse.json({ success: false, error: 'خطای داخلی سرور' }, { status: 500 });
   }
