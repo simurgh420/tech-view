@@ -25,7 +25,7 @@ export default async function BlogPage() {
   const recent = await getRecentPosts(3);
 
   return (
-    <main className="container mx-auto max-w-306 px-4 py-8">
+    <main className="container mx-auto max-w-306 px-4 py-8" dir="rtl">
       <div className="mb-2">
         <Breadcrumb />
       </div>

@@ -59,7 +59,12 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
   const slug = toSlug(title || '');
   return (
     <Form {...form}>
-      <form data-testid="blog-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        data-testid="blog-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+        dir="rtl"
+      >
         <FormField
           control={form.control}
           name="title"
@@ -67,7 +72,11 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             <FormItem>
               <FormLabel htmlFor="title-form-item">عنوان</FormLabel>
               <FormControl>
-                <Input placeholder="مثلاً: تجربه من با هدفون‌های استریو" {...field} />
+                <Input
+                  className="text-right"
+                  placeholder="مثلاً: تجربه من با هدفون‌های استریو"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,7 +90,12 @@ export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
             <FormItem>
               <FormLabel>خلاصه</FormLabel>
               <FormControl>
-                <Textarea rows={3} placeholder="یک توضیح کوتاه درباره بلاگ..." {...field} />
+                <Textarea
+                  className="text-right"
+                  rows={3}
+                  placeholder="یک توضیح کوتاه درباره بلاگ..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

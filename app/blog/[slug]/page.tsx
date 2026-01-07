@@ -41,7 +41,10 @@ export default async function PostPage({ params }: Props) {
   });
   const dehydratedState = dehydrate(qc);
   return (
-    <div className="container mx-auto max-w-[1224px] px-4 py-10 grid grid-cols-1 lg:grid-cols-[880px_1fr] gap-12">
+    <div
+      className="container mx-auto max-w-306 px-4 py-10 grid grid-cols-1 lg:grid-cols-[880px_1fr] gap-12 "
+      dir="rtl"
+    >
       <PostContent post={post} />
       <Sidebar postId={post.id} />
       <Hydrate state={dehydratedState}>

@@ -7,7 +7,7 @@ export async function BlogSection() {
   if (!recent?.length) return null;
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-6" dir="rtl">
       {/* Header */}
 
       <div className="flex items-center justify-between">

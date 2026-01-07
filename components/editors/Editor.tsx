@@ -262,13 +262,8 @@ export default function Editor({ value, onChange, slug }: Props) {
 
   return (
     <>
-      {/* Header bar */}
-      <div className="border-b border-border shadow-md bg-white dark:bg-zinc-900">
-        <div className="w-full max-w-300 p-4 mx-auto my-0"></div>
-      </div>
-
       {/* Editor container */}
-      <div className="w-full max-w-3xl mx-auto my-6 px-4">
+      <div className="w-full max-w-3xl mx-auto my-6 px-4 ">
         <RichTextProvider editor={editor}>
           <div
             className="
@@ -286,7 +281,7 @@ export default function Editor({ value, onChange, slug }: Props) {
                 className="
               flex items-center flex-wrap gap-2 
               border-b border-gray-200 dark:border-zinc-700 
-              bg-gray-50 dark:bg-zinc-800 
+              bg-gray-50 dark:bg-zinc-600 
               px-3 py-2 
               sticky top-0 z-10
             "
@@ -303,7 +298,8 @@ export default function Editor({ value, onChange, slug }: Props) {
               px-4 py-6 
               text-gray-900 dark:text-gray-100 
               leading-relaxed 
-              focus:outline-none"
+              focus:outline-none
+              "
               />
 
               {/* Bubble & Slash menus */}
