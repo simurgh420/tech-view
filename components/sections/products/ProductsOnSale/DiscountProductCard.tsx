@@ -36,9 +36,20 @@ export function DiscountProductCard({
     ease-in-out
   "
     >
-      <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 text-center h-75 flex flex-col justify-between">
+      <div className=" rounded-lg shadow-sm hover:shadow-md transition p-4 text-center h-75 flex flex-col justify-between">
         <div className="relative w-full h-37.5 mb-3">
-          <Image src={image} alt={title} fill className="object-contain" />
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="
+    object-contain
+    drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]
+    dark:drop-shadow-[0_1px_2px_rgba(255,255,255,0.25)]
+    transition-transform duration-300
+  "
+          />
+
           {discount !== undefined && (
             <div className="absolute top-2 left-2 bg-orange-500 text-white text-sm font-bold px-2 py-1 rounded">
               -{discount}%

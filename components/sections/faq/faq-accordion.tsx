@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Accordion,
   AccordionContent,
@@ -10,14 +8,31 @@ import type { FAQCategory } from '@/types/faq';
 
 export function FaqAccordion({ category }: { category: FAQCategory }) {
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion type="single" collapsible className="w-full text-right">
       {category.items.map((item, index) => (
-        <AccordionItem key={index} value={`item-${index}`} className="border-b first:pt-0 pt-4">
-          <AccordionTrigger className="text-left text-base font-medium  hover:no-underline">
+        <AccordionItem
+          key={index}
+          value={`item-${index}`}
+          className="border-b border-white/10 py-3"
+        >
+          <AccordionTrigger
+            className="
+    flex flex-row-reverse
+    items-center
+    justify-between
+    text-base
+    font-medium
+    text-[oklch(90%_0.01_270)]
+    hover:no-underline
+    hover:text-[oklch(98%_0.01_270)]
+  "
+          >
             {item.question}
           </AccordionTrigger>
 
-          <AccordionContent className="text-sm  leading-relaxed">{item.answer}</AccordionContent>
+          <AccordionContent className="text-sm leading-relaxed text-[oklch(80%_0.01_270)] pr-2 animate-in fade-in slide-in-from-top-1">
+            {item.answer}
+          </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>

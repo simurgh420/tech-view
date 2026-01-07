@@ -12,7 +12,19 @@ export function ProductsOnSale() {
     <section>
       <div>
         {/* container مرکزی با بک‌گراند آبی */}
-        <div className="rounded-2xl bg-linear-to-r from-[#002966] via-[#0f6fa4] to-[#002966] px-6 py-10 shadow-lg">
+        <div
+          className="
+  rounded-2xl
+  bg-linear-to-r
+  from-[oklch(18%_0.015_270)]
+  via-[oklch(22%_0.02_270)]
+  to-[oklch(18%_0.015_270)]
+  px-6 py-10
+  shadow-lg
+  border border-white/5
+  backdrop-blur-sm
+"
+        >
           {/* عنوان و دکمه */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
             <h2 className="text-2xl font-bold ">Products On Sale</h2>
