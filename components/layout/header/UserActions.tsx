@@ -61,11 +61,11 @@ export function UserActions({ session }: UserActionsProps) {
                 {/* دایره نقش کاربر */}
                 <span
                   className={`inline-block size-2 rounded-full ${
-                    user.role === 'ADMIN' ? 'bg-green-500' : 'bg-amber-700'
+                    user.role === 'ADMIN' ? 'bg-green-500' : 'bg-orange-700'
                   }`}
                 />
                 {/* نام کاربر */}
-                <span className="text-sm font-medium  group-hover:text-gray-900 transition-colors">
+                <span className="text-sm font-medium group-hover:text-gray-900 transition-colors">
                   {user.name}
                 </span>
               </div>
