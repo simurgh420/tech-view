@@ -65,7 +65,7 @@ export function UserActions({ session }: UserActionsProps) {
                   }`}
                 />
                 {/* نام کاربر */}
-                <span className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors">
+                <span className="text-sm font-medium  group-hover:text-gray-900 transition-colors">
                   {user.name}
                 </span>
               </div>
