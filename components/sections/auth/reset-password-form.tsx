@@ -16,7 +16,11 @@ import { toast } from 'sonner';
 // ✅ اعتبارسنجی با Zod
 const schema = z
   .object({
-    password: z.string().min(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد'),
+    password: z
+      .string()
+      .min(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد')
+      .regex(/[A-Z]/, 'رمز عبور باید حداقل یک حرف بزرگ داشته باشد')
+      .regex(/[0-9]/, 'رمز عبور باید حداقل یک عدد داشته باشد'),
     confirmPassword: z.string().min(6, 'تکرار رمز عبور باید حداقل ۶ کاراکتر باشد'),
   })
   .refine(data => data.password === data.confirmPassword, {
