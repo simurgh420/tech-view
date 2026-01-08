@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 const schema = z.object({
-  email: z.string().email('Please enter a valid email'),
+  email: z.email('لطفاً یک ایمیل معتبر وارد کنید'),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -39,7 +39,7 @@ export const ForgotPasswordForm = () => {
       redirectTo: `${window.location.origin}/auth/reset-password`,
       fetchOptions: {
         onSuccess: () => {
-          toast.success('Reset link sent to your email.');
+          toast.success('لینک بازیابی رمز عبور به ایمیل شما ارسال شد.');
           router.push('/auth/forgot-password/success');
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,34 +52,31 @@ export const ForgotPasswordForm = () => {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
-      >
-        <h2 className="text-xl font-semibold text-gray-900">Forgot Password</h2>
-        <p className="text-sm text-gray-500">
-          Enter your email and we’ll send you a link to reset your password.
-        </p>
+    <div className=" flex  justify-center p-6" dir="rtl">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="max-w-sm w-full space-y-6 p-6 rounded-xl shadow-md border dark:border-neutral-700 dark:bg-neutral-800"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <Label htmlFor="email">ایمیل</Label>
+                <FormControl>
+                  <Input id="email" type="email" placeholder="you@example.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="email">Email</Label>
-              <FormControl>
-                <Input id="email" type="email" placeholder="you@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? 'Sending...' : 'Send Reset Link'}
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending ? 'در حال ارسال...' : 'ارسال لینک بازیابی'}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };
