@@ -55,7 +55,7 @@ export function PostContent({ post }: Props) {
       {/* تصویر کاور */}
       <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xl mb-10 bg-gray-900/10">
         <Image
-          src={coverImageUrl || '/images/placeholder.jpg'}
+          src={coverImageUrl || '/Image-not-found.png'}
           alt={title}
           width={808}
           height={406}

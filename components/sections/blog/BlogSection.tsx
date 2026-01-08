@@ -32,7 +32,7 @@ export async function BlogSection() {
             {/* Image */}
             <div className="relative w-full aspect-4/3">
               <Image
-                src={post.coverImageUrl || '/images/blog-fallback.jpg'}
+                src={post.coverImageUrl || '/Image-not-found.png'}
                 alt={post.title}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"

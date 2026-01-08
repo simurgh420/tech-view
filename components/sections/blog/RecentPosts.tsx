@@ -17,7 +17,7 @@ export function RecentPosts({ items }: { items: BlogPostRecent[] }) {
             {/* تصویر کاور */}
             <div className="relative w-24 h-24 shrink-0 rounded-md overflow-hidden ">
               <Image
-                src={post.coverImageUrl || '/placeholder.jpg'}
+                src={post.coverImageUrl || '/Image-not-found.png'}
                 alt={post.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform"

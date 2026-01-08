@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 const schema = z
   .object({
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(6, 'Confirm password must be at least 6 characters'),
+    confirmPassword: z.string().min(6, 'Con firm password must be at least 6 characters'),
   })
   .refine(data => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -66,7 +66,7 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
+        className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
         <h2 className="text-xl font-semibold 0">Reset Password</h2>
         <p className="text-sm ">Enter your new password below.</p>

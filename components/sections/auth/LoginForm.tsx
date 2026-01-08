@@ -50,7 +50,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg backdrop-blur-md">
+    <div className="w-full max-w-md mx-auto p-8 rounded-2xl shadow-lg backdrop-blur-md" dir="rtl">
       {globalError && (
         <div className="mb-6 text-red-600 text-sm  border  p-3 rounded-lg">{globalError}</div>
       )}
