@@ -69,7 +69,7 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold 0"> تغییر رمز عبور</h2>
+        <h2 className="text-xl font-semibold"> تغییر رمز عبور</h2>
         <p className="text-sm ">رمز عبور جدید خود را وارد کنید.</p>
 
         {/* Password */}
