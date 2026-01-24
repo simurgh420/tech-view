@@ -19,7 +19,6 @@ import { BanUserModal } from './BanUserModal';
 import { UnbanUserModal } from './UnbanUserModal';
 import { UpdateUserModal } from './UpdateUserModal';
 
-// مودال‌های عملیات
 
 export function UsersTable({ users }: { users: UserWithRole[] }) {
   const [filter, setFilter] = useState('');
@@ -43,7 +42,7 @@ export function UsersTable({ users }: { users: UserWithRole[] }) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border  shadow-sm">
+      <div className="overflow-x-auto rounded-xl border shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>

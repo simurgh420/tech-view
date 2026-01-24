@@ -13,12 +13,12 @@ export function ContactCards() {
           className="
             p-6 rounded-2xl border border-white/10 
             hover:border-white/20 hover:scale-[1.02]
-            transition bg-[oklch(18%_0.01_270)]
+            transition bg-gray-700
           "
         >
           <div className="text-3xl mb-3">{item.icon}</div>
-          <h3 className="text-lg font-semibold text-[oklch(95%_0.01_270)]">{item.title}</h3>
-          <p className="text-[oklch(80%_0.01_270)] mt-1">{item.desc}</p>
+          <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+          <p className="text-gray-400 mt-1">{item.desc}</p>
         </div>
       ))}
     </section>

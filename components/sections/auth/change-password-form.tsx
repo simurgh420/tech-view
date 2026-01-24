@@ -20,7 +20,6 @@ import {
 import { changePasswordAction } from '@/services/action/user/change-password.action';
 import { toast } from 'sonner';
 
-// ✅ ولیدیشن قوی‌تر
 const schema = z
   .object({
     currentPassword: z.string().min(6, 'رمز عبور فعلی باید حداقل 6 کاراکتر باشد'),

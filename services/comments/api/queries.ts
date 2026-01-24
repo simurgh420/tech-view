@@ -2,7 +2,7 @@
 import { CommentSafe } from '@/types/comment';
 import axios from 'axios';
 
-export async function fetchComments(postId: string): Promise<CommentSafe[]> {
+export async function fetchCommentsApi(postId: string): Promise<CommentSafe[]> {
   const { data } = await axios.get(`/api/posts/${postId}/comments`);
   return data;
 }

@@ -1,44 +1,46 @@
 // hooks/useBrands.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  createBrandRequest,
-  updateBrandRequest,
-  deleteBrandRequest,
-} from '@/services/brands/api/mutations';
+
 import { Brand, BrandPayload } from '@/types/brand';
-import { fetchBrandBySlug, fetchBrands } from '@/services/brands/api/queries';
+
+import { fetchBrandBySlugApi, fetchBrandsApi } from '@/services/brands/api/queries';
+import {
+  createBrandRequestApi,
+  deleteBrandRequestApi,
+  updateBrandRequestApi,
+} from '@/services/brands/api/mutations';
 
 export function useBrands() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
-  const useGetBrands = () => useQuery<Brand[]>({ queryKey: ['brands'], queryFn: fetchBrands });
+  const useGetBrands = () => useQuery<Brand[]>({ queryKey: ['brands'], queryFn: fetchBrandsApi });
 
   const useGetBrand = (slug: string) =>
     useQuery<Brand>({
       queryKey: ['brand', slug],
-      queryFn: () => fetchBrandBySlug(slug),
+      queryFn: () => fetchBrandBySlugApi(slug),
       enabled: !!slug,
     });
 
   const useCreateBrand = () =>
     useMutation<Brand, Error, BrandPayload>({
-      mutationFn: payload => createBrandRequest(payload),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['brands'] }),
+      mutationFn: payload => createBrandRequestApi(payload),
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['brands'] }),
     });
 
   const useUpdateBrand = () =>
     useMutation<Brand, Error, { slug: string; data: Partial<BrandPayload> }>({
-      mutationFn: ({ slug, data }) => updateBrandRequest(slug, data),
+      mutationFn: ({ slug, data }) => updateBrandRequestApi(slug, data),
       onSuccess: (_res, vars) => {
-        queryClient.invalidateQueries({ queryKey: ['brands'] });
-        queryClient.invalidateQueries({ queryKey: ['brand', vars.slug] });
+        qc.invalidateQueries({ queryKey: ['brands'] });
+        qc.invalidateQueries({ queryKey: ['brand', vars.slug] });
       },
     });
 
   const useDeleteBrand = () =>
     useMutation<{ success: boolean }, Error, string>({
-      mutationFn: slug => deleteBrandRequest(slug),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['brands'] }),
+      mutationFn: slug => deleteBrandRequestApi(slug),
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['brands'] }),
     });
 
   return { useGetBrands, useGetBrand, useCreateBrand, useUpdateBrand, useDeleteBrand };

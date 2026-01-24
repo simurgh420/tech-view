@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import axios from 'axios';
-import { fetchComments } from '@/services/comments/api/queries';
+import { fetchCommentsApi } from '@/services/comments/api/queries';
 vi.mock('axios');
 const mockedAxios = vi.mocked(axios, { deep: true });
 
@@ -21,7 +21,7 @@ describe('Comments API queries', () => {
       },
     ];
     mockedAxios.get.mockResolvedValueOnce({ data: fakeResponse });
-    const result = await fetchComments('post-1');
+    const result = await fetchCommentsApi('post-1');
     expect(mockedAxios.get).toHaveBeenCalledWith('/api/posts/post-1/comments');
     expect(result).toEqual(fakeResponse);
   });

@@ -27,24 +27,20 @@ export default async function LoginPage() {
     rounded-3xl
     p-8
     animate-[fadeIn_0.5s_ease-out]
-
     backdrop-blur-xl
-    bg-white/50 dark:bg-white/50
-    border border-white/20 dark:border-white/10
+    border
     shadow-[0_8px_32px_rgba(0,0,0,0.35)]
   "
         >
-          <h1 className="text-3xl font-semibold mb-6 text-center text-gray-900 dark:text-white">
-            خوش اومدی
-          </h1>
+          <h1 className="text-3xl font-semibold mb-6 text-center ">خوش اومدی</h1>
 
           <LoginForm />
 
-          <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-300 flex flex-row-reverse justify-center gap-2">
+          <p className="mt-6 text-sm text-center   flex flex-row-reverse justify-center gap-2">
             <span>حساب نداری؟</span>
             <Link
               href="/register"
-              className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+              className="font-medium dark:text-blue-400 dark:hover:text-blue-900 transition-colors"
             >
               ثبت‌نام
             </Link>

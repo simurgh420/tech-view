@@ -4,8 +4,8 @@ export function ProductBanner() {
   return (
     <section>
       <div className=" h-auto">
-        {/* آیفون ۱۵ */}
-        <Link href="/register">
+        {/* آیفون 17 */}
+        <Link href="/products/iphone17">
           <Image
             src="/img/banners/iphone17.png"
             alt="iPhone 17 Banner"

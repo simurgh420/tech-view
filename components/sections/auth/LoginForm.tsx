@@ -83,11 +83,7 @@ export function LoginForm() {
               <FormItem>
                 <div className="flex justify-between items-center">
                   <FormLabel>رمز عبور</FormLabel>
-                  <Link
-                    href="/auth/forgot-password"
-                    tabIndex={-1}
-                    className="text-sm italic text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <Link href="/auth/forgot-password" tabIndex={-1} className="text-sm italic ">
                     فراموش کردید؟
                   </Link>
                 </div>
@@ -104,7 +100,12 @@ export function LoginForm() {
             )}
           />
 
-          <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
+          <Button
+            type="submit"
+            variant={'outline'}
+            className="w-full h-11 text-base font-medium"
+            disabled={loading}
+          >
             {loading ? 'در حال ورود...' : 'ورود'}
           </Button>
         </form>

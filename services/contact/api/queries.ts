@@ -2,12 +2,12 @@
 
 import axios from 'axios';
 
-export async function apiGetContacts() {
+export async function GetContactsApi() {
   const { data } = await axios.get('/api/contact');
   return data;
 }
 
-export async function apiGetContactById(id: string) {
+export async function GetContactByIdApi(id: string) {
   const { data } = await axios.get(`/api/contact/${id}`);
   return data;
 }

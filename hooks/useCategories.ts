@@ -1,48 +1,48 @@
 // hooks/useCategories.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Category, CategoryPayload } from '@/types/category';
-import { fetchCategories, fetchCategoryBySlug } from '@/services/categories/api/queries';
 import {
-  createCategoryRequest,
-  deleteCategoryRequest,
-  updateCategoryRequest,
+  createCategoryRequestApi,
+  deleteCategoryRequestApi,
+  updateCategoryRequestApi,
 } from '@/services/categories/api/mutations';
+import { fetchCategoriesApi, fetchCategoryBySlugApi } from '@/services/categories/api/queries';
 
 export function useCategories() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
   const useGetCategories = () =>
     useQuery<Category[]>({
       queryKey: ['categories'],
-      queryFn: fetchCategories,
+      queryFn: fetchCategoriesApi,
     });
 
   const useGetCategory = (slug: string) =>
     useQuery<Category>({
       queryKey: ['category', slug],
-      queryFn: () => fetchCategoryBySlug(slug),
+      queryFn: () => fetchCategoryBySlugApi(slug),
       enabled: !!slug,
     });
 
   const useCreateCategory = () =>
     useMutation<Category, Error, CategoryPayload>({
-      mutationFn: payload => createCategoryRequest(payload),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+      mutationFn: payload => createCategoryRequestApi(payload),
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
     });
 
   const useUpdateCategory = () =>
     useMutation<Category, Error, { slug: string; data: Partial<CategoryPayload> }>({
-      mutationFn: ({ slug, data }) => updateCategoryRequest(slug, data),
+      mutationFn: ({ slug, data }) => updateCategoryRequestApi(slug, data),
       onSuccess: (_res, vars) => {
-        queryClient.invalidateQueries({ queryKey: ['categories'] });
-        queryClient.invalidateQueries({ queryKey: ['category', vars.slug] });
+        qc.invalidateQueries({ queryKey: ['categories'] });
+        qc.invalidateQueries({ queryKey: ['category', vars.slug] });
       },
     });
 
   const useDeleteCategory = () =>
     useMutation<{ success: boolean }, Error, string>({
-      mutationFn: slug => deleteCategoryRequest(slug),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+      mutationFn: slug => deleteCategoryRequestApi(slug),
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
     });
 
   return {

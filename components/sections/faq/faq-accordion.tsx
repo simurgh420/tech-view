@@ -24,13 +24,13 @@ export function FaqAccordion({ category }: { category: FAQCategory }) {
     font-medium
     text-[oklch(90%_0.01_270)]
     hover:no-underline
-    hover:text-[oklch(98%_0.01_270)]
+    hover:text-[oklch(98%_0.1_270)]
   "
           >
             {item.question}
           </AccordionTrigger>
 
-          <AccordionContent className="text-sm leading-relaxed text-[oklch(80%_0.01_270)] pr-2 animate-in fade-in slide-in-from-top-1">
+          <AccordionContent className="text-sm leading-relaxed  pr-2 animate-in fade-in slide-in-from-top-1">
             {item.answer}
           </AccordionContent>
         </AccordionItem>

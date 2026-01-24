@@ -1,39 +1,40 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiGetContacts, apiGetContactById } from '@/services/contact/api/queries';
-import { apiCreateContact, apiDeleteContact } from '@/services/contact/api/mutations';
+
 import { ContactFormValues } from '@/lib/validation/contact.';
+import { GetContactByIdApi, GetContactsApi } from '@/services/contact/api/queries';
+import { CreateContactApi, DeleteContactApi } from '@/services/contact/api/mutations';
 
 export function useContact() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
   const useGetContacts = () =>
     useQuery({
       queryKey: ['contacts'],
-      queryFn: apiGetContacts,
+      queryFn: GetContactsApi,
     });
 
   const useGetContact = (id: string) =>
     useQuery({
       queryKey: ['contact', id],
-      queryFn: () => apiGetContactById(id),
+      queryFn: () => GetContactByIdApi(id),
       enabled: !!id,
     });
 
   const useCreateContact = () =>
     useMutation({
-      mutationFn: (data: ContactFormValues) => apiCreateContact(data),
+      mutationFn: (data: ContactFormValues) => CreateContactApi(data),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['contacts'] });
+        qc.invalidateQueries({ queryKey: ['contacts'] });
       },
     });
 
   const useDeleteContact = () =>
     useMutation({
-      mutationFn: (id: string) => apiDeleteContact(id),
+      mutationFn: (id: string) => DeleteContactApi(id),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['contacts'] });
+        qc.invalidateQueries({ queryKey: ['contacts'] });
       },
     });
 

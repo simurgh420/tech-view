@@ -5,13 +5,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useHorizontalScroll } from '@/hooks/useHorizontalScroll';
 import { DiscountProductCard } from './DiscountProductCard';
+import Link from 'next/link';
 export function ProductsOnSale() {
   const { scrollRef, scroll } = useHorizontalScroll();
 
   return (
     <section>
       <div>
-        {/* container مرکزی با بک‌گراند آبی */}
         <div
           className="
   rounded-2xl
@@ -28,12 +28,12 @@ export function ProductsOnSale() {
           {/* عنوان و دکمه */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
             <h2 className="text-2xl font-bold ">Products On Sale</h2>
-            <a
+            <Link
               href="/products/sale"
-              className="text-sm font-medium  text-[#179BD7] px-4 py-2 rounded-md hover:bg-gray-100 transition"
+              className="text-sm font-medium  text-[#179BD7] px-4 py-2 rounded-md hover:text-blue-600 transition"
             >
               View all &gt;
-            </a>
+            </Link>
           </div>
 
           {/* لیست محصولات */}
@@ -53,13 +53,15 @@ export function ProductsOnSale() {
           <div className="flex justify-end gap-4 mt-6">
             <Button
               onClick={() => scroll('left')}
-              className="bg-white text-[#179BD7] rounded-full shadow hover:bg-gray-100"
+              className="rounded-full shadow 0"
+              variant={'outline'}
             >
               <ChevronLeft size={20} />
             </Button>
             <Button
               onClick={() => scroll('right')}
-              className="bg-white text-[#179BD7] rounded-full shadow hover:bg-gray-100"
+              className="rounded-full shadow 0"
+              variant={'outline'}
             >
               <ChevronRight size={20} />
             </Button>

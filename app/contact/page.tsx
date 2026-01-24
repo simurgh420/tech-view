@@ -9,14 +9,11 @@ export default function ContactPage() {
       <ContactHeader />
       <ContactCards />
 
-      {/* Contact Form + Contact Info side by side */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* فرم دو ستون فضا بگیرد */}
         <div className="lg:col-span-2">
           <ContactForm />
         </div>
 
-        {/* اطلاعات تماس ستون سوم */}
         <div className="lg:col-span-1">
           <ContactInfo />
         </div>

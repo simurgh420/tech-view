@@ -24,24 +24,23 @@ export function MegaMenu() {
         <div className=" w-5xl max-w-306 h-101.5 mx-auto grid grid-cols-4 gap-8 p-6">
           {/* دسته‌بندی‌ها */}
           <div>
-            <h4 className="text-sm font-bold text-gray-800 dark:text-gray-100 mb-3">Categories</h4>
-            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <h4 className="text-sm font-bold  mb-3">Categories</h4>
+            <ul className="space-y-2 text-sm ">
               {categories.map(cat => (
                 <li
                   key={cat.name}
                   onMouseEnter={() => setActiveCategory(cat)}
                   className="flex items-center cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
                 >
-                  <cat.icon className="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2" />
+                  <cat.icon className="w-4 h-4   mr-2" />
                   {cat.name}
                 </li>
               ))}
             </ul>
           </div>
-          {/* زیرمنو و محصولات پیشنهادی */}
           <div className="col-span-3">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-bold text-gray-800">{activeCategory.name}</h4>
+              <h4 className="text-sm font-bold">{activeCategory.name}</h4>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {activeCategory.products.map(item => (

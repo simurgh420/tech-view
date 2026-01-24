@@ -42,27 +42,28 @@ export function FooterColumns() {
       <div className="px-10">
         <h4 className="font-semibold mb-3">Sign up for News</h4>
 
-        {/* ورودی ایمیل با آیکن و فلش */}
+        {/* ورودی ایمیل  */}
         <div className="relative mt-2">
-          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-500">
+          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <LiaUserSolid className="size-5" />
           </span>
           <input
             type="email"
             placeholder="E-mail Address"
-            className="w-full rounded-md border border-[#CBCBCB] text-[#2D2D2D] placeholder:text-[#CBCBCB]
-                       pl-10 pr-12 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#179BD7] focus:border-transparent
-                       shadow-sm bg-white/10"
+            className="w-full rounded-md border 
+                       pl-10 pr-12 py-2.5 focus:outline-none focus:ring-2  focus:border-transparent
+                       shadow-sm"
             aria-label="Email address"
           />
           <Button
             type="button"
             aria-label="Submit email"
+            variant={'link'}
             className="absolute inset-y-0 right-1 top-0.5 flex items-center justify-center rounded-md
-                       text-[#179BD7] hover:text-white bg-transparent hover:bg-[#179BD7]
+                        bg-transparent 
                        transition-colors px-2"
           >
-            <LiaArrowRightSolid className="size-4" />
+            <LiaArrowRightSolid className="size-3.5" />
           </Button>
         </div>
 

@@ -35,9 +35,9 @@ export default async function AdminDashboard() {
         {/* Users Card */}
         <Link
           href="/admin/dashboard/users"
-          className="rounded-2xl shadow-md border  p-6 flex items-center gap-4 hover:shadow-lg  transition-all"
+          className="rounded-2xl shadow-md border p-6 flex items-center gap-4 hover:shadow-lg transition-all"
         >
-          <div className="p-3 rounded-xl   transition-colors">
+          <div className="p-3 rounded-xl transition-colors">
             <Users className="size-6 " />
           </div>
           <div>
@@ -49,9 +49,9 @@ export default async function AdminDashboard() {
         {/* Profile Card */}
         <Link
           href="/profile"
-          className="rounded-2xl shadow-md border  p-6 flex items-center gap-4 hover:shadow-lg  transition-all"
+          className="rounded-2xl shadow-md border p-6 flex items-center gap-4 hover:shadow-lg  transition-all"
         >
-          <div className="p-3 rounded-xl  transition-colors">
+          <div className="p-3 rounded-xl transition-colors">
             <User className="size-6 text-purple-600" />
           </div>
           <div>

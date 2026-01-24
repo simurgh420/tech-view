@@ -13,7 +13,7 @@ export default async function PasswordSettingsPage() {
   }
 
   if (!session?.user) {
-    return <div className="text-center text-gray-500">شما وارد سیستم نشده‌اید</div>;
+    return <div className="text-center text-red-500">شما وارد سیستم نشده‌اید</div>;
   }
 
   return (

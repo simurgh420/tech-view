@@ -1,18 +1,19 @@
 // hooks/useProducts.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ProductPayload, Product } from '@/types/product';
-import {
-  fetchFeaturedProducts,
-  fetchProductBySlug,
-  fetchProducts,
-  fetchProductsByBrand,
-  fetchProductsByCategory,
-} from '@/services/products/api/queries';
+
 import {
   createProductَApi,
   deleteProductApi,
   updateProductApi,
 } from '@/services/products/api/mutations';
+import {
+  fetchFeaturedProductsApi,
+  fetchProductBySlugApi,
+  fetchProductsApi,
+  fetchProductsByBrandApi,
+  fetchProductsByCategoryApi,
+} from '@/services/products/api/queries';
 
 export function useProducts() {
   const qc = useQueryClient();
@@ -20,13 +21,13 @@ export function useProducts() {
   const useGetProducts = () =>
     useQuery<Product[]>({
       queryKey: ['products'],
-      queryFn: fetchProducts,
+      queryFn: fetchProductsApi,
     });
 
   const useGetProduct = (slug: string) =>
     useQuery<Product>({
       queryKey: ['product', slug],
-      queryFn: () => fetchProductBySlug(slug),
+      queryFn: () => fetchProductBySlugApi(slug),
       enabled: !!slug,
     });
 
@@ -54,21 +55,21 @@ export function useProducts() {
   const useGetProductsByCategory = (slug: string) =>
     useQuery<Product[]>({
       queryKey: ['products', 'category', slug],
-      queryFn: () => fetchProductsByCategory(slug),
+      queryFn: () => fetchProductsByCategoryApi(slug),
       enabled: !!slug,
     });
 
   const useGetProductsByBrand = (slug: string) =>
     useQuery<Product[]>({
       queryKey: ['products', 'brand', slug],
-      queryFn: () => fetchProductsByBrand(slug),
+      queryFn: () => fetchProductsByBrandApi(slug),
       enabled: !!slug,
     });
 
   const useGetFeatured = () =>
     useQuery<Product[]>({
       queryKey: ['products', 'featured'],
-      queryFn: fetchFeaturedProducts,
+      queryFn: fetchFeaturedProductsApi,
     });
 
   return {

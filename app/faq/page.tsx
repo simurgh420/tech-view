@@ -9,7 +9,6 @@ export default function FAQPage() {
   return (
     <main className="container mx-auto max-w-7xl px-6 py-12 space-y-8 ">
       {/* Breadcrumb */}
-
       <Breadcrumb />
 
       {/* Banner */}

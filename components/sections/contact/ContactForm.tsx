@@ -40,8 +40,8 @@ export function ContactForm() {
   };
 
   return (
-    <section className="p-8 rounded-2xl border border-white/10 bg-[oklch(18%_0.01_270)] mb-12 text-right [direction:rtl]">
-      <h2 className="text-xl font-semibold text-[oklch(95%_0.01_270)] mb-6">فرم تماس با ما</h2>
+    <section className="p-8 rounded-2xl border border-white/10  mb-12 text-right [direction:rtl]">
+      <h2 className="text-xl font-semibold  mb-6">فرم تماس با ما</h2>
 
       <form
         onSubmit={form.handleSubmit(onSubmit)}
@@ -54,9 +54,8 @@ export function ContactForm() {
             placeholder="نام و نام خانوادگی"
             disabled={createContact.isPending}
             className="
-              w-full bg-[oklch(20%_0.01_270)] border border-white/10 
-              rounded-xl px-4 py-3 text-[oklch(90%_0.01_270)]
-              focus-visible:ring-0 focus-visible:border-[oklch(60%_0.15_270)]
+              w-full border border-white/10 
+              rounded-xl px-4 py-3 
               transition disabled:opacity-50
             "
           />
@@ -72,10 +71,8 @@ export function ContactForm() {
             placeholder="ایمیل"
             disabled={createContact.isPending}
             className="
-              w-full bg-[oklch(20%_0.01_270)] border border-white/10 
-              rounded-xl px-4 py-3 text-[oklch(90%_0.01_270)]
-              focus-visible:ring-0 focus-visible:border-[oklch(60%_0.15_270)]
-              transition disabled:opacity-50
+              w-full border border-white/10 
+              rounded-xl px-4 py-3 
             "
           />
           {form.formState.errors.email && (
@@ -90,9 +87,8 @@ export function ContactForm() {
             placeholder="شماره تماس"
             disabled={createContact.isPending}
             className="
-              w-full bg-[oklch(20%_0.01_270)] border border-white/10 
-              rounded-xl px-4 py-3 text-[oklch(90%_0.01_270)]
-              focus-visible:ring-0 focus-visible:border-[oklch(60%_0.15_270)]
+              w-full  border border-white/10 
+              rounded-xl px-4 py-3 
               transition disabled:opacity-50
             "
           />
@@ -108,9 +104,8 @@ export function ContactForm() {
             placeholder="موضوع پیام"
             disabled={createContact.isPending}
             className="
-              w-full bg-[oklch(20%_0.01_270)] border border-white/10 
-              rounded-xl px-4 py-3 text-[oklch(90%_0.01_270)]
-              focus-visible:ring-0 focus-visible:border-[oklch(60%_0.15_270)]
+              w-full  border border-white/10 
+              rounded-xl px-4 py-3 
               transition disabled:opacity-50
             "
           />
@@ -126,9 +121,9 @@ export function ContactForm() {
             placeholder="متن پیام شما..."
             disabled={createContact.isPending}
             className="
-              h-32 w-full bg-[oklch(20%_0.01_270)] border border-white/10 
-              rounded-xl px-4 py-3 text-[oklch(90%_0.01_270)]
-              focus-visible:ring-0 focus-visible:border-[oklch(60%_0.15_270)]
+              h-32 w-full  border border-white/10 
+              rounded-xl px-4 py-3 
+              focus-visible:ring-0 focus-visible:border-e-blue-600
               transition disabled:opacity-50
             "
           />
@@ -141,10 +136,9 @@ export function ContactForm() {
         <Button
           type="submit"
           disabled={createContact.isPending}
+          variant={'ghost'}
           className="
-            md:col-span-2 mt-4 py-3 rounded-xl 
-            bg-[oklch(60%_0.15_270)] text-black font-semibold
-            hover:bg-[oklch(65%_0.15_270)] transition disabled:opacity-50
+            md:col-span-2 mt-4 py-3 rounded-xl
           "
         >
           {createContact.isPending ? 'در حال ارسال...' : 'ارسال پیام'}

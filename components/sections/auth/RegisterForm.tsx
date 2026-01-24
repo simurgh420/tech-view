@@ -54,8 +54,6 @@ export function RegisterForm() {
         w-full max-w-md mx-auto p-8 
         rounded-2xl shadow-xl 
         backdrop-blur-xl 
-        bg-white/80 dark:bg-white/10 
-        dark:border dark:border-white/20
         transition-all
       "
       dir="rtl"
@@ -69,26 +67,20 @@ export function RegisterForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Name */}
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">نام</FormLabel>
+                <FormLabel className="text-white ">نام</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="نام شما"
-                    {...field}
-                    className=" h-11 text-base bg-white/90 dark:bg-white/10 dark:text-white border border-gray-400 dark:border-white/30 focus-visible:ring-2 focus-visible:ring-blue-500 "
-                  />
+                  <Input placeholder="نام شما" {...field} className=" h-11 text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Email */}
           <FormField
             control={form.control}
             name="email"
@@ -100,15 +92,13 @@ export function RegisterForm() {
                     type="email"
                     placeholder="example@gmail.com"
                     {...field}
-                    className=" h-11 text-base bg-white/90 dark:bg-white/10 dark:text-white border border-gray-400 dark:border-white/30 focus-visible:ring-2 focus-visible:ring-blue-500 "
+                    className=" h-11 text-base"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* Password */}
           <FormField
             control={form.control}
             name="password"
@@ -120,16 +110,19 @@ export function RegisterForm() {
                     type="password"
                     placeholder="********"
                     {...field}
-                    className=" h-11 text-base bg-white/90 dark:bg-white/10 dark:text-white border border-gray-400 dark:border-white/30 focus-visible:ring-2 focus-visible:ring-blue-500 "
+                    className=" h-11 text-base"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* Submit */}
-          <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
+          <Button
+            type="submit"
+            variant={'outline'}
+            className="w-full h-11 text-base font-medium"
+            disabled={loading}
+          >
             {loading ? 'در حال ثبت‌نام...' : 'ثبت نام'}
           </Button>
         </form>

@@ -7,7 +7,6 @@ import { headers } from 'next/headers';
 export async function unbanUserAction(userId: string) {
   const headersList = await headers();
 
-  // گرفتن سشن
   const session = await auth.api.getSession({ headers: headersList });
   if (!session) return { success: false, error: 'Unauthorized' };
 
@@ -20,7 +19,7 @@ export async function unbanUserAction(userId: string) {
     body: {
       userId: session.user.id,
       permissions: {
-        user: ['ban'], // از defaultStatements می‌آید
+        user: ['ban'],
       },
     },
   });

@@ -14,7 +14,7 @@ export function NewProducts() {
           <h2 className="text-2xl font-bold ">New Products</h2>
           <Link
             href="/products/new"
-            className="text-sm font-medium bg-[#179BD7] px-4 py-2 rounded-md hover:bg-[#1279a8] transition"
+            className="text-sm font-medium text-[#179BD7] px-4 py-2 rounded-md hover:text-blue-600 transition"
           >
             View all &gt;
           </Link>

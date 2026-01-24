@@ -3,7 +3,7 @@
 import { User } from '@/types/user';
 import axios from 'axios';
 
-export async function fetchUserProfile(id: string): Promise<User> {
+export async function fetchUserProfileApi(id: string): Promise<User> {
   const res = await axios.get(`/api/users/${id}`);
   return res.data;
 }

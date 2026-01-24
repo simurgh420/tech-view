@@ -42,7 +42,7 @@ describe('useBlogs hook', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
-    vi.spyOn(queries, 'fetchBlogs').mockResolvedValue(mockData);
+    vi.spyOn(queries, 'fetchBlogsApi').mockResolvedValue(mockData);
 
     const { result } = renderHook(() => useBlogs().useGetBlogs(1, 10), {
       wrapper: createWrapper(),
@@ -54,7 +54,7 @@ describe('useBlogs hook', () => {
   it('useCreateBlog calls mutationFn and invalidates queries', async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBlog = { id: 1, slug: 'new-blog' } as any;
-    vi.spyOn(mutations, 'createBlog').mockResolvedValue(mockBlog);
+    vi.spyOn(mutations, 'createBlogApi').mockResolvedValue(mockBlog);
 
     const { result } = renderHook(() => useBlogs().useCreateBlog(), {
       wrapper: createWrapper(),
@@ -65,7 +65,7 @@ describe('useBlogs hook', () => {
       await result.current.mutateAsync({ title: 'New Blog' } as any);
     });
 
-    expect(mutations.createBlog).toHaveBeenCalledWith(
+    expect(mutations.createBlogApi).toHaveBeenCalledWith(
       { title: 'New Blog' },
       expect.any(Object) // ← React Query context
     );
@@ -74,7 +74,7 @@ describe('useBlogs hook', () => {
   it('useUpdateBlog calls mutationFn and invalidates queries', async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBlog = { id: 1, slug: 'updated-blog' } as any;
-    vi.spyOn(mutations, 'updateBlog').mockResolvedValue(mockBlog);
+    vi.spyOn(mutations, 'updateBlogApi').mockResolvedValue(mockBlog);
 
     const { result } = renderHook(() => useBlogs().useUpdateBlog('test-slug'), {
       wrapper: createWrapper(),
@@ -85,11 +85,11 @@ describe('useBlogs hook', () => {
       await result.current.mutateAsync({ title: 'Updated Blog' } as any);
     });
 
-    expect(mutations.updateBlog).toHaveBeenCalledWith('test-slug', { title: 'Updated Blog' });
+    expect(mutations.updateBlogApi).toHaveBeenCalledWith('test-slug', { title: 'Updated Blog' });
   });
 
   it('useDeleteBlog performs optimistic update and rollback on error', async () => {
-    vi.spyOn(mutations, 'deleteBlog').mockRejectedValue(new Error('Delete failed'));
+    vi.spyOn(mutations, 'deleteBlogApi').mockRejectedValue(new Error('Delete failed'));
 
     const { result } = renderHook(() => useBlogs().useDeleteBlog(), {
       wrapper: createWrapper(),
@@ -101,7 +101,7 @@ describe('useBlogs hook', () => {
       } catch {}
     });
 
-    expect(mutations.deleteBlog).toHaveBeenCalledWith(
+    expect(mutations.deleteBlogApi).toHaveBeenCalledWith(
       'test-slug',
       expect.any(Object) // ← React Query context
     );
