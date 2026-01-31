@@ -17,5 +17,5 @@
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style"]
+  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style", "Products"]
 }
