@@ -19,7 +19,6 @@ export function NavLinks() {
     <nav className="hidden md:flex gap-6 text-sm font-medium">
       {links.map(link => {
         const isActive = pathname === link.href;
-        // فقط برای لینک‌های غیر "/" حالت selected رو فعال کن
         const isParentActive = link.href !== '/' && pathname.startsWith(link.href);
         return (
           <Link
@@ -29,7 +28,7 @@ export function NavLinks() {
             className={clsx(
               'px-2 transition-all',
               isActive && 'text-black dark:text-white font-extrabold',
-              isParentActive && 'dark:text-blue-400 border-b-2 dark:border-blue-400 pb-2',
+              isParentActive && ' border-b-2 dark:border-blue-400 pb-2',
               !isActive &&
                 !isParentActive &&
                 'text-muted-foreground hover:text-gray-600 hover:border-b hover:border-gray-600'
