@@ -23,6 +23,10 @@ export default function EditCategoryPage() {
         onSuccess: () => {
           toast.success('کتگوری با موفقیت ویرایش شد ✅');
         },
+        onError: err => {
+          console.error(err);
+          toast.error('خطا در ویرایش کتگوری ❌');
+        },
       }
     );
   };

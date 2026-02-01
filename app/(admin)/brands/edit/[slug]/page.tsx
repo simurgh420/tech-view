@@ -25,6 +25,10 @@ export default function EditBrandPage() {
         onSuccess: () => {
           toast.success('برند با موفقیت ویرایش شد ✅');
         },
+        onError: err => {
+          console.error(err);
+          toast.error('خطا در ویرایش برند ❌');
+        },
       }
     );
   };

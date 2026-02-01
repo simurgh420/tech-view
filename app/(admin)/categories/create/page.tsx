@@ -3,9 +3,12 @@
 
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
 import { useCategories } from '@/hooks/useCategories';
+import { useRouter } from 'next/navigation';
+
 import { toast } from 'sonner';
 
 export default function CreateCategoryPage() {
+  const router = useRouter();
   const { useCreateCategory } = useCategories();
   const createMutation = useCreateCategory();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +16,11 @@ export default function CreateCategoryPage() {
     createMutation.mutate(formData, {
       onSuccess: () => {
         toast.success('کتگوری با موفقیت ساخته شد ✅');
+        router.push('/categories');
+      },
+      onError: err => {
+        console.error(err);
+        toast.error('خطا در ایجاد کتگوری ❌');
       },
     });
   };

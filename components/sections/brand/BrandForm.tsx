@@ -74,7 +74,7 @@ export function BrandForm({
                 <FormItem>
                   <FormLabel>لوگو (اختیاری)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/logo.png" {...field} />
+                    <Input placeholder="https://brandfetch.com/" {...field} />
                   </FormControl>
                   {field.value && (
                     <div className="mt-2 flex justify-center">
