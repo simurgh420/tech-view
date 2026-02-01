@@ -12,7 +12,7 @@ export interface Brand {
 
 export interface BrandPayload {
   name: string;
-  slug: string;
+  slug?: string;
   logo?: string;
   isActive?: boolean;
 }

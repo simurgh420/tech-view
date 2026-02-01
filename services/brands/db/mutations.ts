@@ -1,10 +1,16 @@
 // services/brands/db/mutations.ts
 import prisma from '@/services/db/client';
 import { BrandPayload } from '@/types/brand';
+import { toSlug } from '@/lib/slug';
 
 export async function createBrand(data: BrandPayload) {
   return prisma.brand.create({
-    data,
+    data: {
+      name: data.name,
+      slug: toSlug(data.name),
+      logo: data.logo || null,
+      isActive: true,
+    },
   });
 }
 
