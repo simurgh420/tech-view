@@ -1,7 +1,7 @@
 // app/(admin)/brands/edit/[slug]/page.tsx
 'use client';
 
-import { BrandForm } from '@/components/sections/brand/BrandForm';
+import { BrandForm, BrandFormType } from '@/components/sections/brand/BrandForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
@@ -15,12 +15,11 @@ export default function EditBrandPage() {
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!brand) return <p>برند یافت نشد ❌</p>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (formData: BrandFormType) => {
     updateMutation.mutate(
       {
-        ...data,
         slug,
+        data: formData,
       },
       {
         onSuccess: () => {
@@ -36,6 +35,7 @@ export default function EditBrandPage() {
         initialValues={brand}
         onSubmit={handleSubmit}
         isLoading={updateMutation.isPending}
+        slug={slug}
       />
     </div>
   );

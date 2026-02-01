@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import Image from 'next/image';
-
+import { BrandActions } from './BrandActions';
 
 const brandSchema = z.object({
   name: z.string().min(2, 'نام برند الزامی است'),
@@ -29,10 +29,12 @@ export function BrandForm({
   initialValues,
   onSubmit,
   isLoading,
+  slug,
 }: {
   initialValues?: Partial<BrandFormType>;
   onSubmit: (data: BrandFormType) => void;
   isLoading?: boolean;
+  slug?: string;
 }) {
   const form = useForm<BrandFormType>({
     resolver: zodResolver(brandSchema),
@@ -90,7 +92,8 @@ export function BrandForm({
               )}
             />
           </CardContent>
-          <CardFooter className="flex justify-end">
+          <CardFooter className="flex justify-between">
+            {slug && <BrandActions slug={slug} />}
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'در حال ذخیره...' : initialValues ? 'ویرایش' : 'ثبت'}
             </Button>
