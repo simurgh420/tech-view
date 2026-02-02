@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: Props) {
       title: post.title,
       description: post.excerpt,
       type: 'article',
-      url: `https://yourdomain.com/blog/${post.slug}`,
+      // url: `https://yourdomain.com/blog/${post.slug}`,
       images: [{ url: post.coverImageUrl, width: 1200, height: 630 }],
     },
-    alternates: { canonical: `https://yourdomain.com/blog/${post.slug}` },
+    // alternates: { canonical: `https://yourdomain.com/blog/${post.slug}` },
   };
 }
 export default async function PostPage({ params }: Props) {

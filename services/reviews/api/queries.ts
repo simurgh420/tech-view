@@ -1,6 +1,6 @@
 // services/reviews/api/queries.ts
 
-import { Review } from '@/types/review';
+import { Review } from '@/app/generated/prisma/client';
 import axios from 'axios';
 
 export async function fetchReviewsByProductApi(slug: string): Promise<Review[]> {

@@ -15,9 +15,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-
-import { TagsInput } from '@/components/Tags/TagsInput';
 import { ImageUploader } from '../image/ImageUploader';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const productSchema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
@@ -29,18 +34,26 @@ const productSchema = z.object({
   stockQuantity: z.number().optional(),
   thumbnail: z.union([z.instanceof(File), z.string()]).optional(),
   specifications: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
-  tags: z.array(z.string()).optional(), // مثلا برای ویژگی‌ها یا برچسب‌ها
 });
 
 export type ProductFormType = z.infer<typeof productSchema>;
-
+type Brand = { slug: string; name: string };
+type Category = { slug: string; title: string };
 type Props = {
   initialValues?: Partial<ProductFormType>;
   onSubmit: (data: ProductFormType) => void;
   isLoading?: boolean;
+  brands?: Brand[];
+  categories?: Category[];
 };
 
-export function ProductForm({ initialValues, onSubmit, isLoading }: Props) {
+export function ProductForm({
+  initialValues,
+  onSubmit,
+  isLoading,
+  brands = [],
+  categories = [],
+}: Props) {
   const form = useForm<ProductFormType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -51,9 +64,8 @@ export function ProductForm({ initialValues, onSubmit, isLoading }: Props) {
       brandSlug: initialValues?.brandSlug ?? '',
       categorySlug: initialValues?.categorySlug ?? '',
       stockQuantity: initialValues?.stockQuantity ?? 0,
-      thumbnail: undefined,
+      thumbnail: initialValues?.thumbnail ?? undefined,
       specifications: initialValues?.specifications ?? {},
-      tags: initialValues?.tags ?? [],
     },
   });
 
@@ -152,9 +164,20 @@ export function ProductForm({ initialValues, onSubmit, isLoading }: Props) {
           name="brandSlug"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>برند (slug)</FormLabel>
+              <FormLabel>برند</FormLabel>
               <FormControl>
-                <Input placeholder="مثلاً: samsung" {...field} />
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="انتخاب برند" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands?.map(brand => (
+                      <SelectItem key={brand.slug} value={brand.slug}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -167,9 +190,20 @@ export function ProductForm({ initialValues, onSubmit, isLoading }: Props) {
           name="categorySlug"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>دسته‌بندی (slug)</FormLabel>
+              <FormLabel>دسته‌بندی</FormLabel>
               <FormControl>
-                <Input placeholder="مثلاً: mobile" {...field} />
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="انتخاب دسته‌بندی" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories?.map(category => (
+                      <SelectItem key={category.slug} value={category.slug}>
+                        {category.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -207,9 +241,7 @@ export function ProductForm({ initialValues, onSubmit, isLoading }: Props) {
               <FormLabel>تصویر شاخص</FormLabel>
               <FormControl>
                 <ImageUploader
-                  initialUrl={
-                    typeof initialValues?.thumbnail === 'string' ? initialValues.thumbnail : null
-                  }
+                  initialUrl={typeof field.value === 'string' ? field.value : null}
                   onChange={file => field.onChange(file)}
                 />
               </FormControl>
@@ -217,23 +249,6 @@ export function ProductForm({ initialValues, onSubmit, isLoading }: Props) {
             </FormItem>
           )}
         />
-
-        {/* مشخصات (specifications) */}
-        {/* این بخش می‌تونه داینامیک باشه: مثلا رم، حافظه، رنگ، دوربین */}
-        <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ویژگی‌ها / تگ‌ها</FormLabel>
-              <FormControl>
-                <TagsInput value={field.value || []} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <Button type="submit" disabled={isLoading}>
           {isLoading ? 'در حال ذخیره...' : initialValues?.title ? 'ویرایش محصول' : 'ثبت محصول'}
         </Button>

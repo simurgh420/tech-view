@@ -1,5 +1,6 @@
 // services/categories/api/mutations.ts
-import { Category, CategoryPayload } from '@/types/category';
+import { Category } from '@/app/generated/prisma/client';
+import { CategoryPayload } from '@/types/category';
 import axios from 'axios';
 
 export async function createCategoryRequestApi(payload: CategoryPayload): Promise<Category> {

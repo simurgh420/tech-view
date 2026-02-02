@@ -1,6 +1,4 @@
-import { ProductPrice, Review } from '@/app/generated/prisma/client';
-import { Brand } from './brand';
-import { Category } from './category';
+import { Brand, Category } from '@/app/generated/prisma/client';
 
 // types/product.ts
 export interface Product {
@@ -19,6 +17,8 @@ export interface Product {
   reviewCount: number;
   thumbnail?: string | null;
   images: string[];
+  brand?: Brand;
+  category?: Category;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   specifications: any;
   brandId: string;
@@ -51,34 +51,3 @@ export interface ProductPayload {
   status?: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   publishedAt?: string | null;
 }
-
-export type ProductWithRelations = {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  price: string;
-  discountPrice?: string | null;
-  discountPercentage?: number | null;
-  isDiscounted: boolean;
-  isFeatured: boolean;
-  isNew: boolean;
-  stockQuantity: number;
-  rating?: string | null;
-  reviewCount: number;
-  thumbnail?: string | null;
-  images: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  specifications: any;
-  status?: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt?: string | null;
-
-  // روابط
-  brand?: Brand;
-  category?: Category;
-  subCategory?: Category | null;
-  prices?: ProductPrice[];
-  reviews?: Review[];
-};

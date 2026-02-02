@@ -1,5 +1,6 @@
 // hooks/useReviews.ts
 
+import { Review } from '@/app/generated/prisma/client';
 import {
   createReviewApi,
   deleteReviewApi,
@@ -7,7 +8,7 @@ import {
 } from '@/services/reviews/api/mutations';
 import { fetchReviewsByProductApi } from '@/services/reviews/api/queries';
 
-import { Review, ReviewPayload } from '@/types/review';
+import {  ReviewPayload } from '@/types/review';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useReviews(slug: string) {

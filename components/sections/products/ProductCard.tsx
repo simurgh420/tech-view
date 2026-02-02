@@ -1,9 +1,10 @@
 // components/product/ProductCard.tsx
 import Link from 'next/link';
-import { ProductWithRelations } from '@/types/product';
-import Image from 'next/image';
 
-export default function ProductCard({ product }: { product: ProductWithRelations }) {
+import Image from 'next/image';
+import { Product } from '@/types/product';
+
+export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -12,7 +13,8 @@ export default function ProductCard({ product }: { product: ProductWithRelations
       <Image
         src={product.thumbnail || '/placeholder.jpg'}
         alt={product.title}
-        fill
+        width={300}
+        height={300}
         className="w-full h-48 object-cover rounded mb-2"
       />
 

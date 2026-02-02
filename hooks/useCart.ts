@@ -1,5 +1,6 @@
 // hooks/useCart.ts
 
+import { CartItem } from '@/app/generated/prisma/client';
 import {
   addCartItemApi,
   clearCartApi,
@@ -7,7 +8,7 @@ import {
   updateCartItemQuantityApi,
 } from '@/services/cart/api/mutations';
 import { fetchCartItemsApi } from '@/services/cart/api/queries';
-import { CartItem, CartItemPayload } from '@/types/cart';
+import { CartItemPayload } from '@/types/cart';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useCart(cartId: string | undefined) {

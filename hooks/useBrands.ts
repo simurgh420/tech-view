@@ -1,7 +1,7 @@
 // hooks/useBrands.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Brand, BrandPayload } from '@/types/brand';
+import { BrandPayload } from '@/types/brand';
 
 import { fetchBrandBySlugApi, fetchBrandsApi } from '@/services/brands/api/queries';
 import {
@@ -9,6 +9,7 @@ import {
   deleteBrandRequestApi,
   updateBrandRequestApi,
 } from '@/services/brands/api/mutations';
+import { Brand } from '@/app/generated/prisma/client';
 
 export function useBrands() {
   const qc = useQueryClient();

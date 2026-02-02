@@ -3,7 +3,13 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@node-rs/argon2'],
   images: {
-    domains: ['cdn.brandfetch.io'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.brandfetch.io',
+        pathname: '**',
+      },
+    ],
   },
   experimental: {
     serverActions: {

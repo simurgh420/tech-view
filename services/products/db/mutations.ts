@@ -35,11 +35,15 @@ export async function createProduct(data: ProductPayload): Promise<Product> {
     publishedAt: product.publishedAt ? product.publishedAt.toISOString() : null,
   };
 }
-export async function updateProduct(slug: string, data: Partial<ProductPayload>): Promise<Product> {
+export async function updateProduct(
+  oldSlug: string,
+  data: Partial<ProductPayload>
+): Promise<Product> {
   const product = await prisma.product.update({
-    where: { slug },
+    where: { slug: oldSlug },
     data: {
       ...(data.title && { title: data.title }),
+      ...(data.slug && { slug: data.slug }),
       ...(data.description && { description: data.description }),
       ...(data.price && { price: data.price }),
       ...(data.discountPrice !== undefined && { discountPrice: data.discountPrice }),

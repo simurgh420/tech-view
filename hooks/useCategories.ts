@@ -1,12 +1,13 @@
 // hooks/useCategories.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Category, CategoryPayload } from '@/types/category';
+import { CategoryPayload } from '@/types/category';
 import {
   createCategoryRequestApi,
   deleteCategoryRequestApi,
   updateCategoryRequestApi,
 } from '@/services/categories/api/mutations';
 import { fetchCategoriesApi, fetchCategoryBySlugApi } from '@/services/categories/api/queries';
+import { Category } from '@/app/generated/prisma/client';
 
 export function useCategories() {
   const qc = useQueryClient();

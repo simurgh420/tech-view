@@ -1,6 +1,6 @@
 // services/categories/api/queries.ts
+import { Category } from '@/app/generated/prisma/client';
 import axios from 'axios';
-import { Category } from '@/types/category';
 
 export async function fetchCategoriesApi(): Promise<Category[]> {
   const res = await axios.get('/api/categories');

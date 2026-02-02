@@ -31,7 +31,7 @@ export function BrandForm({
   isLoading,
   slug,
 }: {
-  initialValues?: Partial<BrandFormType>;
+  initialValues?: Partial<Omit<BrandFormType, 'logo'>> & { logo?: string | null };
   onSubmit: (data: BrandFormType) => void;
   isLoading?: boolean;
   slug?: string;

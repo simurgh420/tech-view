@@ -1,6 +1,7 @@
 // services/cart/api/mutations.ts
 
-import { CartItem, CartItemPayload } from '@/types/cart';
+import { CartItem } from '@/app/generated/prisma/client';
+import { CartItemPayload } from '@/types/cart';
 import axios from 'axios';
 
 export async function addCartItemApi(payload: CartItemPayload): Promise<CartItem> {

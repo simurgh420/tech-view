@@ -1,6 +1,7 @@
 // services/brands/api/mutations.ts
 import axios from 'axios';
-import { Brand, BrandPayload } from '@/types/brand';
+import { BrandPayload } from '@/types/brand';
+import { Brand } from '@/app/generated/prisma/client';
 
 export async function createBrandRequestApi(payload: BrandPayload): Promise<Brand> {
   const res = await axios.post('/api/brands', payload);

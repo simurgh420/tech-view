@@ -1,6 +1,6 @@
 // services/cart/api/queries.ts
 
-import { CartItem } from '@/types/cart';
+import { CartItem } from '@/app/generated/prisma/client';
 import axios from 'axios';
 
 export async function fetchCartApi(userId: string) {

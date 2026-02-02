@@ -1,12 +1,13 @@
 // hooks/useWishlist.ts
 
+import { WishlistItem } from '@/app/generated/prisma/client';
 import {
   addWishlistItemApi,
   deleteWishlistItemApi,
   deleteWishlistItemByUserAndProductApi,
 } from '@/services/wishlist/api/mutations';
 import { fetchWishlistApi } from '@/services/wishlist/api/queries';
-import { WishlistItem, WishlistPayload } from '@/types/wishlist';
+import {  WishlistPayload } from '@/types/wishlist';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useWishlist(userId: string) {
