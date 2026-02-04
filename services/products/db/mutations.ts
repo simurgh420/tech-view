@@ -18,7 +18,7 @@ export async function createProduct(data: ProductPayload): Promise<Product> {
       thumbnail: data.thumbnail ?? null,
       images: data.images ?? [],
       specifications: data.specifications ?? {},
-      status: data.status ?? 'DRAFT',
+      status: data.status ?? 'PUBLISHED',
       publishedAt: data.publishedAt ? new Date(data.publishedAt) : null,
       brand: { connect: { slug: data.brandSlug } },
       category: { connect: { slug: data.categorySlug } },

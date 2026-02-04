@@ -1,11 +1,38 @@
 // app/api/products/route.ts
 import { NextResponse } from 'next/server';
-import { getProducts } from '@/services/products/db/queries';
+import { getProducts, getFilteredProducts } from '@/services/products/db/queries';
 import { createProduct } from '@/services/products/db/mutations';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const products = await getProducts();
+    const url = new URL(req.url);
+    const sp = url.searchParams;
+
+    const filters = {
+      brandSlug: sp.get('brandSlug') ?? undefined,
+      categorySlug: sp.get('categorySlug') ?? undefined,
+      subCategorySlug: sp.get('subCategorySlug') ?? undefined,
+      minPrice: sp.get('minPrice') ? Number(sp.get('minPrice')) : undefined,
+      maxPrice: sp.get('maxPrice') ? Number(sp.get('maxPrice')) : undefined,
+      sort: (sp.get('sort') as 'featured' | 'price-asc' | 'price-desc' | 'new') ?? undefined,
+      q: sp.get('q') ?? undefined, // optional search query
+      page: sp.get('page') ? Math.max(1, Number(sp.get('page'))) : undefined,
+      perPage: sp.get('perPage') ? Math.max(1, Number(sp.get('perPage'))) : undefined,
+    };
+
+    // اگر هیچ فیلتری ارسال نشده، رفتار قبلی حفظ شود
+    const noFilters =
+      !filters.brandSlug &&
+      !filters.categorySlug &&
+      !filters.subCategorySlug &&
+      filters.minPrice === undefined &&
+      filters.maxPrice === undefined &&
+      !filters.q &&
+      !filters.page &&
+      !filters.perPage;
+    console.log('filters:', filters);
+    const products = noFilters ? await getProducts() : await getFilteredProducts(filters);
+
     return NextResponse.json(products);
   } catch (error) {
     console.error('GET /api/products Error:', error);
@@ -19,6 +46,15 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+
+    // اعتبارسنجی سطحی
+    if (!body || typeof body.title !== 'string' || typeof body.price === 'undefined') {
+      return NextResponse.json(
+        { success: false, message: 'Invalid product payload' },
+        { status: 400 }
+      );
+    }
+
     const product = await createProduct(body);
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
