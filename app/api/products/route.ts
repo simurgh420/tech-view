@@ -14,22 +14,24 @@ export async function GET(req: Request) {
       subCategorySlug: sp.get('subCategorySlug') ?? undefined,
       minPrice: sp.get('minPrice') ? Number(sp.get('minPrice')) : undefined,
       maxPrice: sp.get('maxPrice') ? Number(sp.get('maxPrice')) : undefined,
-      sort: (sp.get('sort') as 'featured' | 'price-asc' | 'price-desc' | 'new') ?? undefined,
-      q: sp.get('q') ?? undefined, // optional search query
+      ram: sp.getAll('ram'),
+      sort: sp.get('sort') as 'featured' | 'price-asc' | 'price-desc' | 'new' | undefined,
+      q: sp.get('q') ?? undefined,
       page: sp.get('page') ? Math.max(1, Number(sp.get('page'))) : undefined,
       perPage: sp.get('perPage') ? Math.max(1, Number(sp.get('perPage'))) : undefined,
     };
 
-    // اگر هیچ فیلتری ارسال نشده، رفتار قبلی حفظ شود
     const noFilters =
       !filters.brandSlug &&
       !filters.categorySlug &&
       !filters.subCategorySlug &&
       filters.minPrice === undefined &&
       filters.maxPrice === undefined &&
+      (!filters.ram || filters.ram.length === 0) &&
       !filters.q &&
       !filters.page &&
       !filters.perPage;
+
     const products = noFilters ? await getProducts() : await getFilteredProducts(filters);
 
     return NextResponse.json(products);

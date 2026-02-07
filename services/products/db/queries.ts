@@ -83,28 +83,50 @@ export async function getFilteredProducts({
 
   if (sort === 'price-asc') orderBy = { price: 'asc' };
   if (sort === 'price-desc') orderBy = { price: 'desc' };
-  if (sort === 'new') orderBy = { createdAt: 'desc' };
   if (sort === 'featured') orderBy = { isFeatured: 'desc' };
 
   const skip = page && perPage ? (page - 1) * perPage : undefined;
   const take = perPage ?? undefined;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {
+    status: 'PUBLISHED',
+  };
+
+  if (brandSlug) {
+    where.brand = {
+      slug: { equals: brandSlug, mode: 'insensitive' },
+    };
+  }
+
+  if (categorySlug) {
+    where.category = { slug: categorySlug };
+  }
+
+  if (subCategorySlug) {
+    where.subCategory = { slug: subCategorySlug };
+  }
+
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    where.price = {
+      ...(minPrice !== undefined && { gte: minPrice }),
+      ...(maxPrice !== undefined && { lte: maxPrice }),
+    };
+  }
+
+  if (ram && ram.length > 0) {
+    where.ram = { in: ram };
+  }
+
+  if (q) {
+    where.OR = [
+      { title: { contains: q, mode: 'insensitive' } },
+      { description: { contains: q, mode: 'insensitive' } },
+    ];
+  }
+
   return prisma.product.findMany({
-    where: {
-      ...(brandSlug && { brand: { slug: { equals: brandSlug, mode: 'insensitive' } } }),
-      ...(categorySlug && { category: { slug: categorySlug } }),
-      ...(subCategorySlug && { subCategory: { slug: subCategorySlug } }),
-      ...(minPrice && { price: { gte: minPrice } }),
-      ...(maxPrice && { price: { lte: maxPrice } }),
-      ...(ram && { ram: { in: ram } }),
-      ...(q && {
-        OR: [
-          { title: { contains: q, mode: 'insensitive' } },
-          { description: { contains: q, mode: 'insensitive' } },
-        ],
-      }),
-      status: 'PUBLISHED',
-    },
+    where,
     orderBy,
     skip,
     take,

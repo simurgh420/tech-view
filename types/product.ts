@@ -51,3 +51,15 @@ export interface ProductPayload {
   status?: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   publishedAt?: string | null;
 }
+export type FiltersProduct = {
+  brandSlug?: string;
+  categorySlug?: string;
+  subCategorySlug?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: string;
+  ram?: string[];
+  page?: number;
+  perPage?: number;
+  q?: string;
+};

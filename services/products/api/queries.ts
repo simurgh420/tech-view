@@ -1,5 +1,5 @@
 // services/products/api/queries.ts
-import { Product } from '@/types/product';
+import { FiltersProduct, Product } from '@/types/product';
 import axios from 'axios';
 
 export async function fetchProductsApi(): Promise<Product[]> {
@@ -28,14 +28,23 @@ export async function fetchFeaturedProductsApi(): Promise<Product[]> {
 }
 
 // ✅ فانکشن عمومی برای فیلتر و مرتب‌سازی
-export async function fetchFilteredProductsApi(filters: {
-  brand?: string;
-  category?: string;
-  subCategory?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  sort?: string;
-}): Promise<Product[]> {
-  const res = await axios.get('/api/products', { params: filters });
+export async function fetchFilteredProductsApi(filters: FiltersProduct): Promise<Product[]> {
+  const res = await axios.get('/api/products', {
+    params: filters,
+    paramsSerializer: params => {
+      const sp = new URLSearchParams();
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach(v => sp.append(key, v));
+        } else if (value !== undefined && value !== null) {
+          sp.set(key, String(value));
+        }
+      });
+
+      return sp.toString();
+    },
+  });
+
   return res.data;
 }
