@@ -30,7 +30,6 @@ export async function GET(req: Request) {
       !filters.q &&
       !filters.page &&
       !filters.perPage;
-    console.log('filters:', filters);
     const products = noFilters ? await getProducts() : await getFilteredProducts(filters);
 
     return NextResponse.json(products);

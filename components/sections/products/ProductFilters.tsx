@@ -1,4 +1,3 @@
-// components/product/ProductFilters.tsx
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +15,8 @@ export default function ProductFilters({ onChange }: Props) {
   const [price, setPrice] = useState<number>(0);
   const [brandSlug, setBrandSlug] = useState<string | undefined>(undefined);
   const [ram, setRam] = useState<string[]>([]);
+  const [isBrandOpen, setIsBrandOpen] = useState<boolean>(false);
+  const [isRamOpen, setIsRamOpen] = useState<boolean>(false);
 
   function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = Number(e.target.value);
@@ -38,62 +39,78 @@ export default function ProductFilters({ onChange }: Props) {
   }
 
   return (
-    <div className="p-4 rounded-lg shadow-sm space-y-6">
-      <h3 className="font-bold text-lg">فیلترها</h3>
+    <div className="p-6  rounded-lg shadow-lg space-y-6">
+      <h3 className="text-2xl font-semibold ">فیلترها</h3>
 
       {/* فیلتر قیمت */}
       <div>
-        <label className="block text-sm font-medium mb-1">محدوده قیمت</label>
+        <label className="block text-sm font-medium mb-2 ">محدوده قیمت</label>
         <input
           type="range"
           min="0"
           max="50000000"
           value={price}
           onChange={handlePriceChange}
-          className="w-full"
+          className="w-full h-2  rounded-lg"
         />
-        <div className="text-xs mt-1">تا {price.toLocaleString()} تومان</div>
+        <div className="text-sm mt-2">تا {price.toLocaleString()} تومان</div>
       </div>
 
-      {/* فیلتر برند (تک انتخابی) */}
+      {/* فیلتر برند (کشویی) */}
       <div>
-        <label className="block text-sm font-medium mb-1">برند</label>
-        <ul className="space-y-1 text-sm">
-          {['apple', 'Samsung', 'TM-D', 'Cypher'].map(b => (
-            <li key={b}>
-              <label className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setIsBrandOpen(!isBrandOpen)}
+          className="w-full text-left px-4 py-2  rounded-lg flex justify-between items-center "
+        >
+          <span className="text-sm">برند</span>
+          <span>{brandSlug || 'انتخاب نشده'}</span>
+        </button>
+        {isBrandOpen && (
+          <div className="space-y-2 mt-2">
+            {['apple', 'Samsung', 'TM-D', 'Cypher'].map(b => (
+              <label key={b} className="block text-sm ">
                 <input
-                  type="radio" // ✅ رادیو به جای چک‌باکس
+                  type="radio"
                   name="brandSlug"
                   value={b}
                   checked={brandSlug === b}
                   onChange={handleBrandChange}
+                  className="mr-2"
                 />
                 {b}
               </label>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* فیلتر رم (چند انتخابی) */}
       <div>
-        <label className="block text-sm font-medium mb-1">رم</label>
-        <ul className="space-y-1 text-sm">
-          {['4', '6', '8'].map(r => (
-            <li key={r}>
-              <label className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setIsRamOpen(!isRamOpen)}
+          className="w-full text-left px-4 py-2  rounded-lg flex justify-between items-center"
+        >
+          <span className="text-sm">رم</span>
+          <span>{ram.length > 0 ? ram.join(', ') : 'انتخاب نشده'}</span>
+        </button>
+        {isRamOpen && (
+          <div className="space-y-2 mt-2">
+            {['4', '6', '8'].map(r => (
+              <label key={r} className="block text-sm ">
                 <input
                   type="checkbox"
                   value={r}
                   checked={ram.includes(r)}
                   onChange={handleRamChange}
+                  className="mr-2"
                 />
                 {r} گیگ
               </label>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -88,10 +88,7 @@ export async function getFilteredProducts({
 
   const skip = page && perPage ? (page - 1) * perPage : undefined;
   const take = perPage ?? undefined;
-  console.log('DB where:', {
-    ...(brandSlug && { brand: { slug: { equals: brandSlug, mode: 'insensitive' } } }),
-    status: 'PUBLISHED',
-  });
+
   return prisma.product.findMany({
     where: {
       ...(brandSlug && { brand: { slug: { equals: brandSlug, mode: 'insensitive' } } }),

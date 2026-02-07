@@ -1,4 +1,3 @@
-// app/products/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -36,30 +35,33 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 grid grid-cols-12 gap-6">
-      {/* Sidebar Filters */}
-      <aside className=" col-span-3 order-last ">
-        <ProductFilters onChange={handleFiltersChange} />
-      </aside>
-      {/* Product List */}
-      <section className="col-span-12 lg:col-span-9">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold">محصولات</h1>
-          <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
-        </div>
-
-        {isLoading ? (
-          <div className="text-center py-10">در حال بارگذاری...</div>
-        ) : products?.length ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+    <div className="container mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Product List and Sorting */}
+        <section className="col-span-12 lg:col-span-9">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl font-bold">محصولات</h1>
+            <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
           </div>
-        ) : (
-          <div className="text-center py-10 text-gray-500">محصولی یافت نشد ❌</div>
-        )}
-      </section>
+
+          {isLoading ? (
+            <div className="text-center py-10">در حال بارگذاری...</div>
+          ) : products?.length ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10 text-gray-500">محصولی یافت نشد ❌</div>
+          )}
+        </section>
+
+        {/* Sidebar Filters */}
+        <aside className="col-span-12 lg:col-span-3 mt-6 lg:mt-0">
+          <ProductFilters onChange={handleFiltersChange} />
+        </aside>
+      </div>
     </div>
   );
 }
