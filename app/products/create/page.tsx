@@ -16,10 +16,12 @@ export default function CreateProductPage() {
   const { data: brands } = useGetBrands();
   const { useGetCategories } = useCategories();
   const { data: categories } = useGetCategories();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function handleSubmit(data: any) {
     const slug = toSlug(data.title);
     let thumbnailUrl = '';
+
     // اگر تصویر آپلود شده بود
     if (data.thumbnail instanceof File) {
       const formData = new FormData();
@@ -31,24 +33,24 @@ export default function CreateProductPage() {
       });
       thumbnailUrl = res.data.imageUrl;
     }
+
     createMutation.mutate(
       {
         ...data,
         slug,
         thumbnail: thumbnailUrl,
-        discountPercentage: null,
-        isDiscounted: !!data.discountPrice,
         isFeatured: false,
         isNew: true,
         stockQuantity: data.stockQuantity ?? 0,
         images: [],
         specifications: data.specifications ?? {},
-        status: 'DRAFT',
+        status: 'PUBLISHED',
         publishedAt: null,
       },
       { onSuccess: () => router.push('/products') }
     );
   }
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6">📦 ایجاد محصول جدید</h1>

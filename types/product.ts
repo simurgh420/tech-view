@@ -33,8 +33,9 @@ export interface ProductPayload {
   title: string;
   slug: string;
   description: string;
-  price: string; // send as string for Decimal
-  discountPrice?: string | null;
+  price: number; // send as string for Decimal
+  discountPrice?: number | null;
+
   discountPercentage?: number | null;
   isDiscounted?: boolean;
   isFeatured?: boolean;

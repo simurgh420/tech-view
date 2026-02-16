@@ -1,16 +1,16 @@
+// app/products/page.tsx
 'use client';
 
 import { useState } from 'react';
-import ProductCard from '@/components/sections/products/ProductCard';
 
 import { useProducts } from '@/hooks/useProducts';
-import ProductFilters from '@/components/sections/products/ProductFilters';
 import SortMenu from '@/components/sections/products/SortMenu';
+import ProductCard from '@/components/sections/products/ProductCard';
+import ProductFilters from '@/components/sections/products/ProductFilters';
 
 export default function ProductsPage() {
   const { useGetFilteredProducts } = useProducts();
 
-  // ✅ state برای فیلترها و مرتب‌سازی
   const [filters, setFilters] = useState<{
     brandSlug?: string;
     category?: string;
@@ -21,15 +21,12 @@ export default function ProductsPage() {
     sort?: string;
   }>({});
 
-  // ✅ گرفتن محصولات با فیلترها
   const { data: products, isLoading } = useGetFilteredProducts(filters);
 
-  // ✅ تغییر مرتب‌سازی
   function handleSortChange(sort: string) {
     setFilters(prev => ({ ...prev, sort }));
   }
 
-  // ✅ تغییر فیلترها
   function handleFiltersChange(newFilters: Partial<typeof filters>) {
     setFilters(prev => ({ ...prev, ...newFilters }));
   }
@@ -37,15 +34,17 @@ export default function ProductsPage() {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Product List and Sorting */}
+        {/* Product List */}
         <section className="col-span-12 lg:col-span-9">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">محصولات</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">محصولات</h1>
             <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
           </div>
 
           {isLoading ? (
-            <div className="text-center py-10">در حال بارگذاری...</div>
+            <div className="text-center py-10 text-gray-600 dark:text-gray-400">
+              در حال بارگذاری...
+            </div>
           ) : products?.length ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.map(product => (
@@ -53,7 +52,9 @@ export default function ProductsPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 text-gray-500">محصولی یافت نشد ❌</div>
+            <div className="text-center py-10 text-gray-500 dark:text-gray-400">
+              محصولی یافت نشد ❌
+            </div>
           )}
         </section>
 
