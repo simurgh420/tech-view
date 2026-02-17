@@ -61,7 +61,7 @@ export async function getFilteredProducts({
   subCategorySlug,
   minPrice,
   maxPrice,
-  sort,
+  sort = 'new',
   q,
   page,
   perPage,
@@ -79,11 +79,12 @@ export async function getFilteredProducts({
   ram?: string[];
 }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let orderBy: any = { createdAt: 'desc' };
+  let orderBy: any;
 
   if (sort === 'price-asc') orderBy = { price: 'asc' };
-  if (sort === 'price-desc') orderBy = { price: 'desc' };
-  if (sort === 'featured') orderBy = { isFeatured: 'desc' };
+  else if (sort === 'price-desc') orderBy = { price: 'desc' };
+  else if (sort === 'featured') orderBy = [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
+  else orderBy = { createdAt: 'desc' }; // new
 
   const skip = page && perPage ? (page - 1) * perPage : undefined;
   const take = perPage ?? undefined;
@@ -134,7 +135,6 @@ export async function getFilteredProducts({
       brand: true,
       category: true,
       subCategory: true,
-      prices: true,
       reviews: true,
     },
   });
