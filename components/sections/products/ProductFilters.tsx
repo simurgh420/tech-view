@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import { Button } from '@/components/ui';
 
 type Filters = {
   minPrice?: number;
@@ -43,15 +44,16 @@ export default function ProductFilters({ onChange }: Props) {
 
       {/* قیمت - منوی کشویی */}
       <div>
-        <button
+        <Button
           onClick={() => setIsPriceOpen(p => !p)}
           className="w-full flex justify-between items-center"
+          variant={'outline'}
         >
           <span>محدوده قیمت</span>
           <span>
             {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} تومان
           </span>
-        </button>
+        </Button>
 
         {isPriceOpen && (
           <div className="mt-3 px-2">
@@ -90,12 +92,16 @@ export default function ProductFilters({ onChange }: Props) {
 
       {/* برند */}
       <div>
-        <button onClick={() => setIsBrandOpen(p => !p)} className="w-full flex justify-between">
+        <Button
+          variant={'ghost'}
+          onClick={() => setIsBrandOpen(p => !p)}
+          className="w-full flex justify-between"
+        >
           <span>برند</span>
           <span>{brandSlug ?? 'انتخاب نشده'}</span>
-        </button>
+        </Button>
         {isBrandOpen && (
-          <div className="mt-2 space-y-2">
+          <div className="mt-2 space-y-2" dir="rtl">
             {['apple', 'samsung', 'tm-d', 'cypher'].map(b => (
               <label key={b} className="block">
                 <input
@@ -117,12 +123,16 @@ export default function ProductFilters({ onChange }: Props) {
 
       {/* رم */}
       <div>
-        <button onClick={() => setIsRamOpen(p => !p)} className="w-full flex justify-between">
+        <Button
+          variant={'ghost'}
+          onClick={() => setIsRamOpen(p => !p)}
+          className="w-full flex justify-between"
+        >
           <span>رم</span>
           <span>{ram.length ? ram.join(', ') : 'انتخاب نشده'}</span>
-        </button>
+        </Button>
         {isRamOpen && (
-          <div className="mt-2 space-y-2">
+          <div className="mt-2 space-y-2" dir="rtl">
             {['4', '6', '8'].map(r => (
               <label key={r} className="block">
                 <input
