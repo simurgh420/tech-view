@@ -35,6 +35,8 @@ const productSchema = z.object({
   thumbnail: z.union([z.instanceof(File), z.string()]).optional(),
   specifications: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
 });
+const formatPrice = (value: number | null | undefined) =>
+  value ? new Intl.NumberFormat().format(value) : '';
 
 export type ProductFormType = z.infer<typeof productSchema>;
 type Brand = { slug: string; name: string };
@@ -125,12 +127,14 @@ export function ProductForm({
               <FormLabel>قیمت</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
-                  {...field}
-                  onChange={e =>
-                    field.onChange(e.target.value === '' ? undefined : +e.target.value)
-                  }
-                  value={field.value ?? ''}
+                  type="text"
+                  inputMode="numeric"
+                  value={formatPrice(field.value)}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '');
+                    field.onChange(raw ? Number(raw) : undefined);
+                  }}
+                  placeholder="مثلاً: 1,250,000"
                 />
               </FormControl>
               <FormMessage />
@@ -147,10 +151,14 @@ export function ProductForm({
               <FormLabel>قیمت تخفیف</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
-                  {...field}
-                  onChange={e => field.onChange(e.target.value === '' ? null : +e.target.value)}
-                  value={field.value ?? ''}
+                  type="text"
+                  inputMode="numeric"
+                  value={field.value ? new Intl.NumberFormat('en-US').format(field.value) : ''}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, ''); // فقط رقم‌ها
+                    field.onChange(raw ? Number(raw) : null);
+                  }}
+                  placeholder="مثلاً: 950,000"
                 />
               </FormControl>
               <FormMessage />
@@ -209,7 +217,6 @@ export function ProductForm({
             </FormItem>
           )}
         />
-
         {/* موجودی انبار */}
         <FormField
           control={form.control}
@@ -219,12 +226,14 @@ export function ProductForm({
               <FormLabel>موجودی انبار</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
-                  {...field}
-                  onChange={e =>
-                    field.onChange(e.target.value === '' ? undefined : +e.target.value)
-                  }
-                  value={field.value ?? ''}
+                  type="text"
+                  inputMode="numeric"
+                  value={field.value ? new Intl.NumberFormat('en-US').format(field.value) : ''}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, ''); // فقط رقم‌ها
+                    field.onChange(raw ? Number(raw) : undefined);
+                  }}
+                  placeholder="مثلاً: 150"
                 />
               </FormControl>
               <FormMessage />
