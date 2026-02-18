@@ -55,6 +55,13 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    const price = Number(body.price);
+    if (isNaN(price) || price <= 0) {
+      return NextResponse.json(
+        { success: false, message: 'قیمت محصول معتبر نیست' },
+        { status: 400 }
+      );
+    }
 
     const product = await createProduct(body);
     return NextResponse.json(product, { status: 201 });
