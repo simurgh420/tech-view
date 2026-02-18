@@ -25,15 +25,17 @@ export function MegaMenu() {
           {/* دسته‌بندی‌ها */}
           <div>
             <h4 className="text-sm font-bold  mb-3">Categories</h4>
-            <ul className="space-y-2 text-sm ">
+            <ul className="space-y-2 text-sm">
               {categories.map(cat => (
-                <li
-                  key={cat.name}
-                  onMouseEnter={() => setActiveCategory(cat)}
-                  className="flex items-center cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
-                >
-                  <cat.icon className="w-4 h-4   mr-2" />
-                  {cat.name}
+                <li key={cat.name}>
+                  <Link
+                    href={cat.link}
+                    onMouseEnter={() => setActiveCategory(cat)}
+                    className="flex items-center cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
+                  >
+                    <cat.icon className="w-4 h-4 mr-2" />
+                    {cat.name}
+                  </Link>
                 </li>
               ))}
             </ul>
