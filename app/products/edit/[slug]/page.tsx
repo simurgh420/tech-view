@@ -1,6 +1,7 @@
 'use client';
 
-import { ProductForm, ProductFormType } from '@/components/sections/products/ProductForm';
+import { ProductFormValues } from '@/components/admin/product-form/product.schema';
+import { ProductForm } from '@/components/admin/product-form/ProductForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useProducts } from '@/hooks/useProducts';
@@ -26,7 +27,7 @@ export default function EditProductPage() {
 
   const updateMutation = useUpdateProduct();
 
-  async function handleSubmit(data: ProductFormType) {
+  async function handleSubmit(data: ProductFormValues) {
     const slug = toSlug(data.title);
     let thumbnailUrl: string | null = null;
 

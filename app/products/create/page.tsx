@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductForm } from '@/components/sections/products/ProductForm';
+import { ProductForm } from '@/components/admin/product-form/ProductForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useProducts } from '@/hooks/useProducts';
