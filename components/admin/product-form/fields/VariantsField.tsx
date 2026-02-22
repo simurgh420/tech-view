@@ -14,7 +14,7 @@ export function VariantsField({ control }: Props) {
       control={control}
       name="variants"
       render={({ field }) => {
-        const variants = field.value ?? [];
+        const variants = Array.isArray(field.value) ? field.value : [];
 
         return (
           <FormItem>
@@ -23,29 +23,35 @@ export function VariantsField({ control }: Props) {
             <div className="space-y-3">
               {variants.map((variant, index) => (
                 <div key={index} className="flex items-center gap-2">
+                  {/* RAM */}
                   <Input
-                    placeholder="RAM"
+                    id={`variant-ram-${index}`}
+                    placeholder="RAM (مثلاً: 8GB)"
                     value={variant.ram}
                     onChange={e => {
                       const updated = [...variants];
-                      updated[index].ram = e.target.value;
+                      updated[index] = { ...updated[index], ram: e.target.value };
                       field.onChange(updated);
                     }}
                   />
 
+                  {/* Storage */}
                   <Input
-                    placeholder="Storage"
+                    id={`variant-storage-${index}`}
+                    placeholder="Storage (مثلاً: 256GB)"
                     value={variant.storage}
                     onChange={e => {
                       const updated = [...variants];
-                      updated[index].storage = e.target.value;
+                      updated[index] = { ...updated[index], storage: e.target.value };
                       field.onChange(updated);
                     }}
                   />
 
+                  {/* حذف */}
                   <Button
                     type="button"
                     variant="destructive"
+                    size="sm"
                     onClick={() => field.onChange(variants.filter((_, i) => i !== index))}
                   >
                     حذف
@@ -53,10 +59,16 @@ export function VariantsField({ control }: Props) {
                 </div>
               ))}
 
+              {/* افزودن تنوع جدید */}
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => field.onChange([...variants, { ram: '', storage: '' }])}
+                size="sm"
+                onClick={() => {
+                  const last = variants[variants.length - 1];
+                  if (last && (!last.ram || !last.storage)) return;
+                  field.onChange([...variants, { ram: '', storage: '' }]);
+                }}
               >
                 افزودن تنوع جدید
               </Button>

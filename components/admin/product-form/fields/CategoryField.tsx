@@ -22,18 +22,28 @@ export function CategoryField({ control, categories }: Props) {
       name="categorySlug"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>دسته‌بندی</FormLabel>
+          <FormLabel htmlFor="categorySlug">دسته‌بندی</FormLabel>
           <FormControl>
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger>
+            <Select
+              value={field.value}
+              onValueChange={field.onChange}
+              disabled={!categories.length}
+            >
+              <SelectTrigger id="categorySlug">
                 <SelectValue placeholder="انتخاب دسته‌بندی" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category.slug} value={category.slug}>
-                    {category.title}
+                {categories.length === 0 ? (
+                  <SelectItem disabled value="__empty">
+                    هیچ دسته‌بندی ثبت نشده
                   </SelectItem>
-                ))}
+                ) : (
+                  categories.map(category => (
+                    <SelectItem key={category.slug} value={category.slug}>
+                      {category.title}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </FormControl>

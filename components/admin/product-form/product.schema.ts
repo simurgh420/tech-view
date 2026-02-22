@@ -24,17 +24,19 @@ export const productSchema = z.object({
       storage: z.string().min(1, 'حافظه الزامی است'),
     })
   ),
-  specifications: z.record(
-    z.string(),
-    z.array(
-      z.object({
-        label: z.string().min(1, 'عنوان ویژگی الزامی است'),
-        value: z.union([z.string(), z.number()]),
-      })
-    )
+  specifications: z.array(
+    z.object({
+      group: z.string().min(1, 'نام گروه الزامی است'),
+      items: z.array(
+        z.object({
+          label: z.string().min(1, 'عنوان ویژگی الزامی است'),
+          value: z.union([z.string(), z.number()]),
+        })
+      ),
+    })
   ),
   thumbnail: z.union([z.instanceof(File), z.string()]).optional(),
-  images: z.array(z.union([z.instanceof(File), z.string()])),
+  images: z.array(z.union([z.string(), z.instanceof(File), z.null()])),
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;

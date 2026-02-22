@@ -5,7 +5,7 @@ import { ProductForm } from '@/components/admin/product-form/ProductForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useProducts } from '@/hooks/useProducts';
-import { toSlug } from '@/lib/slug';
+import { recordToArray } from '@/lib/specifications';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -15,10 +15,8 @@ export default function EditProductPage() {
   const router = useRouter();
   const { useGetProduct, useUpdateProduct } = useProducts();
 
-  // گرفتن محصول بر اساس slug
   const { data: product, isLoading, isError } = useGetProduct(slug);
 
-  // گرفتن برندها و کتگوری‌ها
   const { useGetBrands } = useBrands();
   const { data: brands } = useGetBrands();
 
@@ -28,52 +26,77 @@ export default function EditProductPage() {
   const updateMutation = useUpdateProduct();
 
   async function handleSubmit(data: ProductFormValues) {
-    const slug = toSlug(data.title);
+    const currentSlug = product?.slug ?? '';
+
+    /* ------------------ THUMBNAIL ------------------ */
     let thumbnailUrl: string | null = null;
 
     if (data.thumbnail instanceof File) {
-      // اگر تصویر قبلی وجود داشت → حذفش کن
       if (product?.thumbnail) {
-        await axios.post('/api/images/delete', {
-          imagePath: product.thumbnail,
-        });
+        await axios.post('/api/images/delete', { imagePath: product.thumbnail });
       }
 
-      // آپلود تصویر جدید
       const formData = new FormData();
       formData.append('file', data.thumbnail);
-      formData.append('folder', `products/${slug}/thumbnail`);
+      formData.append('folder', `products/${currentSlug}/thumbnail`);
       formData.append('baseName', data.title);
+
       const res = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+
       thumbnailUrl = res.data.imageUrl;
     } else if (typeof data.thumbnail === 'string') {
       thumbnailUrl = data.thumbnail;
     } else {
-      // اگر کاربر تصویر رو حذف کرده بود
       if (product?.thumbnail) {
-        await axios.post('/api/images/delete', {
-          imagePath: product.thumbnail,
-        });
+        await axios.post('/api/images/delete', { imagePath: product.thumbnail });
       }
       thumbnailUrl = null;
     }
 
+    /* ------------------ GALLERY ------------------ */
+    const galleryUrls: string[] = [];
+
+    for (const img of data.images) {
+      if (img instanceof File) {
+        const formData = new FormData();
+        formData.append('file', img);
+        formData.append('folder', `products/${currentSlug}/gallery`);
+        formData.append('baseName', data.title);
+
+        const res = await axios.post('/api/images/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+
+        galleryUrls.push(res.data.imageUrl);
+      } else if (typeof img === 'string') {
+        galleryUrls.push(img);
+      }
+    }
+
+    /* ------------------ UPDATE ------------------ */
     updateMutation.mutate(
       {
-        slug: product?.slug ?? '',
+        slug: currentSlug,
         data: {
           title: data.title,
-          slug: toSlug(data.title),
           description: data.description,
           price: data.price,
-          discountPrice: data.discountPrice != null ? data.discountPrice : null,
+          discountPrice: data.discountPrice ?? null,
           brandSlug: data.brandSlug,
           categorySlug: data.categorySlug,
           stockQuantity: data.stockQuantity ?? 0,
+
           thumbnail: thumbnailUrl,
+          images: galleryUrls,
+
+          keyFeatures: data.keyFeatures ?? [],
+          colors: data.colors ?? [],
+          variants: data.variants ?? [],
           specifications: data.specifications ?? {},
+
+          status: product?.status ?? 'PUBLISHED',
         },
       },
       { onSuccess: () => router.push('/products') }
@@ -86,15 +109,24 @@ export default function EditProductPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6">✏️ ویرایش محصول</h1>
+
       <ProductForm
         onSubmit={handleSubmit}
         isLoading={updateMutation.isPending}
         initialValues={{
           ...product,
+
           price: Number(product.price),
           discountPrice: product.discountPrice ? Number(product.discountPrice) : null,
           stockQuantity: product.stockQuantity ?? 0,
+
           thumbnail: product.thumbnail ?? undefined,
+          images: product.images ?? [],
+
+          keyFeatures: product.keyFeatures ?? [],
+          colors: product.colors ?? [],
+          variants: product.variants ?? [],
+          specifications: product.specifications ? recordToArray(product.specifications) : [],
           brandSlug: product.brand?.slug ?? '',
           categorySlug: product.category?.slug ?? '',
         }}

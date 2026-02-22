@@ -6,52 +6,65 @@ export interface Product {
   title: string;
   slug: string;
   description: string;
-  price: string; // Decimal serialized as string
+
+  price: string;
   discountPrice?: string | null;
   discountPercentage?: number | null;
   isDiscounted: boolean;
+
   isFeatured: boolean;
   isNew: boolean;
+
   stockQuantity: number;
+
   rating?: string | null;
   reviewCount: number;
+
   thumbnail?: string | null;
   images: string[];
+
+  keyFeatures: string[];
+  colors: { name: string; hex: string }[];
+  variants: { ram: string; storage: string }[];
+
+  specifications: Record<string, { label: string; value: string | number }[]>;
+
   brand?: Brand;
   category?: Category;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  specifications: any;
+
   brandId: string;
   categoryId: string;
   subCategoryId?: string | null;
+
   createdAt: string;
   updatedAt: string;
+
   publishedAt?: string | null;
+
+  status: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
 }
 
-export interface ProductPayload {
+export type ProductPayload = {
   title: string;
-  slug: string;
   description: string;
-  price: number; // send as string for Decimal
+  price: number;
   discountPrice?: number | null;
-
-  discountPercentage?: number | null;
-  isDiscounted?: boolean;
-  isFeatured?: boolean;
-  isNew?: boolean;
-  stockQuantity?: number;
-  isInStock?: boolean;
-  thumbnail?: string | null;
-  images?: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  specifications?: any;
-  brandSlug: string; // connect by slug
-  categorySlug: string; // connect by slug
+  brandSlug: string;
+  categorySlug: string;
   subCategorySlug?: string | null;
-  status?: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  slug: string;
+  stockQuantity: number;
+  thumbnail: string | null;
+  images: string[];
+  keyFeatures: string[];
+  colors: { name: string; hex: string }[];
+  variants: { ram: string; storage: string }[];
+  specifications?: { group: string; items: { label: string; value: string | number }[] }[];
+  isFeatured: boolean;
+  isNew: boolean;
   publishedAt?: string | null;
-}
+  status?: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
+};
 export type FiltersProduct = {
   brandSlug?: string;
   categorySlug?: string;

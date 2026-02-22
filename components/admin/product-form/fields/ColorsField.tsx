@@ -14,7 +14,7 @@ export function ColorsField({ control }: Props) {
       control={control}
       name="colors"
       render={({ field }) => {
-        const colors = field.value ?? [];
+        const colors = Array.isArray(field.value) ? field.value : [];
 
         return (
           <FormItem>
@@ -23,9 +23,10 @@ export function ColorsField({ control }: Props) {
             <div className="space-y-3">
               {colors.map((color, index) => (
                 <div key={index} className="flex items-center gap-2">
+                  {/* نام رنگ */}
                   <Input
-                    className="text-right"
-                    placeholder="نام رنگ (مثلاً: مشکی)"
+                    id={`color-name-${index}`}
+                    placeholder="نام رنگ (مثلاً: مشکی مات)"
                     value={color.name}
                     onChange={e => {
                       const updated = [...colors];
@@ -34,7 +35,9 @@ export function ColorsField({ control }: Props) {
                     }}
                   />
 
+                  {/* انتخاب رنگ */}
                   <Input
+                    id={`color-hex-${index}`}
                     type="color"
                     className="w-12 h-10 p-1"
                     value={color.hex}
@@ -45,9 +48,11 @@ export function ColorsField({ control }: Props) {
                     }}
                   />
 
+                  {/* حذف */}
                   <Button
                     type="button"
                     variant="destructive"
+                    size="sm"
                     onClick={() => field.onChange(colors.filter((_, i) => i !== index))}
                   >
                     حذف
@@ -55,10 +60,15 @@ export function ColorsField({ control }: Props) {
                 </div>
               ))}
 
+              {/* افزودن رنگ جدید */}
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => field.onChange([...colors, { name: '', hex: '#000000' }])}
+                size="sm"
+                onClick={() => {
+                  if (colors.length > 0 && !colors[colors.length - 1].name) return;
+                  field.onChange([...colors, { name: '', hex: '#000000' }]);
+                }}
               >
                 افزودن رنگ جدید
               </Button>

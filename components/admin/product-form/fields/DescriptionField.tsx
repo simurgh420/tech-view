@@ -4,6 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Textarea } from '@/components/ui/textarea';
 import { Control } from 'react-hook-form';
 import { ProductFormValues } from '../product.schema';
+
 type Props = { control: Control<ProductFormValues> };
 
 export function DescriptionField({ control }: Props) {
@@ -13,14 +14,9 @@ export function DescriptionField({ control }: Props) {
       name="description"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>توضیحات</FormLabel>
+          <FormLabel htmlFor="description">توضیحات</FormLabel>
           <FormControl>
-            <Textarea
-              className="text-right"
-              rows={4}
-              placeholder="توضیحات کامل محصول..."
-              {...field}
-            />
+            <Textarea id="description" rows={5} placeholder="توضیحات کامل محصول..." {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>

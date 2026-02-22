@@ -1,4 +1,3 @@
-// components/product/form/fields/GalleryField.tsx
 'use client';
 
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -16,7 +15,7 @@ export function GalleryField({ control }: Props) {
       control={control}
       name="images"
       render={({ field }) => {
-        const images = field.value ?? [];
+        const images = Array.isArray(field.value) ? field.value : [];
 
         return (
           <FormItem>
@@ -28,21 +27,20 @@ export function GalleryField({ control }: Props) {
                   <div key={index} className="space-y-2">
                     <ImageUploader
                       initialUrl={typeof img === 'string' ? img : null}
-                      onChange={file => {
-                        if (!file) return;
+                      onChange={(file: File | undefined) => {
                         const updated = [...images];
-                        updated[index] = file;
+                        updated[index] = file ?? null;
                         field.onChange(updated);
                       }}
                     />
 
                     <Button
                       type="button"
-                      variant="destructive"
-                      className="w-full"
-                      onClick={() => field.onChange(images.filter((_, i) => i !== index))}
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => field.onChange([...images, undefined])}
                     >
-                      حذف تصویر
+                      افزودن تصویر جدید
                     </Button>
                   </div>
                 ))}
@@ -51,7 +49,8 @@ export function GalleryField({ control }: Props) {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => field.onChange([...images, ''])}
+                size="sm"
+                onClick={() => field.onChange([...images, null])}
               >
                 افزودن تصویر جدید
               </Button>

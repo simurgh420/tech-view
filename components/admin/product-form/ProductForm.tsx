@@ -47,12 +47,13 @@ export function ProductForm({
       brandSlug: initialValues?.brandSlug ?? '',
       categorySlug: initialValues?.categorySlug ?? '',
       stockQuantity: initialValues?.stockQuantity ?? 0,
-      specifications: initialValues?.specifications ?? { 'مشخصات عمومی': [] },
+      specifications: initialValues?.specifications ?? [{ group: 'مشخصات عمومی', items: [] }],
       thumbnail: initialValues?.thumbnail ?? undefined,
-      keyFeatures: initialValues?.keyFeatures ?? [''],
-      colors: initialValues?.colors ?? [{ name: '', hex: '#000000' }],
-      variants: initialValues?.variants ?? [{ ram: '', storage: '' }],
-      images: initialValues?.images ?? [''],
+
+      keyFeatures: initialValues?.keyFeatures ?? [],
+      colors: initialValues?.colors ?? [],
+      variants: initialValues?.variants ?? [],
+      images: initialValues?.images ?? [],
     },
   });
 

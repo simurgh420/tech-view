@@ -14,9 +14,9 @@ export function TitleField({ control }: Props) {
       name="title"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>عنوان محصول</FormLabel>
+          <FormLabel htmlFor="title">عنوان محصول</FormLabel>
           <FormControl>
-            <Input className="text-right" placeholder="مثلاً: گوشی موبایل سامسونگ A36" {...field} />
+            <Input id="title" placeholder="مثلاً: گوشی موبایل سامسونگ A36" {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>

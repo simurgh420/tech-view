@@ -1,8 +1,7 @@
-// components/image/ImageUploader.tsx
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useId } from 'react';
 import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -13,34 +12,43 @@ type ImageUploaderProps = {
 };
 
 export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
-  const [preview, setPreview] = useState<string | null>(initialUrl ?? null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputId = useId();
 
-  // مدیریت امن object URL
+  // فقط وقتی کاربر فایل انتخاب می‌کنه blob می‌سازیم
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+
+  // 👇 preview نهایی همیشه از این میاد
+  const preview = localPreview ?? initialUrl ?? null;
+
+  // cleanup فقط برای blob ها
   useEffect(() => {
     return () => {
-      if (preview?.startsWith('blob:')) {
-        URL.revokeObjectURL(preview);
+      if (localPreview?.startsWith('blob:')) {
+        URL.revokeObjectURL(localPreview);
       }
     };
-  }, [preview]);
+  }, [localPreview]);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl);
-      onChange(file); // ✅ فایل پاس بده
-      e.target.value = '';
-    }
+    if (!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreview(objectUrl);
+    onChange(file);
+
+    e.target.value = '';
   }
 
   function removeImage() {
-    if (preview?.startsWith('blob:')) {
-      URL.revokeObjectURL(preview);
+    if (localPreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(localPreview);
     }
-    setPreview(null);
-    onChange(undefined); // ✅ مقدار فرم پاک می‌شه
+
+    setLocalPreview(null);
+    onChange(undefined);
+
     if (inputRef.current) {
       inputRef.current.value = '';
     }
@@ -48,14 +56,13 @@ export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
 
   return (
     <div className="flex flex-col items-start gap-4">
-      {/* Preview */}
       {preview && (
         <div className="relative inline-block">
           <Image
             src={preview}
             width={96}
             height={96}
-            alt="Profile preview"
+            alt="Preview"
             className="rounded-full border shadow-md object-cover"
             unoptimized
           />
@@ -71,20 +78,19 @@ export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
         </div>
       )}
 
-      {/* Upload Button */}
       <label
-        htmlFor="file-upload"
+        htmlFor={inputId}
         className={cn(
           'flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer shadow-sm transition text-sm font-medium',
-          preview ? 'bg-orange-600  hover:bg-orange-700' : 'bg-green-600  hover:bg-green-700'
+          preview ? 'bg-orange-600 hover:bg-orange-700' : 'bg-green-600 hover:bg-green-700'
         )}
       >
         <Upload className="h-4 w-4" />
-
         {preview ? 'تغییر تصویر' : 'آپلود تصویر'}
       </label>
+
       <input
-        id="file-upload"
+        id={inputId}
         ref={inputRef}
         type="file"
         accept="image/*"

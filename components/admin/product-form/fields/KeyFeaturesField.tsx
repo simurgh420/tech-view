@@ -14,7 +14,7 @@ export function KeyFeaturesField({ control }: Props) {
       control={control}
       name="keyFeatures"
       render={({ field }) => {
-        const features = field.value ?? [];
+        const features = Array.isArray(field.value) ? field.value : [];
 
         return (
           <FormItem>
@@ -24,17 +24,20 @@ export function KeyFeaturesField({ control }: Props) {
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <Input
-                    className="text-right"
+                    id={`keyFeature-${index}`}
                     value={feature}
+                    placeholder="مثلاً: صفحه‌نمایش 120Hz"
                     onChange={e => {
                       const updated = [...features];
                       updated[index] = e.target.value;
                       field.onChange(updated);
                     }}
                   />
+
                   <Button
                     type="button"
                     variant="destructive"
+                    size="sm"
                     onClick={() => field.onChange(features.filter((_, i) => i !== index))}
                   >
                     حذف
@@ -45,7 +48,11 @@ export function KeyFeaturesField({ control }: Props) {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => field.onChange([...features, ''])}
+                size="sm"
+                onClick={() => {
+                  if (features.length > 0 && !features[features.length - 1]) return;
+                  field.onChange([...features, '']);
+                }}
               >
                 افزودن ویژگی جدید
               </Button>
