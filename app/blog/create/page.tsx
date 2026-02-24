@@ -1,7 +1,7 @@
 // app/(whatever)/blog/create/page.tsx
 'use client';
 
-import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm';
+import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useSession } from '@/lib/auth-client';
 import { toSlug } from '@/lib/slug';

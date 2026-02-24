@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { BlogForm } from '@/components/sections/blog/BlogForm';
+import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
 import userEvent from '@testing-library/user-event';
 
 describe('BlogForm Component', () => {

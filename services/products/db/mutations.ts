@@ -1,6 +1,6 @@
 // services/products/db/mutations.ts
 import prisma from '@/services/db/client';
-import { Product, ProductPayload } from '@/types/product';
+import { Product, ProductPayload, SpecsGroup } from '@/types/product';
 
 export async function createProduct(data: ProductPayload): Promise<Product> {
   const priceNum = Number(data.price);
@@ -60,10 +60,7 @@ export async function createProduct(data: ProductPayload): Promise<Product> {
     colors: product.colors as { name: string; hex: string }[],
     variants: product.variants as { ram: string; storage: string }[],
     images: product.images as string[],
-    specifications: product.specifications as Record<
-      string,
-      { label: string; value: string | number }[]
-    >,
+    specifications: product.specifications as SpecsGroup[],
 
     brand: product.brand,
     category: product.category,
@@ -147,11 +144,7 @@ export async function updateProduct(
     colors: (product.colors ?? []) as { name: string; hex: string }[],
     variants: (product.variants ?? []) as { ram: string; storage: string }[],
     images: (product.images ?? []) as string[],
-    specifications: (product.specifications ?? {}) as Record<
-      string,
-      { label: string; value: string | number }[]
-    >,
-
+    specifications: product.specifications as SpecsGroup[],
     brand: product.brand,
     category: product.category,
 
