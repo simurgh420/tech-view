@@ -6,9 +6,7 @@ import ProductBreadcrumb from '@/components/sections/products/breadcrumb/Product
 import ProductGallery from '@/components/sections/products/gallery/ProductGallery';
 import ProductInfo from '@/components/sections/products/info/ProductInfo';
 import ProductPriceBox from '@/components/sections/products/price/ProductPriceBox';
-import ProductSpecs from '@/components/sections/products/specs/ProductSpecs';
 import ProductTabs from '@/components/sections/products/tabs/ProductTabs';
-import { recordToArray } from '@/lib/specifications';
 
 type ProductPageClientProps = {
   slug: string;
@@ -33,12 +31,12 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
   const brandName = product.brand?.name ?? '';
   const categoryTitle = product.category?.title ?? '';
   const categorySlug = product.category?.slug ?? '';
-
-  const specsArray = product.specifications ? recordToArray(product.specifications) : [];
+  const specsArray = product.specifications ?? [];
   const reviews = (product.reviews ?? []).map(r => ({
     rating: r.rating,
     comment: r.content,
   }));
+
   return (
     <div className="container mx-auto py-6 space-y-12">
       {/* Breadcrumb */}
@@ -84,7 +82,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
       {/* تب‌ها */}
       <ProductTabs
         description={product.description ?? ''}
-        specs={<ProductSpecs specs={specsArray} />}
+        specsArray={specsArray}
         reviews={reviews}
         questions={[]}
       />

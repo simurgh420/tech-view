@@ -1,7 +1,7 @@
 export function recordToArray(record: Record<string, { label: string; value: string | number }[]>) {
   return Object.entries(record).map(([group, items]) => ({
     group,
-    items,
+    items: Array.isArray(items) ? items : [],
   }));
 }
 

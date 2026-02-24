@@ -1,9 +1,10 @@
 'use client';
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Control } from 'react-hook-form';
 import { ProductFormValues } from '../product.schema';
+import EditorClient from '@/components/editors/EditorClient';
 
 type Props = { control: Control<ProductFormValues> };
 
@@ -14,9 +15,13 @@ export function DescriptionField({ control }: Props) {
       name="description"
       render={({ field }) => (
         <FormItem>
-          <FormLabel htmlFor="description">توضیحات</FormLabel>
+          <FormLabel>توضیحات محصول</FormLabel>
           <FormControl>
-            <Textarea id="description" rows={5} placeholder="توضیحات کامل محصول..." {...field} />
+            <EditorClient
+              value={field.value}
+              onChange={field.onChange}
+              slug="product-description"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

@@ -5,7 +5,7 @@ import { ProductForm } from '@/components/admin/product-form/ProductForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useProducts } from '@/hooks/useProducts';
-import { recordToArray } from '@/lib/specifications';
+
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -126,7 +126,7 @@ export default function EditProductPage() {
           keyFeatures: product.keyFeatures ?? [],
           colors: product.colors ?? [],
           variants: product.variants ?? [],
-          specifications: product.specifications ? recordToArray(product.specifications) : [],
+          specifications: product.specifications ?? [],
           brandSlug: product.brand?.slug ?? '',
           categorySlug: product.category?.slug ?? '',
         }}
