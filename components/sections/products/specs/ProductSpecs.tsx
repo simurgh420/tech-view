@@ -5,20 +5,19 @@ import SpecsSection from './SpecsSection';
 
 type Props = {
   specs: {
-    [category: string]: {
+    group: string;
+    items: {
       label: string;
       value: string | number;
     }[];
-  };
+  }[];
 };
 
 export default function ProductSpecs({ specs }: Props) {
-  const categories = Object.keys(specs);
-
   return (
     <div className="space-y-6">
-      {categories.map(category => (
-        <SpecsSection key={category} title={category} items={specs[category]} />
+      {specs.map(section => (
+        <SpecsSection key={section.group} title={section.group} items={section.items} />
       ))}
     </div>
   );

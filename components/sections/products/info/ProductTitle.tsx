@@ -16,7 +16,6 @@ export default function ProductTitle({
         برند: <span className="font-medium">{brand}</span>
         {model && (
           <>
-            {' '}
             • مدل: <span className="font-medium">{model}</span>
           </>
         )}

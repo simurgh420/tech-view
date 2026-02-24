@@ -1,16 +1,13 @@
-// components/product/tabs/ProductTabs.tsx
 'use client';
 
 import { useState } from 'react';
 import TabHeader from './TabHeader';
 import TabPanel from './TabPanel';
 
-type Specs = Record<string, string | number | boolean>;
-
 type Props = {
   description: string;
-  specs: Specs;
-  reviews?: { user: string; rating: number; comment: string }[];
+  specs: React.ReactNode;
+  reviews?: { rating: number; comment: string }[];
   questions?: { user: string; question: string }[];
 };
 
@@ -33,14 +30,7 @@ export default function ProductTabs({ description, specs, reviews = [], question
 
         {/* Specs */}
         <TabPanel active={active} tab="specs">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            {Object.entries(specs).map(([key, value]) => (
-              <div key={key} className="flex justify-between border-b pb-2">
-                <span className="font-medium text-gray-700 dark:text-gray-300">{key}</span>
-                <span className="text-gray-600 dark:text-gray-400">{String(value)}</span>
-              </div>
-            ))}
-          </div>
+          {specs}
         </TabPanel>
 
         {/* Reviews */}
@@ -51,7 +41,6 @@ export default function ProductTabs({ description, specs, reviews = [], question
             <div className="space-y-4">
               {reviews.map((r, i) => (
                 <div key={i} className="border rounded-lg p-4">
-                  <div className="font-semibold">{r.user}</div>
                   <div className="text-yellow-500">⭐ {r.rating}</div>
                   <p className="text-gray-600 dark:text-gray-300">{r.comment}</p>
                 </div>

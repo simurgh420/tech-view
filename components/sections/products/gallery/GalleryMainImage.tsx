@@ -1,27 +1,14 @@
-// components/product/gallery/GalleryMainImage.tsx
 'use client';
 
-import Image from 'next/image';
-import { useState } from 'react';
+import ZoomLens from './ZoomLens';
 
-export default function GalleryMainImage({ src }: { src: string }) {
-  const [zoom, setZoom] = useState(false);
-
+export default function GalleryMainImage({ src, onClick }: { src: string; onClick?: () => void }) {
   return (
     <div
-      className="relative overflow-hidden rounded-xl border bg-white w-full h-400px"
-      onMouseEnter={() => setZoom(true)}
-      onMouseLeave={() => setZoom(false)}
+      className="relative w-full aspect-square overflow-hidden rounded-xl border bg-white cursor-zoom-in"
+      onClick={onClick}
     >
-      <Image
-        src={src}
-        alt="product main image"
-        fill
-        className={`object-cover transition-transform duration-300 ${
-          zoom ? 'scale-125' : 'scale-100'
-        }`}
-        sizes="100vw"
-      />
+      <ZoomLens src={src} />
     </div>
   );
 }

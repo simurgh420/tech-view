@@ -9,7 +9,7 @@ import ProductVariants from './ProductVariants';
 type Props = {
   title: string;
   brand: string;
-  model?: string;
+
   rating?: number;
   ratingCount?: number;
   shortDescription?: string;
@@ -21,7 +21,6 @@ type Props = {
 export default function ProductInfo({
   title,
   brand,
-  model,
   rating,
   ratingCount,
   shortDescription,
@@ -31,7 +30,7 @@ export default function ProductInfo({
 }: Props) {
   return (
     <div className="space-y-6">
-      <ProductTitle title={title} brand={brand} model={model} />
+      <ProductTitle title={title} brand={brand} />
 
       <ProductRating rating={rating} ratingCount={ratingCount} />
 

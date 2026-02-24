@@ -1,30 +1,26 @@
-// components/product/gallery/GalleryMobileSlider.tsx
+'use client';
 
 import Image from 'next/image';
 
-type Props = {
+type GalleryMobileSliderProps = {
   images: string[];
   activeIndex: number;
-  onChange: (i: number) => void;
+  onChange: (index: number) => void;
 };
 
-export default function GalleryMobileSlider({ images, activeIndex, onChange }: Props) {
+export default function GalleryMobileSlider({ images, onChange }: GalleryMobileSliderProps) {
   return (
-    <div className="flex overflow-x-auto space-x-3 snap-x snap-mandatory">
+    <div className="snap-x snap-mandatory overflow-x-auto flex gap-4 md:hidden">
       {images.map((img, i) => (
         <div
           key={i}
-          className={`snap-center min-w-64 min-h-64 relative rounded-xl border cursor-pointer ${
-            activeIndex === i ? 'border-blue-500' : 'border-gray-300'
-          }`}
+          className="snap-center w-full shrink-0 cursor-pointer"
           onClick={() => onChange(i)}
         >
           <Image
             src={img}
-            alt={`product image ${i + 1}`} 
-            fill 
-            className="object-cover rounded-xl"
-            sizes="256px"
+            alt={`mobile-slide-${i}`}
+            className="w-full aspect-square object-contain"
           />
         </div>
       ))}

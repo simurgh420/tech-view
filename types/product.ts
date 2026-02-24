@@ -1,6 +1,7 @@
-import { Brand, Category } from '@/app/generated/prisma/client';
+import { Brand, Category, ProductPrice, Review } from '@/app/generated/prisma/client';
 
 // types/product.ts
+
 export interface Product {
   id: string;
   title: string;
@@ -10,8 +11,8 @@ export interface Product {
   price: string;
   discountPrice?: string | null;
   discountPercentage?: number | null;
-  isDiscounted: boolean;
 
+  isDiscounted: boolean;
   isFeatured: boolean;
   isNew: boolean;
 
@@ -23,14 +24,20 @@ export interface Product {
   thumbnail?: string | null;
   images: string[];
 
+  // JSON fields
   keyFeatures: string[];
   colors: { name: string; hex: string }[];
   variants: { ram: string; storage: string }[];
 
   specifications: Record<string, { label: string; value: string | number }[]>;
 
+  // Relations
   brand?: Brand;
   category?: Category;
+  subCategory?: Category | null;
+
+  prices: ProductPrice[];
+  reviews: Review[];
 
   brandId: string;
   categoryId: string;
@@ -38,7 +45,6 @@ export interface Product {
 
   createdAt: string;
   updatedAt: string;
-
   publishedAt?: string | null;
 
   status: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
