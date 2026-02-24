@@ -2,7 +2,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import axios from 'axios';
-import { fetchBlogs, fetchBlogBySlug } from '@/services/blog/api/queries';
+import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 
 vi.mock('axios');
 describe('blog queries', () => {
@@ -11,7 +11,7 @@ describe('blog queries', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (axios.get as any).mockResolvedValue({ data: mockData });
 
-    const result = await fetchBlogs(2, 5);
+    const result = await fetchBlogsApi(2, 5);
     expect(axios.get).toHaveBeenCalledWith('/api/blog', { params: { page: 2, pageSize: 5 } });
     expect(result).toEqual(mockData);
   });
@@ -19,7 +19,7 @@ describe('blog queries', () => {
     const mockData = { id: 1, title: 'Test Blog', slug: 'test-blog' };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (axios.get as any).mockResolvedValue({ data: mockData });
-    const result = await fetchBlogBySlug('test-blog');
+    const result = await fetchBlogBySlugApi('test-blog');
 
     expect(axios.get).toHaveBeenCalledWith('/api/blog/test-blog');
     expect(result).toEqual(mockData);

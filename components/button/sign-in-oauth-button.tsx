@@ -58,12 +58,12 @@ export const SignInOauthButton = ({ provider, signUp, className }: SignInOauthBu
   const providerConfig = {
     google: {
       label: 'Google',
-      bg: 'bg-white text-black border border-gray-300 hover:bg-gray-50',
+      bg: 'hover:bg-neutral-800',
       icon: GoogleIcon,
     },
     github: {
       label: 'GitHub',
-      bg: 'bg-black text-white hover:bg-neutral-800',
+      bg: 'bg-black  hover:bg-neutral-800',
       icon: GitHubIcon,
     },
   }[provider];

@@ -1,6 +1,7 @@
 // services/reviews/api/mutations.ts
 
-import { Review, ReviewPayload } from '@/types/review';
+import { Review } from '@/app/generated/prisma/client';
+import {  ReviewPayload } from '@/types/review';
 import axios from 'axios';
 
 export async function createReviewApi(payload: ReviewPayload): Promise<Review> {

@@ -1,9 +1,12 @@
 {
   "cSpell.words": [
+    "autoincrement",
+    "brandfetch",
     "cuid",
     "Dropcursor",
     "gapcursor",
     "GIPHY",
+    "heroimg",
     "macbook",
     "reactjs",
     "Simurgh",
@@ -15,5 +18,5 @@
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style"]
+  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style", "Products"]
 }

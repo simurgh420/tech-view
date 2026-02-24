@@ -6,10 +6,10 @@ export default function Page() {
       <div className="space-y-4">
         <ReturnButton href="/auth/login" label="Login" />
 
-        <h1 className="text-3xl font-bold">Success</h1>
+        <h1 className="text-3xl font-bold">موفق</h1>
 
         <p className="text-muted-foreground">
-          Success! You have sent a password reset link to your email.
+          موفق! لینک عوض کردن پسورد به ایمیل شما ارسال شد لطفا ایمیل خود را چک کنید
         </p>
       </div>
     </div>

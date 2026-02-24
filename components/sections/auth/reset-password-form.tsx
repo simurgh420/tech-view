@@ -13,23 +13,24 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { resetPassword } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-
+// ✅ اعتبارسنجی با Zod
 const schema = z
   .object({
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(6, 'Confirm password must be at least 6 characters'),
+    password: z
+      .string()
+      .min(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد')
+      .regex(/[A-Z]/, 'رمز عبور باید حداقل یک حرف بزرگ داشته باشد')
+      .regex(/[0-9]/, 'رمز عبور باید حداقل یک عدد داشته باشد'),
+    confirmPassword: z.string().min(6, 'تکرار رمز عبور باید حداقل ۶ کاراکتر باشد'),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'رمز عبور و تکرار آن یکسان نیستند',
     path: ['confirmPassword'],
   });
-
 type FormValues = z.infer<typeof schema>;
-
 interface ResetPasswordFormProps {
   token: string;
 }
-
 export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
@@ -55,7 +56,7 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (ctx: any) => {
-          toast.error(ctx.error.message);
+          toast.error(ctx.error.message || 'خطا در تغییر رمز عبور');
         },
         onResponse: () => setIsPending(false),
       },
@@ -66,10 +67,10 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-sm w-full space-y-6 bg-white p-6 rounded-xl shadow-sm border"
+        className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold 0">Reset Password</h2>
-        <p className="text-sm ">Enter your new password below.</p>
+        <h2 className="text-xl font-semibold"> تغییر رمز عبور</h2>
+        <p className="text-sm ">رمز عبور جدید خود را وارد کنید.</p>
 
         {/* Password */}
         <FormField
@@ -77,9 +78,15 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">رمز عبور جدید</Label>
               <FormControl>
-                <Input type="password" id="password" placeholder="Enter new password" {...field} />
+                <Input
+                  type="password"
+                  id="password"
+                  placeholder="رمز عبور جدید را وارد کنید"
+                  className="text-right"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,12 +99,13 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">تکرار رمز عبور</Label>
               <FormControl>
                 <Input
                   type="password"
                   id="confirmPassword"
-                  placeholder="Confirm new password"
+                  placeholder="رمز عبور جدید را دوباره وارد کنید"
+                  className="text-right"
                   {...field}
                 />
               </FormControl>
@@ -107,7 +115,7 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
         />
 
         <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? 'Resetting...' : 'Reset Password'}
+          {isPending ? 'در حال تغییر...' : 'تغییر رمز عبور'}
         </Button>
       </form>
     </Form>

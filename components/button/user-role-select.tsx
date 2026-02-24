@@ -19,13 +19,13 @@ export const UserRoleSelect = ({ userId, role }: UserRoleSelectProps) => {
     const newRole = evt.target.value as UserRole;
 
     setIsPending(true);
-    const result = await setUserRoleAction(userId, newRole);
+    const res = await setUserRoleAction(userId, newRole);
     setIsPending(false);
 
-    if (!result.success) {
-      toast.error(result.error ?? 'خطا در تغییر نقش');
+    if (res.error) {
+      toast.error(res.error ?? 'خطا در تغییر نقش');
     } else {
-      toast.success('User role updated');
+      toast.success('نقش با موفقیت بروزرسانی شد');
       router.refresh();
     }
   }

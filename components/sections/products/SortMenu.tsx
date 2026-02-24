@@ -1,0 +1,73 @@
+// components/product/SortMenu.tsx
+'use client';
+
+import clsx from 'clsx';
+
+type SortValue = 'featured' | 'new' | 'price-asc' | 'price-desc';
+
+type Props = {
+  value: string;
+  onChange: (val: SortValue) => void;
+};
+
+const SORT_OPTIONS: { value: SortValue; label: string }[] = [
+  { value: 'featured', label: 'پرفروش‌ترین' },
+  { value: 'new', label: 'جدیدترین' },
+  { value: 'price-asc', label: 'ارزان‌ترین' },
+  { value: 'price-desc', label: 'گران‌ترین' },
+];
+
+export default function SortMenu({ value, onChange }: Props) {
+  return (
+    <section aria-label="مرتب‌سازی محصولات" className="flex items-center gap-4 border-b pb-2">
+      {/* Sort options */}
+      <ul
+        className="
+          flex items-center gap-6
+          overflow-x-auto
+          no-scrollbar
+          text-sm
+        "
+      >
+        {SORT_OPTIONS.map(option => {
+          const isActive = option.value === value;
+
+          return (
+            <li key={option.value}>
+              <button
+                type="button"
+                onClick={() => onChange(option.value)}
+                aria-current={isActive ? 'true' : undefined}
+                className={clsx(
+                  'relative pb-2 transition-colors duration-200 whitespace-nowrap',
+                  isActive
+                    ? 'font-bold text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {option.label}
+
+                {/* Active underline */}
+                {isActive && (
+                  <span
+                    className="
+                      absolute
+                      bottom-0
+                      right-0
+                      left-0
+                      h-0.5
+                      bg-primary
+                      rounded-full
+                    "
+                  />
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      {/* Label */}
+      <span className="text-sm text-muted-foreground whitespace-nowrap">مرتب‌سازی:</span>
+    </section>
+  );
+}

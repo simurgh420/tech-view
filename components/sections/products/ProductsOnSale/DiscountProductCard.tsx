@@ -36,21 +36,32 @@ export function DiscountProductCard({
     ease-in-out
   "
     >
-      <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 text-center h-75 flex flex-col justify-between">
+      <div className=" rounded-lg shadow-sm hover:shadow-md transition p-4 text-center h-75 flex flex-col justify-between">
         <div className="relative w-full h-37.5 mb-3">
-          <Image src={image} alt={title} fill className="object-contain" />
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="
+    object-contain
+    drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]
+    dark:drop-shadow-[0_1px_2px_rgba(255,255,255,0.25)]
+    transition-transform duration-300
+  "
+          />
+
           {discount !== undefined && (
-            <div className="absolute top-2 left-2 bg-orange-500 text-white text-sm font-bold px-2 py-1 rounded">
+            <div className="absolute top-2 left-2 bg-orange-500  text-sm font-bold px-2 py-1 rounded">
               -{discount}%
             </div>
           )}
         </div>
-        <h3 className="text-sm font-semibold text-gray-800 mb-1">{title}</h3>
+        <h3 className="text-sm font-semibold text-gray-600 mb-1">{title}</h3>
 
         {/* قیمت‌ها */}
         {originalPrice !== undefined && salePrice !== undefined && (
           <div className="mt-auto flex items-center justify-between gap-2">
-            <div className="text-xs text-gray-500 line-through">${originalPrice.toFixed(2)}</div>
+            <div className="text-xs text-white line-through">${originalPrice.toFixed(2)}</div>
             <div className="text-base font-bold text-[#179BD7]">${salePrice.toFixed(2)}</div>
           </div>
         )}

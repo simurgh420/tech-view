@@ -1,11 +1,11 @@
 // app/blog/page.tsx
-
+import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 import { BlogGrid } from '@/components/sections/blog/BlogGrid';
 import { RecentPosts } from '@/components/sections/blog/RecentPosts';
 import { getPublishedPosts, getRecentPosts } from '@/services/blog/db/queries';
 export const revalidate = 3600; // صفحه هر 1 ساعت یکبار regenerate
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Tech Heim Blog • News, Guides, and Reviews',
   description:
     'Latest tech articles, videos, and insights on phones, laptops, audio, gaming, and more.',
@@ -25,7 +25,7 @@ export default async function BlogPage() {
   const recent = await getRecentPosts(3);
 
   return (
-    <main className="container mx-auto max-w-306 px-4 py-8">
+    <main className="container mx-auto max-w-306 px-4 py-8" dir="rtl">
       <div className="mb-2">
         <Breadcrumb />
       </div>

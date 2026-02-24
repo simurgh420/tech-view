@@ -1,36 +1,38 @@
 // hooks/useWishlist.ts
+
+import { WishlistItem } from '@/app/generated/prisma/client';
 import {
-  addWishlistItem,
-  deleteWishlistItem,
-  deleteWishlistItemByUserAndProduct,
+  addWishlistItemApi,
+  deleteWishlistItemApi,
+  deleteWishlistItemByUserAndProductApi,
 } from '@/services/wishlist/api/mutations';
-import { fetchWishlist } from '@/services/wishlist/api/queries';
-import { WishlistItem, WishlistPayload } from '@/types/wishlist';
+import { fetchWishlistApi } from '@/services/wishlist/api/queries';
+import {  WishlistPayload } from '@/types/wishlist';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useWishlist(userId: string) {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
   const useGetWishlist = () =>
     useQuery<WishlistItem[]>({
       queryKey: ['wishlist', userId],
-      queryFn: () => fetchWishlist(userId),
+      queryFn: () => fetchWishlistApi(userId),
       enabled: !!userId,
     });
 
   const useAddToWishlist = () =>
     useMutation({
-      mutationFn: (payload: WishlistPayload) => addWishlistItem(payload),
+      mutationFn: (payload: WishlistPayload) => addWishlistItemApi(payload),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
+        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
 
   const useRemoveFromWishlist = () =>
     useMutation({
-      mutationFn: (id: string) => deleteWishlistItem(id),
+      mutationFn: (id: string) => deleteWishlistItemApi(id),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
+        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
 
@@ -38,15 +40,15 @@ export function useWishlist(userId: string) {
     useMutation({
       mutationFn: async (payload: WishlistPayload & { exists: boolean }) => {
         if (payload.exists) {
-          return deleteWishlistItemByUserAndProduct({
+          return deleteWishlistItemByUserAndProductApi({
             userId: payload.userId,
             productId: payload.productId,
           });
         }
-        return addWishlistItem({ userId: payload.userId, productId: payload.productId });
+        return addWishlistItemApi({ userId: payload.userId, productId: payload.productId });
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
+        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
       },
     });
   return {

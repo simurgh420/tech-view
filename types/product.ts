@@ -1,49 +1,89 @@
+import { Brand, Category } from '@/app/generated/prisma/client';
+
+export type SpecsItem = {
+  label: string;
+  value: string | number;
+};
+
+export type SpecsGroup = {
+  group: string;
+  items: SpecsItem[];
+};
+
 // types/product.ts
 export interface Product {
   id: string;
   title: string;
   slug: string;
   description: string;
-  price: string; // Decimal serialized as string
+
+  price: string;
   discountPrice?: string | null;
   discountPercentage?: number | null;
   isDiscounted: boolean;
+
   isFeatured: boolean;
   isNew: boolean;
+
   stockQuantity: number;
+
   rating?: string | null;
   reviewCount: number;
+
   thumbnail?: string | null;
   images: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  specifications: any;
+
+  keyFeatures: string[];
+  colors: { name: string; hex: string }[];
+  variants: { ram: string; storage: string }[];
+
+  specifications: SpecsGroup[];
+
+  brand?: Brand;
+  category?: Category;
+  reviews?: { rating: number; content: string }[];
   brandId: string;
   categoryId: string;
   subCategoryId?: string | null;
+
   createdAt: string;
   updatedAt: string;
+
   publishedAt?: string | null;
+
+  status: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
 }
 
-export interface ProductPayload {
+export type ProductPayload = {
   title: string;
-  slug: string;
   description: string;
-  price: string; // send as string for Decimal
-  discountPrice?: string | null;
-  discountPercentage?: number | null;
-  isDiscounted?: boolean;
-  isFeatured?: boolean;
-  isNew?: boolean;
-  stockQuantity?: number;
-  isInStock?: boolean;
-  thumbnail?: string | null;
-  images?: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  specifications?: any;
-  brandSlug: string; // connect by slug
-  categorySlug: string; // connect by slug
+  price: number;
+  discountPrice?: number | null;
+  brandSlug: string;
+  categorySlug: string;
   subCategorySlug?: string | null;
-  status?: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  slug: string;
+  stockQuantity: number;
+  thumbnail: string | null;
+  images: string[];
+  keyFeatures: string[];
+  colors: { name: string; hex: string }[];
+  variants: { ram: string; storage: string }[];
+  specifications?: { group: string; items: { label: string; value: string | number }[] }[];
+  isFeatured: boolean;
+  isNew: boolean;
   publishedAt?: string | null;
-}
+  status?: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
+};
+export type FiltersProduct = {
+  brandSlug?: string;
+  categorySlug?: string;
+  subCategorySlug?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: string;
+  ram?: string[];
+  page?: number;
+  perPage?: number;
+  q?: string;
+};

@@ -21,7 +21,7 @@ export const DeleteUserButton = ({ userId }: DeleteUserButtonProps) => {
     if (res.error) {
       toast.error(res.error);
     } else {
-      toast.success('User deleted successfully');
+      toast.success('کاربر با موفقیت حذف شد');
     }
     setIsPending(false);
   }
@@ -34,7 +34,7 @@ export const DeleteUserButton = ({ userId }: DeleteUserButtonProps) => {
       onClick={handleClick}
       disabled={isPending}
     >
-      <span className="sr-only">Delete User</span>
+      <span className="sr-only">حذف کاربر</span>
       <TrashIcon />
     </Button>
   );
@@ -43,7 +43,7 @@ export const DeleteUserButton = ({ userId }: DeleteUserButtonProps) => {
 export const PlaceholderDeleteUserButton = () => {
   return (
     <Button size="icon" variant="destructive" className="size-7 rounded-sm" disabled>
-      <span className="sr-only">Delete User</span>
+      <span className="sr-only">حذف کاربر</span>
       <TrashIcon />
     </Button>
   );

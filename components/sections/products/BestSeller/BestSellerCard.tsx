@@ -34,7 +34,7 @@ export function BestSellerCard({
             </div>
           )}
         </div>
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">{title} </h3>
+        <h3 className="text-sm font-semibold text-gray-600 mb-2">{title} </h3>
 
         {/* قیمت ها */}
         {originalPrice !== undefined && salePrice !== undefined ? (

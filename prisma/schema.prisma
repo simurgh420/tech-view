@@ -15,20 +15,15 @@ model BlogPost {
   content        String
   coverImageUrl  String?
   readingMinutes Int
-    // انتشار
-  status         PostStatus  @default(PUBLISHED)
-  publishedAt    DateTime?    
+  publishedAt    DateTime?
   updatedAt      DateTime    @updatedAt
-    // نویسنده 
-  authorId String?
-  
-
-
+  status         PostStatus  @default(PUBLISHED)
   videoUrls      String[]
-    // روابط
+  authorId       String?
+  author         User?       @relation("UserPosts", fields: [authorId], references: [id])
   comments       Comment[]
   tags           TagOnPost[]
-  author   User? @relation("UserPosts", fields: [authorId], references: [id], onDelete: SetNull)
+
   @@index([publishedAt])
   @@index([status])
 }
@@ -56,9 +51,10 @@ model Comment {
   updatedAt DateTime @updatedAt
   postId    String
   rating    Int      @default(0)
+  authorId  String?
+  author    User?    @relation("UserComments", fields: [authorId], references: [id])
   post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-  authorId String?
-  author   User? @relation("UserComments", fields: [authorId], references: [id], onDelete: SetNull)
+
   @@index([postId])
   @@index([rating])
   @@index([authorId])
@@ -87,8 +83,7 @@ model Category {
   parentId            String?
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
-  parent Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-
+  parent              Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children            Category[] @relation("CategoryHierarchy")
   products            Product[]
   subCategoryProducts Product[]  @relation("SubCategoryProducts")
@@ -109,17 +104,20 @@ model Product {
   price              Decimal        @db.Decimal(12, 2)
   discountPrice      Decimal?       @db.Decimal(12, 2)
   discountPercentage Int?
+
   isDiscounted       Boolean        @default(false)
   isFeatured         Boolean        @default(false)
+  keyFeatures        String[]       @default([])
   isNew              Boolean        @default(false)
   stockQuantity      Int            @default(0)
-
   rating             Decimal?       @db.Decimal(3, 2)
   reviewCount        Int            @default(0)
   thumbnail          String?
-  images             String[]
-  specifications     Json
-  status             ProductStatus  @default(DRAFT)
+  images             String[]       @default([])
+  variants           Json           @default("[]")
+  specifications     Json           @default("{}")
+  colors             Json           @default("[]")
+  status             ProductStatus  @default(PUBLISHED)
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
   publishedAt        DateTime?
@@ -165,7 +163,7 @@ model Review {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [authorId], references: [id])
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
@@ -173,44 +171,41 @@ model Review {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  email           String           @unique
+  emailVerified   Boolean          @default(false)
+  image           String?
+  role            UserRole         @default(USER)
+  banExpires      DateTime?
+  banReason       String?
+  banned          Boolean?         @default(false)
+  blogPosts       BlogPost[]       @relation("UserPosts")
+  cart            Cart?
+  comments        Comment[]        @relation("UserComments")
+  contactMessages ContactMessage[]
+  reviews         Review[]
+  wishlistItems   WishlistItem[]
+  accounts        Account[]
+  sessions        Session[]
 
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  banned        Boolean?  @default(false)
-  banReason     String?
-  banExpires    DateTime?
-
-  role UserRole @default(USER)
-  sessions      Session[]
-  accounts      Account[]
-  cart          Cart?
-  reviews       Review[]
-  wishlistItems WishlistItem[]
-  blogPosts     BlogPost[] @relation("UserPosts")
-  comments      Comment[] @relation("UserComments")
   @@map("Users")
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  expiresAt DateTime
-  token     String   @unique
-  ipAddress String?
-  userAgent String?
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  expiresAt      DateTime
+  token          String   @unique
+  ipAddress      String?
+  userAgent      String?
+  userId         String
   impersonatedBy String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
- 
   @@index([userId])
   @@map("sessions")
 }
@@ -219,7 +214,6 @@ model Account {
   id                    String    @id @default(cuid())
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-
   accountId             String
   providerId            String
   refreshToken          String?
@@ -228,10 +222,9 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("accounts")
@@ -241,7 +234,6 @@ model Verification {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
   identifier String
   value      String
   expiresAt  DateTime
@@ -250,51 +242,65 @@ model Verification {
   @@map("verifications")
 }
 
-
 model WishlistItem {
   id        String   @id @default(cuid())
   userId    String
   productId String
   createdAt DateTime @default(now())
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@index([productId])
 }
+
 model Cart {
   id        String     @id @default(cuid())
-  userId    String?    @unique 
-  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items     CartItem[]
+  userId    String?    @unique
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
 
   @@index([userId])
 }
 
-
 model CartItem {
   id         String   @id @default(cuid())
-
   cartId     String
-  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-
   productId  String
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   quantity   Int      @default(1)
   priceAtAdd Decimal  @db.Decimal(12, 2)
-
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([cartId, productId])
-
   @@index([cartId])
   @@index([productId])
 }
 
+model ContactMessage {
+  id        String   @id @default(cuid())
+  userId    String?
+  name      String
+  email     String
+  phone     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
+}
 
 enum PostStatus {
   DRAFT
@@ -323,3 +329,4 @@ enum UserRole {
   ADMIN
   USER
 }
+

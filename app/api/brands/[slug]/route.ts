@@ -21,9 +21,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
   try {
     const body = await req.json();
     const brand = await updateBrandBySlug(slug, body);
+
     return NextResponse.json(brand);
   } catch (error) {
     console.error(`PATCH /api/brands/${slug} Error:`, error);

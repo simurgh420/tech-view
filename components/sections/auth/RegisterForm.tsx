@@ -21,9 +21,6 @@ import { useNotify } from '@/hooks/useNotify';
 import { registerAction } from '@/services/action/user/register';
 import { RegisterInput, RegisterSchema } from '@/lib/validation/auth';
 
-/* ---------------------------------------------
- *  Component
- * --------------------------------------------- */
 export function RegisterForm() {
   const router = useRouter();
   const notify = useNotify();
@@ -37,9 +34,6 @@ export function RegisterForm() {
     mode: 'onSubmit',
   });
 
-  /* ---------------------------------------------
-   *  Submit Handler
-   * --------------------------------------------- */
   async function onSubmit(values: RegisterInput) {
     setGlobalError(null);
     setLoading(true);
@@ -48,18 +42,22 @@ export function RegisterForm() {
       setGlobalError(error);
       notify.error('خطا در ثبت‌نام', error);
     } else {
-      notify.success('ثبت‌نام با موفقیت انجام شد', 'طلفا ایمیل خود را تایید کنید ');
+      notify.success('ثبت‌نام با موفقیت انجام شد', 'لطفاً ایمیل خود را تأیید کنید');
       router.push('/register/success');
     }
-
     setLoading(false);
   }
 
-  /* ---------------------------------------------
-   *  UI
-   * --------------------------------------------- */
   return (
-    <div className="w-full max-w-md mx-auto p-8 border rounded-2xl shadow-lg  backdrop-blur-md">
+    <div
+      className="
+        w-full max-w-md mx-auto p-8 
+        rounded-2xl shadow-xl 
+        backdrop-blur-xl 
+        transition-all
+      "
+      dir="rtl"
+    >
       {/* Global Error */}
       {globalError && (
         <div className="mb-6 text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
@@ -69,63 +67,62 @@ export function RegisterForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Name */}
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>نام</FormLabel>
+                <FormLabel className="text-white ">نام</FormLabel>
                 <FormControl>
-                  <Input placeholder="نام شما" {...field} className="h-11 text-base" />
+                  <Input placeholder="نام شما" {...field} className=" h-11 text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Email */}
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ایمیل</FormLabel>
+                <FormLabel className="text-white">ایمیل</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="example@gmail.com"
                     {...field}
-                    className="h-11 text-base"
+                    className=" h-11 text-base"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* Password */}
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>رمز عبور</FormLabel>
+                <FormLabel className="text-white">رمز عبور</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
                     placeholder="********"
                     {...field}
-                    className="h-11 text-base"
+                    className=" h-11 text-base"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* Submit */}
-          <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
+          <Button
+            type="submit"
+            variant={'outline'}
+            className="w-full h-11 text-base font-medium"
+            disabled={loading}
+          >
             {loading ? 'در حال ثبت‌نام...' : 'ثبت نام'}
           </Button>
         </form>

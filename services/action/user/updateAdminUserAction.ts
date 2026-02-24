@@ -13,10 +13,6 @@ export async function updateAdminUserAction(
   const session = await auth.api.getSession({ headers: headersList });
   if (!session) return { success: false, error: 'Unauthorized' };
 
-  if (session.user.id === userId) {
-    return { success: false, error: 'You cannot update your own admin data' };
-  }
-
   const permissionCheck = await auth.api.userHasPermission({
     headers: headersList,
     body: {

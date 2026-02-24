@@ -31,7 +31,7 @@ export async function Sidebar({ postId }: { postId: string }) {
               <Link href={`/blog/${post.slug}`} className="flex items-center gap-3 group">
                 <div className="w-16 h-16 rounded overflow-hidden shrink-0">
                   <Image
-                    src={post.coverImageUrl || ''}
+                    src={post.coverImageUrl || '/Image-not-found.png'}
                     alt={post.title}
                     width={64}
                     height={64}

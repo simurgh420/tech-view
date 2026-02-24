@@ -6,7 +6,7 @@ interface PageProps {
   searchParams: Promise<{ token: string }>;
 }
 
-export default async function Page({ searchParams }: PageProps) {
+export default async function ResetPasswordPage({ searchParams }: PageProps) {
   const token = (await searchParams).token;
 
   if (!token) redirect('/auth/login');
@@ -16,13 +16,18 @@ export default async function Page({ searchParams }: PageProps) {
       <div className="space-y-4">
         <ReturnButton href="/auth/login" label="Login" />
 
-        <h1 className="text-3xl font-bold">Reset Password</h1>
+        <h1 className="text-3xl font-semibold"> تغییر رمز عبور</h1>
+        {!token ? (
+          <p className="text-sm text-center text-red-500">
+            لینک معتبر نیست یا توکن ارسال نشده است.
+          </p>
+        ) : (
+          <>
+            <p className="text-sm ">رمز عبور جدید خود را وارد کنید.</p>
 
-        <p className="text-muted-foreground">
-          Please enter your new password. Make sure it is at least 6 characters.
-        </p>
-
-        <ResetPasswordForm token={token} />
+            <ResetPasswordForm token={token} />
+          </>
+        )}
       </div>
     </div>
   );

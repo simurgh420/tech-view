@@ -13,8 +13,8 @@ export function LogoutButton({ className }: LogoutButtonProps) {
   return (
     <button
       onClick={async () => {
-        await logoutAction(); // کوکی و session پاک می‌شود
-        router.refresh(); // ✅ UI فورس رفرش می‌شود
+        await logoutAction();
+        router.refresh(); //
       }}
       className={className}
     >

@@ -20,18 +20,15 @@ import {
 import { changePasswordAction } from '@/services/action/user/change-password.action';
 import { toast } from 'sonner';
 
-// ✅ ولیدیشن قوی‌تر
 const schema = z
   .object({
-    currentPassword: z.string().min(8, 'رمز عبور فعلی باید حداقل ۸ کاراکتر باشد'),
+    currentPassword: z.string().min(6, 'رمز عبور فعلی باید حداقل 6 کاراکتر باشد'),
     newPassword: z
       .string()
-      .min(8, 'رمز عبور جدید باید حداقل ۸ کاراکتر باشد')
+      .min(6, 'رمز عبور جدید باید حداقل 6 کاراکتر باشد')
       .regex(/[A-Z]/, 'رمز عبور باید حداقل یک حرف بزرگ داشته باشد')
-      .regex(/[a-z]/, 'رمز عبور باید حداقل یک حرف کوچک داشته باشد')
-      .regex(/[0-9]/, 'رمز عبور باید حداقل یک عدد داشته باشد')
-      .regex(/[^A-Za-z0-9]/, 'رمز عبور باید حداقل یک کاراکتر خاص داشته باشد'),
-    confirmPassword: z.string().min(8, 'تکرار رمز عبور باید حداقل ۸ کاراکتر باشد'),
+      .regex(/[0-9]/, 'رمز عبور باید حداقل یک عدد داشته باشد'),
+    confirmPassword: z.string().min(6, 'تکرار رمز عبور باید حداقل 6 کاراکتر باشد'),
   })
   .refine(data => data.newPassword === data.confirmPassword, {
     message: 'رمزهای عبور یکسان نیستند',
@@ -81,7 +78,7 @@ export const ChangePasswordForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold text-gray-900">تغییر رمز عبور</h2>
+        <h2 className="text-xl font-semibold ">تغییر رمز عبور</h2>
         <p className="text-sm text-gray-500">
           لطفاً رمز عبور فعلی و رمز جدید خود را وارد کنید. رمز جدید باید قوی و امن باشد.
         </p>
