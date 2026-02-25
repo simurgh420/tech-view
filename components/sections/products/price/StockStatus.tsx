@@ -1,7 +1,23 @@
 // components/product/price/StockStatus.tsx
-export default function StockStatus({ stock }: { stock: number }) {
-  if (stock <= 0) return <div className="text-red-600 font-medium">ناموجود</div>;
+import { CheckCircle, XCircle } from 'lucide-react';
 
-  return <div className="text-green-600 font-medium">موجود در انبار • {stock} عدد</div>;
+export default function StockStatus({ stock }: { stock: number }) {
+  const isOut = stock <= 0;
+
+  if (isOut) {
+    return (
+      <div className="flex items-center gap-2 text-red-500 font-medium text-sm">
+        <XCircle size={18} className="text-red-500" />
+        <span>ناموجود</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 text-emerald-600 font-semibold text-sm">
+      <CheckCircle size={18} className="text-emerald-600" />
+      <span>موجود در انبار</span>
+      <span className="text-gray-500 text-xs">• {stock} عدد</span>
+    </div>
+  );
 }
-    

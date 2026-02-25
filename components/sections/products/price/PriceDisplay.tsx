@@ -19,8 +19,17 @@ export default function PriceDisplay({
             <span className="text-2xl font-bold text-red-600">
               {formatPrice(discountPrice!)} تومان
             </span>
-            <span className="text-sm bg-red-100 text-red-600 px-2 py-1 rounded-lg">
-              {percent}٪ تخفیف
+            <span
+              className="
+    flex items-center justify-center
+    text-xs font-bold
+    bg-red-100 text-red-600
+    px-2 py-0.5
+    rounded-md
+    leading-none
+  "
+            >
+              {percent}٪
             </span>
           </div>
 
