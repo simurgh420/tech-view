@@ -17,15 +17,11 @@ export default async function PasswordSettingsPage() {
   }
 
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center  dark:bg-neutral-900 p-6"
-      dir="rtl"
-    >
+    <div className="min-h-screen w-full flex items-center justify-center p-6" dir="rtl">
       <div
         className="
           w-full max-w-md 
-          dark:bg-neutral-800 
-          border  dark:border-neutral-700
+          border  
           shadow-md 
           rounded-2xl 
           p-8 
@@ -33,12 +29,8 @@ export default async function PasswordSettingsPage() {
           space-y-6
         "
       >
-        <h1 className="text-2xl font-semibold text-center  dark:text-white">تغییر رمز عبور</h1>
-
-        <p className="text-sm text-center text-gray-600 dark:text-gray-300">
-          رمز عبور حساب خود را بروزرسانی کنید.
-        </p>
-
+        <h1 className="text-2xl font-semibold text-center  ">تغییر رمز عبور</h1>
+        <p className="text-sm text-center  ">رمز عبور حساب خود را بروزرسانی کنید.</p>
         <ChangePasswordForm />
       </div>
     </div>

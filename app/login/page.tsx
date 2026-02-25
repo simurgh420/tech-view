@@ -20,7 +20,7 @@ export default async function LoginPage() {
         <AuthVisual />
       </div>
 
-      <div className="w-full md:basis-1/4 flex items-center justify-center dark:bg-neutral-900 p-6">
+      <div className="w-full md:basis-1/4 flex items-center justify-center p-6">
         <div
           className="
     w-full

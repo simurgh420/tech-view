@@ -56,7 +56,7 @@ export const ForgotPasswordForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-sm w-full space-y-6 p-6 rounded-xl shadow-md border dark:border-neutral-700 dark:bg-neutral-800"
+          className="max-w-sm w-full space-y-6 p-6 rounded-xl shadow-md border dark:border-neutral-700 "
         >
           <FormField
             control={form.control}
