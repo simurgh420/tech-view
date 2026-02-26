@@ -4,17 +4,9 @@ import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Button } from '@/components/ui';
+import { FiltersProduct } from '@/types/product';
 
-type Filters = {
-  minPrice?: number;
-  maxPrice?: number;
-  brandSlug?: string;
-  ram?: string[];
-};
-
-type Props = {
-  onChange: (filters: Filters) => void;
-};
+type Props = { onChange: (filters: Partial<FiltersProduct>) => void };
 
 export default function ProductFilters({ onChange }: Props) {
   const PRICE_MIN = 0;
@@ -28,7 +20,7 @@ export default function ProductFilters({ onChange }: Props) {
   const [isBrandOpen, setIsBrandOpen] = useState(false);
   const [isRamOpen, setIsRamOpen] = useState(false);
 
-  function emit(next: Partial<Filters>) {
+  function emit(next: Partial<FiltersProduct>) {
     onChange({
       minPrice: priceRange[0],
       maxPrice: priceRange[1],

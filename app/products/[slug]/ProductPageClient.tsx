@@ -62,7 +62,6 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
             brand={brandName}
             rating={product.rating ? Number(product.rating) : 0}
             ratingCount={product.reviewCount ?? 0}
-            shortDescription={''} // چون در Prisma وجود ندارد
             keyFeatures={product.keyFeatures ?? []}
             colors={product.colors ?? []}
             variants={product.variants ?? []}

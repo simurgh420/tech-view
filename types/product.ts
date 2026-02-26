@@ -87,3 +87,7 @@ export type FiltersProduct = {
   perPage?: number;
   q?: string;
 };
+export type FiltersState = FiltersProduct & {
+  page: number;
+  perPage: number;
+};
