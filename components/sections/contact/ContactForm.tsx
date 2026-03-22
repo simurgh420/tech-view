@@ -40,7 +40,7 @@ export function ContactForm() {
   };
 
   return (
-    <section className="p-8 rounded-2xl border border-white/10  mb-12 text-right [direction:rtl]">
+    <section className="p-8 rounded-2xl border border-white/10  mb-12  [direction:rtl]">
       <h2 className="text-xl font-semibold  mb-6">فرم تماس با ما</h2>
 
       <form
@@ -48,14 +48,15 @@ export function ContactForm() {
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
         {/* نام */}
-        <div className="flex flex-col gap-1">
+        <div>
           <Input
             {...form.register('name')}
             placeholder="نام و نام خانوادگی"
             disabled={createContact.isPending}
             className="
-              w-full border border-white/10 
+            border border-white/10 
               rounded-xl px-4 py-3 
+               focus-visible:ring-1
               transition disabled:opacity-50
             "
           />
@@ -65,14 +66,16 @@ export function ContactForm() {
         </div>
 
         {/* ایمیل */}
-        <div className="flex flex-col gap-1">
+        <div>
           <Input
             {...form.register('email')}
             placeholder="ایمیل"
             disabled={createContact.isPending}
             className="
-              w-full border border-white/10 
+             border border-white/10 
               rounded-xl px-4 py-3 
+                   focus-visible:ring-1
+              transition disabled:opacity-50
             "
           />
           {form.formState.errors.email && (
@@ -81,14 +84,15 @@ export function ContactForm() {
         </div>
 
         {/* شماره تماس */}
-        <div className="flex flex-col gap-1">
+        <div>
           <Input
             {...form.register('phone')}
             placeholder="شماره تماس"
             disabled={createContact.isPending}
             className="
-              w-full  border border-white/10 
+               border border-white/10 
               rounded-xl px-4 py-3 
+                  focus-visible:ring-1
               transition disabled:opacity-50
             "
           />
@@ -98,14 +102,15 @@ export function ContactForm() {
         </div>
 
         {/* موضوع پیام */}
-        <div className="flex flex-col gap-1">
+        <div>
           <Input
             {...form.register('subject')}
             placeholder="موضوع پیام"
             disabled={createContact.isPending}
             className="
-              w-full  border border-white/10 
+              border border-white/10 
               rounded-xl px-4 py-3 
+                   focus-visible:ring-1
               transition disabled:opacity-50
             "
           />
@@ -121,9 +126,9 @@ export function ContactForm() {
             placeholder="متن پیام شما..."
             disabled={createContact.isPending}
             className="
-              h-32 w-full  border border-white/10 
+              h-25 w-full border border-white/10 
               rounded-xl px-4 py-3 
-              focus-visible:ring-0 focus-visible:border-e-blue-600
+                   focus-visible:ring-1 focus-visible:border-e-blue-600
               transition disabled:opacity-50
             "
           />

@@ -44,8 +44,8 @@ export function FaqSidebar({ categories }: { categories: FAQCategory[] }) {
               rounded-sm
               ${
                 activeId === category.id
-                  ? 'text-white border-gray-300'
-                  : 'text-gray-400 border-transparent hover:text-white hover:border-gray-400'
+                  ? 'border-gray-400'
+                  : 'text-gray-400 border-transparent hover:text-black dark:hover:text-white hover:border-gray-500'
               }
             `}
           >

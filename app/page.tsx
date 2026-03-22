@@ -30,7 +30,7 @@ export default function Home() {
         {/* Product Banner */}
         <ProductBanner />
         {/* Blog Section */}
-        <BlogSection />
+        {/* <BlogSection /> */}
         {/* Feature Bar */}
         <FeatureBar />
       </div>

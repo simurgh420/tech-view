@@ -8,7 +8,7 @@ export function HeroImage() {
         alt="Modern laptops"
         width={728}
         height={443}
-        className="max-w-full h-auto drop-shadow-xl"
+        className="drop-shadow-xl"
       />
     </div>
   );
