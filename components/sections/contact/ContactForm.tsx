@@ -128,7 +128,7 @@ export function ContactForm() {
             className="
               h-25 w-full border border-white/10 
               rounded-xl px-4 py-3 
-                   focus-visible:ring-1 focus-visible:border-e-blue-600
+                   focus-visible:ring-0 focus-visible:border-e-blue-600
               transition disabled:opacity-50
             "
           />

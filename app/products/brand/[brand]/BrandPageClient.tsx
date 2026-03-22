@@ -14,7 +14,7 @@ type BrandProductsPageProps = {
   brand: string;
 };
 
-export default function BrandProductsPageClient({ brand }: BrandProductsPageProps) {
+export default function BrandProductsClientPage({ brand }: BrandProductsPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 

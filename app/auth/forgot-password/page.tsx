@@ -5,7 +5,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="px-8 py-16 container mx-auto max-w-5xl space-y-8">
       <div className="space-y-4">
-        <ReturnButton href="/auth/login" label="Login" />
+        <ReturnButton href="/login" label="Login" />
 
         <h1 className="text-3xl font-semibold text-center  ">فراموشی رمز عبور</h1>
 
