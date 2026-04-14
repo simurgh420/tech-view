@@ -7,7 +7,7 @@ import { admin, customSession } from 'better-auth/plugins';
 import { normalizeName } from '@/lib/utils';
 import { ac, roles } from '@/lib/permissions';
 import prisma from '@/services/db/client';
-import { sendEmailAction } from '@/services/action/user/send-email.action';
+import { sendEmailAction } from '@/services/action/user/sendEmailAction';
 import { hashPassword, verifyPassword } from './auth/hash';
 import { isValidEmailDomain } from '@/services/action/validation/isValidEmailDomain';
 

@@ -10,9 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
-import { resetPassword } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+
+import { resetPasswordAction } from '@/services/action/user/resetPasswordAction';
+import { useNotify } from '@/hooks/useNotify';
 // ✅ اعتبارسنجی با Zod
 const schema = z
   .object({
@@ -34,6 +35,7 @@ interface ResetPasswordFormProps {
 export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  const notify = useNotify();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -45,22 +47,17 @@ export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
 
   async function onSubmit(values: FormValues) {
     setIsPending(true);
-
-    await resetPassword({
+    const { error } = await resetPasswordAction({
       newPassword: values.password,
       token,
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success('Password reset successfully.');
-          router.push('/auth/login');
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (ctx: any) => {
-          toast.error(ctx.error.message || 'خطا در تغییر رمز عبور');
-        },
-        onResponse: () => setIsPending(false),
-      },
     });
+
+    if (error) {
+      notify.error(error);
+    } else {
+      notify.success('رمز عبور با موفقیت عوض شد ');
+      router.push('/auth/login');
+    }
   }
 
   return (

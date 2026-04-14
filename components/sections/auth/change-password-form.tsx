@@ -17,8 +17,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { changePasswordAction } from '@/services/action/user/change-password.action';
-import { toast } from 'sonner';
+import { changePasswordAction } from '@/services/action/user/changePasswordAction';
+
+import { useNotify } from '@/hooks/useNotify';
 
 const schema = z
   .object({
@@ -43,6 +44,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const ChangePasswordForm = () => {
   const [isPending, setIsPending] = useState(false);
+  const notify = useNotify();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -63,9 +65,9 @@ export const ChangePasswordForm = () => {
     const { error } = await changePasswordAction(formData);
 
     if (error) {
-      toast.error(error);
+      notify.error(error);
     } else {
-      toast.success('رمز عبور با موفقیت تغییر کرد');
+      notify.success('رمز عبور با موفقیت تغییر کرد');
       form.reset();
     }
 

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
 
 import { toast } from 'sonner';
-import { deleteUserAction } from '@/services/action/user/delete-user.action';
+import { deleteUserAction } from '@/services/action/user/deleteUserAction';
 
 interface DeleteUserButtonProps {
   userId: string;

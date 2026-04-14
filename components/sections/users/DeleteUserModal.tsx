@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogOverlay,
 } from '@/components/ui/dialog';
-import { deleteUserAction } from '@/services/action/user/delete-user.action';
+import { deleteUserAction } from '@/services/action/user/deleteUserAction';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
