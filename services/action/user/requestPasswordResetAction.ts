@@ -17,7 +17,7 @@ export async function requestPasswordResetAction({
       headers: await headers(),
       body: {
         email,
-        redirectTo: redirectTo,
+        redirectTo,
       },
     });
     return { success: true, error: null };
