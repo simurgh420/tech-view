@@ -1,6 +1,7 @@
 'use server';
 
 import { auth } from '@/lib/auth';
+import { validateEmail } from '@/lib/utils';
 import { APIError } from 'better-auth';
 
 import { headers } from 'next/headers';
@@ -12,20 +13,40 @@ export async function requestPasswordResetAction({
   email: string;
   redirectTo: string;
 }) {
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.isValid) {
+    return {
+      success: false,
+      error: emailValidation.error, // "فرمت ایمیل معتبر نیست" یا پیام خطای مناسب
+    };
+  }
+  const normalizedEmail = emailValidation.normalizedEmail!;
+
   try {
     await auth.api.requestPasswordReset({
       headers: await headers(),
       body: {
-        email,
+        email: normalizedEmail,
         redirectTo,
       },
     });
-    return { success: true, error: null };
+    return {
+      success: true,
+      message: 'لینک بازیابی رمز عبور ارسال شد',
+    };
   } catch (err) {
-    if (err instanceof APIError) {
-      return { success: false, error: err.message };
+    if (err instanceof APIError && err.status === 400) {
+      // حتی اگه ایمیل نامعتبر باشه، پیام موفقیت می‌دیم
+      return {
+        success: true,
+        message: 'لینک بازیابی رمز عبور ارسال شد',
+      };
     }
 
-    return { success: false, error: 'خطای داخلی سرور' };
+    console.error('Password reset error:', err);
+    return {
+      success: false,
+      error: 'مشکلی پیش آمده. لطفاً چند دقیقه دیگر تلاش کنید',
+    };
   }
 }
