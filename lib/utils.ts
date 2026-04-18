@@ -77,3 +77,17 @@ export function validateEmail(email: string): {
     normalizedEmail: trimmedEmail.toLowerCase(),
   };
 }
+
+export function isValidPassword(password: string): { valid: boolean; error?: string } {
+  if (!password || typeof password !== 'string') {
+    return { valid: false, error: 'رمز عبور الزامی است' };
+  }
+  if (password.length < 8) {
+    return { valid: false, error: 'رمز عبور باید حداقل 8 کاراکتر باشد' };
+  }
+  // (اختیاری) حداقل یک حرف و یک عدد
+  if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+    return { valid: false, error: 'رمز عبور باید شامل حروف و اعداد باشد' };
+  }
+  return { valid: true };
+}

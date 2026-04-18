@@ -23,7 +23,7 @@ const options = {
       const link = new URL(url);
       link.searchParams.set('callbackURL', '/auth/verify');
 
-      await sendEmailAction({
+      const result = await sendEmailAction({
         to: user.email,
         subject: 'Verify your email address',
         meta: {
@@ -31,6 +31,9 @@ const options = {
           link: String(link),
         },
       });
+      if (!result.success) {
+        console.error(`Failed to send verification email to ${user.email}:`, result.error);
+      }
     },
   },
   emailAndPassword: {
@@ -43,7 +46,7 @@ const options = {
     },
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-      await sendEmailAction({
+      const result = await sendEmailAction({
         to: user.email,
         subject: 'Reset your password',
         meta: {
@@ -51,6 +54,9 @@ const options = {
           link: String(url),
         },
       });
+      if (!result.success) {
+        console.error(`Failed to send reset password email to ${user.email}:`, result.error);
+      }
     },
   },
   hooks: {

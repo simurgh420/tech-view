@@ -3,6 +3,7 @@
 
 import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
+import { useNotify } from '@/hooks/useNotify';
 import { useSession } from '@/lib/auth-client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -16,6 +17,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
   const { data: blog, isLoading } = useGetBlog(slug);
   const updateMutation = useUpdateBlog(slug);
   const { data: session, isPending } = useSession();
+  const notify = useNotify();
 
   useEffect(() => {
     if (isPending) return;
@@ -25,6 +27,16 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
   }, [session, router, isPending]);
   if (isLoading) return <div>Loading...</div>;
   if (!blog) return <div>Not found</div>;
+  const isAuthor = blog.authorId === session?.user?.id;
+  const isAdmin = session?.user?.role === 'ADMIN';
+
+  if (!isAuthor && !isAdmin) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-red-500">شما اجازه ویرایش این پست را ندارید.</p>
+      </div>
+    );
+  }
 
   const initialValues = {
     title: blog.title,
@@ -65,7 +77,19 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
     };
 
     updateMutation.mutate(payload, {
-      onSuccess: () => router.push('/blog'),
+      onSuccess: () => {
+        notify.success('بلاگ با موفقیت ویرایش شد ✅');
+        router.push('/blog');
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onError: (error: any) => {
+        if (error.response?.status === 403) {
+          notify.error('شما اجازه ویرایش این پست را ندارید');
+        } else {
+          notify.error('خطا در ویرایش بلاگ');
+        }
+        console.error(error);
+      },
     });
   }
 
@@ -77,10 +101,6 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
         onSubmit={handleSubmit}
         isLoading={updateMutation.isPending}
       />
-      {updateMutation.isError && <p className="text-red-500 mt-4">خطا در ویرایش بلاگ</p>}
-      {updateMutation.isSuccess && (
-        <p className="text-green-600 mt-4">بلاگ با موفقیت ویرایش شد ✅</p>
-      )}
     </div>
   );
 }

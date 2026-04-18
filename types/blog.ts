@@ -59,7 +59,6 @@ export type BlogPayload = {
   content: string;
   tags: string[];
   coverImageUrl?: string;
-  authorId: string;
 };
 
 export type UpdateBlogData = {

@@ -19,7 +19,7 @@ export async function createBlogPost(input: unknown) {
       coverImageUrl: data.coverImageUrl ?? null,
       readingMinutes: calculateReadingMinutes(data.content),
       publishedAt: new Date(),
-      authorId: data.authorId, // مهم
+      authorId: data.authorId,
       status: 'PUBLISHED',
       tags: {
         create: data.tags.map(tagName => ({

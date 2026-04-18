@@ -3,6 +3,7 @@
 
 import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
+import { useNotify } from '@/hooks/useNotify';
 import { useSession } from '@/lib/auth-client';
 import { toSlug } from '@/lib/slug';
 import axios from 'axios';
@@ -13,6 +14,7 @@ export default function CreateBlogPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const userId = session?.user?.id;
+  const notify = useNotify();
   useEffect(() => {
     if (isPending) return;
     if (!session?.user) {
@@ -23,7 +25,10 @@ export default function CreateBlogPage() {
   const createMutation = useCreateBlog();
 
   async function handleSubmit(data: BlogFormType) {
-    if (!userId) return;
+    if (!userId) {
+      notify.info('لطفاً منتظر بمانید...');
+      return;
+    }
 
     const slug = toSlug(data.title);
     let imageUrl = '';
@@ -48,10 +53,16 @@ export default function CreateBlogPage() {
         content: data.content,
         tags: data.tags,
         coverImageUrl: imageUrl,
-        authorId: userId,
       },
       {
-        onSuccess: () => router.push('/blog'),
+        onSuccess: () => {
+          notify.success('بلاگ با موفقیت ایجاد شد ✅');
+          router.push('/blog');
+        },
+        onError: error => {
+          notify.error('خطا در ایجاد بلاگ');
+          console.error(error);
+        },
       }
     );
   }
@@ -60,10 +71,7 @@ export default function CreateBlogPage() {
     <div className="max-w-2xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6 text-right">✍️ ایجاد بلاگ جدید</h1>
 
-      <BlogForm onSubmit={handleSubmit} isLoading={createMutation.isPending} />
-
-      {createMutation.isError && <p className="text-red-500">خطا در ایجاد بلاگ</p>}
-      {createMutation.isSuccess && <p className="text-green-600">بلاگ با موفقیت ایجاد شد ✅</p>}
+      <BlogForm onSubmit={handleSubmit} isLoading={createMutation.isPending || isPending} />
     </div>
   );
 }

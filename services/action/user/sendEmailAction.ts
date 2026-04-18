@@ -14,6 +14,31 @@ export async function sendEmailAction({
     link: string;
   };
 }) {
+  // 1. اعتبارسنجی ورودی‌ها
+  if (!to || typeof to !== 'string' || !to.includes('@')) {
+    return { success: false, error: 'آدرس ایمیل گیرنده معتبر نیست' };
+  }
+  if (!subject || typeof subject !== 'string') {
+    return { success: false, error: 'موضوع ایمیل نامعتبر است' };
+  }
+  if (!meta?.description || !meta?.link) {
+    return { success: false, error: 'محتوای ایمیل کامل نیست' };
+  }
+  // 2. اعتبارسنجی امنیتی لینک (جلوگیری از open redirect یا لینک‌های مخرب)
+  try {
+    new URL(meta.link);
+  } catch {
+    return { success: false, error: 'لینک نامعتبر است' };
+  }
+  // بررسی پیکربندی SMTP
+
+  if (!process.env.NODEMAILER_USER || !transporter) {
+    console.error('[SendEmail] SMTP configuration missing');
+    return { success: false, error: 'سیستم ارسال ایمیل پیکربندی نشده است' };
+  }
+
+  // 3. قالب HTML ایمیل (می‌توانید همان قالب قبلی را استفاده کنید)
+
   const html = `
   <div style="
     max-width: 520px;
@@ -95,9 +120,9 @@ export async function sendEmailAction({
       html,
     });
 
-    return { success: true };
+    return { success: true, error: null };
   } catch (err) {
-    console.error('[SendEmail]:', err);
-    return { success: false };
+    console.error('[SendEmail] Error:', err);
+    return { success: false, error: 'خطا در ارسال ایمیل. لطفاً دقایقی دیگر تلاش کنید.' };
   }
 }

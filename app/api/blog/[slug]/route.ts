@@ -30,11 +30,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ slug: st
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
   const action = post.authorId === session.user.id ? 'update:own' : 'update';
-  const canUpdate = await auth.api.userHasPermission({
+
+  const permission = await auth.api.userHasPermission({
     headers: req.headers,
     body: { userId: session.user.id, permission: { posts: [action] } },
   });
-  if (!canUpdate) {
+  if (permission.error || !permission.success) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
@@ -61,11 +62,12 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
   const action = post.authorId === session.user.id ? 'delete:own' : 'delete';
-  const canDelete = await auth.api.userHasPermission({
+  const permission = await auth.api.userHasPermission({
     headers: req.headers,
     body: { userId: session.user.id, permission: { posts: [action] } },
   });
-  if (!canDelete) {
+
+  if (permission.error || !permission.success) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {

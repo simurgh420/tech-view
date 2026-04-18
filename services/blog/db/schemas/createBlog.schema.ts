@@ -6,7 +6,7 @@ export const createBlogSchema = z.object({
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
   coverImageUrl: z.string().optional(),
   content: z.string().min(20, 'محتوا باید حداقل ۲۰ کاراکتر باشد'),
-  authorId: z.string(),
+  authorId: z.string().optional(),
   tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
 });
 
