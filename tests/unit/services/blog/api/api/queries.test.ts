@@ -8,7 +8,7 @@ vi.mock('axios');
 describe('blog queries', () => {
   it('fetchBlogs sends GET request with params and returns data', async () => {
     const mockData = { blogs: [{ id: 1, title: 'Test Blog' }], total: 1 };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (axios.get as any).mockResolvedValue({ data: mockData });
 
     const result = await fetchBlogsApi(2, 5);
@@ -17,7 +17,7 @@ describe('blog queries', () => {
   });
   it('fetchBlogBySlug sends GET request and returns data', async () => {
     const mockData = { id: 1, title: 'Test Blog', slug: 'test-blog' };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (axios.get as any).mockResolvedValue({ data: mockData });
     const result = await fetchBlogBySlugApi('test-blog');
 

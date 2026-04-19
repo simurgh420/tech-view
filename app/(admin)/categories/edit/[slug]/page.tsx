@@ -15,7 +15,7 @@ export default function EditCategoryPage() {
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!category) return <p>کتگوری یافت نشد ❌</p>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const handleSubmit = (formData: any) => {
     updateMutation.mutate(
       { slug, data: formData },

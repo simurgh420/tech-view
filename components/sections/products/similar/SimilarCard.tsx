@@ -5,7 +5,6 @@ import Image from 'next/image';
 
 const formatPrice = (value: number) => new Intl.NumberFormat('en-US').format(value);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function SimilarCard({ product }: { product: any }) {
   return (
     <div className="border rounded-xl p-3 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition cursor-pointer">

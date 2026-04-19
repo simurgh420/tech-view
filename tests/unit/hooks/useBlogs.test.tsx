@@ -39,7 +39,6 @@ describe('useBlogs hook', () => {
       page: 1,
       pageSize: 10,
       pages: 1,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     vi.spyOn(queries, 'fetchBlogsApi').mockResolvedValue(mockData);
@@ -52,7 +51,6 @@ describe('useBlogs hook', () => {
   });
 
   it('useCreateBlog calls mutationFn and invalidates queries', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBlog = { id: 1, slug: 'new-blog' } as any;
     vi.spyOn(mutations, 'createBlogApi').mockResolvedValue(mockBlog);
 
@@ -61,7 +59,6 @@ describe('useBlogs hook', () => {
     });
 
     await act(async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await result.current.mutateAsync({ title: 'New Blog' } as any);
     });
 
@@ -72,7 +69,6 @@ describe('useBlogs hook', () => {
   });
 
   it('useUpdateBlog calls mutationFn and invalidates queries', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBlog = { id: 1, slug: 'updated-blog' } as any;
     vi.spyOn(mutations, 'updateBlogApi').mockResolvedValue(mockBlog);
 
@@ -81,7 +77,6 @@ describe('useBlogs hook', () => {
     });
 
     await act(async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await result.current.mutateAsync({ title: 'Updated Blog' } as any);
     });
 

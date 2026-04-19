@@ -15,7 +15,6 @@ export function LogoutButton() {
       await logoutMutation.mutateAsync();
       notify.success('با موفقیت خارج شدید');
       router.push('/');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       notify.error('خطا در خروج', err?.message);
     }

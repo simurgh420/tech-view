@@ -3,7 +3,6 @@
 
 import SimilarCard from './SimilarCard';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function SimilarSlider({ products }: { products: any[] }) {
   return (
     <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">

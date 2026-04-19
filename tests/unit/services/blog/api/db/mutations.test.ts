@@ -17,7 +17,7 @@ vi.mock('@/services/upload/deleteImage', () => ({
 describe('blog mutations', () => {
   it('createBlogPost calls prisma.blogPost.create with correct data', async () => {
     const mockData = { id: 1, title: 'Test Blog' };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.create as any).mockResolvedValue(mockData);
 
     const result = await createBlogPost({
@@ -49,9 +49,9 @@ describe('blog mutations', () => {
   it('updatePost updates post correctly', async () => {
     const mockPost = { id: 1, slug: 'test-slug' };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findUnique as any).mockResolvedValue(mockPost);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.update as any).mockResolvedValue({ id: 1, title: 'Updated Blog' });
 
     const result = await updatePost('test-slug', {
@@ -84,9 +84,9 @@ describe('blog mutations', () => {
   it('deletePost deletes post when found', async () => {
     const mockPost = { id: 1, slug: 'test-slug', coverImageUrl: '/img.jpg' };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findUnique as any).mockResolvedValue(mockPost);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.delete as any).mockResolvedValue({ success: true });
 
     const result = await deletePost('test-slug');

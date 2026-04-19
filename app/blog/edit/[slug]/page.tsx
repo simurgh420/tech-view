@@ -81,7 +81,6 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
         notify.success('بلاگ با موفقیت ویرایش شد ✅');
         router.push('/blog');
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: any) => {
         if (error.response?.status === 403) {
           notify.error('شما اجازه ویرایش این پست را ندارید');

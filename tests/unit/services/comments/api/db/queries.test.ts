@@ -25,7 +25,7 @@ describe('Comment Queries (mocked)', () => {
       },
     ];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.comment.findMany as any).mockResolvedValueOnce(fakeResponse);
 
     const result = await getCommentsByPostId('fake-post-id');
@@ -66,7 +66,7 @@ describe('Comment Queries (mocked)', () => {
       },
     ];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.comment.findMany as any).mockResolvedValueOnce(fakeResponse);
 
     const result = await getAllCommentsWithPost();

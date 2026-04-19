@@ -13,7 +13,6 @@ export async function deleteImage(imagePath: string) {
     await stat(fullPath);
     await unlink(fullPath);
     return true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       console.warn('deleteImage: file not found:', fullPath);

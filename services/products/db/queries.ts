@@ -78,7 +78,6 @@ export async function getFilteredProducts({
   perPage?: number;
   ram?: string[];
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let orderBy: any;
 
   if (sort === 'price-asc') orderBy = { price: 'asc' };
@@ -89,7 +88,6 @@ export async function getFilteredProducts({
   const skip = page && perPage ? (page - 1) * perPage : undefined;
   const take = perPage ?? undefined;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {
     status: 'PUBLISHED',
   };

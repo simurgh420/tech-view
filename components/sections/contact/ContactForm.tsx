@@ -32,7 +32,6 @@ export function ContactForm() {
         form.reset();
         toast.success('پیام شما با موفقیت ارسال شد.');
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (err: any) => {
         toast.error(err?.response?.data?.message || 'خطایی در ارسال پیام رخ داد.');
       },

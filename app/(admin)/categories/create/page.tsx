@@ -11,7 +11,6 @@ export default function CreateCategoryPage() {
   const router = useRouter();
   const { useCreateCategory } = useCategories();
   const createMutation = useCreateCategory();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (formData: any) => {
     createMutation.mutate(formData, {
       onSuccess: () => {

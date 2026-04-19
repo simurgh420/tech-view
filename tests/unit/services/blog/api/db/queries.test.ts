@@ -31,9 +31,9 @@ describe('blog queries', async () => {
         tags: [{ tag: { name: 'tag1' } }],
       },
     ];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findMany as any).mockResolvedValue(mockPosts);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.count as any).mockResolvedValue(1);
     const result = await getPublishedPosts({ page: 1, pageSize: 10 });
     expect(prisma.blogPost.findMany).toHaveBeenCalled();
@@ -44,7 +44,7 @@ describe('blog queries', async () => {
   });
   it('getPostBySlug calls prisma.blogPost.findUnique with slug', async () => {
     const mockPost = { id: '1', slug: 'test-blog', title: 'Test Blog' };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findUnique as any).mockResolvedValue(mockPost);
     const result = await getPostBySlug('test-blog');
     expect(prisma.blogPost.findUnique).toHaveBeenCalledWith(
@@ -54,7 +54,7 @@ describe('blog queries', async () => {
   });
   it('getRecentPosts calls prisma.blogPost.findMany with limit', async () => {
     const mockPosts = [{ id: '1', title: 'Recent Blog' }];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findMany as any).mockResolvedValue(mockPosts);
     const result = await getRecentPosts(2);
     expect(prisma.blogPost.findMany).toHaveBeenCalledWith(expect.objectContaining({ take: 2 }));
@@ -62,7 +62,7 @@ describe('blog queries', async () => {
   });
   it('getUsedTags returns tags from prisma.tag.findMany', async () => {
     const mockTags = [{ id: '1', name: 'tag1', slug: 'tag1' }];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.tag.findMany as any).mockResolvedValue(mockTags);
     const result = await getUsedTags();
     expect(prisma.tag.findMany).toHaveBeenCalled();
@@ -70,7 +70,7 @@ describe('blog queries', async () => {
   });
   it('getTagsByPostId returns tags if post exists', async () => {
     const mockPost = { id: '1', tags: [{ tag: { id: 't1', name: 'tag1' } }] };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findUnique as any).mockResolvedValue(mockPost);
     const result = await getTagsByPostId('1');
     expect(prisma.blogPost.findUnique).toHaveBeenCalledWith(
@@ -79,7 +79,7 @@ describe('blog queries', async () => {
     expect(result).toEqual([{ id: 't1', name: 'tag1' }]);
   });
   it('getTagsByPostId returns empty array if post not found', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (prisma.blogPost.findUnique as any).mockResolvedValue(null);
     const result = await getTagsByPostId('not-found');
     expect(result).toEqual([]);
