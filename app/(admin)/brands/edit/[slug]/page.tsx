@@ -3,8 +3,8 @@
 
 import { BrandForm, BrandFormType } from '@/components/sections/brand/BrandForm';
 import { useBrands } from '@/hooks/useBrands';
+import { useNotify } from '@/hooks/useNotify';
 import { useParams } from 'next/navigation';
-import { toast } from 'sonner';
 
 export default function EditBrandPage() {
   const params = useParams();
@@ -12,6 +12,8 @@ export default function EditBrandPage() {
   const { useGetBrand, useUpdateBrand } = useBrands();
   const { data: brand, isLoading } = useGetBrand(slug);
   const updateMutation = useUpdateBrand();
+  const notify = useNotify();
+
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!brand) return <p>برند یافت نشد ❌</p>;
 
@@ -23,11 +25,11 @@ export default function EditBrandPage() {
       },
       {
         onSuccess: () => {
-          toast.success('برند با موفقیت ویرایش شد ✅');
+          notify.success('برند با موفقیت ویرایش شد ✅');
         },
         onError: err => {
           console.error(err);
-          toast.error('خطا در ویرایش برند ❌');
+          notify.error('خطا در ویرایش برند ❌');
         },
       }
     );

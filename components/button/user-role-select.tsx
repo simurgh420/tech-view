@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { UserRole } from '@/types/user';
 import { setUserRoleAction } from '@/services/action/user/setUserRoleAction';
+import { useNotify } from '@/hooks/useNotify';
 
 interface UserRoleSelectProps {
   userId: string;
@@ -14,6 +14,7 @@ interface UserRoleSelectProps {
 export const UserRoleSelect = ({ userId, role }: UserRoleSelectProps) => {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  const notify = useNotify();
 
   async function handleChange(evt: React.ChangeEvent<HTMLSelectElement>) {
     const newRole = evt.target.value as UserRole;
@@ -23,9 +24,9 @@ export const UserRoleSelect = ({ userId, role }: UserRoleSelectProps) => {
     setIsPending(false);
 
     if (res.error) {
-      toast.error(res.error ?? 'خطا در تغییر نقش');
+      notify.error(res.error ?? 'خطا در تغییر نقش');
     } else {
-      toast.success('نقش با موفقیت بروزرسانی شد');
+      notify.success('نقش با موفقیت بروزرسانی شد');
       router.refresh();
     }
   }

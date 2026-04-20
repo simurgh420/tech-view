@@ -8,12 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
 import { useContact } from '@/hooks/useContact';
-import { toast } from 'sonner';
 import { ContactFormValues, contactSchema } from '@/lib/validation/contact.';
+import { useNotify } from '@/hooks/useNotify';
 
 export function ContactForm() {
   const { useCreateContact } = useContact();
   const createContact = useCreateContact();
+  const notify = useNotify();
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -30,10 +31,10 @@ export function ContactForm() {
     createContact.mutate(data, {
       onSuccess: () => {
         form.reset();
-        toast.success('پیام شما با موفقیت ارسال شد.');
+        notify.success('پیام شما با موفقیت ارسال شد.');
       },
       onError: (err: any) => {
-        toast.error(err?.response?.data?.message || 'خطایی در ارسال پیام رخ داد.');
+        notify.error(err?.response?.data?.message || 'خطایی در ارسال پیام رخ داد.');
       },
     });
   };

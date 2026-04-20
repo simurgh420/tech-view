@@ -3,8 +3,8 @@
 
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
 import { useCategories } from '@/hooks/useCategories';
+import { useNotify } from '@/hooks/useNotify';
 import { useParams } from 'next/navigation';
-import { toast } from 'sonner';
 
 export default function EditCategoryPage() {
   const params = useParams();
@@ -12,20 +12,21 @@ export default function EditCategoryPage() {
   const { useGetCategory, useUpdateCategory } = useCategories();
   const { data: category, isLoading } = useGetCategory(slug);
   const updateMutation = useUpdateCategory();
+  const notify = useNotify();
+
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!category) return <p>کتگوری یافت نشد ❌</p>;
 
-   
   const handleSubmit = (formData: any) => {
     updateMutation.mutate(
       { slug, data: formData },
       {
         onSuccess: () => {
-          toast.success('کتگوری با موفقیت ویرایش شد ✅');
+          notify.success('کتگوری با موفقیت ویرایش شد ✅');
         },
         onError: err => {
           console.error(err);
-          toast.error('خطا در ویرایش کتگوری ❌');
+          notify.error('خطا در ویرایش کتگوری ❌');
         },
       }
     );
