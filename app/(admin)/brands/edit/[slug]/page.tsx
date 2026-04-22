@@ -4,10 +4,11 @@
 import { BrandForm, BrandFormType } from '@/components/sections/brand/BrandForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function EditBrandPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params?.slug as string;
   const { useGetBrand, useUpdateBrand } = useBrands();
   const { data: brand, isLoading } = useGetBrand(slug);
@@ -26,6 +27,8 @@ export default function EditBrandPage() {
       {
         onSuccess: () => {
           notify.success('برند با موفقیت ویرایش شد ✅');
+          router.push('/brands');
+          router.refresh();
         },
         onError: err => {
           console.error(err);

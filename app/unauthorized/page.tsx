@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
 export default function UnauthorizedPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center ">
-      <div className=" shadow-lg rounded-lg p-8 text-center max-w-md">
-        <AlertTriangle className="h-16 w-16 text-red-500 mx-auto" />
+    <main className="flex min-h-screen items-center justify-center p-4 ">
+      <div dir="rtl" className=" shadow-lg rounded-lg p-8 text-center max-w-md">
+        <AlertTriangle className="h-16 w-16 text-red-500 mx-auto" aria-hidden="true" />
         <h1 className="text-2xl font-bold  mt-4">دسترسی غیرمجاز 🚫</h1>
         <p className=" mt-2">
           شما اجازه ورود به این صفحه رو ندارید برای اطلاعات بیشتر لطفا با ادمین تماس بگیرید
@@ -17,6 +17,6 @@ export default function UnauthorizedPage() {
           صفحه اصلی
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

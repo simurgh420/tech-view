@@ -18,9 +18,10 @@ export default function CreateBrandPage() {
         notify.success('برند با موفقیت ایجاد شد ✅');
         router.push('/brands');
       },
-      onError: err => {
+      onError: (err: any) => {
+        const message = err?.response?.data?.error || 'خطا در ایجاد برند ❌';
+        notify.error(message);
         console.error(err);
-        notify.error('خطا در ایجاد برند ❌');
       },
     });
   };
