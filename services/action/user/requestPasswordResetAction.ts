@@ -37,6 +37,7 @@ export async function requestPasswordResetAction({
   } catch (err) {
     if (err instanceof APIError && err.status === 400) {
       // حتی اگه ایمیل نامعتبر باشه، پیام موفقیت می‌دیم
+      console.warn('Password reset 400:', err.body); // فقط در لاگ
       return {
         success: true,
         message: 'لینک بازیابی رمز عبور ارسال شد',
