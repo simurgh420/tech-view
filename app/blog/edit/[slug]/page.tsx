@@ -77,9 +77,13 @@ export default function EditBlogPage({ params }: { params: Promise<{ slug: strin
     };
 
     updateMutation.mutate(payload, {
-      onSuccess: () => {
+      onSuccess: data => {
         notify.success('بلاگ با موفقیت ویرایش شد ✅');
-        router.push('/blog');
+        if (data.slug !== slug) {
+          router.push(`/blog/${data.slug}`);
+        } else {
+          router.push('/blog/');
+        }
       },
       onError: (error: any) => {
         if (error.response?.status === 403) {

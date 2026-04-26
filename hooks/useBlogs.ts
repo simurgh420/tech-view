@@ -5,12 +5,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { BlogListResponse, BlogPayload, BlogPost, UpdateBlogData } from '@/types/blog';
 
-import { useRouter } from 'next/navigation';
 import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 import { createBlogApi, deleteBlogApi, updateBlogApi } from '@/services/blog/api/mutations';
 
 export function useBlogs() {
-  const router = useRouter();
   const qc = useQueryClient();
 
   const useGetBlogs = (page = 1, pageSize = 10) =>
@@ -42,7 +40,7 @@ export function useBlogs() {
         qc.invalidateQueries({ queryKey: ['blog', updatedPost.slug] });
 
         if (updatedPost.slug !== slug) {
-          router.push(`/blog/${updatedPost.slug}`);
+          qc.invalidateQueries({ queryKey: ['blog', slug] }); // ← اسلاگ قدیمی
         }
       },
     });
