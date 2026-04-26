@@ -1,24 +1,31 @@
 // services/upload/deleteImage.ts
-import { stat, unlink } from 'fs/promises';
+import { rm } from 'fs/promises';
 import path from 'path';
 
 export async function deleteImage(imagePath: string) {
-  if (!imagePath) return false;
-  if (imagePath.includes('..')) return false;
-
+  // اعتبارسنجی اولیه
+  if (!imagePath || typeof imagePath !== 'string') return false;
+  if (imagePath.includes('..')) {
+    console.warn('deleteImage: path traversal detected:', imagePath);
+    return false;
+  }
+  // حذف اسلش ابتدایی و جلوگیری از مسیر خالی
   const safePath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-  const fullPath = path.join(process.cwd(), 'public', safePath);
+  if (!safePath) return false;
+  // ساخت مسیر کامل امن
+  const publicDir = path.join(process.cwd(), 'public');
+  const fullPath = path.resolve(publicDir, safePath);
+  // بررسی اینکه مسیر نهایی داخل public است
+  if (!fullPath.startsWith(publicDir + path.sep)) {
+    console.error('deleteImage: resolved path outside public directory');
+    return false;
+  }
 
   try {
-    await stat(fullPath);
-    await unlink(fullPath);
+    await rm(fullPath, { force: true });
     return true;
   } catch (err: any) {
-    if (err.code === 'ENOENT') {
-      console.warn('deleteImage: file not found:', fullPath);
-      return false;
-    }
-    console.error('Error deleting file:', err);
+    console.error('deleteImage: error deleting file:', err);
     return false;
   }
 }
