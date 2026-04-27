@@ -3,7 +3,7 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import EditorClient from '@/components/editors/EditorClient';
 import { Control } from 'react-hook-form';
-import { BlogFormType } from './BlogForm';
+import { BlogFormType } from '@/lib/validation/blog';
 
 export function BlogContentSection({
   control,

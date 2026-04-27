@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 
 import { Control } from 'react-hook-form';
 import { ImageUploader } from '../../image/ImageUploader';
-import { BlogFormType } from './BlogForm';
+import { BlogFormType } from '@/lib/validation/blog';
 
 export function BlogCoverSection({
   control,
