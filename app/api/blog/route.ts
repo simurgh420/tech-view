@@ -1,13 +1,17 @@
 import { auth } from '@/lib/auth';
 import { createBlogPost } from '@/services/blog/db/mutations';
 import { getPublishedPosts } from '@/services/blog/db/queries';
+import { createBlogSchema } from '@/services/blog/db/schemas/createBlog.schema';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = Number(searchParams.get('page') || 1);
-    const pageSize = Number(searchParams.get('pageSize') || 10);
+    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10) || 1);
+    const pageSize = Math.min(
+      50,
+      Math.max(1, parseInt(searchParams.get('pageSize') ?? '10', 10) || 10)
+    );
 
     const blogs = await getPublishedPosts({ page, pageSize });
     return NextResponse.json(blogs);
@@ -19,29 +23,44 @@ export async function GET(req: Request) {
 
 // ساخت بلاگ جدید
 export async function POST(req: Request) {
+  // 1. بررسی احراز هویت
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  // 2. بررسی دسترسی برای ایجاد پست
+  const permission = await auth.api.userHasPermission({
+    headers: req.headers,
+    body: {
+      userId: session.user.id,
+      permission: { posts: ['create'] },
+    },
+  });
+  if (permission.error || !permission.success) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
-    // 1. بررسی احراز هویت
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    // 2. بررسی دسترسی برای ایجاد پست
-    const permission = await auth.api.userHasPermission({
-      headers: req.headers,
-      body: {
-        userId: session.user.id,
-        permission: { posts: ['create'] },
-      },
-    });
-    if (permission.error || !permission.success) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
     const body = await req.json();
-    const blogData = { ...body, authorId: session.user.id };
-    const blog = await createBlogPost(blogData);
-    return NextResponse.json(blog);
+    const parsed = createBlogSchema.safeParse({
+      ...body,
+      authorId: session.user.id,
+    });
+
+    if (!parsed.success) {
+      // مدرن‌ترین روش: برگرداندن issues (بدون flatten)
+      const details = parsed.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message,
+      }));
+      return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
+    }
+
+    // 4. ایجاد بلاگ (داده معتبر)
+    const blog = await createBlogPost(parsed.data);
+    return NextResponse.json(blog, { status: 201 });
   } catch (error) {
+    // خطاهای غیرمنتظره (مثلاً بدنه JSON نبود)
     console.error('Failed to create blog post:', error);
-    return NextResponse.json({ error: 'Failed to create blog post' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -3,13 +3,11 @@ import { calculateReadingMinutes, toSlug } from '@/lib/slug';
 import prisma from '@/services/db/client';
 import { deleteImage } from '@/services/upload/deleteImage';
 import { UpdateBlogData } from '@/types/blog';
-import { createBlogSchema } from './schemas/createBlog.schema';
-import { updateBlogSchema } from './schemas/updateBlog.schema';
+import { CreateBlogInput } from './schemas/createBlog.schema';
+import { UpdateBlogInput } from './schemas/updateBlog.schema';
 
 // ساخت بلاگ جدید
-export async function createBlogPost(input: unknown) {
-  const data = createBlogSchema.parse(input);
-
+export async function createBlogPost(data: CreateBlogInput) {
   return prisma.blogPost.create({
     data: {
       title: data.title,
@@ -40,9 +38,7 @@ export async function createBlogPost(input: unknown) {
 }
 
 // ویرایش بلاگ
-export async function updatePost(slug: string, input: unknown) {
-  const data = updateBlogSchema.parse(input);
-
+export async function updatePost(slug: string, data: UpdateBlogInput) {
   const post = await prisma.blogPost.findUnique({ where: { slug } });
   if (!post) return null;
 

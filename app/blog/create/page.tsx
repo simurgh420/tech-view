@@ -1,28 +1,43 @@
 // app/(whatever)/blog/create/page.tsx
 'use client';
 
-import { BlogForm, BlogFormType } from '@/components/sections/blog/BlogForm/BlogForm';
+import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
 import { useSession } from '@/lib/auth-client';
 import { toSlug } from '@/lib/slug';
+import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
+import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function CreateBlogPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const userId = session?.user?.id;
   const notify = useNotify();
+  const { useCreateBlog } = useBlogs();
+  const createMutation = useCreateBlog();
+
+  const form = useForm<BlogFormType>({
+    resolver: zodResolver(blogFormSchema),
+    defaultValues: {
+      title: '',
+      excerpt: '',
+      coverImageUrl: undefined,
+      content: '',
+      tags: [],
+    },
+  });
+
   useEffect(() => {
     if (isPending) return;
     if (!session?.user) {
       router.push('/login');
     }
   }, [session, isPending, router]);
-  const { useCreateBlog } = useBlogs();
-  const createMutation = useCreateBlog();
 
   async function handleSubmit(data: BlogFormType) {
     if (!userId) {
@@ -59,8 +74,18 @@ export default function CreateBlogPage() {
           notify.success('بلاگ با موفقیت ایجاد شد ✅');
           router.push('/blog');
         },
-        onError: error => {
-          notify.error('خطا در ایجاد بلاگ');
+        onError: (error: any) => {
+          const details = error?.response?.data?.details;
+          if (Array.isArray(details)) {
+            details.forEach(({ field, message }: { field: string; message: string }) => {
+              if (field in blogFormSchema.shape) {
+                form.setError(field as keyof BlogFormType, { message });
+              }
+            });
+            notify.error('لطفاً خطاهای فرم را بررسی کنید');
+          } else {
+            notify.error('خطا در ایجاد بلاگ');
+          }
           console.error(error);
         },
       }
@@ -71,7 +96,11 @@ export default function CreateBlogPage() {
     <div className="max-w-2xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6 text-right">✍️ ایجاد بلاگ جدید</h1>
 
-      <BlogForm onSubmit={handleSubmit} isLoading={createMutation.isPending || isPending} />
+      <BlogForm
+        form={form}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || isPending}
+      />
     </div>
   );
 }

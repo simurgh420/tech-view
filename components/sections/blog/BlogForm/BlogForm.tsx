@@ -1,8 +1,6 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useWatch } from 'react-hook-form';
-import z from 'zod';
+import { UseFormReturn, useWatch } from 'react-hook-form';
 
 import { Form } from '@/components/ui/form';
 
@@ -13,18 +11,10 @@ import { BlogCoverSection } from './BlogCoverSection';
 import { BlogContentSection } from './BlogContentSection';
 import { BlogTagsSection } from './BlogTagsSection';
 import { Button } from '@/components/ui';
-
-const schema = z.object({
-  title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
-  excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
-  coverImageUrl: z.union([z.instanceof(File), z.string()]).optional(),
-  content: z.string().min(20, 'محتوا باید حداقل ۲۰ کاراکتر باشد'),
-  tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
-});
-
-export type BlogFormType = z.infer<typeof schema>;
+import { BlogFormType } from '@/lib/validation/blog';
 
 type Props = {
+  form: UseFormReturn<BlogFormType>;
   initialValues?: {
     title: string;
     excerpt: string;
@@ -35,17 +25,7 @@ type Props = {
   onSubmit: (data: BlogFormType) => void;
   isLoading?: boolean;
 };
-export function BlogForm({ initialValues, onSubmit, isLoading }: Props) {
-  const form = useForm<BlogFormType>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      title: initialValues?.title ?? '',
-      excerpt: initialValues?.excerpt ?? '',
-      coverImageUrl: undefined,
-      content: initialValues?.content ?? '',
-      tags: initialValues?.tags ?? [],
-    },
-  });
+export function BlogForm({ form, initialValues, onSubmit, isLoading }: Props) {
   const title = useWatch({ control: form.control, name: 'title' });
   const slug = toSlug(title || '');
   return (

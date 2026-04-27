@@ -1,17 +1,12 @@
 // src/lib/validation/blog.ts
 
 import { z } from 'zod';
-export const createPostSchema = z.object({
-  title: z.string().min(3),
-  slug: z
-    .string()
-    .min(3)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-  excerpt: z.string().min(16),
-  content: z.string().min(20),
-  coverImageUrl: z.url(),
-  readingMinutes: z.number().min(1).max(30),
-  author: z.string().min(2),
-  tags: z.array(z.string()).default([]),
-  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('PUBLISHED'),
+
+export const blogFormSchema = z.object({
+  title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
+  excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
+  coverImageUrl: z.union([z.instanceof(File), z.string()]).optional(),
+  content: z.string().min(20, 'محتوا باید حداقل ۲۰ کاراکتر باشد'),
+  tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
 });
+export type BlogFormType = z.infer<typeof blogFormSchema>;
