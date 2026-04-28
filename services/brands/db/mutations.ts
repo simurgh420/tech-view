@@ -10,7 +10,7 @@ export async function createBrand(data: BrandPayload) {
       name: data.name,
       slug: toSlug(data.name),
       logo: data.logo || null,
-      isActive: true,
+      isActive: data.isActive ?? true,
     },
   });
 }

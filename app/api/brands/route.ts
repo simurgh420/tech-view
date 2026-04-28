@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import { getBrands } from '@/services/brands/db/queries';
 import { createBrand } from '@/services/brands/db/mutations';
+import { auth } from '@/lib/auth';
+import { createBrandSchema } from '@/lib/validation/brand';
 
 export async function GET() {
   try {
@@ -9,20 +11,40 @@ export async function GET() {
     return NextResponse.json(brands);
   } catch (error) {
     console.error('GET /api/brands Error:', error);
-    return NextResponse.json({ success: false, message: 'Failed to load brands' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const permission = await auth.api.userHasPermission({
+    headers: req.headers,
+    body: {
+      userId: session.user.id,
+      permission: { brands: ['create'] },
+    },
+  });
+  if (permission.error || !permission.success) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const body = await req.json();
-    const brand = await createBrand(body);
+    const parsed = createBrandSchema.safeParse(body);
+    if (!parsed.success) {
+      const details = parsed.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message,
+      }));
+      return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
+    }
+    const brand = await createBrand(parsed.data);
     return NextResponse.json(brand, { status: 201 });
   } catch (error) {
     console.error('POST /api/brands Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to create brand' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

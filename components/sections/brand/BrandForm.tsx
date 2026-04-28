@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import {
   Form,
@@ -17,42 +16,51 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import Image from 'next/image';
 import { BrandActions } from './BrandActions';
+import z from 'zod';
+import {
+  CreateBrandInput,
+  createBrandSchema,
+  EditBrandInput,
+  editBrandSchema,
+} from '@/lib/validation/brand';
+import { BrandFormProps } from '@/types/brand';
 
-const brandSchema = z.object({
-  name: z.string().min(2, 'نام برند الزامی است'),
-  logo: z.url('آدرس لوگو باید معتبر باشد').optional(),
-});
+export function BrandForm(props: BrandFormProps) {
+  const { mode, initialValues, onSubmit, isLoading, slug } = props;
 
-export type BrandFormType = z.infer<typeof brandSchema>;
+  const schema = mode === 'create' ? createBrandSchema : editBrandSchema;
+  type FormData = z.infer<typeof schema>;
 
-export function BrandForm({
-  initialValues,
-  onSubmit,
-  isLoading,
-  slug,
-}: {
-  initialValues?: Partial<Omit<BrandFormType, 'logo'>> & { logo?: string | null };
-  onSubmit: (data: BrandFormType) => void;
-  isLoading?: boolean;
-  slug?: string;
-}) {
-  const form = useForm<BrandFormType>({
-    resolver: zodResolver(brandSchema),
+  const form = useForm<FormData>({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: initialValues?.name ?? '',
       logo: initialValues?.logo ?? '',
+      isActive: initialValues?.isActive ?? (mode === 'create' ? true : undefined),
     },
   });
+
+  const handleFormSubmit = (data: FormData) => {
+    if (mode === 'edit') {
+      const payload: EditBrandInput = {
+        ...data,
+        logo: data.logo === '' ? undefined : data.logo,
+      };
+      (onSubmit as (data: EditBrandInput) => void)(payload);
+    } else {
+      onSubmit(data as CreateBrandInput);
+    }
+  };
 
   return (
     <Card className="max-w-md mx-auto shadow-lg border rounded-lg">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-center">
-          {initialValues ? 'ویرایش برند' : 'ایجاد برند جدید'}
+          {mode === 'edit' ? 'ویرایش برند' : 'ایجاد برند جدید'}
         </CardTitle>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(handleFormSubmit)}>
           <CardContent className="space-y-4">
             <FormField
               control={form.control}
@@ -74,7 +82,11 @@ export function BrandForm({
                 <FormItem>
                   <FormLabel>لوگو (اختیاری)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://brandfetch.com/" {...field} />
+                    <Input
+                      placeholder="https://brandfetch.com/"
+                      {...field}
+                      value={field.value ?? ''}
+                    />
                   </FormControl>
                   {field.value && (
                     <div className="mt-2 flex justify-center">
@@ -91,11 +103,23 @@ export function BrandForm({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex items-center gap-5 mb-6">
+                  <FormControl>
+                    <input type="checkbox" checked={field.value} onChange={field.onChange} />
+                  </FormControl>
+                  <FormLabel>فعال</FormLabel>
+                </FormItem>
+              )}
+            />
           </CardContent>
           <CardFooter className="flex justify-between">
             {slug && <BrandActions slug={slug} />}
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'در حال ذخیره...' : initialValues ? 'ویرایش' : 'ثبت'}
+              {isLoading ? 'در حال ذخیره...' : mode === 'edit' ? 'ویرایش' : 'ثبت'}
             </Button>
           </CardFooter>
         </form>

@@ -1,9 +1,10 @@
 // app/(admin)/brands/edit/[slug]/page.tsx
 'use client';
 
-import { BrandForm, BrandFormType } from '@/components/sections/brand/BrandForm';
+import { BrandForm } from '@/components/sections/brand/BrandForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
+import { EditBrandInput } from '@/lib/validation/brand';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function EditBrandPage() {
@@ -18,7 +19,7 @@ export default function EditBrandPage() {
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!brand) return <p>برند یافت نشد ❌</p>;
 
-  const handleSubmit = (formData: BrandFormType) => {
+  const handleSubmit = (formData: EditBrandInput) => {
     updateMutation.mutate(
       {
         slug,
@@ -30,17 +31,17 @@ export default function EditBrandPage() {
           router.push('/brands');
           router.refresh();
         },
-        onError: err => {
-          console.error(err);
-          notify.error('خطا در ویرایش برند ❌');
+        onError: (err: any) => {
+          const message = err?.response?.data?.error || 'خطا در ویرایش رخ داد ❌';
+          notify.error(message);
         },
       }
     );
   };
-
   return (
     <div className="container mx-auto py-10">
       <BrandForm
+        mode="edit"
         initialValues={brand}
         onSubmit={handleSubmit}
         isLoading={updateMutation.isPending}
