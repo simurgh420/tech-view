@@ -50,6 +50,8 @@ export function CategoryForm(props: CategoryFormProps) {
     if (mode === 'edit') {
       const payload: EditCategoryInput = {
         ...data,
+        icon: data.icon === '' ? null : data.icon,
+        parentId: data.parentId === '' ? null : data.parentId,
       };
       (onSubmit as (data: EditCategoryInput) => void)(payload);
     } else {
