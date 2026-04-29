@@ -17,13 +17,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     return NextResponse.json(category);
   } catch (error) {
     console.error(`GET /api/categories/${slug} Error:`, error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to load category' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
 export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
