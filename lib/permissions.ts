@@ -5,6 +5,7 @@ const statements = {
   ...defaultStatements,
   posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
   brands: ['create', 'update', 'delete'],
+  categories: ['create', 'update', 'delete'],
 } as const;
 
 export const ac = createAccessControl(statements);
@@ -17,6 +18,7 @@ export const roles = {
   ADMIN: ac.newRole({
     posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     brands: ['create', 'update', 'delete'],
+    categories: ['create', 'update', 'delete'],
     ...adminAc.statements,
   }),
 };

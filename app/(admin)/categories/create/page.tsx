@@ -4,6 +4,7 @@
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
 import { useCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
+import { CreateCategoryInput } from '@/lib/validation/category';
 import { useRouter } from 'next/navigation';
 
 export default function CreateCategoryPage() {
@@ -12,21 +13,25 @@ export default function CreateCategoryPage() {
   const createMutation = useCreateCategory();
   const notify = useNotify();
 
-  const handleSubmit = (formData: any) => {
-    createMutation.mutate(formData, {
+  const handleSubmit = (data: CreateCategoryInput) => {
+    createMutation.mutate(data, {
       onSuccess: () => {
         notify.success('کتگوری با موفقیت ساخته شد ✅');
         router.push('/categories');
       },
-      onError: err => {
-        console.error(err);
-        notify.error('خطا در ایجاد کتگوری ❌');
+      onError: (err: any) => {
+        const message = err?.response?.data?.error || 'خطا در ایجاد کتگوری ❌';
+        notify.error(message);
       },
     });
   };
   return (
     <div className="container mx-auto py-10">
-      <CategoryForm onSubmit={handleSubmit} isLoading={createMutation.isPending} />{' '}
+      <CategoryForm
+        mode="create"
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending}
+      />{' '}
     </div>
   );
 }

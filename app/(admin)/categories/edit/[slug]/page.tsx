@@ -4,6 +4,7 @@
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
 import { useCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
+import { EditCategoryInput } from '@/lib/validation/category';
 import { useParams } from 'next/navigation';
 
 export default function EditCategoryPage() {
@@ -17,23 +18,25 @@ export default function EditCategoryPage() {
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!category) return <p>کتگوری یافت نشد ❌</p>;
 
-  const handleSubmit = (formData: any) => {
+  const handleSubmit = (formData: EditCategoryInput) => {
     updateMutation.mutate(
       { slug, data: formData },
       {
         onSuccess: () => {
           notify.success('کتگوری با موفقیت ویرایش شد ✅');
         },
-        onError: err => {
-          console.error(err);
-          notify.error('خطا در ویرایش کتگوری ❌');
+        onError: (err: any) => {
+          const message = err?.response?.data?.error || 'خطا در ویرایش کتگوری ❌';
+          notify.error(message);
         },
       }
     );
   };
+
   return (
     <div className="container mx-auto py-10">
       <CategoryForm
+        mode="edit"
         initialValues={category}
         onSubmit={handleSubmit}
         isLoading={updateMutation.isPending}

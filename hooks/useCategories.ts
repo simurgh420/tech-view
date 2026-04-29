@@ -25,20 +25,20 @@ export function useCategories() {
       enabled: !!slug,
     });
 
-  const useCreateCategory = () =>
-    useMutation<Category, Error, CategoryPayload>({
-      mutationFn: payload => createCategoryRequestApi(payload),
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
-    });
+    const useCreateCategory = () =>
+      useMutation<Category, Error, CategoryPayload>({
+        mutationFn: payload => createCategoryRequestApi(payload),
+        onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+      });
 
-  const useUpdateCategory = () =>
-    useMutation<Category, Error, { slug: string; data: Partial<CategoryPayload> }>({
-      mutationFn: ({ slug, data }) => updateCategoryRequestApi(slug, data),
-      onSuccess: (_res, vars) => {
-        qc.invalidateQueries({ queryKey: ['categories'] });
-        qc.invalidateQueries({ queryKey: ['category', vars.slug] });
-      },
-    });
+    const useUpdateCategory = () =>
+      useMutation<Category, Error, { slug: string; data: Partial<CategoryPayload> }>({
+        mutationFn: ({ slug, data }) => updateCategoryRequestApi(slug, data),
+        onSuccess: (_res, vars) => {
+          qc.invalidateQueries({ queryKey: ['categories'] });
+          qc.invalidateQueries({ queryKey: ['category', vars.slug] });
+        },
+      });
 
   const useDeleteCategory = () =>
     useMutation<{ success: boolean }, Error, string>({
