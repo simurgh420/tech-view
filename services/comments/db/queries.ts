@@ -36,3 +36,6 @@ export async function getAllCommentsWithPost() {
     },
   });
 }
+export async function getCommentById(id: string) {
+  return prisma.comment.findUnique({ where: { id } });
+}

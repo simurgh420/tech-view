@@ -30,7 +30,6 @@ describe('Comments API mutations', () => {
     mockedAxios.post.mockResolvedValueOnce({ data: fakeResponse });
 
     const result = await addCommentApi('post-1', {
-      authorId: 'user-1',
       content: 'test',
       rating: 5,
     });

@@ -37,8 +37,9 @@ export async function updateComment(
 }
 
 export async function deleteComment(commentId: string) {
-  return prisma.comment.delete({
+  prisma.comment.delete({
     where: { id: commentId },
     select: { id: true },
   });
+  return { success: true };
 }

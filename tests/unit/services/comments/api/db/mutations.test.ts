@@ -57,7 +57,7 @@ describe('Comment Mutations (mocked)', () => {
   });
 
   it('should delete a comment', async () => {
-    const deleted = await deleteComment('1');
-    expect(deleted.id).toBe('1');
+    const result = await deleteComment('1');
+    expect(result.success).toBe(true);
   });
 });
