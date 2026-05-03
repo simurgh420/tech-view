@@ -7,6 +7,7 @@ const statements = {
   brands: ['create', 'update', 'delete'],
   categories: ['create', 'update', 'delete'],
   comments: ['create', 'update', 'update:own', 'delete:own', 'delete'],
+  contacts: ['read', 'delete'],
 } as const;
 
 export const ac = createAccessControl(statements);
@@ -22,6 +23,7 @@ export const roles = {
     brands: ['create', 'update', 'delete'],
     categories: ['create', 'update', 'delete'],
     comments: ['create', 'update', 'delete', 'update:own', 'delete:own'],
+    contacts: ['read', 'delete'],
     ...adminAc.statements,
   }),
 };

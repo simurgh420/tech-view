@@ -34,11 +34,20 @@ export function ContactForm() {
         notify.success('پیام شما با موفقیت ارسال شد.');
       },
       onError: (err: any) => {
-        notify.error(err?.response?.data?.message || 'خطایی در ارسال پیام رخ داد.');
+        const details = err?.response?.data?.details;
+        if (Array.isArray(details)) {
+          details.forEach(({ field, message }: { field: string; message: string }) => {
+            if (field in contactSchema.shape) {
+              form.setError(field as keyof ContactFormValues, { message });
+            }
+          });
+          notify.error('لطفاً خطاهای فرم را بررسی کنید');
+        } else {
+          notify.error(err?.response?.data?.message || 'خطایی در ارسال پیام رخ داد.');
+        }
       },
     });
   };
-
   return (
     <section className="p-8 rounded-2xl border border-white/10  mb-12  [direction:rtl]">
       <h2 className="text-xl font-semibold  mb-6">فرم تماس با ما</h2>

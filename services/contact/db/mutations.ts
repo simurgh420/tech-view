@@ -1,19 +1,25 @@
 // services/contact/db/mutations.ts
 
-import { ContactFormValues } from '@/lib/validation/contact.';
 import prisma from '@/services/db/client';
+import { CreateContactData } from '@/types/contact';
 
-export async function createContact(data: ContactFormValues & { userId?: string | null }) {
+export async function createContact(data: CreateContactData) {
   return prisma.contactMessage.create({
     data: {
-      ...data,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      subject: data.subject,
+      message: data.message,
       userId: data.userId ?? null,
     },
   });
 }
 
 export async function deleteContact(id: string) {
-  return prisma.contactMessage.delete({
-    where: { id },
-  });
+  const contact = await prisma.contactMessage.findUnique({ where: { id } });
+  if (!contact) return null;
+
+  await prisma.contactMessage.delete({ where: { id } });
+  return contact; // یا true
 }
