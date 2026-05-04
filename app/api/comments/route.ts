@@ -4,24 +4,24 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
 export async function GET() {
-  // احراز هویت
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const permission = await auth.api.userHasPermission({
-    headers: await headers(),
-    body: {
-      userId: session.user.id,
-      permission: { comments: ['update', 'delete'] }, 
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
   try {
+    // احراز هویت
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { comments: ['update', 'delete'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const comments = await getAllCommentsWithPost();
     return NextResponse.json(comments);
   } catch (error) {

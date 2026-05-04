@@ -5,6 +5,7 @@ import { deletePost, updatePost } from '@/services/blog/db/mutations';
 import { getPostBySlug } from '@/services/blog/db/queries';
 import { updateBlogSchema } from '@/services/blog/db/schemas/updateBlog.schema';
 import prisma from '@/services/db/client';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 // GET ─ دریافت یک پست
@@ -25,27 +26,27 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 export async function PUT(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   // 1. احراز هویت
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  // 2. پیدا کردن پست
-
-  const post = await prisma.blogPost.findUnique({ where: { slug } });
-  if (!post) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  }
-  // 3. بررسی دسترسی (بر اساس مالکیت)
-  const action = post.authorId === session.user.id ? 'update:own' : 'update';
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: { userId: session.user.id, permission: { posts: [action] } },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-  // 4. اعتبارسنجی بدنه درخواست
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    // 2. پیدا کردن پست
+
+    const post = await prisma.blogPost.findUnique({ where: { slug } });
+    if (!post) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+    // 3. بررسی دسترسی (بر اساس مالکیت)
+    const action = post.authorId === session.user.id ? 'update:own' : 'update';
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: { userId: session.user.id, permission: { posts: [action] } },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    // 4. اعتبارسنجی بدنه درخواست
     const body = await req.json();
     const parsed = updateBlogSchema.safeParse(body);
     if (!parsed.success) {
@@ -72,34 +73,34 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
   const { slug } = await params;
   // 1. احراز هویت
 
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  // 2. پیدا کردن پست
-
-  const post = await prisma.blogPost.findUnique({ where: { slug } });
-  if (!post) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  }
-  // 3. بررسی دسترسی (بر اساس مالکیت)
-
-  const action = post.authorId === session.user.id ? 'delete:own' : 'delete';
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: { userId: session.user.id, permission: { posts: [action] } },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-  
-  // 4. حذف پست
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    // 2. پیدا کردن پست
+
+    const post = await prisma.blogPost.findUnique({ where: { slug } });
+    if (!post) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+    // 3. بررسی دسترسی (بر اساس مالکیت)
+
+    const action = post.authorId === session.user.id ? 'delete:own' : 'delete';
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: { userId: session.user.id, permission: { posts: [action] } },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // 4. حذف پست
     const deleted = await deletePost(slug);
     if (!deleted) {
       return NextResponse.json({ error: 'Post Not found' }, { status: 404 });
     }
-    return NextResponse.json(deleted);
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete post:', error);
     return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });

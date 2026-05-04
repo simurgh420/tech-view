@@ -1,28 +1,30 @@
 // services/cart/api/mutations.ts
 
 import { CartItem } from '@/app/generated/prisma/client';
-import { CartItemPayload } from '@/types/cart';
+import { AddCartItemInput, UpdateQuantityInput } from '@/lib/validation/cart';
 import axios from 'axios';
 
-export async function addCartItemApi(payload: CartItemPayload): Promise<CartItem> {
+// افزودن محصول به سبد
+export async function addCartItemApi(payload: AddCartItemInput): Promise<CartItem> {
   const res = await axios.post('/api/cart', payload);
   return res.data;
 }
+// به‌روزرسانی تعداد یک آیتم
 
 export async function updateCartItemQuantityApi(id: string, quantity: number): Promise<CartItem> {
-  const res = await axios.patch(`/api/cart/${id}`, { quantity });
+  const res = await axios.patch<CartItem>(`/api/cart/${id}`, {
+    quantity,
+  } satisfies UpdateQuantityInput);
   return res.data;
 }
+// حذف یک آیتم
 export async function removeCartItemApi(id: string): Promise<{ success: boolean }> {
-  const res = await axios.delete(`/api/cart/${id}`);
+  const res = await axios.delete<{ success: boolean }>(`/api/cart/${id}`);
   return res.data;
 }
 
-export async function clearCartApi(cartId: string): Promise<{ success: boolean }> {
-  const res = await axios.request<{ success: boolean }>({
-    url: '/api/cart',
-    method: 'DELETE',
-    data: { cartId },
-  });
+// پاک کردن کل سبد (بدون پارامتر؛ کاربر از روی سشن تشخیص داده می‌شود)
+export async function clearCartApi(): Promise<{ success: boolean }> {
+  const res = await axios.delete<{ success: boolean }>('/api/cart');
   return res.data;
 }

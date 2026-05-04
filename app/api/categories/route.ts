@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { createCategorySchema } from '@/lib/validation/category';
 import { createCategory } from '@/services/categories/db/mutations';
 import { getCategories } from '@/services/categories/db/queries';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -16,25 +17,26 @@ export async function GET() {
   }
 }
 export async function POST(req: Request) {
-  // ۱. احراز هویت
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  // ۲. چک دسترسی
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { categories: ['create'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
-  // ۳. اعتبارسنجی بدنه
   try {
+    // ۱. احراز هویت
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    // ۲. چک دسترسی
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { categories: ['create'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // ۳. اعتبارسنجی بدنه
+
     const body = await req.json();
     const parsed = createCategorySchema.safeParse(body);
     if (!parsed.success) {

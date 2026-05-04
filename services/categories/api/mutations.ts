@@ -1,16 +1,16 @@
 // services/categories/api/mutations.ts
 import { Category } from '@/app/generated/prisma/client';
-import { CategoryPayload } from '@/types/category';
+import { CreateCategoryInput, EditCategoryInput } from '@/lib/validation/category';
 import axios from 'axios';
 
-export async function createCategoryRequestApi(payload: CategoryPayload): Promise<Category> {
-  const res = await axios.post('/api/categories', payload);
+export async function createCategoryRequestApi(payload: CreateCategoryInput): Promise<Category> {
+  const res = await axios.post<Category>('/api/categories', payload);
   return res.data;
 }
 
 export async function updateCategoryRequestApi(
   slug: string,
-  payload: Partial<CategoryPayload>
+  payload: Partial<EditCategoryInput>
 ): Promise<Category> {
   const res = await axios.patch(`/api/categories/${slug}`, payload);
   return res.data;

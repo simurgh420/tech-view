@@ -1,51 +1,52 @@
 // hooks/useCart.ts
 
 import { CartItem } from '@/app/generated/prisma/client';
+import { AddCartItemInput } from '@/lib/validation/cart';
 import {
   addCartItemApi,
   clearCartApi,
   removeCartItemApi,
   updateCartItemQuantityApi,
 } from '@/services/cart/api/mutations';
-import { fetchCartItemsApi } from '@/services/cart/api/queries';
-import { CartItemPayload } from '@/types/cart';
+import { fetchCartApi } from '@/services/cart/api/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export function useCart(cartId: string | undefined) {
+export function useCart() {
   const qc = useQueryClient();
-  const useGetCartItems = () =>
-    useQuery<CartItem[]>({
-      queryKey: ['cart', cartId],
-      queryFn: () => fetchCartItemsApi(cartId!),
-      enabled: !!cartId,
+
+  const useGetCartItems = () => {
+    return useQuery<CartItem[]>({
+      queryKey: ['cart'],
+      queryFn: fetchCartApi,
     });
+  };
   const useAddToCart = () =>
-    useMutation({
-      mutationFn: (payload: CartItemPayload) => addCartItemApi(payload),
+    useMutation<CartItem, Error, AddCartItemInput>({
+      mutationFn: addCartItemApi,
       onSuccess: () => {
-        if (cartId) qc.invalidateQueries({ queryKey: ['cart', cartId] });
+        qc.invalidateQueries({ queryKey: ['cart'] });
       },
     });
   const useUpdateCartItemQuantity = () =>
-    useMutation({
-      mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
-        updateCartItemQuantityApi(id, quantity),
+    useMutation<CartItem, Error, { id: string; quantity: number }>({
+      mutationFn: ({ id, quantity }) => updateCartItemQuantityApi(id, quantity),
       onSuccess: () => {
-        if (cartId) qc.invalidateQueries({ queryKey: ['cart', cartId] });
+        qc.invalidateQueries({ queryKey: ['cart'] });
       },
     });
+
   const useRemoveFromCart = () =>
-    useMutation({
-      mutationFn: (id: string) => removeCartItemApi(id),
+    useMutation<{ success: boolean }, Error, string>({
+      mutationFn: removeCartItemApi,
       onSuccess: () => {
-        if (cartId) qc.invalidateQueries({ queryKey: ['cart', cartId] });
+        qc.invalidateQueries({ queryKey: ['cart'] });
       },
     });
   const useClearCart = () =>
-    useMutation({
-      mutationFn: () => clearCartApi(cartId as string),
+    useMutation<{ success: boolean }, Error, void>({
+      mutationFn: clearCartApi,
       onSuccess: () => {
-        if (cartId) qc.invalidateQueries({ queryKey: ['cart', cartId] });
+        qc.invalidateQueries({ queryKey: ['cart'] });
       },
     });
   return {

@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { createCommentSchema } from '@/lib/validation/comment';
 import { createComment } from '@/services/comments/db/mutations';
 import { getCommentsByPostId } from '@/services/comments/db/queries';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ postId: string }> }) {
@@ -17,24 +18,24 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ postId: string }> }) {
-  // احراز هویت
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  // چک دسترسی ایجاد
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { comments: ['create'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-  const { postId } = await params;
   try {
+    // احراز هویت
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    // چک دسترسی ایجاد
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { comments: ['create'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    const { postId } = await params;
     const body = await req.json();
     const parsed = createCommentSchema.safeParse(body);
     if (!parsed.success) {

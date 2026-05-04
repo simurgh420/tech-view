@@ -4,6 +4,7 @@ import { getBrandBySlug } from '@/services/brands/db/queries';
 import { updateBrandBySlug, deleteBrandBySlug } from '@/services/brands/db/mutations';
 import { auth } from '@/lib/auth';
 import { editBrandSchema } from '@/lib/validation/brand';
+import { headers } from 'next/headers';
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -23,13 +24,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const session = await auth.api.getSession({ headers: req.headers });
+  const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const permission = await auth.api.userHasPermission({
-    headers: req.headers,
+    headers: await headers(),
     body: {
       userId: session.user.id,
       permission: { brands: ['update'] },
@@ -58,23 +59,26 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
 }
 export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { brands: ['delete'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { brands: ['delete'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const result = await deleteBrandBySlug(slug);
-    return NextResponse.json(result);
+    if (result === null) {
+      return NextResponse.json({ error: 'Brand not found' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error(`DELETE /api/brands/${slug} Error:`, error);
     return NextResponse.json({ error: 'Failed to delete brand' }, { status: 500 });

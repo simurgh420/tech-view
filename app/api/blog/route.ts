@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { createBlogPost } from '@/services/blog/db/mutations';
 import { getPublishedPosts } from '@/services/blog/db/queries';
 import { createBlogSchema } from '@/services/blog/db/schemas/createBlog.schema';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
@@ -24,22 +25,25 @@ export async function GET(req: Request) {
 // ساخت بلاگ جدید
 export async function POST(req: Request) {
   // 1. بررسی احراز هویت
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  // 2. بررسی دسترسی برای ایجاد پست
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { posts: ['create'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    // 2. بررسی دسترسی برای ایجاد پست
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { posts: ['create'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const body = await req.json();
     const parsed = createBlogSchema.safeParse({
       ...body,

@@ -4,6 +4,7 @@ import { getBrands } from '@/services/brands/db/queries';
 import { createBrand } from '@/services/brands/db/mutations';
 import { auth } from '@/lib/auth';
 import { createBrandSchema } from '@/lib/validation/brand';
+import { headers } from 'next/headers';
 
 export async function GET() {
   try {
@@ -16,22 +17,23 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { brands: ['create'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { brands: ['create'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await req.json();
     const parsed = createBrandSchema.safeParse(body);
     if (!parsed.success) {

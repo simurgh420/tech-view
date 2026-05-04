@@ -1,21 +1,21 @@
 // services/categories/db/mutations.ts
 import { toSlug } from '@/lib/slug';
+import { CreateCategoryInput, EditCategoryInput } from '@/lib/validation/category';
 import prisma from '@/services/db/client';
-import { CategoryPayload } from '@/types/category';
 
-export async function createCategory(data: CategoryPayload) {
+export async function createCategory(data: CreateCategoryInput) {
   return prisma.category.create({
     data: {
       title: data.title,
       slug: toSlug(data.title),
-      icon: data.icon,
-      order: data.order ?? 0,
+      icon: data.icon ?? null,
       parentId: data.parentId,
+      order: 0,
     },
   });
 }
 
-export async function updateCategory(slug: string, data: Partial<CategoryPayload>) {
+export async function updateCategory(slug: string, data: EditCategoryInput) {
   // ۱. اگر عنوانی در داده نیست، اسلاگ تغییری نمی‌کند
 
   if (data.title === undefined) {
@@ -26,18 +26,27 @@ export async function updateCategory(slug: string, data: Partial<CategoryPayload
   }
   // ۲. عنوان جدید داریم؛ رکورد فعلی را بخوانیم تا عنوان قبلی را داشته باشیم
   const existing = await prisma.category.findUnique({ where: { slug } });
-  if (!existing) throw new Error('Category not found');
-  const newSlug = data.title !== existing.title ? toSlug(data.title) : undefined;
+  if (!existing) return null;
+
+  const updateData: Record<string, unknown> = {};
+
+  if (data.title !== undefined) {
+    updateData.title = data.title;
+    if (data.title !== existing.title) {
+      updateData.slug = toSlug(data.title); // فقط در صورت تغییر نام
+    }
+  }
+  if (data.icon !== undefined) updateData.icon = data.icon;
+  if (data.parentId !== undefined) updateData.parentId = data.parentId;
+
   return prisma.category.update({
     where: { slug },
-    data: {
-      ...data,
-      ...(newSlug ? { slug: newSlug } : {}),
-    },
+    data: updateData,
   });
 }
-
 export async function deleteCategory(slug: string) {
+  const category = await prisma.category.findUnique({ where: { slug } });
+  if (!category) return null;
   await prisma.category.delete({ where: { slug } });
-  return { success: true };
+  return true;
 }

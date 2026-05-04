@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { editCategorySchema } from '@/lib/validation/category';
 import { deleteCategory, updateCategory } from '@/services/categories/db/mutations';
 import { getCategoryBySlug } from '@/services/categories/db/queries';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -23,25 +24,25 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // ۱. احراز هویت
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // ۲. چک دسترسی
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { categories: ['update'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
   try {
+    // ۱. احراز هویت
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // ۲. چک دسترسی
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { categories: ['update'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await req.json();
     const parsed = editCategorySchema.safeParse(body);
     if (!parsed.success) {
@@ -51,8 +52,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
       }));
       return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
     }
-    const category = await updateCategory(slug, parsed.data);
-    return NextResponse.json(category);
+    const updated = await updateCategory(slug, parsed.data);
+    if (!updated) {
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+    }
+    return NextResponse.json(updated);
   } catch (error) {
     console.error(`PATCH /api/categories/${slug} Error:`, error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -61,29 +65,30 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
-  // ۱. احراز هویت
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // ۲. چک دسترسی
-  const permission = await auth.api.userHasPermission({
-    headers: req.headers,
-    body: {
-      userId: session.user.id,
-      permission: { categories: ['delete'] },
-    },
-  });
-  if (permission.error || !permission.success) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-  // ۳. حذف
-
   try {
+    // ۱. احراز هویت
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // ۲. چک دسترسی
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permission: { categories: ['delete'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    // ۳. حذف
     const result = await deleteCategory(slug);
-    return NextResponse.json(result);
+    if (result === null) {
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error(`DELETE /api/categories/${slug} Error:`, error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
