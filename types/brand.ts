@@ -1,6 +1,6 @@
 // types/brand.ts
 
-import { CreateBrandInput, EditBrandInput } from '@/lib/validation/brand';
+import { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
 
 export interface BrandPayload {
   name: string;
@@ -24,7 +24,7 @@ export type BrandFormProps =
         logo?: string | null;
         isActive?: boolean;
       };
-      onSubmit: (data: EditBrandInput) => void;
+      onSubmit: (data: UpdateBrandInput) => void;
       isLoading?: boolean;
       slug?: string;
     };

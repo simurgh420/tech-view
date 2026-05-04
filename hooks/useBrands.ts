@@ -8,7 +8,7 @@ import {
   updateBrandRequestApi,
 } from '@/services/brands/api/mutations';
 import { Brand } from '@/app/generated/prisma/client';
-import { CreateBrandInput, EditBrandInput } from '@/lib/validation/brand';
+import { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
 
 export function useBrands() {
   const qc = useQueryClient();
@@ -29,7 +29,7 @@ export function useBrands() {
     });
 
   const useUpdateBrand = () =>
-    useMutation<Brand, Error, { slug: string; data: EditBrandInput }>({
+    useMutation<Brand, Error, { slug: string; data: UpdateBrandInput }>({
       mutationFn: ({ slug, data }) => updateBrandRequestApi(slug, data),
       onSuccess: (_res, vars) => {
         qc.invalidateQueries({ queryKey: ['brands'] });

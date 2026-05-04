@@ -4,7 +4,7 @@
 import { BrandForm } from '@/components/sections/brand/BrandForm';
 import { useBrands } from '@/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
-import { EditBrandInput } from '@/lib/validation/brand';
+import { UpdateBrandInput } from '@/lib/validation/brand';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function EditBrandPage() {
@@ -19,7 +19,7 @@ export default function EditBrandPage() {
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (!brand) return <p>برند یافت نشد ❌</p>;
 
-  const handleSubmit = (formData: EditBrandInput) => {
+  const handleSubmit = (formData: UpdateBrandInput ) => {
     updateMutation.mutate(
       {
         slug,

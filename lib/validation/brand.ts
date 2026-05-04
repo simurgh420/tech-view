@@ -13,4 +13,4 @@ export const editBrandSchema = z.object({
 });
 
 export type CreateBrandInput = z.infer<typeof createBrandSchema>;
-export type EditBrandInput = z.infer<typeof editBrandSchema>;
+export type UpdateBrandInput = z.infer<typeof editBrandSchema>;

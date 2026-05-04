@@ -20,8 +20,8 @@ import z from 'zod';
 import {
   CreateBrandInput,
   createBrandSchema,
-  EditBrandInput,
   editBrandSchema,
+  UpdateBrandInput,
 } from '@/lib/validation/brand';
 import { BrandFormProps } from '@/types/brand';
 
@@ -42,11 +42,11 @@ export function BrandForm(props: BrandFormProps) {
 
   const handleFormSubmit = (data: FormData) => {
     if (mode === 'edit') {
-      const payload: EditBrandInput = {
+      const payload: UpdateBrandInput = {
         ...data,
         logo: data.logo === '' ? undefined : data.logo,
       };
-      (onSubmit as (data: EditBrandInput) => void)(payload);
+      (onSubmit as (data: UpdateBrandInput) => void)(payload);
     } else {
       onSubmit(data as CreateBrandInput);
     }
