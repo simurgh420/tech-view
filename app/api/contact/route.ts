@@ -5,7 +5,6 @@ import { contactSchema } from '@/lib/validation/contact.';
 import { createContact } from '@/services/contact/db/mutations';
 
 import { getContacts } from '@/services/contact/db/queries';
-import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -27,11 +26,9 @@ export async function GET() {
     }
     const data = await getContacts();
     return NextResponse.json(data);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return NextResponse.json({ success: false, error: err.message }, { status: 400 });
-    }
-    return NextResponse.json({ success: false, error: 'خطای داخلی سرور' }, { status: 500 });
+  } catch (error) {
+    console.error('GET /api/contact Error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 export async function POST(req: Request) {
