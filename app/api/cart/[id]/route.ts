@@ -2,7 +2,7 @@
 
 import { auth } from '@/lib/auth';
 import { updateQuantitySchema } from '@/lib/validation/cart';
-import { CartErrors } from '@/services/cart/db/constants';
+import { CartErrors } from '@/services/cart/constants';
 import { removeCartItem, updateCartItemQuantity } from '@/services/cart/db/mutations';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';

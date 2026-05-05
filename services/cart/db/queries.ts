@@ -1,7 +1,7 @@
 // services/cart/db/queries.ts
 
 import prisma from '@/services/db/client';
-import { productSelect } from './constants';
+import { productSelect } from '../constants';
 
 export async function getCart(userId: string) {
   // ابتدا سبد کاربر را پیدا کن (اگر نبود برنمی‌گردد)

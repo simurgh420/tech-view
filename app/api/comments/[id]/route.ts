@@ -49,6 +49,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const updated = await updateComment(id, parsed.data);
+    if (!updated) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Update comment failed:', error);
@@ -82,8 +85,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (permission.error || !permission.success) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    const deleted = await deleteComment(id);
-    return NextResponse.json(deleted);
+    const result = await deleteComment(id);
+    if (result === null) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Delete comment failed:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

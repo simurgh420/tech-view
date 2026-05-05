@@ -1,7 +1,7 @@
 // app/api/cart/route.ts
 import { auth } from '@/lib/auth';
 import { addCartItemSchema } from '@/lib/validation/cart';
-import { CartErrors } from '@/services/cart/db/constants';
+import { CartErrors } from '@/services/cart/constants';
 import { addCartItem, clearCart } from '@/services/cart/db/mutations';
 import { getCart } from '@/services/cart/db/queries';
 import { headers } from 'next/headers';

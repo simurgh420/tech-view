@@ -5,6 +5,7 @@ import { deleteImage } from '@/services/upload/deleteImage';
 import { UpdateBlogData } from '@/types/blog';
 import { CreateBlogInput } from './schemas/createBlog.schema';
 import { UpdateBlogInput } from './schemas/updateBlog.schema';
+import { authorSelect } from '../authorSelect';
 
 // ساخت بلاگ جدید
 export async function createBlogPost(data: CreateBlogInput) {
@@ -31,7 +32,9 @@ export async function createBlogPost(data: CreateBlogInput) {
       },
     },
     include: {
-      author: true,
+      author: {
+        select: authorSelect,
+      },
       tags: { include: { tag: true } },
     },
   });
@@ -76,7 +79,9 @@ export async function updatePost(slug: string, data: UpdateBlogInput) {
         : undefined,
     },
     include: {
-      author: true,
+      author: {
+        select: authorSelect,
+      },
       tags: { include: { tag: true } },
     },
   });

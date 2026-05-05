@@ -6,7 +6,7 @@ const statements = {
   posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
   brands: ['create', 'update', 'delete'],
   categories: ['create', 'update', 'delete'],
-  comments: ['create', 'update', 'update:own', 'delete:own', 'delete'],
+  comments: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
   contacts: ['read', 'delete'],
 } as const;
 
@@ -22,7 +22,7 @@ export const roles = {
     posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     brands: ['create', 'update', 'delete'],
     categories: ['create', 'update', 'delete'],
-    comments: ['create', 'update', 'delete', 'update:own', 'delete:own'],
+    comments: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     contacts: ['read', 'delete'],
     ...adminAc.statements,
   }),

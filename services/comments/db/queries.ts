@@ -7,7 +7,7 @@ export async function getCommentsByPostId(postId: string): Promise<CommentSafe[]
     where: { postId },
     orderBy: { createdAt: 'desc' },
     include: {
-      author: true,
+      author: { select: { name: true, image: true } },
     },
   });
 
@@ -25,7 +25,7 @@ export async function getAllCommentsWithPost() {
   return prisma.comment.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
-      author: true,
+      author: { select: { name: true, image: true } },
       post: {
         select: {
           id: true,

@@ -2,7 +2,7 @@
 
 import { Prisma } from '@/app/generated/prisma/client';
 import prisma from '@/services/db/client';
-import { CartErrors, productSelect } from './constants';
+import { CartErrors, productSelect } from '../constants';
 
 async function ensureCart(tx: Prisma.TransactionClient, userId: string) {
   return tx.cart.upsert({

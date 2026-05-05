@@ -15,7 +15,7 @@ export async function createComment(data: {
       authorId: data.authorId,
     },
     include: {
-      author: true,
+      author: { select: { name: true, image: true } },
     },
   });
 }
@@ -31,15 +31,16 @@ export async function updateComment(
     where: { id: commentId },
     data,
     include: {
-      author: true,
+      author: { select: { name: true, image: true } },
     },
   });
 }
 
 export async function deleteComment(commentId: string) {
-  prisma.comment.delete({
+  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  if (!comment) return null;
+  await prisma.comment.delete({
     where: { id: commentId },
-    select: { id: true },
   });
   return { success: true };
 }

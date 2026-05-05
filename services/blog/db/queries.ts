@@ -1,6 +1,7 @@
 // src/server/blog/db/queries.ts
 import prisma from '@/services/db/client';
 import { BlogPostSafe } from '@/types/blog';
+import { authorSelect } from '../authorSelect';
 
 export async function getPublishedPosts(params: { page?: number; pageSize?: number }) {
   const page = params.page ?? 1;
@@ -14,7 +15,7 @@ export async function getPublishedPosts(params: { page?: number; pageSize?: numb
       skip,
       take,
       include: {
-        author: true,
+        author: { select: authorSelect },
         tags: { include: { tag: true } },
       },
     }),
@@ -46,7 +47,7 @@ export async function getPostBySlug(slug: string) {
   return prisma.blogPost.findUnique({
     where: { slug },
     include: {
-      author: true,
+      author: { select: authorSelect },
       tags: { include: { tag: true } },
     },
   });
@@ -58,7 +59,7 @@ export async function getRecentPosts(limit = 3) {
     orderBy: { publishedAt: 'desc' },
     take: limit,
     include: {
-      author: true,
+      author: { select: authorSelect },
       tags: { include: { tag: true } },
     },
   });
