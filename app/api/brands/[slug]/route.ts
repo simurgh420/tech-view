@@ -74,8 +74,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
     if (permission.error || !permission.success) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    const deleted = await deleteBrandBySlug(slug);
-    if (!deleted) {
+    const result = await deleteBrandBySlug(slug);
+    if (result === null) {
       return NextResponse.json({ error: 'Brand not found' }, { status: 404 });
     }
     return NextResponse.json({ success: true });

@@ -94,10 +94,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
     if (permission.error || !permission.success) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-
-    // 4. حذف پست
-    const deleted = await deletePost(slug);
-    if (!deleted) {
+    const result = await deletePost(slug);
+    if (result === null) {
       return NextResponse.json({ error: 'Post Not found' }, { status: 404 });
     }
     return NextResponse.json({ success: true });
