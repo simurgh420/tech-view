@@ -41,9 +41,6 @@ export async function POST(req: Request) {
     if (permission.error || !permission.success) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    if (permission.error || !permission.success) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
     const body = await req.json();
     const parsed = createBlogSchema.safeParse({
       ...body,
