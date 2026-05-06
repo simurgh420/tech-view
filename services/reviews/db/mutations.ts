@@ -1,10 +1,11 @@
 // services/reviews/db/mutations.ts
 
 import prisma from '@/services/db/client';
+import { userSelect } from '../userSelect';
 
 export async function createReview(data: {
   productId: string;
-  authorId?: string;
+  authorId: string;
   rating: number;
   title?: string;
   content: string;
@@ -12,19 +13,14 @@ export async function createReview(data: {
   return prisma.review.create({
     data: {
       productId: data.productId,
+      authorId: data.authorId,
       rating: data.rating,
-      title: data.title,
+      title: data.title ?? null,
       content: data.content,
-      ...(data.authorId && { authorId: data.authorId }), // ← مهم
     },
 
     include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
+      user: { select: userSelect },
     },
   });
 }
@@ -36,7 +32,7 @@ export async function updateReview(
   const review = await prisma.review.update({
     where: { id },
     data,
-    include: { user: { select: { id: true, name: true } } },
+    include: { user: { select: userSelect } },
   });
   return {
     ...review,
@@ -45,8 +41,6 @@ export async function updateReview(
   };
 }
 export async function deleteReview(id: string) {
-  await prisma.review.delete({
-    where: { id },
-  });
+  await prisma.review.delete({ where: { id } });
   return { success: true };
 }

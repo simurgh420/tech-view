@@ -21,7 +21,7 @@ export async function GET() {
         permission: { contacts: ['read'] },
       },
     });
-    if (!permission?.success) {
+    if (permission.error || !permission?.success) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     const data = await getContacts();
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     }
     const userId = session?.user?.id ?? null;
     await createContact({ ...parsed.data, userId });
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error('POST /api/contact Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

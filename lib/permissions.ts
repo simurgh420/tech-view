@@ -8,6 +8,7 @@ const statements = {
   categories: ['create', 'update', 'delete'],
   comments: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
   contacts: ['read', 'delete'],
+  reviews: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
 } as const;
 
 export const ac = createAccessControl(statements);
@@ -16,6 +17,7 @@ export const roles = {
   USER: ac.newRole({
     posts: ['create', 'read', 'update:own', 'delete:own'],
     comments: ['create', 'update:own', 'delete:own'],
+    reviews: ['create', 'update:own', 'delete:own'],
   }),
 
   ADMIN: ac.newRole({
@@ -24,6 +26,7 @@ export const roles = {
     categories: ['create', 'update', 'delete'],
     comments: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     contacts: ['read', 'delete'],
+    reviews: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     ...adminAc.statements,
   }),
 };
