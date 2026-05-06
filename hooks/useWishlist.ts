@@ -1,60 +1,56 @@
 // hooks/useWishlist.ts
 
 import { WishlistItem } from '@/app/generated/prisma/client';
+import { WishlistItemInput } from '@/lib/validation/wishlist';
 import {
   addWishlistItemApi,
   deleteWishlistItemApi,
   deleteWishlistItemByUserAndProductApi,
 } from '@/services/wishlist/api/mutations';
 import { fetchWishlistApi } from '@/services/wishlist/api/queries';
-import {  WishlistPayload } from '@/types/wishlist';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export function useWishlist(userId: string) {
+export function useWishlist() {
   const qc = useQueryClient();
 
   const useGetWishlist = () =>
     useQuery<WishlistItem[]>({
-      queryKey: ['wishlist', userId],
-      queryFn: () => fetchWishlistApi(userId),
-      enabled: !!userId,
+      queryKey: ['wishlist'],
+      queryFn: fetchWishlistApi,
     });
+  // اضافه کردن
 
   const useAddToWishlist = () =>
-    useMutation({
-      mutationFn: (payload: WishlistPayload) => addWishlistItemApi(payload),
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
-      },
+    useMutation<WishlistItem, Error, WishlistItemInput>({
+      mutationFn: addWishlistItemApi,
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
 
+  // حذف با id
   const useRemoveFromWishlist = () =>
-    useMutation({
-      mutationFn: (id: string) => deleteWishlistItemApi(id),
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
-      },
+    useMutation<{ success: boolean }, Error, string>({
+      mutationFn: deleteWishlistItemApi,
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
 
-  const useToggleWishlistByUserAndProduct = () =>
-    useMutation({
-      mutationFn: async (payload: WishlistPayload & { exists: boolean }) => {
-        if (payload.exists) {
-          return deleteWishlistItemByUserAndProductApi({
-            userId: payload.userId,
-            productId: payload.productId,
-          });
+  const useToggleWishlistByProduct = () =>
+    useMutation<{ success: boolean }, Error, { productId: string; exists: boolean }>({
+      mutationFn: async ({ productId, exists }) => {
+        if (exists) {
+          // اگر وجود داشت، حذف کن
+          return deleteWishlistItemByUserAndProductApi(productId);
         }
-        return addWishlistItemApi({ userId: payload.userId, productId: payload.productId });
+        // در غیر این صورت اضافه کن
+        await addWishlistItemApi({ productId });
+        return { success: true };
       },
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
-      },
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
+
   return {
     useGetWishlist,
     useAddToWishlist,
     useRemoveFromWishlist,
-    useToggleWishlistByUserAndProduct,
+    useToggleWishlistByProduct,
   };
 }
