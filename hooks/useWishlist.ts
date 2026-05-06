@@ -7,7 +7,7 @@ import {
   deleteWishlistItemApi,
   deleteWishlistItemByUserAndProductApi,
 } from '@/services/wishlist/api/mutations';
-import { fetchWishlistApi } from '@/services/wishlist/api/queries';
+import { fetchWishlistApi, fetchWishlistCheckApi } from '@/services/wishlist/api/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useWishlist() {
@@ -32,7 +32,12 @@ export function useWishlist() {
       mutationFn: deleteWishlistItemApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
-
+  const useCheckWishlist = (productId: string) =>
+    useQuery<{ inWishlist: boolean }>({
+      queryKey: ['wishlist', 'check', productId],
+      queryFn: () => fetchWishlistCheckApi(productId),
+      enabled: !!productId,
+    });
   const useToggleWishlistByProduct = () =>
     useMutation<{ success: boolean }, Error, { productId: string; exists: boolean }>({
       mutationFn: async ({ productId, exists }) => {
@@ -51,6 +56,7 @@ export function useWishlist() {
     useGetWishlist,
     useAddToWishlist,
     useRemoveFromWishlist,
+    useCheckWishlist,
     useToggleWishlistByProduct,
   };
 }
