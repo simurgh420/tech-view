@@ -1,6 +1,6 @@
 // hooks/useProducts.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Product, ProductPayload } from '@/types/product';
+import { FiltersProduct, Product } from '@/types/product';
 
 import {
   createProductَApi,
@@ -16,19 +16,13 @@ import {
   fetchProductsByCategoryApi,
   fetchFilteredProductsApi,
 } from '@/services/products/api/queries';
+import { CreateProductInput, UpdateProductInput } from '@/lib/validation/product';
 
 export function useProducts() {
   const qc = useQueryClient();
 
   // ✅ هوک عمومی برای فیلتر و مرتب‌سازی
-  const useGetFilteredProducts = (filters: {
-    brand?: string;
-    category?: string;
-    subCategory?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    sort?: string;
-  }) =>
+  const useGetFilteredProducts = (filters: FiltersProduct) =>
     useQuery<Product[]>({
       queryKey: ['products', filters],
       queryFn: () => fetchFilteredProductsApi(filters),
@@ -40,7 +34,6 @@ export function useProducts() {
       queryKey: ['products'],
       queryFn: fetchProductsApi,
     });
-
   // ✅ گرفتن محصول تکی
   const useGetProduct = (slug: string) =>
     useQuery<Product>({
@@ -51,25 +44,24 @@ export function useProducts() {
 
   // ✅ ایجاد محصول
   const useCreateProduct = () =>
-    useMutation<Product, Error, ProductPayload>({
-      mutationFn: payload => createProductَApi(payload),
+    useMutation<Product, Error, CreateProductInput>({
+      mutationFn: createProductَApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
     });
 
   // ✅ آپدیت محصول
   const useUpdateProduct = () =>
-    useMutation<Product, Error, { slug: string; data: Partial<ProductPayload> }>({
+    useMutation<Product, Error, { slug: string; data: UpdateProductInput }>({
       mutationFn: ({ slug, data }) => updateProductApi(slug, data),
       onSuccess: (_res, vars) => {
         qc.invalidateQueries({ queryKey: ['products'] });
         qc.invalidateQueries({ queryKey: ['product', vars.slug] });
       },
     });
-
   // ✅ حذف محصول
   const useDeleteProduct = () =>
     useMutation<{ success: boolean }, Error, string>({
-      mutationFn: slug => deleteProductApi(slug),
+      mutationFn: deleteProductApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
     });
 
@@ -80,7 +72,6 @@ export function useProducts() {
       queryFn: () => fetchProductsByCategoryApi(slug),
       enabled: !!slug,
     });
-
   // ✅ محصولات بر اساس برند
   const useGetProductsByBrand = (slug: string) =>
     useQuery<Product[]>({
@@ -88,7 +79,6 @@ export function useProducts() {
       queryFn: () => fetchProductsByBrandApi(slug),
       enabled: !!slug,
     });
-
   // ✅ محصولات ویژه
   const useGetFeatured = () =>
     useQuery<Product[]>({

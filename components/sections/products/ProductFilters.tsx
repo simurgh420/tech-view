@@ -16,16 +16,13 @@ export default function ProductFilters({ onChange }: Props) {
   const [isPriceOpen, setIsPriceOpen] = useState(false);
 
   const [brandSlug, setBrandSlug] = useState<string>();
-  const [ram, setRam] = useState<string[]>([]);
   const [isBrandOpen, setIsBrandOpen] = useState(false);
-  const [isRamOpen, setIsRamOpen] = useState(false);
 
   function emit(next: Partial<FiltersProduct>) {
     onChange({
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
       ...(brandSlug && { brandSlug }),
-      ...(ram.length > 0 && { ram }),
       ...next,
     });
   }
@@ -114,37 +111,7 @@ export default function ProductFilters({ onChange }: Props) {
       </div>
 
       {/* رم */}
-      <div>
-        <Button
-          variant={'ghost'}
-          onClick={() => setIsRamOpen(p => !p)}
-          className="w-full flex justify-between"
-        >
-          <span>رم</span>
-          <span>{ram.length ? ram.join(', ') : 'انتخاب نشده'}</span>
-        </Button>
-        {isRamOpen && (
-          <div className="mt-2 space-y-2" dir="rtl">
-            {['4', '6', '8'].map(r => (
-              <label key={r} className="block">
-                <input
-                  type="checkbox"
-                  value={r}
-                  checked={ram.includes(r)}
-                  onChange={e => {
-                    const value = e.target.value;
-                    const checked = e.target.checked;
-                    const nextRam = checked ? [...ram, value] : ram.filter(x => x !== value);
-                    setRam(nextRam);
-                    emit({ ram: nextRam });
-                  }}
-                />
-                {r} گیگ
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
+      <div></div>
     </div>
   );
 }

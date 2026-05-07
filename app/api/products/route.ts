@@ -4,6 +4,7 @@ import { getProducts, getFilteredProducts } from '@/services/products/db/queries
 import { createProduct } from '@/services/products/db/mutations';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
+import { createProductSchema } from '@/lib/validation/product';
 
 export async function GET(req: Request) {
   try {
@@ -16,67 +17,56 @@ export async function GET(req: Request) {
       subCategorySlug: sp.get('subCategorySlug') ?? undefined,
       minPrice: sp.get('minPrice') ? Number(sp.get('minPrice')) : undefined,
       maxPrice: sp.get('maxPrice') ? Number(sp.get('maxPrice')) : undefined,
-      ram: sp.getAll('ram'),
-      sort: sp.get('sort') as 'featured' | 'price-asc' | 'price-desc' | 'new' | undefined,
+      sort: (sp.get('sort') as any) ?? undefined,
       q: sp.get('q') ?? undefined,
       page: sp.get('page') ? Math.max(1, Number(sp.get('page'))) : undefined,
       perPage: sp.get('perPage') ? Math.max(1, Number(sp.get('perPage'))) : undefined,
     };
 
-    const noFilters =
-      !filters.brandSlug &&
-      !filters.categorySlug &&
-      !filters.subCategorySlug &&
-      filters.minPrice === undefined &&
-      filters.maxPrice === undefined &&
-      (!filters.ram || filters.ram.length === 0) &&
-      !filters.q &&
-      !filters.page &&
-      !filters.perPage;
+    const hasFilters = Object.values(filters).some(
+      v => v !== undefined && (!Array.isArray(v) || v.length > 0)
+    );
 
-    const products = noFilters ? await getProducts() : await getFilteredProducts(filters);
-
+    const products = hasFilters ? await getFilteredProducts(filters) : await getProducts();
     return NextResponse.json(products);
   } catch (error) {
     console.error('GET /api/products Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to load products' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: { userId: session.user.id, permission: { products: ['create'] } },
+    });
+    if (permission.error || !permission.success) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await req.json();
-
-    // اعتبارسنجی سطحی
-    if (!body || typeof body.title !== 'string' || typeof body.price === 'undefined') {
-      return NextResponse.json(
-        { success: false, message: 'Invalid product payload' },
-        { status: 400 }
-      );
-    }
-    const price = Number(body.price);
-    if (isNaN(price) || price <= 0) {
-      return NextResponse.json(
-        { success: false, message: 'قیمت محصول معتبر نیست' },
-        { status: 400 }
-      );
+    const parsed = createProductSchema.safeParse(body);
+    if (!parsed.success) {
+      const details = parsed.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message,
+      }));
+      return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
     }
 
-    const product = await createProduct(body);
+    const product = await createProduct(parsed.data);
     return NextResponse.json(product, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('POST /api/products Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to create product' },
-      { status: 500 }
-    );
+    if (error.message?.includes('already exists')) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

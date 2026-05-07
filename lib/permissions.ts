@@ -8,6 +8,7 @@ const statements = {
   categories: ['create', 'update', 'delete'],
   comments: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
   contacts: ['read', 'delete'],
+  products: ['create', 'read', 'update', 'delete'],
   reviews: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
   wishlist: ['create', 'read', 'delete'],
 } as const;
@@ -18,6 +19,7 @@ export const roles = {
   USER: ac.newRole({
     posts: ['create', 'read', 'update:own', 'delete:own'],
     comments: ['create', 'update:own', 'delete:own'],
+    products: ['read'],
     reviews: ['create', 'update:own', 'delete:own'],
     wishlist: ['create'],
   }),
@@ -27,6 +29,7 @@ export const roles = {
     brands: ['create', 'update', 'delete'],
     categories: ['create', 'update', 'delete'],
     comments: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
+    products: ['create', 'read', 'update', 'delete'],
     contacts: ['read', 'delete'],
     reviews: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     wishlist: ['create', 'read', 'delete'],

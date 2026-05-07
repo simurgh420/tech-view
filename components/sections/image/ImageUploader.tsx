@@ -8,58 +8,125 @@ import { cn } from '@/lib/utils';
 
 type ImageUploaderProps = {
   initialUrl?: string | null;
+  initialUrls?: string[];
+  multiple?: boolean;
   onChange: (file: File | undefined) => void;
+  onMultipleChange?: (files: File[] | undefined) => void;
 };
 
-export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
+export function ImageUploader({
+  initialUrl,
+  initialUrls = [],
+  multiple = false,
+  onChange,
+  onMultipleChange,
+}: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inputId = useId();
 
-  // فقط وقتی کاربر فایل انتخاب می‌کنه blob می‌سازیم
+  // Single mode preview
   const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const singlePreview = localPreview ?? initialUrl ?? null;
+  // Multiple mode previews
 
-  // 👇 preview نهایی همیشه از این میاد
-  const preview = localPreview ?? initialUrl ?? null;
+  const [multiplePreviews, setMultiplePreviews] = useState<string[]>(initialUrls);
 
   // cleanup فقط برای blob ها
   useEffect(() => {
     return () => {
-      if (localPreview?.startsWith('blob:')) {
-        URL.revokeObjectURL(localPreview);
-      }
+      // cleanup blobs in single mode
+      if (localPreview?.startsWith('blob:')) URL.revokeObjectURL(localPreview);
+      // cleanup blobs in multiple mode
+      multiplePreviews.forEach(url => {
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      });
     };
-  }, [localPreview]);
+  }, [localPreview, multiplePreviews]);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    const objectUrl = URL.createObjectURL(file);
-    setLocalPreview(objectUrl);
-    onChange(file);
+    if (multiple) {
+      const fileArray = Array.from(files);
+      const newPreviews = fileArray.map(file => URL.createObjectURL(file));
+      setMultiplePreviews(prev => [...prev, ...newPreviews]);
+      onMultipleChange?.(fileArray);
+    } else {
+      const file = files[0];
+      const objectUrl = URL.createObjectURL(file);
+      setLocalPreview(objectUrl);
+      onChange(file);
+    }
 
     e.target.value = '';
   }
 
-  function removeImage() {
-    if (localPreview?.startsWith('blob:')) {
-      URL.revokeObjectURL(localPreview);
-    }
-
+  function removeSingle() {
+    if (localPreview?.startsWith('blob:')) URL.revokeObjectURL(localPreview);
     setLocalPreview(null);
     onChange(undefined);
-
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
   }
+  function removeMulti(index: number) {
+    const url = multiplePreviews[index];
+    if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
+    const updated = multiplePreviews.filter((_, i) => i !== index);
+    setMultiplePreviews(updated);
+  }
+  return multiple ? (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-2">
+        {multiplePreviews.map((url, idx) => (
+          <div key={idx} className="relative inline-block">
+            <Image
+              src={url}
+              width={96}
+              height={96}
+              alt={`gallery-${idx}`}
+              className="rounded-md border shadow-md object-cover"
+              unoptimized
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={() => removeMulti(idx)}
+              className="absolute -top-2 -right-2 rounded-full shadow-md"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
 
-  return (
+      <label
+        htmlFor={inputId}
+        className={cn(
+          'flex items-center justify-center gap-2 px-4 py-2 rounded-lg cursor-pointer shadow-sm transition text-sm font-medium',
+          'bg-blue-600 hover:bg-blue-700 text-white', 
+          'w-44'
+        )}
+      >
+        <Upload className="h-4 w-4" />
+        {multiplePreviews.length > 0 ? 'افزودن تصاویر' : 'انتخاب تصاویر'}
+      </label>
+
+      <input
+        id={inputId}
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleFile}
+        className="hidden"
+      />
+    </div>
+  ) : (
     <div className="flex flex-col items-start gap-4">
-      {preview && (
+      {singlePreview && (
         <div className="relative inline-block">
           <Image
-            src={preview}
+            src={singlePreview}
             width={96}
             height={96}
             alt="Preview"
@@ -70,7 +137,7 @@ export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
             type="button"
             variant="destructive"
             size="icon"
-            onClick={removeImage}
+            onClick={removeSingle}
             className="absolute -top-2 -right-2 rounded-full shadow-md"
           >
             <X className="h-4 w-4" />
@@ -82,11 +149,12 @@ export function ImageUploader({ initialUrl, onChange }: ImageUploaderProps) {
         htmlFor={inputId}
         className={cn(
           'flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer shadow-sm transition text-sm font-medium',
-          preview ? 'bg-orange-600 hover:bg-orange-700' : 'bg-green-600 hover:bg-green-700'
+          singlePreview ? 'bg-orange-600 hover:bg-orange-700' : 'bg-green-600 hover:bg-green-700',
+          'text-white'
         )}
       >
         <Upload className="h-4 w-4" />
-        {preview ? 'تغییر تصویر' : 'آپلود تصویر'}
+        {singlePreview ? 'تغییر تصویر' : 'آپلود تصویر'}
       </label>
 
       <input

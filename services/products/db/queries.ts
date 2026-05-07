@@ -1,35 +1,20 @@
 // services/products/db/queries.ts
 import prisma from '@/services/db/client';
+import { productIncludes, productWithReviews } from '../productIncludes';
 
 export async function getProducts() {
   return prisma.product.findMany({
     orderBy: { createdAt: 'desc' },
-    include: {
-      brand: true,
-      category: true,
-      subCategory: true,
-      prices: true,
-      reviews: true,
-    },
+    include: productIncludes,
   });
 }
 
 export async function getProductBySlug(slug: string) {
   return prisma.product.findUnique({
     where: { slug },
-    include: {
-      brand: true,
-      category: true,
-      subCategory: true,
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        include: { user: { select: { id: true, name: true } } },
-      },
-      prices: true,
-    },
+    include: productWithReviews,
   });
 }
-
 export async function getProductsByBrand(slug: string) {
   return prisma.product.findMany({
     where: { brand: { slug } },
@@ -50,23 +35,11 @@ export async function getFeaturedProducts() {
   return prisma.product.findMany({
     where: { isFeatured: true, status: 'PUBLISHED' },
     orderBy: { createdAt: 'desc' },
-    include: { brand: true, category: true },
+    include: productIncludes,
   });
 }
 
-// ✅ فانکشن عمومی برای فیلتر و مرتب‌سازی
-export async function getFilteredProducts({
-  brandSlug,
-  categorySlug,
-  subCategorySlug,
-  minPrice,
-  maxPrice,
-  sort = 'new',
-  q,
-  page,
-  perPage,
-  ram,
-}: {
+export async function getFilteredProducts(filters: {
   brandSlug?: string;
   categorySlug?: string;
   subCategorySlug?: string;
@@ -76,47 +49,20 @@ export async function getFilteredProducts({
   q?: string;
   page?: number;
   perPage?: number;
-  ram?: string[];
 }) {
-  let orderBy: any;
+  const { brandSlug, categorySlug, subCategorySlug, minPrice, maxPrice, sort, q, page, perPage } =
+    filters;
 
-  if (sort === 'price-asc') orderBy = { price: 'asc' };
-  else if (sort === 'price-desc') orderBy = { price: 'desc' };
-  else if (sort === 'featured') orderBy = [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
-  else orderBy = { createdAt: 'desc' }; // new
+  const where: any = { status: 'PUBLISHED' };
 
-  const skip = page && perPage ? (page - 1) * perPage : undefined;
-  const take = perPage ?? undefined;
-
-  const where: any = {
-    status: 'PUBLISHED',
-  };
-
-  if (brandSlug) {
-    where.brand = {
-      slug: { equals: brandSlug, mode: 'insensitive' },
-    };
-  }
-
-  if (categorySlug) {
-    where.category = { slug: categorySlug };
-  }
-
-  if (subCategorySlug) {
-    where.subCategory = { slug: subCategorySlug };
-  }
-
+  if (brandSlug) where.brand = { slug: { equals: brandSlug, mode: 'insensitive' } };
+  if (categorySlug) where.category = { slug: categorySlug };
+  if (subCategorySlug) where.subCategory = { slug: subCategorySlug };
   if (minPrice !== undefined || maxPrice !== undefined) {
-    where.price = {
-      ...(minPrice !== undefined && { gte: minPrice }),
-      ...(maxPrice !== undefined && { lte: maxPrice }),
-    };
+    where.price = {};
+    if (minPrice !== undefined) where.price.gte = minPrice;
+    if (maxPrice !== undefined) where.price.lte = maxPrice;
   }
-
-  if (ram && ram.length > 0) {
-    where.ram = { in: ram };
-  }
-
   if (q) {
     where.OR = [
       { title: { contains: q, mode: 'insensitive' } },
@@ -124,16 +70,29 @@ export async function getFilteredProducts({
     ];
   }
 
+  let orderBy: any;
+  switch (sort) {
+    case 'price-asc':
+      orderBy = { price: 'asc' };
+      break;
+    case 'price-desc':
+      orderBy = { price: 'desc' };
+      break;
+    case 'featured':
+      orderBy = [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
+      break;
+    default:
+      orderBy = { createdAt: 'desc' };
+  }
+
+  const skip = page && perPage ? (page - 1) * perPage : undefined;
+  const take = perPage;
+
   return prisma.product.findMany({
     where,
     orderBy,
     skip,
     take,
-    include: {
-      brand: true,
-      category: true,
-      subCategory: true,
-      reviews: true,
-    },
+    include: productIncludes,
   });
 }

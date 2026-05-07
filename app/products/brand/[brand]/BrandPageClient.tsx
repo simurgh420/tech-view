@@ -8,8 +8,8 @@ import SortMenu from '@/components/sections/products/SortMenu';
 import ProductCard from '@/components/sections/products/ProductCard';
 import ProductFilters from '@/components/sections/products/ProductFilters';
 import { Button } from '@/components/ui';
+import { FiltersProduct } from '@/types/product';
 
-import type { FiltersState } from '@/types/product';
 type BrandProductsPageProps = {
   brand: string;
 };
@@ -21,49 +21,42 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
   const { useGetFilteredProducts } = useProducts();
 
   // تبدیل URL → فیلترها
-  const initialFilters: FiltersState = {
+  const initialFilters: FiltersProduct = {
     brandSlug: brand as string,
     categorySlug: searchParams.get('categorySlug') || undefined,
     minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
     maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
-    ram: searchParams.get('ram') ? searchParams.get('ram')!.split(',') : [],
-    sort: searchParams.get('sort') || 'new',
+    sort: (searchParams.get('sort') as FiltersProduct['sort']) || 'new',
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     perPage: 20,
   };
 
-  const [filters, setFilters] = useState<FiltersState>(initialFilters);
+  const [filters, setFilters] = useState<FiltersProduct>(initialFilters);
 
-  function buildQueryString(filters: FiltersState) {
+  function buildQueryString(f: FiltersProduct) {
     const params = new URLSearchParams();
-    const excludedKeys = ['page', 'perPage'];
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (excludedKeys.includes(key)) return;
-      if (value === undefined || value === null) return;
-      if (Array.isArray(value) && value.length === 0) return;
-
-      params.set(key, Array.isArray(value) ? value.join(',') : String(value));
-    });
-
+    if (f.categorySlug) params.set('categorySlug', f.categorySlug);
+    if (f.minPrice) params.set('minPrice', String(f.minPrice));
+    if (f.maxPrice) params.set('maxPrice', String(f.maxPrice));
+    if (f.sort && f.sort !== 'new') params.set('sort', f.sort);
     return params.toString();
   }
 
   // Sync فیلترها با URL
-  function syncUrl(updated: FiltersState) {
+  function syncUrl(updated: FiltersProduct) {
     const query = buildQueryString(updated);
     router.replace(`?${query}`);
   }
 
   // تغییر Sort
   function handleSortChange(sort: string) {
-    const updated = { ...filters, sort, page: 1 };
+    const updated = { ...filters, sort: sort as FiltersProduct['sort'], page: 1 };
     setFilters(updated);
     syncUrl(updated);
   }
 
   // تغییر فیلترها
-  function handleFiltersChange(newFilters: Partial<FiltersState>) {
+  function handleFiltersChange(newFilters: Partial<FiltersProduct>) {
     const updated = { ...filters, ...newFilters, page: 1 };
     setFilters(updated);
     syncUrl(updated);
@@ -76,16 +69,19 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
     syncUrl(updated);
   }
 
-  const { data: products, isLoading, error, isError } = useGetFilteredProducts(filters);
+  const { data: products, isLoading, error } = useGetFilteredProducts(filters);
 
   if (isLoading) {
     return <p className="p-10 text-center">در حال بارگذاری...</p>;
   }
 
-  if (isError || !products) {
-    return <p className="p-10 text-center">محصول یافت نشد ❌</p>;
+  if (error) {
+    return <p className="p-10 text-center text-red-500">خطا در بارگذاری محصولات ❌</p>;
   }
 
+  if (!products?.length) {
+    return <p className="p-10 text-center text-gray-500">محصولی یافت نشد ❌</p>;
+  }
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -96,8 +92,6 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
             <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
           </div>
 
-          {error && <div className="text-red-500">خطا در بارگذاری</div>}
-
           {isLoading && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: filters.perPage ?? 20 }).map((_, i) => (
@@ -106,7 +100,7 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
             </div>
           )}
 
-          {!isLoading && products?.length ? (
+          {!isLoading && (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map(p => (
@@ -118,17 +112,15 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
                 <Button
                   variant="outline"
                   disabled={filters.page === 1}
-                  onClick={() => handlePageChange(filters.page! - 1)}
+                  onClick={() => handlePageChange((filters.page ?? 1) - 1)}
                 >
                   قبلی
                 </Button>
-                <Button variant="outline" onClick={() => handlePageChange(filters.page! + 1)}>
+                <Button variant="outline" onClick={() => handlePageChange((filters.page ?? 1) + 1)}>
                   بعدی
                 </Button>
               </div>
             </>
-          ) : (
-            !isLoading && <div className="text-gray-500">محصولی یافت نشد</div>
           )}
         </section>
 

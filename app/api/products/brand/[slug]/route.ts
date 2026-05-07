@@ -10,9 +10,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     return NextResponse.json(products);
   } catch (error) {
     console.error('GET /api/products/brand Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to load brand products' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

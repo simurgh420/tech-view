@@ -7,21 +7,12 @@ import SortMenu from '@/components/sections/products/SortMenu';
 import ProductCard from '@/components/sections/products/ProductCard';
 import ProductFilters from '@/components/sections/products/ProductFilters';
 import { Button } from '@/components/ui';
+import { FiltersProduct } from '@/types/product';
 
 export default function ProductsPage() {
   const { useGetFilteredProducts } = useProducts();
 
-  const [filters, setFilters] = useState<{
-    brandSlug?: string;
-    category?: string;
-    subCategory?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    ram?: string[];
-    sort?: string;
-    page?: number;
-    perPage?: number;
-  }>({
+  const [filters, setFilters] = useState<FiltersProduct>({
     sort: 'new',
     page: 1,
     perPage: 20,
@@ -30,10 +21,10 @@ export default function ProductsPage() {
   const { data: products, isLoading, error } = useGetFilteredProducts(filters);
 
   function handleSortChange(sort: string) {
-    setFilters(prev => ({ ...prev, sort, page: 1 }));
+    setFilters(prev => ({ ...prev, sort: sort as FiltersProduct['sort'], page: 1 }));
   }
 
-  function handleFiltersChange(newFilters: Partial<typeof filters>) {
+  function handleFiltersChange(newFilters: Partial<FiltersProduct>) {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   }
 

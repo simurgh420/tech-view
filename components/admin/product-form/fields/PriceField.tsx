@@ -3,12 +3,12 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Control } from 'react-hook-form';
-import { ProductFormValues } from '../product.schema';
+import { ProductFormType } from '@/lib/validation/product';
 
 const formatPrice = (value: number | null | undefined) =>
   value !== null && value !== undefined ? new Intl.NumberFormat('en-US').format(value) : '';
 
-type Props = { control: Control<ProductFormValues> };
+type Props = { control: Control<ProductFormType> };
 
 export function PriceField({ control }: Props) {
   return (

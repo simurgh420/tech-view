@@ -8,8 +8,8 @@ import SortMenu from '@/components/sections/products/SortMenu';
 import ProductCard from '@/components/sections/products/ProductCard';
 import ProductFilters from '@/components/sections/products/ProductFilters';
 import { Button } from '@/components/ui';
+import { FiltersProduct } from '@/types/product';
 
-import type { FiltersState } from '@/types/product';
 type CategoryProductsProps = {
   category: string;
 };
@@ -18,56 +18,46 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
   const searchParams = useSearchParams();
   const { useGetFilteredProducts } = useProducts();
 
-  const initialFilters: FiltersState = {
+  const initialFilters: FiltersProduct = {
     categorySlug: category as string,
     brandSlug: searchParams.get('brandSlug') || undefined,
     minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
     maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
-    ram: searchParams.get('ram') ? searchParams.get('ram')!.split(',') : [],
-    sort: searchParams.get('sort') || 'new',
+    sort: (searchParams.get('sort') as FiltersProduct['sort']) || 'new',
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     perPage: 20,
   };
 
-  const [filters, setFilters] = useState<FiltersState>(initialFilters);
+  const [filters, setFilters] = useState<FiltersProduct>(initialFilters);
 
-  function buildQueryString(filters: FiltersState) {
+  function buildQueryString(f: FiltersProduct) {
     const params = new URLSearchParams();
-    const excludedKeys = ['page', 'perPage'];
-    Object.entries(filters).forEach(([key, value]) => {
-      if (excludedKeys.includes(key)) return;
-      if (value === undefined || value === null) return;
-      if (Array.isArray(value) && value.length === 0) return;
-
-      params.set(key, Array.isArray(value) ? value.join(',') : String(value));
-    });
-
+    if (f.brandSlug) params.set('brandSlug', f.brandSlug);
+    if (f.minPrice) params.set('minPrice', String(f.minPrice));
+    if (f.maxPrice) params.set('maxPrice', String(f.maxPrice));
+    if (f.sort && f.sort !== 'new') params.set('sort', f.sort);
     return params.toString();
   }
-
-  function syncUrl(updated: FiltersState) {
+  function syncUrl(updated: FiltersProduct) {
     const query = buildQueryString(updated);
     router.replace(`?${query}`);
   }
 
   function handleSortChange(sort: string) {
-    const updated = { ...filters, sort, page: 1 };
+    const updated = { ...filters, sort: sort as FiltersProduct['sort'], page: 1 };
     setFilters(updated);
     syncUrl(updated);
   }
-
-  function handleFiltersChange(newFilters: Partial<FiltersState>) {
+  function handleFiltersChange(newFilters: Partial<FiltersProduct>) {
     const updated = { ...filters, ...newFilters, page: 1 };
     setFilters(updated);
     syncUrl(updated);
   }
-
   function handlePageChange(nextPage: number) {
     const updated = { ...filters, page: nextPage };
     setFilters(updated);
     syncUrl(updated);
   }
-
   const { data: products, isLoading, error } = useGetFilteredProducts(filters);
 
   return (

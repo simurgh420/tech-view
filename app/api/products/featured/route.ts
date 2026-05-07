@@ -9,9 +9,6 @@ export async function GET() {
     return NextResponse.json(products);
   } catch (error) {
     console.error('GET /api/products/featured Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to load featured products' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
