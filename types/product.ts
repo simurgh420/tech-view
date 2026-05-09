@@ -78,4 +78,5 @@ export type FiltersProduct = {
   q?: string;
   page?: number;
   perPage?: number;
+  specs?: Record<string, string>;
 };

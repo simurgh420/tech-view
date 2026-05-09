@@ -4,34 +4,56 @@ import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Button } from '@/components/ui';
-import { FiltersProduct } from '@/types/product';
+import { useProducts } from '@/hooks/useProducts';
+import type { FiltersProduct } from '@/types/product';
 
-type Props = { onChange: (filters: Partial<FiltersProduct>) => void };
+type Props = {
+  onChange: (filters: Partial<FiltersProduct>) => void;
+  initialCategorySlug?: string;
+};
 
-export default function ProductFilters({ onChange }: Props) {
+export default function ProductFilters({ onChange, initialCategorySlug }: Props) {
   const PRICE_MIN = 0;
   const PRICE_MAX = 50_000_000;
 
   const [priceRange, setPriceRange] = useState<number[]>([PRICE_MIN, PRICE_MAX]);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
+  const [selectedSpecs, setSelectedSpecs] = useState<Record<string, string>>({});
 
-  const [brandSlug, setBrandSlug] = useState<string>();
-  const [isBrandOpen, setIsBrandOpen] = useState(false);
+  // استفاده از هوک جدید
+  const { useProductFilters } = useProducts();
+  const { data: specFilters, isLoading: filtersLoading } = useProductFilters(
+    initialCategorySlug ?? ''
+  );
 
-  function emit(next: Partial<FiltersProduct>) {
+  function emit() {
     onChange({
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
-      ...(brandSlug && { brandSlug }),
-      ...next,
+      ...(Object.keys(selectedSpecs).length > 0 && { specs: selectedSpecs }),
     });
   }
+
+  const handleSpecChange = (key: string, value: string) => {
+    const newSpecs = { ...selectedSpecs };
+    if (newSpecs[key] === value) {
+      delete newSpecs[key];
+    } else {
+      newSpecs[key] = value;
+    }
+    setSelectedSpecs(newSpecs);
+    onChange({
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+      ...(Object.keys(newSpecs).length > 0 && { specs: newSpecs }),
+    });
+  };
 
   return (
     <div className="p-6 rounded-lg shadow-lg space-y-6">
       <h3 className="text-2xl font-semibold">فیلترها</h3>
 
-      {/* قیمت - منوی کشویی */}
+      {/* محدوده قیمت */}
       <div>
         <Button
           onClick={() => setIsPriceOpen(p => !p)}
@@ -43,7 +65,6 @@ export default function ProductFilters({ onChange }: Props) {
             {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} تومان
           </span>
         </Button>
-
         {isPriceOpen && (
           <div className="mt-3 px-2">
             <Slider
@@ -58,7 +79,7 @@ export default function ProductFilters({ onChange }: Props) {
               onChangeComplete={value => {
                 if (Array.isArray(value)) {
                   setPriceRange(value);
-                  emit({ minPrice: value[0], maxPrice: value[1] });
+                  emit();
                 }
               }}
               styles={{
@@ -70,7 +91,6 @@ export default function ProductFilters({ onChange }: Props) {
                   height: 18,
                   marginTop: -7,
                   boxShadow: '0 0 0 4px rgba(59,130,246,0.3)',
-                  transition: 'box-shadow 0.2s',
                 },
                 rail: { backgroundColor: '#e5e7eb', height: 6 },
               }}
@@ -79,39 +99,35 @@ export default function ProductFilters({ onChange }: Props) {
         )}
       </div>
 
-      {/* برند */}
-      <div>
-        <Button
-          variant={'ghost'}
-          onClick={() => setIsBrandOpen(p => !p)}
-          className="w-full flex justify-between"
-        >
-          <span>برند</span>
-          <span>{brandSlug ?? 'انتخاب نشده'}</span>
-        </Button>
-        {isBrandOpen && (
-          <div className="mt-2 space-y-2" dir="rtl">
-            {['apple', 'samsung', 'tm-d', 'cypher'].map(b => (
-              <label key={b} className="block">
-                <input
-                  type="radio"
-                  name="brand"
-                  value={b}
-                  checked={brandSlug === b}
-                  onChange={e => {
-                    setBrandSlug(e.target.value);
-                    emit({ brandSlug: e.target.value });
-                  }}
-                />
-                {b}
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* فیلترهای پویا (مشخصات فنی) */}
+      {filtersLoading && <div className="text-sm text-gray-500">در حال بارگذاری فیلترها...</div>}
 
-      {/* رم */}
-      <div></div>
+      {specFilters && Object.keys(specFilters).length > 0 && (
+        <div className="space-y-4">
+          {Object.entries(specFilters).map(([key, values]) => (
+            <div key={key}>
+              <h4 className="font-medium mb-2 text-sm">{key}</h4>
+              <div className="space-y-1">
+                {values.map(v => (
+                  <label key={v} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={selectedSpecs[key] === v}
+                      onChange={() => handleSpecChange(key, v)}
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    {v}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!filtersLoading && !specFilters && initialCategorySlug && (
+        <div className="text-sm text-gray-500">هیچ فیلتری برای این دسته موجود نیست</div>
+      )}
     </div>
   );
 }

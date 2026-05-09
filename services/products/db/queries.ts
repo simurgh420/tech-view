@@ -49,9 +49,20 @@ export async function getFilteredProducts(filters: {
   q?: string;
   page?: number;
   perPage?: number;
+  specs?: Record<string, string>;
 }) {
-  const { brandSlug, categorySlug, subCategorySlug, minPrice, maxPrice, sort, q, page, perPage } =
-    filters;
+  const {
+    brandSlug,
+    categorySlug,
+    subCategorySlug,
+    minPrice,
+    maxPrice,
+    sort,
+    q,
+    page,
+    perPage,
+    specs,
+  } = filters;
 
   const where: any = { status: 'PUBLISHED' };
 
@@ -69,7 +80,27 @@ export async function getFilteredProducts(filters: {
       { description: { contains: q, mode: 'insensitive' } },
     ];
   }
+  if (specs && Object.keys(specs).length > 0) {
+    const specConditions = Object.entries(specs).map(([key, value]) => ({
+      AND: [
+        {
+          specifications: {
+            path: ['$[*].items[*].label'],
+            array_contains: [key],
+          },
+        },
+        {
+          specifications: {
+            path: ['$[*].items[*].value'],
+            array_contains: [value],
+          },
+        },
+      ],
+    }));
 
+    if (!where.AND) where.AND = [];
+    where.AND.push(...specConditions);
+  }
   let orderBy: any;
   switch (sort) {
     case 'price-asc':

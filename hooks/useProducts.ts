@@ -15,6 +15,7 @@ import {
   fetchProductsByBrandApi,
   fetchProductsByCategoryApi,
   fetchFilteredProductsApi,
+  fetchProductFiltersApi,
 } from '@/services/products/api/queries';
 import { CreateProductInput, UpdateProductInput } from '@/lib/validation/product';
 
@@ -85,9 +86,15 @@ export function useProducts() {
       queryKey: ['products', 'featured'],
       queryFn: fetchFeaturedProductsApi,
     });
-
+  const useProductFilters = (categorySlug: string) =>
+    useQuery<Record<string, string[]>>({
+      queryKey: ['product-filters', categorySlug],
+      queryFn: () => fetchProductFiltersApi(categorySlug),
+      enabled: !!categorySlug,
+      staleTime: 1000 * 60 * 30,
+    });
   return {
-    useGetFilteredProducts, // فانکشن اصلی برای فیلتر و مرتب‌سازی
+    useGetFilteredProducts,
     useGetProducts,
     useGetProduct,
     useCreateProduct,
@@ -96,5 +103,6 @@ export function useProducts() {
     useGetProductsByCategory,
     useGetProductsByBrand,
     useGetFeatured,
+    useProductFilters,
   };
 }

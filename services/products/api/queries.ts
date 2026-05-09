@@ -26,19 +26,30 @@ export async function fetchFeaturedProductsApi(): Promise<Product[]> {
 }
 // ✅ فانکشن عمومی برای فیلتر و مرتب‌سازی
 export async function fetchFilteredProductsApi(filters: FiltersProduct): Promise<Product[]> {
-  const res = await axios.get<Product[]>('/api/products', {
-    params: filters,
-    paramsSerializer: params => {
-      const sp = new URLSearchParams();
-      Object.entries(params).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          value.forEach(v => sp.append(key, v));
-        } else if (value !== undefined && value !== null) {
-          sp.set(key, String(value));
-        }
-      });
-      return sp.toString();
-    },
+  const { specs, ...rest } = filters;
+
+  const sp = new URLSearchParams();
+  // اضافه کردن فیلدهای معمولی
+  Object.entries(rest).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach(v => sp.append(key, v));
+    } else if (value !== undefined && value !== null) {
+      sp.set(key, String(value));
+    }
   });
+  // اضافه کردن specs
+  if (specs) {
+    Object.entries(specs).forEach(([key, value]) => {
+      sp.set(`specs[${key}]`, value);
+    });
+  }
+
+  const res = await axios.get<Product[]>('/api/products', { params: sp });
+  return res.data;
+}
+export async function fetchProductFiltersApi(
+  categorySlug: string
+): Promise<Record<string, string[]>> {
+  const res = await axios.get(`/api/products/filters?categorySlug=${categorySlug}`);
   return res.data;
 }

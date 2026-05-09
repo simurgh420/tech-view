@@ -11,6 +11,13 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const sp = url.searchParams;
 
+    const specs: Record<string, string> = {};
+    sp.forEach((value, key) => {
+      const match = key.match(/^specs\[(.+)\]$/);
+      if (match) {
+        specs[match[1]] = value;
+      }
+    });
     const filters = {
       brandSlug: sp.get('brandSlug') ?? undefined,
       categorySlug: sp.get('categorySlug') ?? undefined,
@@ -21,6 +28,7 @@ export async function GET(req: Request) {
       q: sp.get('q') ?? undefined,
       page: sp.get('page') ? Math.max(1, Number(sp.get('page'))) : undefined,
       perPage: sp.get('perPage') ? Math.max(1, Number(sp.get('perPage'))) : undefined,
+      specs: Object.keys(specs).length > 0 ? specs : undefined,
     };
 
     const hasFilters = Object.values(filters).some(
