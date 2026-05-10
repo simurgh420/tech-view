@@ -1,4 +1,4 @@
-// app/(whatever)/blog/[slug]/edit/EditBlogForm.tsx
+// app/(whatever)/blog/[slug]/EditBlogPageClient.tsx
 
 'use client';
 
@@ -22,7 +22,7 @@ interface EditBlogFormProps {
   };
 }
 
-export function EditBlogForm({ slug, blog }: EditBlogFormProps) {
+export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
   const router = useRouter();
   const { useUpdateBlog } = useBlogs();
   const updateMutation = useUpdateBlog(slug);

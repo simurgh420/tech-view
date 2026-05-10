@@ -1,4 +1,4 @@
-// app/(whatever)/blog/create/CreateBlogForm.tsx
+// app/(whatever)/blog/create/CreateBlogPageClient.tsx
 'use client';
 
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-export function CreateBlogForm() {
+export function CreateBlogPageClient() {
   const router = useRouter();
   const { useCreateBlog } = useBlogs();
   const createMutation = useCreateBlog();

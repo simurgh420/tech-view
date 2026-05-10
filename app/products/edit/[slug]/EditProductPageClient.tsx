@@ -1,3 +1,5 @@
+// app/product/edit/[slug]/EditProductClientPage.tsx
+
 'use client';
 
 import { ProductForm } from '@/components/admin/product-form/ProductForm';

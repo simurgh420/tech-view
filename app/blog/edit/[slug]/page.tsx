@@ -3,8 +3,11 @@
 import { auth } from '@/lib/auth';
 import { getPostBySlug } from '@/services/blog/db/queries';
 import { headers } from 'next/headers';
-import { notFound } from 'next/navigation';
-import { EditBlogForm } from './EditBlogForm';
+import { notFound, redirect } from 'next/navigation';
+import { EditBlogPageClient } from './EditBlogPageClient';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import BlogError from '../../error';
 
 interface EditBlogPageProps {
   params: Promise<{ slug: string }>;
@@ -17,23 +20,16 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
 
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
-    return (
-      <div className="text-center py-10">
-        <p className="text-red-500">برای ویرایش بلاگ باید وارد شوید.</p>
-      </div>
-    );
+    redirect('/unauthorized');
   }
+
   // ۲. دریافت پست
   let blog: Awaited<ReturnType<typeof getPostBySlug>>;
   try {
     blog = await getPostBySlug(slug);
   } catch (error) {
     console.error('Failed to fetch blog:', error);
-    return (
-      <div className="text-center py-10">
-        <p className="text-red-500">خطا در بارگذاری بلاگ. لطفاً بعداً تلاش کنید.</p>
-      </div>
-    );
+    return <BlogError error={error as Error & { digest?: string }} />;
   }
 
   if (!blog) {
@@ -54,16 +50,30 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mt-6">ویرایش بلاگ ✏️</h1>
-      <EditBlogForm
-        slug={slug}
-        blog={{
-          title: blog.title,
-          excerpt: blog.excerpt,
-          coverImageUrl: blog.coverImageUrl,
-          content: blog.content,
-          tags: blog.tags.map(t => t.tag.name),
-        }}
-      />
+
+      <Suspense
+        fallback={
+          <div className="space-y-6 mt-8">
+            <Skeleton variant="text" className="h-8 w-2/3" />
+            <Skeleton variant="rect" className="h-10 w-full" />
+            <Skeleton variant="rect" className="h-32 w-full" />
+            <Skeleton variant="rect" className="h-10 w-full" />
+            <Skeleton variant="rect" className="h-40 w-full" />
+            <Skeleton variant="rect" className="h-12 w-full" />
+          </div>
+        }
+      >
+        <EditBlogPageClient
+          slug={slug}
+          blog={{
+            title: blog.title,
+            excerpt: blog.excerpt,
+            coverImageUrl: blog.coverImageUrl,
+            content: blog.content,
+            tags: blog.tags.map(t => t.tag.name),
+          }}
+        />
+      </Suspense>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+//app/products/[slug]/ProductPageClient.tsx
+
 'use client';
 
 import { useProducts } from '@/hooks/useProducts';

@@ -1,4 +1,4 @@
-// app/product/brand/[brand]/page.tsx
+// app/product/brand/page.tsx
 
 import { Suspense } from 'react';
 import BrandProductsClientPage from './BrandPageClient';
@@ -18,7 +18,7 @@ export default async function ProductPage({ params }: { params: Promise<{ brand:
         </div>
       }
     >
-      <BrandProductsClientPage brand={brand} />;
+      <BrandProductsClientPage brand={brand} />
     </Suspense>
   );
 }

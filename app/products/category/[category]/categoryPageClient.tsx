@@ -1,3 +1,5 @@
+// app/product/category[category]/CategoryProductsClientPage.tsx
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -11,6 +13,7 @@ import { Button } from '@/components/ui';
 import { FiltersProduct } from '@/types/product';
 import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
 import { SkeletonCard } from '@/components/ui/skeleton';
+import { ProductEmptyState } from '@/components/sections/products/empty-state';
 
 type CategoryProductsProps = {
   category: string;
@@ -64,11 +67,11 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
   }
 
   if (error) {
-    return <p className="p-10 text-center text-red-500">خطا در بارگذاری محصولات ❌</p>;
+    return <ProductEmptyState variant="error" />;
   }
 
   if (!products?.length) {
-    return <p className="p-10 text-center text-gray-500">محصولی یافت نشد ❌</p>;
+    return <ProductEmptyState variant="empty" />;
   }
   return (
     <div className="container mx-auto px-4 py-6">

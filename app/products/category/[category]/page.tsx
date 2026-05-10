@@ -1,4 +1,4 @@
-// app/product/category/[category]/page.tsx
+// app/product/category/page.tsx
 
 import { Suspense } from 'react';
 import CategoryProductsClientPage from './categoryPageClient';
@@ -18,7 +18,7 @@ export default async function ProductPage({ params }: { params: Promise<{ catego
         </div>
       }
     >
-      <CategoryProductsClientPage category={category} />;
+      <CategoryProductsClientPage category={category} />
     </Suspense>
   );
 }

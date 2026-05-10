@@ -27,7 +27,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
       }
     >
-      <EditProductClientPage slug={slug} />;
+      <EditProductClientPage slug={slug} />
     </Suspense>
   );
 }

@@ -1,5 +1,8 @@
+// app/products/ProductsPageClient.tsx
+
 'use client';
 
+import { ProductEmptyState } from '@/components/sections/products/empty-state';
 import ProductCard from '@/components/sections/products/ProductCard';
 import ProductFilters from '@/components/sections/products/ProductFilters';
 import SortMenu from '@/components/sections/products/SortMenu';
@@ -61,11 +64,11 @@ export default function ProductsPageClient() {
   }
 
   if (error) {
-    return <p className="p-10 text-center text-red-500">خطا در بارگذاری محصولات ❌</p>;
+    return <ProductEmptyState variant="error" />;
   }
 
   if (!products?.length) {
-    return <p className="p-10 text-center text-gray-500">محصولی یافت نشد ❌</p>;
+    return <ProductEmptyState variant="empty" />;
   }
 
   return (

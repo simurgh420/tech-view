@@ -8,8 +8,9 @@ export default async function UsersPage() {
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
 
-  if (!session) redirect('/auth/login');
-
+  if (!session) {
+    redirect('/unauthorized');
+  }
   if (session.user.role !== 'ADMIN') {
     return (
       <div className="container mx-auto max-w-5xl px-8 py-16 space-y-10">
