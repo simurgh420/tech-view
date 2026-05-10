@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw, WifiOff } from 'lucide-react';
 import { ReturnButton } from '@/components/button/return-button';
@@ -19,9 +19,13 @@ export default function BlogError({
     console.error(error);
   }, [error]);
 
-  // 👇 اگر reset بود، همون رو صدا می‌زنه، وگرنه router.refresh()
-  const handleRetry = reset ?? (() => router.refresh());
-
+  const handleRetry = useCallback(() => {
+    if (reset) {
+      reset();
+    } else {
+      router.refresh();
+    }
+  }, [reset, router]);
   return (
     <main className="flex min-h-[80vh] items-center justify-center p-4">
       <motion.div
