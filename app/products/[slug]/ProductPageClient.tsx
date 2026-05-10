@@ -7,6 +7,7 @@ import ProductGallery from '@/components/sections/products/gallery/ProductGaller
 import ProductInfo from '@/components/sections/products/info/ProductInfo';
 import ProductPriceBox from '@/components/sections/products/price/ProductPriceBox';
 import ProductTabs from '@/components/sections/products/tabs/ProductTabs';
+import { SkeletonProductDetail } from '@/components/ui/skeleton';
 
 type ProductPageClientProps = {
   slug: string;
@@ -17,7 +18,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
   const { data: product, isLoading, isError } = useGetProduct(slug);
 
   if (isLoading) {
-    return <p className="p-10 text-center">در حال بارگذاری...</p>;
+    return <SkeletonProductDetail />;
   }
 
   if (isError || !product) {

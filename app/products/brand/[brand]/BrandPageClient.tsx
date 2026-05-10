@@ -10,6 +10,7 @@ import ProductFilters from '@/components/sections/products/ProductFilters';
 import { Button } from '@/components/ui';
 import { FiltersProduct } from '@/types/product';
 import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
+import { SkeletonCard } from '@/components/ui/skeleton';
 
 type BrandProductsPageProps = {
   brand: string;
@@ -53,7 +54,15 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
   }
 
   if (isLoading) {
-    return <p className="p-10 text-center">در حال بارگذاری...</p>;
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {

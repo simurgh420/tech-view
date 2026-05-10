@@ -1,31 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useProducts } from '@/hooks/useProducts';
-
-import SortMenu from '@/components/sections/products/SortMenu';
 import ProductCard from '@/components/sections/products/ProductCard';
 import ProductFilters from '@/components/sections/products/ProductFilters';
+import SortMenu from '@/components/sections/products/SortMenu';
 import { Button } from '@/components/ui';
-import { FiltersProduct } from '@/types/product';
-import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
 import { SkeletonCard } from '@/components/ui/skeleton';
+import { useProducts } from '@/hooks/useProducts';
+import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
+import { FiltersProduct } from '@/types/product';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-type CategoryProductsProps = {
-  category: string;
-};
-export default function CategoryProductsClientPage({ category }: CategoryProductsProps) {
+export default function ProductsPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const { useGetFilteredProducts } = useProducts();
 
   const initialFilters: FiltersProduct = {
-    categorySlug: category,
     brandSlug: searchParams.get('brandSlug') || undefined,
+    categorySlug: searchParams.get('categorySlug') || undefined,
     minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
     maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
     sort: (searchParams.get('sort') as FiltersProduct['sort']) || 'new',
+    q: searchParams.get('q') || undefined,
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     perPage: 20,
     specs: parseSpecsFromURL(searchParams),
@@ -33,7 +31,6 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
   const [filters, setFilters] = useState<FiltersProduct>(initialFilters);
   const { data: products, isLoading, error } = useGetFilteredProducts(filters);
 
-  // Sync URL
   useEffect(() => {
     const query = buildFiltersQueryString(filters);
     router.replace(query ? `?${query}` : window.location.pathname, { scroll: false });
@@ -70,37 +67,46 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
   if (!products?.length) {
     return <p className="p-10 text-center text-gray-500">محصولی یافت نشد ❌</p>;
   }
+
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <section className="col-span-12 lg:col-span-9">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">دسته: {category}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">محصولات</h1>
             <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map(p => (
-              <ProductCard key={p.id} product={p} />
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
           <div className="flex justify-center mt-6">
             <Button
-              variant="outline"
+              variant={'outline'}
               disabled={filters.page === 1}
               onClick={() => handlePageChange((filters.page ?? 1) - 1)}
+              className="px-4 py-2 mx-1 rounded disabled:opacity-50"
             >
               قبلی
             </Button>
-            <Button variant="outline" onClick={() => handlePageChange((filters.page ?? 1) + 1)}>
+            <Button
+              variant={'outline'}
+              onClick={() => handlePageChange((filters.page ?? 1) + 1)}
+              className="px-4 py-2 mx-1 rounded disabled:opacity-50"
+            >
               بعدی
             </Button>
           </div>
         </section>
 
-        <aside className="col-span-12 lg:col-span-3">
-          <ProductFilters onChange={handleFiltersChange} initialCategorySlug={category} />
+        <aside className="col-span-12 lg:col-span-3 mt-6 lg:mt-0">
+          <ProductFilters
+            onChange={handleFiltersChange}
+            initialCategorySlug={filters.categorySlug}
+          />
         </aside>
       </div>
     </div>

@@ -4,12 +4,28 @@
 import { useComments } from '@/hooks/useComments';
 import Image from 'next/image';
 import { CommentForm } from './CommentForm';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function CommentsSection({ postId }: { postId: string }) {
   const { useGetComments } = useComments(postId);
   const { data: comments = [], isLoading, error } = useGetComments();
 
-  if (isLoading) return <p className="p-4">در حال بارگذاری کامنت‌ها...</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        </div>
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      </div>
+    );
+  }
   if (error) return <p className="p-4 text-red-500">خطا در دریافت کامنت‌ها</p>;
 
   return (

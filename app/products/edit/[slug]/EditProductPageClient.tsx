@@ -1,6 +1,7 @@
 'use client';
 
 import { ProductForm } from '@/components/admin/product-form/ProductForm';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
@@ -113,7 +114,23 @@ export default function EditProductClientPage({ slug }: EditProductProps) {
       }
     );
   }
-  if (isLoading) return <p>در حال بارگذاری محصول...</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
+        <Skeleton variant="rect" className="h-10 w-full" />
+        <Skeleton variant="rect" className="h-32 w-full" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="rect" className="h-10 w-full" />
+          <Skeleton variant="rect" className="h-10 w-full" />
+        </div>
+        <Skeleton variant="rect" className="h-10 w-full" />
+        <Skeleton variant="rect" className="h-40 w-full" />
+        <Skeleton variant="rect" className="h-40 w-full" />
+        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      </div>
+    );
+  }
   if (isError || !product) return <p>خطا در دریافت محصول ❌</p>;
 
   return (

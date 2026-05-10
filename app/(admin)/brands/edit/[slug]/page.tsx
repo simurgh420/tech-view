@@ -2,6 +2,7 @@
 'use client';
 
 import { BrandForm } from '@/components/sections/brand/BrandForm';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useBrands } from '@/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
 import { UpdateBrandInput } from '@/lib/validation/brand';
@@ -16,10 +17,25 @@ export default function EditBrandPage() {
   const updateMutation = useUpdateBrand();
   const notify = useNotify();
 
-  if (isLoading) return <p>در حال بارگذاری...</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        </div>
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      </div>
+    );
+  }
   if (!brand) return <p>برند یافت نشد ❌</p>;
 
-  const handleSubmit = (formData: UpdateBrandInput ) => {
+  const handleSubmit = (formData: UpdateBrandInput) => {
     updateMutation.mutate(
       {
         slug,

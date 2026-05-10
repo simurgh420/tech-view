@@ -4,12 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { useAdminComments } from '@/hooks/useAdmin/useAdminComments';
 import { DeleteCommentModal } from './DeleteCommentModal';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function CommentsList() {
   const { comments, isLoading } = useAdminComments();
 
-  if (isLoading) return <p>در حال بارگذاری...</p>;
-
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        </div>
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      </div>
+    );
+  }
   if (!comments || comments.length === 0) {
     return <p className="text-gray-500">هیچ کامنتی وجود ندارد.</p>;
   }

@@ -2,6 +2,7 @@
 'use client';
 
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
 import { EditCategoryInput } from '@/lib/validation/category';
@@ -15,7 +16,22 @@ export default function EditCategoryPage() {
   const updateMutation = useUpdateCategory();
   const notify = useNotify();
 
-  if (isLoading) return <p>در حال بارگذاری...</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        </div>
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      </div>
+    );
+  }
   if (!category) return <p>کتگوری یافت نشد ❌</p>;
 
   const handleSubmit = (formData: EditCategoryInput) => {

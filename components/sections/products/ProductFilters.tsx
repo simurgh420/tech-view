@@ -20,7 +20,6 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [selectedSpecs, setSelectedSpecs] = useState<Record<string, string>>({});
 
-  // استفاده از هوک جدید
   const { useProductFilters } = useProducts();
   const { data: specFilters, isLoading: filtersLoading } = useProductFilters(
     initialCategorySlug ?? ''
