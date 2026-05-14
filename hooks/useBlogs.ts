@@ -7,7 +7,7 @@ import { BlogListResponse, BlogPost } from '@/types/blog';
 
 import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 import { createBlogApi, deleteBlogApi, updateBlogApi } from '@/services/blog/api/mutations';
-import { CreateBlogInput, UpdateBlogInput } from '@/lib/validation/blog';
+import { CreateBlogPayload, UpdateBlogInput } from '@/lib/validation/blog';
 
 export function useBlogs() {
   const qc = useQueryClient();
@@ -26,7 +26,7 @@ export function useBlogs() {
     });
 
   const useCreateBlog = () =>
-    useMutation<BlogPost, Error, CreateBlogInput>({
+    useMutation<BlogPost, Error, CreateBlogPayload>({
       mutationFn: createBlogApi,
       onSuccess: () => {
         qc.invalidateQueries({ queryKey: ['blogs'] });

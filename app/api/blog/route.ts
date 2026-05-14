@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { createBlogSchema } from '@/lib/validation/blog';
+import { createBlogPayloadSchema, createBlogSchema } from '@/lib/validation/blog';
 import { createBlogPost } from '@/services/blog/db/mutations';
 import { getPublishedPosts } from '@/services/blog/db/queries';
 import { headers } from 'next/headers';
@@ -42,13 +42,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     const body = await req.json();
-    const parsed = createBlogSchema.safeParse({
-      ...body,
-      authorId: session.user.id,
-    });
-
+    const parsed = createBlogPayloadSchema.safeParse(body);
     if (!parsed.success) {
-      // مدرن‌ترین روش: برگرداندن issues (بدون flatten)
       const details = parsed.error.issues.map(issue => ({
         field: issue.path.join('.'),
         message: issue.message,
@@ -56,8 +51,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
     }
 
-    // 4. ایجاد بلاگ (داده معتبر)
-    const blog = await createBlogPost(parsed.data);
+    const payload = createBlogSchema.parse({
+      ...parsed.data,
+      authorId: session.user.id,
+    });
+
+    const blog = await createBlogPost(payload);
     return NextResponse.json(blog, { status: 201 });
   } catch (error) {
     // خطاهای غیرمنتظره (مثلاً بدنه JSON نبود)

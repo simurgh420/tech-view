@@ -42,10 +42,32 @@ export const productFormSchema = z.object({
 });
 export type ProductFormType = z.infer<typeof productFormSchema>;
 
+// اسکیمای ارسال از کلاینت به API
+export const createProductPayloadSchema = z.object({
+  title: z.string().min(3, 'عنوان حداقل ۳ کاراکتر').max(200),
+  description: z.string().min(20, 'توضیحات حداقل ۲۰ کاراکتر'),
+  price: z.number().positive('قیمت باید مثبت باشد'),
+  discountPrice: z.number().positive().optional().nullable(),
+  stockQuantity: z.number().int().min(0).default(0),
+  thumbnail: z.url().optional().nullable(),
+  images: z.array(z.url()).optional().default([]),
+  keyFeatures: z.array(z.string()).optional().default([]),
+  colors: z.array(colorSchema).optional().default([]),
+  variants: z.array(variantSchema).optional().default([]),
+  specifications: z.array(specGroupSchema).optional().default([]),
+  isFeatured: z.boolean().optional().default(false),
+  isNew: z.boolean().optional().default(true),
+  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
+  brandSlug: z.string().min(1, 'برند الزامی است'),
+  categorySlug: z.string().min(1, 'دسته‌بندی الزامی است'),
+  subCategorySlug: z.string().optional().nullable(),
+});
+
+export type CreateProductPayload = z.infer<typeof createProductPayloadSchema>;
 // ------------------ Server create schema ------------------
 export const createProductSchema = z.object({
   title: z.string().min(3, 'عنوان حداقل ۳ کاراکتر').max(200),
-  slug: z.string().min(1, 'اسلاگ الزامی است'),
+  slug: z.string().optional(),
   description: z.string().min(20, 'توضیحات حداقل ۲۰ کاراکتر'),
   price: z.number().positive('قیمت باید مثبت باشد'),
   discountPrice: z.number().positive().optional().nullable(),

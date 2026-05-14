@@ -8,7 +8,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
 import { useProducts } from '@/hooks/useProducts';
 import { toSlug } from '@/lib/slug';
-import { ProductFormType } from '@/lib/validation/product';
+import { CreateProductPayload, ProductFormType } from '@/lib/validation/product';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -56,9 +56,8 @@ export default function CreateProductPageClient() {
       }
     }
     /* ------------------ final payload ------------------ */
-    const payload = {
+    const payload: CreateProductPayload = {
       title: data.title,
-      slug,
       description: data.description,
       price: data.price,
       discountPrice: data.discountPrice ?? null,
@@ -74,8 +73,6 @@ export default function CreateProductPageClient() {
       status: data.status ?? 'PUBLISHED',
       brandSlug: data.brandSlug,
       categorySlug: data.categorySlug,
-      // subCategorySlug not in form? add if needed
-      publishedAt: null,
     };
     createMutation.mutate(payload, {
       onSuccess: () => {

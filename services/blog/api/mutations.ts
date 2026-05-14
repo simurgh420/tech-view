@@ -1,9 +1,9 @@
 // services/blog/api/mutations.ts
-import { CreateBlogInput, UpdateBlogInput } from '@/lib/validation/blog';
+import { CreateBlogPayload, UpdateBlogInput } from '@/lib/validation/blog';
 import { BlogPost } from '@/types/blog';
 import axios from 'axios';
 
-export async function createBlogApi(data: CreateBlogInput): Promise<BlogPost> {
+export async function createBlogApi(data: CreateBlogPayload): Promise<BlogPost> {
   const { data: res } = await axios.post('/api/blog', data);
   return res;
 }

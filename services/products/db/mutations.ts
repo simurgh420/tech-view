@@ -1,6 +1,8 @@
 import prisma from '@/services/db/client';
 import type { CreateProductInput, UpdateProductInput } from '@/lib/validation/product';
 import { Prisma } from '@/app/generated/prisma/client';
+import { generateUniqueSlug, toSlug } from '@/lib/slug';
+import { Product } from '@/types/product';
 
 // محاسبهٔ تخفیف
 function calculateDiscount(price: number, discountPrice: number | null) {
@@ -12,48 +14,37 @@ function calculateDiscount(price: number, discountPrice: number | null) {
   }
   return { isDiscounted: false, discountPercentage: null };
 }
-// بررسی یکتا بودن slug
-async function isSlugUnique(slug: string, excludeId?: string): Promise<boolean> {
-  const existing = await prisma.product.findUnique({
-    where: { slug },
-    select: { id: true },
-  });
-  if (!existing) return true;
-  if (excludeId && existing.id === excludeId) return true;
-  return false;
-}
 // فرمت کردن خروجی
-function formatProduct(product: any) {
+function formatProduct(raw: any): Product {
   return {
-    id: product.id,
-    title: product.title,
-    slug: product.slug,
-    description: product.description,
-    price: product.price.toString(),
-    discountPrice: product.discountPrice?.toString() ?? null,
-    discountPercentage: product.discountPercentage ?? null,
-    isDiscounted: product.isDiscounted,
-    isFeatured: product.isFeatured,
-    isNew: product.isNew,
-    stockQuantity: product.stockQuantity,
-    thumbnail: product.thumbnail ?? null,
-    images: product.images ?? [],
-    keyFeatures: product.keyFeatures ?? [],
-    colors: product.colors ?? [],
-    variants: product.variants ?? [],
-    specifications: product.specifications ?? [],
-    status: product.status,
-    rating: product.rating?.toString() ?? null,
-    reviewCount: product.reviewCount,
-    createdAt: product.createdAt.toISOString(),
-    updatedAt: product.updatedAt.toISOString(),
-    publishedAt: product.publishedAt?.toISOString() ?? null,
-    brand: product.brand ?? null,
-    category: product.category ?? null,
-    subCategory: product.subCategory ?? null,
+    id: raw.id,
+    title: raw.title,
+    slug: raw.slug,
+    description: raw.description,
+    price: raw.price.toString(),
+    discountPrice: raw.discountPrice?.toString() ?? null,
+    discountPercentage: raw.discountPercentage ?? null,
+    isDiscounted: raw.isDiscounted,
+    isFeatured: raw.isFeatured,
+    isNew: raw.isNew,
+    stockQuantity: raw.stockQuantity,
+    thumbnail: raw.thumbnail ?? null,
+    images: raw.images ?? [],
+    keyFeatures: raw.keyFeatures ?? [],
+    colors: raw.colors ?? [],
+    variants: raw.variants ?? [],
+    specifications: raw.specifications ?? [],
+    status: raw.status,
+    rating: raw.rating?.toString() ?? null,
+    reviewCount: raw.reviewCount,
+    createdAt: raw.createdAt.toISOString(),
+    updatedAt: raw.updatedAt.toISOString(),
+    publishedAt: raw.publishedAt?.toISOString() ?? null,
+    brand: raw.brand ?? null,
+    category: raw.category ?? null,
+    subCategory: raw.subCategory ?? null,
   };
 }
-
 // ایجاد محصول جدید
 export async function createProduct(data: CreateProductInput) {
   const priceNum = data.price;
@@ -61,13 +52,13 @@ export async function createProduct(data: CreateProductInput) {
   const { isDiscounted, discountPercentage } = calculateDiscount(priceNum, discountNum);
 
   try {
-    const slugUnique = await isSlugUnique(data.slug);
-    if (!slugUnique) throw new Error(`Slug "${data.slug}" already exists`);
+    const baseSlug = data.slug?.trim() || toSlug(data.title);
+    const uniqueSlug = await generateUniqueSlug(baseSlug);
 
     const product = await prisma.product.create({
       data: {
         title: data.title,
-        slug: data.slug,
+        slug: uniqueSlug,
         description: data.description,
         price: priceNum,
         discountPrice: discountNum,
@@ -130,12 +121,11 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
     updateData.publishedAt = data.publishedAt ? new Date(data.publishedAt) : null;
   }
 
-  if (data.slug !== undefined && data.slug !== slug) {
-    const slugUnique = await isSlugUnique(data.slug, existing.id);
-    if (!slugUnique) throw new Error(`Slug "${data.slug}" is already taken`);
-    updateData.slug = data.slug;
+  if (data.slug !== undefined || data.title !== undefined) {
+    const baseSlug = data.slug || toSlug(data.title ?? existing.title);
+    const newSlug = await generateUniqueSlug(baseSlug, existing.id);
+    updateData.slug = newSlug;
   }
-
   if (data.brandSlug !== undefined) updateData.brand = { connect: { slug: data.brandSlug } };
   if (data.categorySlug !== undefined)
     updateData.category = { connect: { slug: data.categorySlug } };

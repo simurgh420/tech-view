@@ -4,7 +4,7 @@ import { getProducts, getFilteredProducts } from '@/services/products/db/queries
 import { createProduct } from '@/services/products/db/mutations';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createProductSchema } from '@/lib/validation/product';
+import { createProductPayloadSchema } from '@/lib/validation/product';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
 
 export async function GET(req: Request) {
@@ -39,11 +39,13 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    // 1. احراز هویت
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // 2. بررسی دسترسی
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
       body: { userId: session.user.id, permission: { products: ['create'] } },
@@ -52,8 +54,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    // 3. اعتبارسنجی بدنه با Payload Schema (فیلدهای کلاینت)
     const body = await req.json();
-    const parsed = createProductSchema.safeParse(body);
+    const parsed = createProductPayloadSchema.safeParse(body);
     if (!parsed.success) {
       const details = parsed.error.issues.map(issue => ({
         field: issue.path.join('.'),
@@ -62,6 +65,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
     }
 
+    // 4. فراخوانی سرویس ایجاد (سرویس خودش slug یکتا و publishedAt را مدیریت می‌کند)
     const product = await createProduct(parsed.data);
     return NextResponse.json(product, { status: 201 });
   } catch (error: any) {

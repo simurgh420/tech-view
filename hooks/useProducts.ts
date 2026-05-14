@@ -17,7 +17,7 @@ import {
   fetchFilteredProductsApi,
   fetchProductFiltersApi,
 } from '@/services/products/api/queries';
-import { CreateProductInput, UpdateProductInput } from '@/lib/validation/product';
+import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/product';
 
 export function useProducts() {
   const qc = useQueryClient();
@@ -45,7 +45,7 @@ export function useProducts() {
 
   // ✅ ایجاد محصول
   const useCreateProduct = () =>
-    useMutation<Product, Error, CreateProductInput>({
+    useMutation<Product, Error, CreateProductPayload>({
       mutationFn: createProductَApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
     });
