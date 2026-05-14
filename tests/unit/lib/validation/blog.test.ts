@@ -52,12 +52,14 @@ describe('Blog Validation Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should require slug', () => {
+    it('should allow missing slug (slug is optional)', () => {
       const withoutSlug = { ...validServerInput, slug: undefined };
       const result = createBlogSchema.safeParse(withoutSlug);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.slug).toBeUndefined();
+      }
     });
-
     it('should set default values for optional fields', () => {
       const result = createBlogSchema.parse({
         title: 'عنوان تست کافی',
