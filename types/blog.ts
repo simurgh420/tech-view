@@ -52,20 +52,3 @@ export type BlogListResponse = {
   pageSize: number;
   pages: number;
 };
-
-export type BlogPayload = {
-  title: string;
-  excerpt: string;
-  content: string;
-  tags: string[];
-  coverImageUrl?: string;
-};
-
-export type UpdateBlogData = {
-  title?: string;
-  excerpt?: string;
-  content?: string;
-  tags?: string[];
-  coverImageUrl?: string;
-  slug?: string;
-};

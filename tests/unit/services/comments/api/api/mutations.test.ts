@@ -34,8 +34,8 @@ describe('Comments API mutations', () => {
       rating: 5,
     });
 
+    // انتظار: بدون authorId (چون در سمت سرور از session گرفته می‌شود)
     expect(mockedAxios.post).toHaveBeenCalledWith('/api/posts/post-1/comments', {
-      authorId: 'user-1',
       content: 'test',
       rating: 5,
     });

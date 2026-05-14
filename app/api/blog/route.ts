@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth';
+import { createBlogSchema } from '@/lib/validation/blog';
 import { createBlogPost } from '@/services/blog/db/mutations';
 import { getPublishedPosts } from '@/services/blog/db/queries';
-import { createBlogSchema } from '@/services/blog/db/schemas/createBlog.schema';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 

@@ -7,8 +7,7 @@ import { BlogListResponse, BlogPost } from '@/types/blog';
 
 import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 import { createBlogApi, deleteBlogApi, updateBlogApi } from '@/services/blog/api/mutations';
-import { CreateBlogInput } from '@/services/blog/db/schemas/createBlog.schema';
-import { UpdateBlogInput } from '@/services/blog/db/schemas/updateBlog.schema';
+import { CreateBlogInput, UpdateBlogInput } from '@/lib/validation/blog';
 
 export function useBlogs() {
   const qc = useQueryClient();

@@ -1,9 +1,9 @@
 // src/app/api/blog/[slug]/route.ts
 
 import { auth } from '@/lib/auth';
+import { updateBlogSchema } from '@/lib/validation/blog';
 import { deletePost, updatePost } from '@/services/blog/db/mutations';
 import { getPostBySlug } from '@/services/blog/db/queries';
-import { updateBlogSchema } from '@/services/blog/db/schemas/updateBlog.schema';
 import prisma from '@/services/db/client';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
