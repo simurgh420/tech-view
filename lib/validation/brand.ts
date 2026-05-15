@@ -8,7 +8,7 @@ export const createBrandSchema = z.object({
 
 export const editBrandSchema = z.object({
   name: z.string().min(2, 'نام برند الزامی است').max(100).optional(),
-  logo: z.url('آدرس لوگو معتبر نیست').optional(),
+  logo: z.url('آدرس لوگو معتبر نیست').nullable().optional(),
   isActive: z.boolean().optional(),
 });
 
