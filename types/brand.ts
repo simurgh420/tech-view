@@ -5,7 +5,7 @@ import { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
 export interface BrandPayload {
   name: string;
   slug?: string;
-  logo?: string;
+  logo?: string | null;
   isActive?: boolean;
 }
 
