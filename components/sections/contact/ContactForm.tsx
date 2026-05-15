@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
 import { useContact } from '@/hooks/useContact';
-import { ContactFormValues, contactSchema } from '@/lib/validation/contact.';
+import { ContactFormValues, contactSchema } from '@/lib/validation/contact';
 import { useNotify } from '@/hooks/useNotify';
 
 export function ContactForm() {

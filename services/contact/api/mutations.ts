@@ -1,6 +1,6 @@
 // services/contact/api/mutations.ts
 
-import { ContactFormValues } from '@/lib/validation/contact.';
+import { ContactFormValues } from '@/lib/validation/contact';
 import axios from 'axios';
 
 export async function CreateContactApi(payload: ContactFormValues) {
