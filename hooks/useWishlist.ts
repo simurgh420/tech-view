@@ -1,5 +1,4 @@
 // hooks/useWishlist.ts
-
 import { WishlistItem } from '@/app/generated/prisma/client';
 import { WishlistItemInput } from '@/lib/validation/wishlist';
 import {
@@ -18,7 +17,6 @@ export function useWishlist() {
       queryKey: ['wishlist'],
       queryFn: fetchWishlistApi,
     });
-  // اضافه کردن
 
   const useAddToWishlist = () =>
     useMutation<WishlistItem, Error, WishlistItemInput>({
@@ -26,30 +24,32 @@ export function useWishlist() {
       onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
 
-  // حذف با id
   const useRemoveFromWishlist = () =>
     useMutation<{ success: boolean }, Error, string>({
       mutationFn: deleteWishlistItemApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
+
   const useCheckWishlist = (productId: string) =>
     useQuery<{ inWishlist: boolean }>({
       queryKey: ['wishlist', 'check', productId],
       queryFn: () => fetchWishlistCheckApi(productId),
       enabled: !!productId,
     });
+
   const useToggleWishlistByProduct = () =>
     useMutation<{ success: boolean }, Error, { productId: string; exists: boolean }>({
       mutationFn: async ({ productId, exists }) => {
         if (exists) {
-          // اگر وجود داشت، حذف کن
           return deleteWishlistItemByUserAndProductApi(productId);
         }
-        // در غیر این صورت اضافه کن
         await addWishlistItemApi({ productId });
         return { success: true };
       },
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
+      onSuccess: (_data, variables) => {
+        qc.invalidateQueries({ queryKey: ['wishlist'] });
+        qc.invalidateQueries({ queryKey: ['wishlist', 'check', variables.productId] });
+      },
     });
 
   return {

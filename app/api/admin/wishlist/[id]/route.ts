@@ -1,14 +1,20 @@
+// app/api/admin/wishlist/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { removeFromWishlist } from '@/services/wishlist/db/mutations';
 import { getWishlistItemById } from '@/services/wishlist/db/queries';
-import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
+import { logger } from '@/lib/logger';
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const startTime = Date.now();
   const { id } = await params;
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
+      logger.warn(`DELETE /api/admin/wishlist/${id} - Unauthorized`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -20,18 +26,33 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       },
     });
     if (permission.error || !permission.success) {
+      logger.warn(`DELETE /api/admin/wishlist/${id} - Forbidden`, {
+        userId: session.user.id,
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const existing = await getWishlistItemById(id);
     if (!existing) {
+      logger.info(`DELETE /api/admin/wishlist/${id} - Item not found`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Wishlist item not found' }, { status: 404 });
     }
 
     await removeFromWishlist(id);
+    logger.info(`DELETE /api/admin/wishlist/${id} - Removed`, {
+      adminId: session.user.id,
+      itemId: id,
+      duration: Date.now() - startTime,
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(`DELETE /api/admin/wishlist/${id} Error:`, error);
+    logger.error(`DELETE /api/admin/wishlist/${id} failed`, {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
