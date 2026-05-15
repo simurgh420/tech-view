@@ -1,30 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createBlogPost, updatePost, deletePost } from '@/services/blog/db/mutations';
+import { createBrand, updateBrandBySlug, deleteBrandBySlug } from '@/services/brands/db/mutations';
 import prisma from '@/services/db/client';
 import * as slugUtils from '@/lib/slug';
-import { deleteImage } from '@/services/upload/deleteImage';
 import { logger } from '@/lib/logger';
-import { PrismaClient } from '@/app/generated/prisma/client';
-import { CreateBlogInput } from '@/lib/validation/blog';
 
 vi.mock('@/services/db/client', () => ({
   default: {
-    blogPost: {
-      findUnique: vi.fn(),
-      findFirst: vi.fn(),
+    brand: {
       create: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
     },
-    tagOnPost: {
-      deleteMany: vi.fn(),
-    },
-    $transaction: vi.fn(callback => callback(prisma)),
   },
-}));
-
-vi.mock('@/services/upload/deleteImage', () => ({
-  deleteImage: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@/lib/logger', () => ({
@@ -34,137 +22,149 @@ vi.mock('@/lib/logger', () => ({
   },
 }));
 
-describe('Blog DB Mutations', () => {
+describe('Brand DB Mutations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(slugUtils, 'toSlug').mockImplementation(title =>
-      title.toLowerCase().replace(/\s+/g, '-')
+    vi.spyOn(slugUtils, 'toSlug').mockImplementation(name =>
+      name.toLowerCase().replace(/\s+/g, '-')
     );
     vi.spyOn(slugUtils, 'generateUniqueSlug').mockImplementation(async base => base);
   });
 
-  describe('createBlogPost', () => {
-    it('should create a post with unique slug', async () => {
-      const input: CreateBlogInput = {
-        title: 'Test Title',
-        excerpt: 'Long enough excerpt',
-        content: 'Content with more than twenty characters for testing.',
-        tags: ['tag1', 'tag2'],
-        authorId: 'user1',
-        coverImageUrl: null,
-        status: 'PUBLISHED',
-        slug: 'dummy-slug', // مقدار placeholder
-      };
-      const expectedSlug = 'test-title';
-      const mockCreated = { id: '1', ...input, slug: expectedSlug, readingMinutes: 1 };
-      (prisma.blogPost.create as any).mockResolvedValue(mockCreated);
+  describe('createBrand', () => {
+    const input = { name: 'Nike', logo: 'https://example.com/logo.png', isActive: true };
+    const expectedSlug = 'nike';
+    const mockBrand = { id: '1', ...input, slug: expectedSlug };
 
-      const result = await createBlogPost(input);
-      expect(slugUtils.toSlug).toHaveBeenCalledWith('Test Title');
-      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith(expectedSlug);
-      expect(prisma.blogPost.create).toHaveBeenCalled();
-      expect(result).toEqual(mockCreated);
+    it('should create a brand with auto-generated slug and default isActive', async () => {
+      (prisma.brand.create as any).mockResolvedValue(mockBrand);
+      const result = await createBrand(input);
+      expect(prisma.brand.create).toHaveBeenCalledWith({
+        data: {
+          name: 'Nike',
+          slug: expectedSlug,
+          logo: input.logo,
+          isActive: true,
+        },
+      });
+      expect(result).toEqual(mockBrand);
+      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith('nike');
       expect(logger.info).toHaveBeenCalledWith(
-        'createBlogPost success',
-        expect.objectContaining({ blogId: '1', slug: expectedSlug })
+        'createBrand success',
+        expect.objectContaining({ brandId: '1' })
       );
     });
 
-    it('should log and throw error on failure', async () => {
-      (prisma.blogPost.create as any).mockRejectedValue(new Error('DB error'));
-      const input: CreateBlogInput = {
-        title: 'Test',
-        excerpt: 'Excerpt long enough ten chars',
-        content: 'Content long enough twenty chars for validation.',
-        tags: ['tag1'],
-        authorId: 'u1',
-        coverImageUrl: null,
-        status: 'PUBLISHED',
-        slug: 'dummy-slug',
-      };
-      await expect(createBlogPost(input)).rejects.toThrow('DB error');
+    it('should use default isActive true when not provided', async () => {
+      const inputWithoutActive = { name: 'Adidas', logo: null } as any; 
+      const mock = { id: '2', name: 'Adidas', slug: 'adidas', logo: null, isActive: true };
+      (prisma.brand.create as any).mockResolvedValue(mock);
+      await createBrand(inputWithoutActive);
+      expect(prisma.brand.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ isActive: true }),
+      });
+    });
+    it('should log error and rethrow on failure', async () => {
+      const dbError = new Error('Duplicate slug');
+      (prisma.brand.create as any).mockRejectedValue(dbError);
+      await expect(createBrand({ name: 'Nike' } as any)).rejects.toThrow('Duplicate slug');
       expect(logger.error).toHaveBeenCalled();
     });
   });
 
-  describe('updatePost', () => {
-    const existingPost = {
-      id: 'p1',
-      slug: 'old-slug',
-      coverImageUrl: 'old.jpg',
-      tags: [],
-      title: 'Old',
-      excerpt: 'Old excerpt',
-      content: 'Old content',
-      status: 'DRAFT',
-      publishedAt: null,
-    };
-    const updatedPost = {
-      ...existingPost,
-      title: 'New',
-      coverImageUrl: 'new.jpg',
-      slug: 'new-slug',
-    };
+  describe('updateBrandBySlug', () => {
+    const slug = 'nike';
+    const existing = { id: '1', name: 'Nike', slug: 'nike', logo: null, isActive: true };
 
-    it('should return null if post not found', async () => {
-      (prisma.blogPost.findUnique as any).mockResolvedValue(null);
-      const result = await updatePost('missing', { title: 'New' });
+    it('should return null if brand not found', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue(null);
+      const result = await updateBrandBySlug(slug, { name: 'New' });
       expect(result).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('updatePost: post not found', expect.any(Object));
-    });
-
-    it('should update post in transaction and delete old image', async () => {
-      (prisma.blogPost.findUnique as any)
-        .mockResolvedValueOnce(existingPost)
-        .mockResolvedValueOnce(updatedPost);
-      (prisma.blogPost.update as any).mockResolvedValue(updatedPost);
-      (prisma.tagOnPost.deleteMany as any).mockResolvedValue({});
-      (prisma.$transaction as any).mockImplementation(async (cb: (arg0: PrismaClient) => any) =>
-        cb(prisma)
-      );
-      vi.spyOn(slugUtils, 'generateUniqueSlug').mockResolvedValue('new-slug');
-
-      const result = await updatePost('old-slug', { title: 'New', coverImageUrl: 'new.jpg' });
-      expect(prisma.$transaction).toHaveBeenCalled();
-      expect(prisma.blogPost.update).toHaveBeenCalled();
-      expect(deleteImage).toHaveBeenCalledWith('old.jpg');
-      expect(result).toEqual(updatedPost);
       expect(logger.info).toHaveBeenCalledWith(
-        'updatePost success',
-        expect.objectContaining({ slug: 'old-slug' })
+        'updateBrandBySlug: brand not found',
+        expect.any(Object)
       );
     });
 
-    it('should log error on transaction failure', async () => {
-      (prisma.blogPost.findUnique as any).mockResolvedValue(existingPost);
-      (prisma.$transaction as any).mockRejectedValue(new Error('Transaction failed'));
-      await expect(updatePost('old-slug', { title: 'New' })).rejects.toThrow('Transaction failed');
+    it('should update only logo without changing slug', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue(existing);
+      const updated = { ...existing, logo: 'new-logo.jpg' };
+      (prisma.brand.update as any).mockResolvedValue(updated);
+      const result = await updateBrandBySlug(slug, { logo: 'new-logo.jpg' });
+      expect(prisma.brand.update).toHaveBeenCalledWith({
+        where: { slug },
+        data: { logo: 'new-logo.jpg' },
+      });
+      expect(result).toEqual(updated);
+      expect(logger.info).toHaveBeenCalledWith(
+        'updateBrandBySlug success',
+        expect.objectContaining({ oldSlug: slug })
+      );
+    });
+
+    it('should update name and regenerate slug (unique)', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue(existing);
+      const updated = { ...existing, name: 'Nike Sports', slug: 'nike-sports' };
+      (prisma.brand.update as any).mockResolvedValue(updated);
+      vi.spyOn(slugUtils, 'generateUniqueSlug').mockResolvedValueOnce('nike-sports');
+      const result = await updateBrandBySlug(slug, { name: 'Nike Sports' });
+      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith('nike-sports', existing.id);
+      expect(prisma.brand.update).toHaveBeenCalledWith({
+        where: { slug },
+        data: { name: 'Nike Sports', slug: 'nike-sports' },
+      });
+      expect(result).toEqual(updated);
+    });
+
+    it('should update isActive without affecting slug', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue(existing);
+      const updated = { ...existing, isActive: false };
+      (prisma.brand.update as any).mockResolvedValue(updated);
+      const result = await updateBrandBySlug(slug, { isActive: false });
+      expect(prisma.brand.update).toHaveBeenCalledWith({
+        where: { slug },
+        data: { isActive: false },
+      });
+      expect(result).toEqual(updated);
+    });
+
+    it('should log error on failure', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue(existing);
+      (prisma.brand.update as any).mockRejectedValue(new Error('DB error'));
+      await expect(updateBrandBySlug(slug, { name: 'New' })).rejects.toThrow('DB error');
       expect(logger.error).toHaveBeenCalled();
     });
   });
 
-  describe('deletePost', () => {
-    it('should delete post and remove image', async () => {
-      const post = { id: 'p1', slug: 'test', coverImageUrl: 'img.jpg' };
-      (prisma.blogPost.findUnique as any).mockResolvedValue(post);
-      (prisma.blogPost.delete as any).mockResolvedValue(post);
-      const result = await deletePost('test');
-      expect(deleteImage).toHaveBeenCalledWith('img.jpg');
-      expect(result).toEqual(post);
-      expect(logger.info).toHaveBeenCalledWith('deletePost success', expect.any(Object));
-    });
+  describe('deleteBrandBySlug', () => {
+    const slug = 'nike';
 
-    it('should return null if post not found', async () => {
-      (prisma.blogPost.findUnique as any).mockResolvedValue(null);
-      const result = await deletePost('missing');
+    it('should return null if brand not found', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue(null);
+      const result = await deleteBrandBySlug(slug);
       expect(result).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('deletePost: post not found', expect.any(Object));
+      expect(logger.info).toHaveBeenCalledWith(
+        'deleteBrandBySlug: brand not found',
+        expect.any(Object)
+      );
     });
 
-    it('should log error on delete failure', async () => {
-      (prisma.blogPost.findUnique as any).mockResolvedValue({ id: 'p1', coverImageUrl: null });
-      (prisma.blogPost.delete as any).mockRejectedValue(new Error('Delete failed'));
-      await expect(deletePost('test')).rejects.toThrow('Delete failed');
+    it('should delete and return true', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue({ id: '1', slug });
+      (prisma.brand.delete as any).mockResolvedValue({});
+      const result = await deleteBrandBySlug(slug);
+      expect(result).toBe(true);
+      expect(prisma.brand.delete).toHaveBeenCalledWith({ where: { slug } });
+      expect(logger.info).toHaveBeenCalledWith(
+        'deleteBrandBySlug success',
+        expect.objectContaining({ slug })
+      );
+    });
+
+    it('should log error on failure', async () => {
+      (prisma.brand.findUnique as any).mockResolvedValue({ id: '1', slug });
+      (prisma.brand.delete as any).mockRejectedValue(new Error('FK constraint'));
+      await expect(deleteBrandBySlug(slug)).rejects.toThrow('FK constraint');
       expect(logger.error).toHaveBeenCalled();
     });
   });

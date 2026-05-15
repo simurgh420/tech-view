@@ -1,23 +1,27 @@
-// services/brands/db/mutations.ts
 import prisma from '@/services/db/client';
-import { toSlug } from '@/lib/slug';
-import { BrandPayload } from '@/types/brand';
+import { generateUniqueSlug, toSlug } from '@/lib/slug';
 import { logger } from '@/lib/logger';
+import type { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
 
-export async function createBrand(data: BrandPayload) {
+// ---------- ایجاد برند ----------
+export async function createBrand(data: CreateBrandInput) {
   const startTime = Date.now();
+  const baseSlug = toSlug(data.name);
+  const uniqueSlug = await generateUniqueSlug(baseSlug);
+
   try {
     const brand = await prisma.brand.create({
       data: {
         name: data.name,
-        slug: toSlug(data.name),
-        logo: data.logo || null,
+        slug: uniqueSlug,
+        logo: data.logo ?? null,
         isActive: data.isActive ?? true,
       },
     });
     logger.info('createBrand success', {
       brandId: brand.id,
       name: brand.name,
+      slug: uniqueSlug,
       duration: Date.now() - startTime,
     });
     return brand;
@@ -31,24 +35,42 @@ export async function createBrand(data: BrandPayload) {
   }
 }
 
-export async function updateBrandBySlug(slug: string, data: Partial<BrandPayload>) {
+// ---------- ویرایش برند ----------
+export async function updateBrandBySlug(slug: string, data: UpdateBrandInput) {
   const startTime = Date.now();
   try {
-    // اگر نام تغییر کند، اسلاگ به‌طور خودکار به‌روز نمی‌شود – عمدی است.
+    const existing = await prisma.brand.findUnique({ where: { slug } });
+    if (!existing) {
+      logger.info('updateBrandBySlug: brand not found', { slug, duration: Date.now() - startTime });
+      return null;
+    }
+
+    const updateData: Record<string, unknown> = {};
+
+    if (data.name !== undefined) {
+      updateData.name = data.name;
+      // اگر نام تغییر کرده، اسلاگ جدید یکتا بساز
+      const newBaseSlug = toSlug(data.name);
+      updateData.slug = await generateUniqueSlug(newBaseSlug, existing.id);
+    }
+    if (data.logo !== undefined) updateData.logo = data.logo;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
+
     const brand = await prisma.brand.update({
       where: { slug },
-      data,
+      data: updateData,
     });
+
     logger.info('updateBrandBySlug success', {
-      slug,
-      updatedFields: Object.keys(data),
+      oldSlug: slug,
+      newName: data.name,
+      newSlug: updateData.slug as string | undefined,
       duration: Date.now() - startTime,
     });
     return brand;
   } catch (error) {
     logger.error('updateBrandBySlug failed', {
       slug,
-      data,
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
@@ -56,14 +78,19 @@ export async function updateBrandBySlug(slug: string, data: Partial<BrandPayload
   }
 }
 
+// ---------- حذف برند ----------
 export async function deleteBrandBySlug(slug: string) {
   const startTime = Date.now();
   try {
-    await prisma.brand.delete({
-      where: { slug },
-    });
+    const existing = await prisma.brand.findUnique({ where: { slug } });
+    if (!existing) {
+      logger.info('deleteBrandBySlug: brand not found', { slug, duration: Date.now() - startTime });
+      return null;
+    }
+
+    await prisma.brand.delete({ where: { slug } });
     logger.info('deleteBrandBySlug success', { slug, duration: Date.now() - startTime });
-    return { success: true };
+    return true;
   } catch (error) {
     logger.error('deleteBrandBySlug failed', {
       slug,

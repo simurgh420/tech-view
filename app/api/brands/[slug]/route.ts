@@ -68,7 +68,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ sl
 
     const brand = await updateBrandBySlug(slug, parsed.data);
     logger.info(`PATCH /api/brands/${slug} - Updated`, {
-      brandId: brand.id,
+      brandId: brand?.id,
       duration: Date.now() - startTime,
     });
     return NextResponse.json(brand);
