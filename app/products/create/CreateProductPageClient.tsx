@@ -7,7 +7,7 @@ import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
 import { useProducts } from '@/hooks/useProducts';
-import { toSlug } from '@/lib/slug';
+import { toSlug } from '@/lib/slug-common';
 import { CreateProductPayload, ProductFormType } from '@/lib/validation/product';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';

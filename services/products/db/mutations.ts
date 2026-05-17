@@ -2,9 +2,10 @@
 import prisma from '@/services/db/client';
 import type { CreateProductInput, UpdateProductInput } from '@/lib/validation/product';
 import { Prisma } from '@/app/generated/prisma/client';
-import { generateUniqueSlug, toSlug } from '@/lib/slug';
+import { generateUniqueSlug } from '@/lib/server/slug';
 import { Product } from '@/types/product';
 import { logger } from '@/lib/logger';
+import { toSlug } from '@/lib/slug-common';
 
 function calculateDiscount(price: number, discountPrice: number | null) {
   if (discountPrice !== null && discountPrice < price) {

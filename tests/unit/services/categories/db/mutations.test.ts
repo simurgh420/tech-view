@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createCategory, updateCategory, deleteCategory } from '@/services/categories/db/mutations';
 import prisma from '@/services/db/client';
-import * as slugUtils from '@/lib/slug';
 import { logger } from '@/lib/logger';
+
+import * as slugCommon from '@/lib/slug-common';
+import * as slugServer from '@/lib/server/slug';
 
 vi.mock('@/services/db/client', () => ({
   default: {
@@ -25,10 +27,10 @@ vi.mock('@/lib/logger', () => ({
 describe('Category DB Mutations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(slugUtils, 'toSlug').mockImplementation(title =>
+    vi.spyOn(slugCommon, 'toSlug').mockImplementation(title =>
       title.toLowerCase().replace(/\s+/g, '-')
     );
-    vi.spyOn(slugUtils, 'generateUniqueSlug').mockImplementation(async base => base);
+    vi.spyOn(slugServer, 'generateUniqueSlug').mockImplementation(async base => base);
   });
 
   describe('createCategory', () => {
@@ -104,9 +106,10 @@ describe('Category DB Mutations', () => {
       (prisma.category.findUnique as any).mockResolvedValue(existing);
       const updated = { ...existing, title: 'New Title', slug: 'new-title' };
       (prisma.category.update as any).mockResolvedValue(updated);
-      vi.spyOn(slugUtils, 'generateUniqueSlug').mockResolvedValueOnce('new-title');
+      // موک generateUniqueSlug برای برگرداندن 'new-title'
+      vi.spyOn(slugServer, 'generateUniqueSlug').mockResolvedValueOnce('new-title');
       const result = await updateCategory(slug, { title: 'New Title' });
-      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith('new-title', existing.id);
+      expect(slugServer.generateUniqueSlug).toHaveBeenCalledWith('new-title', existing.id);
       expect(prisma.category.update).toHaveBeenCalledWith({
         where: { slug },
         data: { title: 'New Title', slug: 'new-title' },

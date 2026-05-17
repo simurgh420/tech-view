@@ -4,7 +4,6 @@ import { UseFormReturn, useWatch } from 'react-hook-form';
 
 import { Form } from '@/components/ui/form';
 
-import { toSlug } from '@/lib/slug';
 import { BlogTitleSection } from './BlogTitleSection';
 import { BlogExcerptSection } from './BlogExcerptSection';
 import { BlogCoverSection } from './BlogCoverSection';
@@ -12,6 +11,7 @@ import { BlogContentSection } from './BlogContentSection';
 import { BlogTagsSection } from './BlogTagsSection';
 import { Button } from '@/components/ui';
 import { BlogFormType } from '@/lib/validation/blog';
+import { toSlug } from '@/lib/slug-common';
 
 type Props = {
   form: UseFormReturn<BlogFormType>;

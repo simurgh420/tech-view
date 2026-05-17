@@ -2,10 +2,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createProduct, updateProduct, deleteProduct } from '@/services/products/db/mutations';
 import prisma from '@/services/db/client';
-import * as slugUtils from '@/lib/slug';
 import { logger } from '@/lib/logger';
 import { CreateProductInput } from '@/lib/validation/product';
-
+import * as slugCommon from '@/lib/slug-common';
+import * as slugServer from '@/lib/server/slug';
 // Mock Prisma client
 vi.mock('@/services/db/client', () => ({
   default: {
@@ -38,10 +38,10 @@ vi.mock('@/lib/logger', () => ({
 describe('Products DB Mutations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (slugUtils.toSlug as any).mockImplementation((str: string) =>
+    vi.spyOn(slugCommon, 'toSlug').mockImplementation((str: string) =>
       str.toLowerCase().replace(/\s+/g, '-')
-    );
-    (slugUtils.generateUniqueSlug as any).mockImplementation(async (base: string) => base);
+    );  
+    vi.spyOn(slugServer, 'generateUniqueSlug').mockImplementation(async (base: string) => base);
   });
 
   describe('createProduct', () => {

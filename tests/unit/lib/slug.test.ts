@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { generateUniqueSlug, toSlug } from '@/lib/slug';
+import { generateUniqueSlug } from '@/lib/server/slug';
 import prisma from '@/services/db/client';
+import { toSlug } from '@/lib/slug-common';
 
 vi.mock('@/services/db/client', () => ({
   default: {
@@ -12,12 +13,12 @@ vi.mock('@/services/db/client', () => ({
 
 describe('Slug Utilities', () => {
   beforeEach(() => {
-    // ریست کردن موک قبل از هر تست
     vi.mocked(prisma.blogPost.findFirst).mockReset();
   });
 
   it('toSlug should convert title to slug', () => {
-    expect(toSlug('Hello World')).toBe('Hello-World');
+    // ✅ تغییر: انتظار lowercase برای انگلیسی
+    expect(toSlug('Hello World')).toBe('hello-world');
     expect(toSlug('تست عنوان')).toBe('تست-عنوان');
   });
 

@@ -1,7 +1,8 @@
-import { generateUniqueSlug, toSlug } from '@/lib/slug';
+import { generateUniqueSlug } from '@/lib/server/slug';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
 import { CreateCategoryInput, EditCategoryInput } from '@/lib/validation/category';
+import { toSlug } from '@/lib/slug-common';
 
 // ---------- ایجاد دسته‌بندی ----------
 export async function createCategory(data: CreateCategoryInput) {

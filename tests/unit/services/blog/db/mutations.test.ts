@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createBlogPost, updatePost, deletePost } from '@/services/blog/db/mutations';
 import prisma from '@/services/db/client';
-import * as slugUtils from '@/lib/slug';
 import { deleteImage } from '@/services/upload/deleteImage';
 import { CreateBlogInput } from '@/lib/validation/blog';
+import * as slugCommon from '@/lib/slug-common';
+import * as slugServer from '@/lib/server/slug';
 
 // Mock Prisma
 vi.mock('@/services/db/client', () => ({
@@ -31,10 +32,11 @@ describe('Blog DB Mutations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock toSlug و generateUniqueSlug
-    vi.spyOn(slugUtils, 'toSlug').mockImplementation((title: string) => title.replace(/\s+/g, '-'));
-    vi.spyOn(slugUtils, 'generateUniqueSlug').mockImplementation(async (base: string) => base);
+    vi.spyOn(slugCommon, 'toSlug').mockImplementation((title: string) =>
+      title.replace(/\s+/g, '-')
+    );
+    vi.spyOn(slugServer, 'generateUniqueSlug').mockImplementation(async (base: string) => base);
   });
-
   describe('createBlogPost', () => {
     it('should generate unique slug and create post', async () => {
       const input: CreateBlogInput = {
@@ -63,8 +65,8 @@ describe('Blog DB Mutations', () => {
 
       const result = await createBlogPost(input);
 
-      expect(slugUtils.toSlug).toHaveBeenCalledWith('تست عنوان');
-      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith(expectedSlug);
+      expect(slugCommon.toSlug).toHaveBeenCalledWith('تست عنوان');
+      expect(slugServer.generateUniqueSlug).toHaveBeenCalledWith(expectedSlug);
       expect(prisma.blogPost.create).toHaveBeenCalled();
       expect(result.title).toBe('تست عنوان');
     });
@@ -107,7 +109,7 @@ describe('Blog DB Mutations', () => {
       (prisma.$transaction as any).mockImplementation(async (callback: any) => callback(prisma));
 
       // جلوگیری از تداخل generateUniqueSlug
-      vi.spyOn(slugUtils, 'generateUniqueSlug').mockResolvedValue('new-slug');
+      vi.spyOn(slugServer, 'generateUniqueSlug').mockResolvedValue('new-slug');
 
       const result = await updatePost('old-slug', {
         title: 'New Title',

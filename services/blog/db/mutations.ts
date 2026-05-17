@@ -1,10 +1,11 @@
 // services/blog/db/mutations.ts
-import { calculateReadingMinutes, generateUniqueSlug, toSlug } from '@/lib/slug';
+import { generateUniqueSlug } from '@/lib/server/slug';
 import prisma from '@/services/db/client';
 import { deleteImage } from '@/services/upload/deleteImage';
 import { authorSelect } from '../authorSelect';
 import { CreateBlogInput, UpdateBlogInput } from '@/lib/validation/blog';
 import { logger } from '@/lib/logger';
+import { calculateReadingMinutes, toSlug } from '@/lib/slug-common';
 
 // ساخت بلاگ جدید
 export async function createBlogPost(data: CreateBlogInput) {

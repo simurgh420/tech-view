@@ -1,7 +1,8 @@
 import prisma from '@/services/db/client';
-import { generateUniqueSlug, toSlug } from '@/lib/slug';
+import { generateUniqueSlug } from '@/lib/server/slug';
 import { logger } from '@/lib/logger';
 import type { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
+import { toSlug } from '@/lib/slug-common';
 
 // ---------- ایجاد برند ----------
 export async function createBrand(data: CreateBrandInput) {

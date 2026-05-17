@@ -4,7 +4,7 @@
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
-import { toSlug } from '@/lib/slug';
+import { toSlug } from '@/lib/slug-common';
 import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createBrand, updateBrandBySlug, deleteBrandBySlug } from '@/services/brands/db/mutations';
 import prisma from '@/services/db/client';
-import * as slugUtils from '@/lib/slug';
 import { logger } from '@/lib/logger';
-
+import * as slugCommon from '@/lib/slug-common';
+import * as slugServer from '@/lib/server/slug';
 vi.mock('@/services/db/client', () => ({
   default: {
     brand: {
@@ -25,10 +25,10 @@ vi.mock('@/lib/logger', () => ({
 describe('Brand DB Mutations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(slugUtils, 'toSlug').mockImplementation(name =>
+    vi.spyOn(slugCommon, 'toSlug').mockImplementation(name =>
       name.toLowerCase().replace(/\s+/g, '-')
     );
-    vi.spyOn(slugUtils, 'generateUniqueSlug').mockImplementation(async base => base);
+    vi.spyOn(slugServer, 'generateUniqueSlug').mockImplementation(async base => base);
   });
 
   describe('createBrand', () => {
@@ -48,7 +48,7 @@ describe('Brand DB Mutations', () => {
         },
       });
       expect(result).toEqual(mockBrand);
-      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith('nike');
+      expect(slugServer.generateUniqueSlug).toHaveBeenCalledWith('nike');
       expect(logger.info).toHaveBeenCalledWith(
         'createBrand success',
         expect.objectContaining({ brandId: '1' })
@@ -56,7 +56,7 @@ describe('Brand DB Mutations', () => {
     });
 
     it('should use default isActive true when not provided', async () => {
-      const inputWithoutActive = { name: 'Adidas', logo: null } as any; 
+      const inputWithoutActive = { name: 'Adidas', logo: null } as any;
       const mock = { id: '2', name: 'Adidas', slug: 'adidas', logo: null, isActive: true };
       (prisma.brand.create as any).mockResolvedValue(mock);
       await createBrand(inputWithoutActive);
@@ -106,9 +106,9 @@ describe('Brand DB Mutations', () => {
       (prisma.brand.findUnique as any).mockResolvedValue(existing);
       const updated = { ...existing, name: 'Nike Sports', slug: 'nike-sports' };
       (prisma.brand.update as any).mockResolvedValue(updated);
-      vi.spyOn(slugUtils, 'generateUniqueSlug').mockResolvedValueOnce('nike-sports');
+      vi.spyOn(slugServer, 'generateUniqueSlug').mockResolvedValueOnce('nike-sports');
       const result = await updateBrandBySlug(slug, { name: 'Nike Sports' });
-      expect(slugUtils.generateUniqueSlug).toHaveBeenCalledWith('nike-sports', existing.id);
+      expect(slugServer.generateUniqueSlug).toHaveBeenCalledWith('nike-sports', existing.id);
       expect(prisma.brand.update).toHaveBeenCalledWith({
         where: { slug },
         data: { name: 'Nike Sports', slug: 'nike-sports' },
