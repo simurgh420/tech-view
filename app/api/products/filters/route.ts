@@ -1,19 +1,24 @@
+// app/api/products/filters/route.ts
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/services/db/client';
-import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const categorySlug = url.searchParams.get('categorySlug');
-  if (!categorySlug) {
-    return NextResponse.json({ error: 'categorySlug required' }, { status: 400 });
-  }
-
+export async function GET(req: NextRequest) {
+  const startTime = Date.now();
   try {
-    // دریافت محصولات این دسته (فقط specifications)
+    const url = new URL(req.url);
+    const categorySlug = url.searchParams.get('categorySlug');
+    if (!categorySlug) {
+      logger.warn('GET /api/products/filters - Missing categorySlug', {
+        duration: Date.now() - startTime,
+      });
+      return NextResponse.json({ error: 'categorySlug required' }, { status: 400 });
+    }
+
     const products = await prisma.product.findMany({
       where: { category: { slug: categorySlug }, status: 'PUBLISHED' },
       select: { specifications: true },
-      take: 200, // محدودیت برای پرفورمنس
+      take: 200,
     });
 
     const filters: Record<string, Set<string>> = {};
@@ -38,12 +43,19 @@ export async function GET(req: Request) {
       result[key] = Array.from(filters[key]);
     }
 
-    // اضافه کردن هدر کش برای بهبود پرفورمنس
     const response = NextResponse.json(result);
     response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=600');
+    logger.info('GET /api/products/filters succeeded', {
+      categorySlug,
+      filterCount: Object.keys(result).length,
+      duration: Date.now() - startTime,
+    });
     return response;
   } catch (error) {
-    console.error('GET /api/products/filters Error:', error);
+    logger.error('GET /api/products/filters failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

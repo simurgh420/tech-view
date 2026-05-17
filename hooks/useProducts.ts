@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FiltersProduct, Product } from '@/types/product';
 
 import {
-  createProductَApi,
+  createProductApi,
   deleteProductApi,
   updateProductApi,
 } from '@/services/products/api/mutations';
@@ -46,7 +46,8 @@ export function useProducts() {
   // ✅ ایجاد محصول
   const useCreateProduct = () =>
     useMutation<Product, Error, CreateProductPayload>({
-      mutationFn: createProductَApi,
+      mutationFn: createProductApi,
+
       onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
     });
 

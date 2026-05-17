@@ -4,7 +4,7 @@ import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/produ
 import { Product } from '@/types/product';
 import axios from 'axios';
 
-export async function createProductَApi(payload: CreateProductPayload): Promise<Product> {
+export async function createProductApi(payload: CreateProductPayload): Promise<Product> {
   const res = await axios.post<Product>('/api/products', payload);
   return res.data;
 }
