@@ -1,37 +1,62 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { useAdminComments } from '@/hooks/useAdmin/useAdminComments';
 import { DeleteCommentModal } from './DeleteCommentModal';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useNotify } from '@/hooks/useNotify';
+import { AdminComment } from '@/types/comment';
 
 export function CommentsList() {
-  const { comments, isLoading } = useAdminComments();
+  const { comments, isLoading, isError, error } = useAdminComments();
+  const notify = useNotify();
 
+  // نمایش خطا در صورت وجود
+  useEffect(() => {
+    if (isError && error) {
+      notify.error(
+        error instanceof Error ? error.message : 'خطا در دریافت کامنت‌ها. لطفاً دوباره تلاش کنید.'
+      );
+    }
+  }, [isError, error, notify]);
+
+  // ---------- حالت بارگذاری ----------
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
-        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
-        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
-        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
-        <div className="grid grid-cols-2 gap-4">
-          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
-          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
-        </div>
-        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
-        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
-        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      <div className="space-y-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="border rounded-xl p-6 space-y-3">
+            <div className="flex justify-between">
+              <Skeleton variant="text" className="h-4 w-32" />
+              <Skeleton variant="text" className="h-3 w-24" />
+            </div>
+            <Skeleton variant="text" className="h-4 w-full" />
+            <Skeleton variant="text" className="h-3 w-3/4" />
+            <div className="flex justify-between items-center pt-2">
+              <Skeleton variant="rect" className="h-4 w-20 rounded" />
+              <Skeleton variant="circle" width={24} height={24} />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
+
+  // ---------- حالت خالی (بدون خطا) ----------
   if (!comments || comments.length === 0) {
-    return <p className="text-gray-500">هیچ کامنتی وجود ندارد.</p>;
+    return (
+      <div className="text-center py-10 text-gray-500 dark:text-gray-400">
+        <p className="text-lg">هیچ کامنتی وجود ندارد.</p>
+      </div>
+    );
   }
 
+  // ---------- نمایش کامنت‌ها ----------
   return (
     <div className="space-y-4">
-      {comments.map((comment: any) => (
+      {comments.map((comment: AdminComment) => (
         <Card key={comment.id}>
           <CardHeader>
             <CardTitle className="text-base flex justify-between items-center">

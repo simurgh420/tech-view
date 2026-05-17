@@ -22,6 +22,8 @@ export function useAdminComments() {
   return {
     comments: commentsQuery.data ?? [],
     isLoading: commentsQuery.isLoading,
+    isError: commentsQuery.isError,
+    error: commentsQuery.error,
     deleteComment: deleteMutation,
   };
 }
