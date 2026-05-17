@@ -39,7 +39,9 @@ describe('Products DB Queries', () => {
       expect(result).toEqual(mockProducts);
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         orderBy: { createdAt: 'desc' },
-        include: expect.any(Object),
+        include: expect.objectContaining({
+          specifications: true, // اضافه شد
+        }),
       });
       expect(logger.info).toHaveBeenCalled();
     });
@@ -56,6 +58,12 @@ describe('Products DB Queries', () => {
       (prisma.product.findUnique as any).mockResolvedValue(mockProduct);
       const result = await getProductBySlug('test');
       expect(result).toEqual(mockProduct);
+      expect(prisma.product.findUnique).toHaveBeenCalledWith({
+        where: { slug: 'test' },
+        include: expect.objectContaining({
+          specifications: true,
+        }),
+      });
       expect(logger.info).toHaveBeenCalled();
     });
     it('should return null when not found', async () => {
@@ -74,7 +82,7 @@ describe('Products DB Queries', () => {
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { brand: { slug: 'nike' } },
         orderBy: { createdAt: 'desc' },
-        include: { brand: true },
+        include: { brand: true, specifications: true },
       });
       expect(result).toEqual(mockProducts);
     });
@@ -88,7 +96,7 @@ describe('Products DB Queries', () => {
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { category: { slug: 'shoes' } },
         orderBy: { createdAt: 'desc' },
-        include: { category: true },
+        include: { category: true, specifications: true },
       });
       expect(result).toEqual(mockProducts);
     });
@@ -102,7 +110,9 @@ describe('Products DB Queries', () => {
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { isFeatured: true, status: 'PUBLISHED' },
         orderBy: { createdAt: 'desc' },
-        include: expect.any(Object),
+        include: expect.objectContaining({
+          specifications: true,
+        }),
       });
       expect(result).toEqual(mockProducts);
     });
@@ -155,6 +165,24 @@ describe('Products DB Queries', () => {
         expect.objectContaining({
           skip: 10,
           take: 10,
+        })
+      );
+    });
+
+    // ✅ تست جدید برای فیلتر مشخصات (specs)
+    it('should apply specs filter using specifications.some', async () => {
+      (prisma.product.findMany as any).mockResolvedValue([]);
+      await getFilteredProducts({
+        specs: { color: 'red', ram: '8GB' },
+      });
+      expect(prisma.product.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            AND: [
+              { specifications: { some: { key: 'color', value: 'red' } } },
+              { specifications: { some: { key: 'ram', value: '8GB' } } },
+            ],
+          }),
         })
       );
     });

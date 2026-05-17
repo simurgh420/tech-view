@@ -104,7 +104,6 @@ model Product {
   price              Decimal        @db.Decimal(12, 2)
   discountPrice      Decimal?       @db.Decimal(12, 2)
   discountPercentage Int?
-
   isDiscounted       Boolean        @default(false)
   isFeatured         Boolean        @default(false)
   keyFeatures        String[]       @default([])
@@ -115,7 +114,6 @@ model Product {
   thumbnail          String?
   images             String[]       @default([])
   variants           Json           @default("[]")
-  specifications     Json           @default("{}")
   colors             Json           @default("[]")
   status             ProductStatus  @default(PUBLISHED)
   createdAt          DateTime       @default(now())
@@ -128,6 +126,7 @@ model Product {
   prices             ProductPrice[]
   reviews            Review[]
   wishlistItems      WishlistItem[]
+  specifications     ProductSpecification[] // ← اضافه شد
 
   @@index([brandId])
   @@index([categoryId])
@@ -141,6 +140,20 @@ model Product {
   @@index([publishedAt])
 }
 
+model ProductSpecification {
+  id        String   @id @default(cuid())
+  productId String
+  key       String
+  value     String
+  groupName String?
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, key, value])
+  @@index([productId])
+  @@index([key])
+  @@index([value])
+  @@index([key, value])
+}
 model ProductPrice {
   id        String    @id @default(cuid())
   productId String

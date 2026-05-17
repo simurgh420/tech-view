@@ -53,7 +53,7 @@ export async function getProductsByBrand(slug: string) {
     const products = await prisma.product.findMany({
       where: { brand: { slug } },
       orderBy: { createdAt: 'desc' },
-      include: { brand: true },
+      include: { brand: true, specifications: true },
     });
     logger.info('getProductsByBrand success', {
       slug,
@@ -77,7 +77,7 @@ export async function getProductsByCategory(slug: string) {
     const products = await prisma.product.findMany({
       where: { category: { slug } },
       orderBy: { createdAt: 'desc' },
-      include: { category: true },
+      include: { category: true, specifications: true },
     });
     logger.info('getProductsByCategory success', {
       slug,
@@ -160,25 +160,20 @@ export async function getFilteredProducts(filters: {
         { description: { contains: q, mode: 'insensitive' } },
       ];
     }
+
+    // فیلتر مشخصات با استفاده از رابطه specifications (AND بین چند شرط)
     if (specs && Object.keys(specs).length > 0) {
-      const specConditions = Object.entries(specs).map(([key, value]) => ({
-        AND: [
-          {
-            specifications: {
-              path: ['$[*].items[*].label'],
-              array_contains: [key],
+      where.AND = [];
+      for (const [key, value] of Object.entries(specs)) {
+        where.AND.push({
+          specifications: {
+            some: {
+              key: key,
+              value: value,
             },
           },
-          {
-            specifications: {
-              path: ['$[*].items[*].value'],
-              array_contains: [value],
-            },
-          },
-        ],
-      }));
-      if (!where.AND) where.AND = [];
-      where.AND.push(...specConditions);
+        });
+      }
     }
 
     let orderBy: any;

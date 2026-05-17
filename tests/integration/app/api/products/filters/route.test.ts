@@ -1,3 +1,4 @@
+// tests/integration/app/api/products/filters/route.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/products/filters/route';
@@ -8,6 +9,9 @@ vi.mock('@/services/db/client', () => ({
   default: {
     product: {
       findMany: vi.fn(),
+    },
+    productSpecification: {
+      groupBy: vi.fn(),
     },
   },
 }));
@@ -39,59 +43,35 @@ describe('API /api/products/filters', () => {
   });
 
   it('should return 200 and extracted filters on success', async () => {
-    const mockProducts = [
-      {
-        specifications: [
-          {
-            group: 'گروه 1',
-            items: [
-              { label: 'رنگ', value: 'قرمز' },
-              { label: 'رنگ', value: 'آبی' },
-              { label: 'حافظه', value: '256GB' },
-            ],
-          },
-          {
-            group: 'گروه 2',
-            items: [
-              { label: 'پردازنده', value: 'Intel' },
-              { label: 'حافظه', value: '512GB' },
-            ],
-          },
-        ],
-      },
-      {
-        specifications: [
-          {
-            group: 'گروه 1',
-            items: [{ label: 'رنگ', value: 'سبز' }],
-          },
-        ],
-      },
+    const mockSpecs = [
+      { key: 'color', value: 'red' },
+      { key: 'color', value: 'blue' },
+      { key: 'ram', value: '8GB' },
     ];
-    (prisma.product.findMany as any).mockResolvedValue(mockProducts);
+    (prisma.productSpecification.groupBy as any).mockResolvedValue(mockSpecs);
     const req = createNextRequest('http://localhost/api/products/filters?categorySlug=electronics');
     const res = await GET(req);
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data).toEqual({
-      رنگ: ['قرمز', 'آبی', 'سبز'],
-      حافظه: ['256GB', '512GB'],
-      پردازنده: ['Intel'],
+      color: ['blue', 'red'], // مرتب شده
+      ram: ['8GB'],
     });
-    expect(prisma.product.findMany).toHaveBeenCalledWith({
-      where: { category: { slug: 'electronics' }, status: 'PUBLISHED' },
-      select: { specifications: true },
-      take: 200,
+    expect(prisma.productSpecification.groupBy).toHaveBeenCalledWith({
+      by: ['key', 'value'],
+      where: {
+        product: {
+          category: { slug: 'electronics' },
+          status: 'PUBLISHED',
+        },
+      },
+      orderBy: { key: 'asc' },
     });
     expect(logger.info).toHaveBeenCalled();
-    // بررسی هدر کش
-    expect(res.headers.get('Cache-Control')).toBe(
-      'public, s-maxage=3600, stale-while-revalidate=600'
-    );
   });
 
   it('should handle empty products array', async () => {
-    (prisma.product.findMany as any).mockResolvedValue([]);
+    (prisma.productSpecification.groupBy as any).mockResolvedValue([]);
     const req = createNextRequest('http://localhost/api/products/filters?categorySlug=empty');
     const res = await GET(req);
     expect(res.status).toBe(200);
@@ -100,8 +80,7 @@ describe('API /api/products/filters', () => {
   });
 
   it('should handle products with no specifications', async () => {
-    const mockProducts = [{ specifications: null }, { specifications: [] }];
-    (prisma.product.findMany as any).mockResolvedValue(mockProducts);
+    (prisma.productSpecification.groupBy as any).mockResolvedValue([]);
     const req = createNextRequest('http://localhost/api/products/filters?categorySlug=test');
     const res = await GET(req);
     expect(res.status).toBe(200);
@@ -110,7 +89,7 @@ describe('API /api/products/filters', () => {
   });
 
   it('should return 500 on database error', async () => {
-    (prisma.product.findMany as any).mockRejectedValue(new Error('DB error'));
+    (prisma.productSpecification.groupBy as any).mockRejectedValue(new Error('DB error'));
     const req = createNextRequest('http://localhost/api/products/filters?categorySlug=test');
     const res = await GET(req);
     expect(res.status).toBe(500);

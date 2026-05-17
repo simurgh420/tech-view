@@ -2,6 +2,7 @@ export const productIncludes = {
   brand: true,
   category: true,
   subCategory: true,
+  specifications: true,
 } as const;
 
 export const productWithReviews = {

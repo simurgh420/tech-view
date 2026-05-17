@@ -6,6 +6,7 @@ import * as slugUtils from '@/lib/slug';
 import { logger } from '@/lib/logger';
 import { CreateProductInput } from '@/lib/validation/product';
 
+// Mock Prisma client
 vi.mock('@/services/db/client', () => ({
   default: {
     product: {
@@ -14,6 +15,11 @@ vi.mock('@/services/db/client', () => ({
       update: vi.fn(),
       delete: vi.fn(),
     },
+    productSpecification: {
+      create: vi.fn(),
+      deleteMany: vi.fn(),
+    },
+    $transaction: vi.fn(callback => callback(prisma)), // مهم: اینجا prisma را به عنوان tx استفاده کن
   },
 }));
 
@@ -39,7 +45,6 @@ describe('Products DB Mutations', () => {
   });
 
   describe('createProduct', () => {
-    // ✅ اضافه کردن تمام فیلدهای مورد نیاز (حتی با مقدار پیش‌فرض)
     const input: CreateProductInput = {
       title: 'New Product',
       description: 'This is a long description that exceeds twenty characters.',
@@ -51,7 +56,15 @@ describe('Products DB Mutations', () => {
       keyFeatures: [],
       colors: [],
       variants: [],
-      specifications: [],
+      specifications: [
+        {
+          group: 'گروه تست',
+          items: [
+            { label: 'رنگ', value: 'قرمز' },
+            { label: 'حافظه', value: '256GB' },
+          ],
+        },
+      ],
       isFeatured: false,
       isNew: true,
       status: 'DRAFT',
@@ -64,25 +77,50 @@ describe('Products DB Mutations', () => {
     const now = new Date();
     const mockCreated = {
       id: 'p1',
-      ...input,
+      title: input.title,
       slug: 'new-product',
+      description: input.description,
       price: 1000,
+      discountPrice: null,
+      discountPercentage: null,
+      isDiscounted: false,
+      isFeatured: false,
+      isNew: true,
+      stockQuantity: 10,
+      thumbnail: null,
+      images: [],
+      keyFeatures: [],
+      colors: [],
+      variants: [],
+      status: 'DRAFT',
       createdAt: now,
       updatedAt: now,
+      publishedAt: null,
       brand: { slug: 'nike' },
       category: { slug: 'shoes' },
       subCategory: null,
     };
 
-    it('should create product and return formatted', async () => {
+    it('should create product and its specifications in a transaction', async () => {
       (prisma.product.create as any).mockResolvedValue(mockCreated);
       const result = await createProduct(input);
+      expect(prisma.$transaction).toHaveBeenCalled();
       expect(prisma.product.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ title: 'New Product', slug: 'new-product' }),
           include: { brand: true, category: true, subCategory: true },
         })
       );
+      // بررسی اینکه دو بار productSpecification.create فراخوانی شده باشد
+      expect(prisma.productSpecification.create).toHaveBeenCalledTimes(2);
+      expect(prisma.productSpecification.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          productId: 'p1',
+          key: 'رنگ',
+          value: 'قرمز',
+          groupName: 'گروه تست',
+        }),
+      });
       expect(result).toEqual(expect.objectContaining({ id: 'p1', title: 'New Product' }));
       expect(logger.info).toHaveBeenCalled();
     });
@@ -106,11 +144,16 @@ describe('Products DB Mutations', () => {
       discountPrice: null,
       createdAt: now,
       updatedAt: now,
-      brand: { slug: 'nike' },
-      category: { slug: 'shoes' },
+      brand: { slug: 'nike', name: 'Nike' },
+      category: { slug: 'shoes', title: 'Shoes' },
       subCategory: null,
+      specifications: [],
     };
-    const updated = { ...existing, title: 'New' };
+    const updated = {
+      ...existing,
+      title: 'New',
+      updatedAt: now,
+    };
 
     it('should return null if product not found', async () => {
       (prisma.product.findUnique as any).mockResolvedValue(null);
@@ -122,11 +165,32 @@ describe('Products DB Mutations', () => {
       );
     });
 
-    it('should update product', async () => {
-      (prisma.product.findUnique as any).mockResolvedValue(existing);
+    it('should update product and handle specifications', async () => {
+      // اولین فراخوانی findUnique: برای یافتن محصول موجود
+      (prisma.product.findUnique as any).mockResolvedValueOnce(existing);
+      // دومین فراخوانی findUnique: در انتهای تراکنش برای برگرداندن محصول به‌روزشده
+      (prisma.product.findUnique as any).mockResolvedValueOnce(updated);
       (prisma.product.update as any).mockResolvedValue(updated);
-      const result = await updateProduct(slug, { title: 'New' });
-      expect(prisma.product.update).toHaveBeenCalled();
+      (prisma.productSpecification.deleteMany as any).mockResolvedValue({ count: 0 });
+      (prisma.productSpecification.create as any).mockResolvedValue({});
+
+      const updateData = {
+        title: 'New',
+        specifications: [{ group: 'گروه', items: [{ label: 'رنگ', value: 'آبی' }] }],
+      };
+      const result = await updateProduct(slug, updateData);
+      expect(prisma.$transaction).toHaveBeenCalled();
+      expect(prisma.productSpecification.deleteMany).toHaveBeenCalledWith({
+        where: { productId: existing.id },
+      });
+      expect(prisma.productSpecification.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          productId: existing.id,
+          key: 'رنگ',
+          value: 'آبی',
+          groupName: 'گروه',
+        }),
+      });
       expect(result).toEqual(expect.objectContaining({ title: 'New' }));
       expect(logger.info).toHaveBeenCalled();
     });

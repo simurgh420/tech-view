@@ -1,4 +1,3 @@
-// app/api/products/filters/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
@@ -15,32 +14,30 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'categorySlug required' }, { status: 400 });
     }
 
-    const products = await prisma.product.findMany({
-      where: { category: { slug: categorySlug }, status: 'PUBLISHED' },
-      select: { specifications: true },
-      take: 200,
+    // ✅ کوئری بهینه با GROUP BY روی جدول مشخصات
+    const specs = await prisma.productSpecification.groupBy({
+      by: ['key', 'value'],
+      where: {
+        product: {
+          category: { slug: categorySlug },
+          status: 'PUBLISHED',
+        },
+      },
+      orderBy: { key: 'asc' },
     });
 
-    const filters: Record<string, Set<string>> = {};
-
-    for (const p of products) {
-      const specs = p.specifications as any[];
-      if (!specs) continue;
-      for (const group of specs) {
-        if (group.items) {
-          for (const item of group.items) {
-            const key = item.label;
-            const val = item.value;
-            if (!filters[key]) filters[key] = new Set();
-            filters[key].add(val);
-          }
-        }
+    // تبدیل به فرمت Record<string, string[]>
+    const result: Record<string, string[]> = {};
+    for (const spec of specs) {
+      if (!result[spec.key]) result[spec.key] = [];
+      if (!result[spec.key].includes(spec.value)) {
+        result[spec.key].push(spec.value);
       }
     }
 
-    const result: Record<string, string[]> = {};
-    for (const key in filters) {
-      result[key] = Array.from(filters[key]);
+    // مرتب‌سازی مقادیر هر کلید
+    for (const key in result) {
+      result[key].sort();
     }
 
     const response = NextResponse.json(result);
