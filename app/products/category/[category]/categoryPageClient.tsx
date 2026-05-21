@@ -96,7 +96,11 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
             >
               قبلی
             </Button>
-            <Button variant="outline" onClick={() => handlePageChange((filters.page ?? 1) + 1)}>
+            <Button
+              variant="outline"
+              disabled={(products?.length ?? 0) < (filters.perPage ?? 20)}
+              onClick={() => handlePageChange((filters.page ?? 1) + 1)}
+            >
               بعدی
             </Button>
           </div>

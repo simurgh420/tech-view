@@ -97,6 +97,7 @@ export default function ProductsPageClient() {
             </Button>
             <Button
               variant={'outline'}
+              disabled={(products?.length ?? 0) < (filters.perPage ?? 20)}
               onClick={() => handlePageChange((filters.page ?? 1) + 1)}
               className="px-4 py-2 mx-1 rounded disabled:opacity-50"
             >
