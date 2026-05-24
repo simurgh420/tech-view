@@ -149,10 +149,8 @@ model ProductSpecification {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, key, value])
-  @@index([productId])
-  @@index([key])
-  @@index([value])
   @@index([key, value])
+  @@index([productId, key])     
 }
 model ProductPrice {
   id        String    @id @default(cuid())
