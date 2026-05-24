@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getProducts, getFilteredProducts } from '@/services/products/db/queries';
+import { getFilteredProducts } from '@/services/products/db/queries';
 import { createProduct } from '@/services/products/db/mutations';
 import { createProductPayloadSchema } from '@/lib/validation/product';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
@@ -27,18 +27,15 @@ export async function GET(req: NextRequest) {
       specs,
     };
 
-    const hasFilters = Object.values(filters).some(
-      v => v !== undefined && (!Array.isArray(v) || v.length > 0)
-    );
+    const result = await getFilteredProducts(filters);
 
-    const products = hasFilters ? await getFilteredProducts(filters) : await getProducts();
-    const count = hasFilters ? ((products as any).items?.length ?? 0) : (products as any[]).length;
     logger.info('GET /api/products succeeded', {
-      hasFilters,
-      count,
+      count: result.items.length,
+      total: result.total,
+      page: result.page,
       duration: Date.now() - startTime,
     });
-    return NextResponse.json(products);
+    return NextResponse.json(result);
   } catch (error) {
     logger.error('GET /api/products failed', {
       error: error instanceof Error ? error.message : 'Unknown',

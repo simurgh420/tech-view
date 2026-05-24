@@ -1,6 +1,6 @@
 // hooks/useProducts.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FiltersProduct, Product } from '@/types/product';
+import { FiltersProduct, PaginatedResponse, Product } from '@/types/product';
 
 import {
   createProductApi,
@@ -24,9 +24,10 @@ export function useProducts() {
 
   // ✅ هوک عمومی برای فیلتر و مرتب‌سازی
   const useGetFilteredProducts = (filters: FiltersProduct) =>
-    useQuery<Product[]>({
+    useQuery<PaginatedResponse<Product>>({
       queryKey: ['products', filters],
       queryFn: () => fetchFilteredProductsApi(filters),
+      staleTime: 1000 * 60 * 2,
     });
 
   // ✅ لیست ساده محصولات

@@ -80,3 +80,11 @@ export type FiltersProduct = {
   perPage?: number;
   specs?: Record<string, string>;
 };
+
+export type PaginatedResponse<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  perPage: number;
+  pages: number;
+};

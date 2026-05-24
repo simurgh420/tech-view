@@ -191,25 +191,32 @@ export async function getFilteredProducts(filters: {
         orderBy = { createdAt: 'desc' };
     }
 
-    const skip = page && perPage ? (page - 1) * perPage : undefined;
-    const take = perPage;
+    const take = perPage ?? 20;
+    const currentPage = page ?? 1;
+    const skip = (currentPage - 1) * take;
 
-    const products = await prisma.product.findMany({
-      where,
-      orderBy,
-      skip,
-      take,
-      include: productIncludes,
-    });
+    const [items, total] = await Promise.all([
+      prisma.product.findMany({ where, orderBy, skip, take, include: productIncludes }),
+      prisma.product.count({ where }),
+    ]);
 
     logger.info('getFilteredProducts success', {
       filterKeys: Object.keys(filters).filter(
         k => filters[k as keyof typeof filters] !== undefined
       ),
-      count: products.length,
+      count: items.length,
+      total,
+      page: currentPage,
       duration: Date.now() - startTime,
     });
-    return products;
+
+    return {
+      items,
+      total,
+      page: currentPage,
+      perPage: take,
+      pages: Math.ceil(total / take),
+    };
   } catch (error) {
     logger.error('getFilteredProducts failed', {
       error: error instanceof Error ? error.message : 'Unknown',

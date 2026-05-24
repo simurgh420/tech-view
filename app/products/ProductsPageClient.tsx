@@ -32,8 +32,9 @@ export default function ProductsPageClient() {
     specs: parseSpecsFromURL(searchParams),
   };
   const [filters, setFilters] = useState<FiltersProduct>(initialFilters);
-  const { data: products, isLoading, error } = useGetFilteredProducts(filters);
-
+  const { data, isLoading, error } = useGetFilteredProducts(filters);
+  const products = data?.items ?? [];
+  const totalPages = data?.pages ?? 1;
   useEffect(() => {
     const query = buildFiltersQueryString(filters);
     router.replace(query ? `?${query}` : window.location.pathname, { scroll: false });
@@ -97,7 +98,7 @@ export default function ProductsPageClient() {
             </Button>
             <Button
               variant={'outline'}
-              disabled={(products?.length ?? 0) < (filters.perPage ?? 20)}
+              disabled={(filters.page ?? 1) >= totalPages}
               onClick={() => handlePageChange((filters.page ?? 1) + 1)}
               className="px-4 py-2 mx-1 rounded disabled:opacity-50"
             >

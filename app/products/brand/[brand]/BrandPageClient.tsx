@@ -36,8 +36,10 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
   };
 
   const [filters, setFilters] = useState<FiltersProduct>(initialFilters);
-  const { data: products, isLoading, error } = useGetFilteredProducts(filters);
+  const { data, isLoading, error } = useGetFilteredProducts(filters);
 
+  const products = data?.items ?? [];
+  const totalPages = data?.pages ?? 1;
   // Sync URL
   useEffect(() => {
     const query = buildFiltersQueryString(filters);
@@ -101,7 +103,7 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
             </Button>
             <Button
               variant="outline"
-              disabled={(products?.length ?? 0) < (filters.perPage ?? 20)}
+              disabled={(filters.page ?? 1) >= totalPages}
               onClick={() => handlePageChange((filters.page ?? 1) + 1)}
             >
               بعدی

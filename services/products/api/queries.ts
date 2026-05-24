@@ -1,5 +1,5 @@
 // services/products/api/queries.ts
-import { FiltersProduct, Product } from '@/types/product';
+import { FiltersProduct, PaginatedResponse, Product } from '@/types/product';
 import axios from 'axios';
 
 export async function fetchProductsApi(): Promise<Product[]> {
@@ -25,11 +25,11 @@ export async function fetchFeaturedProductsApi(): Promise<Product[]> {
   return res.data;
 }
 // ✅ فانکشن عمومی برای فیلتر و مرتب‌سازی
-export async function fetchFilteredProductsApi(filters: FiltersProduct): Promise<Product[]> {
+export async function fetchFilteredProductsApi(
+  filters: FiltersProduct
+): Promise<PaginatedResponse<Product>> {
   const { specs, ...rest } = filters;
-
   const sp = new URLSearchParams();
-  // اضافه کردن فیلدهای معمولی
   Object.entries(rest).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach(v => sp.append(key, v));
@@ -37,14 +37,10 @@ export async function fetchFilteredProductsApi(filters: FiltersProduct): Promise
       sp.set(key, String(value));
     }
   });
-  // اضافه کردن specs
   if (specs) {
-    Object.entries(specs).forEach(([key, value]) => {
-      sp.set(`specs[${key}]`, value);
-    });
+    Object.entries(specs).forEach(([key, value]) => sp.set(`specs[${key}]`, value));
   }
-
-  const res = await axios.get<Product[]>('/api/products', { params: sp });
+  const res = await axios.get<PaginatedResponse<Product>>('/api/products', { params: sp });
   return res.data;
 }
 export async function fetchProductFiltersApi(

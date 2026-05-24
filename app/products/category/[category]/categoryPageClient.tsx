@@ -1,5 +1,3 @@
-// app/product/category[category]/CategoryProductsClientPage.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -18,6 +16,7 @@ import { ProductEmptyState } from '@/components/sections/products/empty-state';
 type CategoryProductsProps = {
   category: string;
 };
+
 export default function CategoryProductsClientPage({ category }: CategoryProductsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +33,10 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
     specs: parseSpecsFromURL(searchParams),
   };
   const [filters, setFilters] = useState<FiltersProduct>(initialFilters);
-  const { data: products, isLoading, error } = useGetFilteredProducts(filters);
+  const { data, isLoading, error } = useGetFilteredProducts(filters); // data از نوع PaginatedResponse
+
+  const products = data?.items ?? []; // آرایهٔ محصولات
+  const totalPages = data?.pages ?? 1; // تعداد کل صفحات
 
   // Sync URL
   useEffect(() => {
@@ -70,9 +72,10 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
     return <ProductEmptyState variant="error" />;
   }
 
-  if (!products?.length) {
+  if (!products.length) {
     return <ProductEmptyState variant="empty" />;
   }
+
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -98,7 +101,7 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
             </Button>
             <Button
               variant="outline"
-              disabled={(products?.length ?? 0) < (filters.perPage ?? 20)}
+              disabled={(filters.page ?? 1) >= totalPages} 
               onClick={() => handlePageChange((filters.page ?? 1) + 1)}
             >
               بعدی
