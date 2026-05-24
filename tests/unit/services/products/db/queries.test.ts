@@ -15,6 +15,7 @@ vi.mock('@/services/db/client', () => ({
     product: {
       findMany: vi.fn(),
       findUnique: vi.fn(),
+      count: vi.fn(),
     },
   },
 }));
@@ -121,6 +122,7 @@ describe('Products DB Queries', () => {
   describe('getFilteredProducts', () => {
     it('should apply brand filter', async () => {
       (prisma.product.findMany as any).mockResolvedValue([]);
+      (prisma.product.count as any).mockResolvedValue(0);
       await getFilteredProducts({ brandSlug: 'nike' });
       expect(prisma.product.findMany).toHaveBeenCalledWith(
         expect.objectContaining({

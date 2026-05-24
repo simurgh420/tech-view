@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/products/route';
 import { auth } from '@/lib/auth';
-import { getProducts, getFilteredProducts } from '@/services/products/db/queries';
+import { getFilteredProducts } from '@/services/products/db/queries';
 import { createProduct } from '@/services/products/db/mutations';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
 
@@ -21,7 +21,6 @@ vi.mock('@/lib/auth', () => ({
 }));
 
 vi.mock('@/services/products/db/queries', () => ({
-  getProducts: vi.fn(),
   getFilteredProducts: vi.fn(),
 }));
 
@@ -53,22 +52,33 @@ function createNextRequest(method: string, url: string, body?: any): NextRequest
 describe('API /api/products', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // مقدار پیش‌فرض برای parseSpecsFromURL – آرایه خالی (بدون فیلتر)
     (parseSpecsFromURL as any).mockReturnValue([]);
+    (getFilteredProducts as any).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      perPage: 20,
+      pages: 0,
+    });
   });
 
   describe('GET', () => {
-    it('should return all products when no filters', async () => {
-      const mockProductsArray = [{ id: 'p1', title: 'Product 1' }];
-      (getProducts as any).mockResolvedValue(mockProductsArray);
-      (parseSpecsFromURL as any).mockReturnValue([]);
+    it('should return paginated products when no filters', async () => {
+      const mockResponse = {
+        items: [{ id: 'p1', title: 'Product 1' }],
+        total: 1,
+        page: 1,
+        perPage: 20,
+        pages: 1,
+      };
+      (getFilteredProducts as any).mockResolvedValue(mockResponse);
+
       const req = createNextRequest('GET', 'http://localhost/api/products');
       const res = await GET(req);
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data).toEqual(mockProductsArray);
-      expect(getProducts).toHaveBeenCalled();
-      expect(getFilteredProducts).not.toHaveBeenCalled();
+      expect(data).toEqual(mockResponse);
+      expect(getFilteredProducts).toHaveBeenCalled();
     });
 
     it('should call getFilteredProducts when filters present', async () => {
@@ -89,8 +99,7 @@ describe('API /api/products', () => {
     });
 
     it('should return 500 on error', async () => {
-      (parseSpecsFromURL as any).mockReturnValue([]);
-      (getProducts as any).mockRejectedValue(new Error('DB error'));
+      (getFilteredProducts as any).mockRejectedValue(new Error('DB error'));
       const req = createNextRequest('GET', 'http://localhost/api/products');
       const res = await GET(req);
       expect(res.status).toBe(500);
