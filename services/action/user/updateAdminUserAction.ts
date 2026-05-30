@@ -11,20 +11,25 @@ export async function updateAdminUserAction(
   const headersList = await headers();
 
   const session = await auth.api.getSession({ headers: headersList });
-  if (!session) return { success: false, error: 'Unauthorized' };
+  if (!session?.user?.id) {
+    return { success: false, error: 'Unauthorized: لطفاً وارد شوید' };
+  }
 
   const permissionCheck = await auth.api.userHasPermission({
     headers: headersList,
     body: {
       userId: session.user.id,
-      permissions: {
-        user: ['set-role'],
-      },
+      permission: { user: ['set-role'] },
     },
   });
 
   if (permissionCheck.error) {
-    return { success: false, error: 'Forbidden: شما اجازه ویرایش کاربر را ندارید' };
+    console.error('Permission check error:', permissionCheck.error);
+    return { success: false, error: 'خطا در بررسی دسترسی' };
+  }
+
+  if (!permissionCheck.success) {
+    return { success: false, error: 'Forbidden: شما اجازه ویرایش کاربران را ندارید' };
   }
 
   try {
@@ -33,12 +38,23 @@ export async function updateAdminUserAction(
       body: { userId, data },
     });
 
-    return { success: true };
+    return { success: true, error: null };
   } catch (err) {
     if (err instanceof APIError) {
+      // مدیریت خطاهای خاص Better Auth
+      if (err.status === 404) {
+        return { success: false, error: 'کاربر مورد نظر یافت نشد' };
+      }
+      if (err.status === 403) {
+        return { success: false, error: 'شما مجوز این کار را ندارید' };
+      }
+      if (err.status === 400) {
+        return { success: false, error: 'اطلاعات ارسالی نامعتبر است (مثلاً ایمیل تکراری)' };
+      }
       return { success: false, error: err.message };
     }
 
-    return { success: false, error: 'خطای داخلی سرور' };
+    console.error('Update admin user error:', err);
+    return { success: false, error: 'خطای داخلی سرور. لطفاً دوباره تلاش کنید' };
   }
 }

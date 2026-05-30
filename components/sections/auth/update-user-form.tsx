@@ -16,12 +16,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { updateUserAction } from '@/services/action/user/update-user-action';
-import { deleteUserImageAction } from '@/services/action/user/delete-user-image-action';
+
 import Image from 'next/image';
 import { ImageUploader } from '../image/ImageUploader';
+
+import { useNotify } from '@/hooks/useNotify';
+import { updateUserAction } from '@/services/action/user/updateuserAction';
+import { deleteUserImageAction } from '@/services/action/user/deleteUserImageAction';
 
 const schema = z
   .object({
@@ -51,6 +53,7 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const [preview, setPreview] = useState<string | null>(image);
   const router = useRouter();
+  const notify = useNotify();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -70,10 +73,11 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
     const { error, imageUrl } = await updateUserAction(formData);
 
     if (error) {
-      toast.error(error);
+      notify.error(error);
     } else {
-      toast.success('پروفایل با موفقیت به‌روزرسانی شد');
+      notify.success('پروفایل با موفقیت به‌روزرسانی شد');
       if (imageUrl) setPreview(imageUrl);
+      form.resetField('file');
       router.refresh();
     }
 
@@ -87,13 +91,12 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
     const { error } = await deleteUserImageAction(preview); // ✅ پاس دادن URL تصویر
 
     if (error) {
-      toast.error(error);
+      notify.error(error);
     } else {
-      toast.success('تصویر پروفایل حذف شد');
+      notify.success('تصویر پروفایل حذف شد');
       setPreview(null);
       router.refresh();
     }
-
     setIsPending(false);
   }
 

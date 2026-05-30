@@ -1,6 +1,5 @@
 // hooks/useCategories.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CategoryPayload } from '@/types/category';
 import {
   createCategoryRequestApi,
   deleteCategoryRequestApi,
@@ -8,6 +7,7 @@ import {
 } from '@/services/categories/api/mutations';
 import { fetchCategoriesApi, fetchCategoryBySlugApi } from '@/services/categories/api/queries';
 import { Category } from '@/app/generated/prisma/client';
+import { CreateCategoryInput, EditCategoryInput } from '@/lib/validation/category';
 
 export function useCategories() {
   const qc = useQueryClient();
@@ -26,13 +26,12 @@ export function useCategories() {
     });
 
   const useCreateCategory = () =>
-    useMutation<Category, Error, CategoryPayload>({
-      mutationFn: payload => createCategoryRequestApi(payload),
+    useMutation<Category, Error, CreateCategoryInput>({
+      mutationFn: createCategoryRequestApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
     });
-
   const useUpdateCategory = () =>
-    useMutation<Category, Error, { slug: string; data: Partial<CategoryPayload> }>({
+    useMutation<Category, Error, { slug: string; data: EditCategoryInput }>({
       mutationFn: ({ slug, data }) => updateCategoryRequestApi(slug, data),
       onSuccess: (_res, vars) => {
         qc.invalidateQueries({ queryKey: ['categories'] });
@@ -42,10 +41,9 @@ export function useCategories() {
 
   const useDeleteCategory = () =>
     useMutation<{ success: boolean }, Error, string>({
-      mutationFn: slug => deleteCategoryRequestApi(slug),
+      mutationFn: deleteCategoryRequestApi,
       onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
     });
-
   return {
     useGetCategories,
     useGetCategory,

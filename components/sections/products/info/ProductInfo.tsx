@@ -12,7 +12,7 @@ type Props = {
 
   rating?: number;
   ratingCount?: number;
-  shortDescription?: string;
+
   keyFeatures?: string[];
   colors?: { name: string; hex: string }[];
   variants?: { ram: string; storage: string }[];
@@ -23,7 +23,7 @@ export default function ProductInfo({
   brand,
   rating,
   ratingCount,
-  shortDescription,
+
   keyFeatures = [],
   colors = [],
   variants = [],
@@ -33,10 +33,6 @@ export default function ProductInfo({
       <ProductTitle title={title} brand={brand} />
 
       <ProductRating rating={rating} ratingCount={ratingCount} />
-
-      {shortDescription && (
-        <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{shortDescription}</p>
-      )}
 
       <ProductKeyFeatures features={keyFeatures} />
 

@@ -3,9 +3,9 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Control } from 'react-hook-form';
 import { ImageUploader } from '@/components/sections/image/ImageUploader';
-import { ProductFormValues } from '../product.schema';
+import { ProductFormType } from '@/lib/validation/product';
 
-type Props = { control: Control<ProductFormValues> };
+type Props = { control: Control<ProductFormType> };
 
 export function ThumbnailField({ control }: Props) {
   return (

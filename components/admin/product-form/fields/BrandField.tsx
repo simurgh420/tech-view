@@ -8,12 +8,12 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { ProductFormType } from '@/lib/validation/product';
 import { Control } from 'react-hook-form';
-import { ProductFormValues } from '../product.schema';
 
 type Brand = { slug: string; name: string };
 
-type Props = { control: Control<ProductFormValues>; brands: Brand[] };
+type Props = { control: Control<ProductFormType>; brands: Brand[] };
 
 export function BrandField({ control, brands }: Props) {
   return (

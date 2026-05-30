@@ -11,14 +11,15 @@ export async function logoutAction() {
 
   try {
     await auth.api.signOut({ headers: headersList });
-
-    revalidatePath('/');
-    redirect('/auth/login');
   } catch (err) {
     if (err instanceof APIError) {
       return { success: false, error: err.message };
     }
-
     return { success: false, error: 'خطای داخلی سرور' };
   }
+  // پاک کردن کش صفحه اصلی (اختیاری)
+  revalidatePath('/');
+
+  // هدایت به صفحه ورود (بعد از try-catch)
+  redirect('/auth/login');
 }

@@ -1,12 +1,12 @@
 'use client';
 
 import { useFieldArray, Control } from 'react-hook-form';
-import { ProductFormValues } from '../product.schema';
+import { ProductFormType } from '@/lib/validation/product';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-type Props = { control: Control<ProductFormValues> };
+type Props = { control: Control<ProductFormType> };
 
 export function SpecificationsField({ control }: Props) {
   const { fields, append, remove } = useFieldArray({
@@ -57,7 +57,7 @@ function ItemsField({
   control,
   groupIndex,
 }: {
-  control: Control<ProductFormValues>;
+  control: Control<ProductFormType>;
   groupIndex: number;
 }) {
   const { fields, append, remove } = useFieldArray({

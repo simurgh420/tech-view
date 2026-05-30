@@ -1,13 +1,20 @@
 'use client';
 
-import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
 import { z } from 'zod';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
+import { Button } from '@/components/ui/button';
+import { IconPicker } from './IconPicker';
 import { CategoryActions } from './CategoryActions';
-
 import {
   Select,
   SelectContent,
@@ -15,94 +22,119 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { IconPicker } from './IconPicker';
+import {
+  createCategorySchema,
+  editCategorySchema,
+  CreateCategoryInput,
+  EditCategoryInput,
+} from '@/lib/validation/category';
+import type { CategoryFormProps } from '@/types/category';
 
-const categorySchema = z.object({
-  title: z.string().min(2, 'عنوان کتگوری باید حداقل ۲ کاراکتر باشد'),
-  icon: z.string().nullable().optional(),
-  parentId: z.string().nullable().optional(),
-});
+export function CategoryForm(props: CategoryFormProps) {
+  const { mode, initialValues, onSubmit, isLoading, parents, slug } = props;
 
-export type CategoryFormValues = z.infer<typeof categorySchema>;
+  // انتخاب اسکیمای دقیق بر اساس mode
+  const schema = mode === 'create' ? createCategorySchema : editCategorySchema;
+  type FormData = z.infer<typeof schema>;
 
-type Props = {
-  initialValues?: Partial<CategoryFormValues>;
-  onSubmit: SubmitHandler<CategoryFormValues>;
-  isLoading?: boolean;
-  parents?: { id: string; title: string }[];
-  slug?: string;
-};
-
-export function CategoryForm({ initialValues, onSubmit, isLoading, parents, slug }: Props) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<CategoryFormValues>({
-    resolver: zodResolver(categorySchema),
+  const form = useForm<FormData>({
+    resolver: zodResolver(schema),
     defaultValues: {
       title: initialValues?.title ?? '',
-      icon: initialValues?.icon ?? '',
+      icon: initialValues?.icon ?? null,
       parentId: initialValues?.parentId ?? null,
     },
   });
 
-  const parent = useWatch({ control: control, name: 'parentId' });
-  const icon = useWatch({ control, name: 'icon' });
-
+  const handleFormSubmit = (data: FormData) => {
+    if (mode === 'edit') {
+      const payload: EditCategoryInput = {
+        ...data,
+        icon: data.icon === '' ? null : data.icon,
+        parentId: data.parentId === '' ? null : data.parentId,
+      };
+      (onSubmit as (data: EditCategoryInput) => void)(payload);
+    } else {
+      (onSubmit as (data: CreateCategoryInput) => void)(data as CreateCategoryInput);
+    }
+  };
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto max-w-lg  rounded-lg shadow-md p-6 space-y-6"
-      dir="rtl"
-    >
-      {/* Title */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">عنوان کتگوری</label>
-        <Input {...register('title')} placeholder="مثلاً: پوشاک" />
-        {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
-      </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleFormSubmit)}
+        className="mx-auto max-w-lg rounded-lg shadow-md p-6 space-y-6"
+        dir="rtl"
+      >
+        {/* عنوان */}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>عنوان کتگوری</FormLabel>
+              <FormControl>
+                <Input placeholder="مثلاً: پوشاک" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {/* Icon */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">آیکون</label>
-        <IconPicker value={icon ?? ''} onChange={val => setValue('icon', val)} />
-        {errors.icon && <p className="text-red-500 text-xs mt-1">{errors.icon.message}</p>}
-      </div>
+        {/* آیکون */}
+        <FormField
+          control={form.control}
+          name="icon"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>آیکون</FormLabel>
+              <FormControl>
+                <IconPicker value={field.value ?? ''} onChange={field.onChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {/* Parent */}
-      {parents && parents.length > 0 && (
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">دسته والد</label>
-          <Select
-            value={parent ?? ''}
-            onValueChange={value => setValue('parentId', value === '' ? null : value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="بدون والد" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">بدون والد</SelectItem>
-              {parents.map(p => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.parentId && <p className="text-red-500 text-xs">{errors.parentId.message}</p>}
+        {/* والد */}
+        {parents && parents.length > 0 && (
+          <FormField
+            control={form.control}
+            name="parentId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>دسته والد</FormLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={value => field.onChange(value === '' ? null : value)}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="بدون والد" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="">بدون والد</SelectItem>
+                    {parents.map(p => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {/* دکمه‌ها */}
+        <div className="flex justify-between items-center pt-4 border-t">
+          {slug && <CategoryActions slug={slug} />}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'در حال ذخیره…' : mode === 'edit' ? 'ویرایش' : 'ذخیره'}
+          </Button>
         </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex justify-between items-center pt-4 border-t">
-        {slug && <CategoryActions slug={slug} />}
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'در حال ذخیره…' : 'ذخیره'}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Form>
   );
 }

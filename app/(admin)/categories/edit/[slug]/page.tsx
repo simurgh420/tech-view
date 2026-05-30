@@ -2,9 +2,11 @@
 'use client';
 
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useCategories } from '@/hooks/useCategories';
+import { useNotify } from '@/hooks/useNotify';
+import { EditCategoryInput } from '@/lib/validation/category';
 import { useParams } from 'next/navigation';
-import { toast } from 'sonner';
 
 export default function EditCategoryPage() {
   const params = useParams();
@@ -12,27 +14,45 @@ export default function EditCategoryPage() {
   const { useGetCategory, useUpdateCategory } = useCategories();
   const { data: category, isLoading } = useGetCategory(slug);
   const updateMutation = useUpdateCategory();
-  if (isLoading) return <p>در حال بارگذاری...</p>;
+  const notify = useNotify();
+
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <Skeleton variant="text" className="h-8 w-2/3 mb-6" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+          <Skeleton variant="rect" className="h-10 w-full rounded-lg" />
+        </div>
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-40 w-full rounded-lg" />
+        <Skeleton variant="rect" className="h-12 w-full rounded-lg" />
+      </div>
+    );
+  }
   if (!category) return <p>کتگوری یافت نشد ❌</p>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmit = (formData: any) => {
+  const handleSubmit = (formData: EditCategoryInput) => {
     updateMutation.mutate(
       { slug, data: formData },
       {
         onSuccess: () => {
-          toast.success('کتگوری با موفقیت ویرایش شد ✅');
+          notify.success('کتگوری با موفقیت ویرایش شد ✅');
         },
-        onError: err => {
-          console.error(err);
-          toast.error('خطا در ویرایش کتگوری ❌');
+        onError: (err: any) => {
+          const message = err?.response?.data?.error || 'خطا در ویرایش کتگوری ❌';
+          notify.error(message);
         },
       }
     );
   };
+
   return (
     <div className="container mx-auto py-10">
       <CategoryForm
+        mode="edit"
         initialValues={category}
         onSubmit={handleSubmit}
         isLoading={updateMutation.isPending}

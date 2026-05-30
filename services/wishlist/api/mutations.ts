@@ -1,26 +1,25 @@
 // services/wishlist/api/mutations.ts
 
 import axios from 'axios';
-import { WishlistPayload } from '@/types/wishlist';
+import { WishlistItemInput } from '@/lib/validation/wishlist';
+import { WishlistItem } from '@/app/generated/prisma/client';
 
 // اضافه کردن به لیست علاقه‌مندی‌ها
-export async function addWishlistItemApi(payload: WishlistPayload) {
+export async function addWishlistItemApi(payload: WishlistItemInput): Promise<WishlistItem> {
   const res = await axios.post('/api/wishlist', payload);
   return res.data;
 }
 
 // حذف بر اساس wishlistItem.id
-export async function deleteWishlistItemApi(id: string) {
+export async function deleteWishlistItemApi(id: string): Promise<{ success: boolean }> {
   const res = await axios.delete(`/api/wishlist/${id}`);
   return res.data;
 }
 
 // حذف بر اساس userId + productId (برای toggle)
-export async function deleteWishlistItemByUserAndProductApi(payload: WishlistPayload) {
-  const res = await axios.request({
-    url: '/api/wishlist',
-    method: 'DELETE',
-    data: payload,
-  });
+export async function deleteWishlistItemByUserAndProductApi(
+  productId: string
+): Promise<{ success: boolean }> {
+  const res = await axios.delete('/api/wishlist', { data: { productId } });
   return res.data;
 }

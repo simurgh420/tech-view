@@ -8,6 +8,7 @@
     "GIPHY",
     "heroimg",
     "macbook",
+    "maxage",
     "reactjs",
     "Simurgh",
     "Unban",
@@ -18,5 +19,20 @@
   "atlascode.enableCurlLogging": true,
   "atlascode.jira.showCreateIssueProblems": true,
   "atlascode.enableCharles": false,
-  "conventionalCommits.scopes": ["blug", "comment ", "user", "Auth", "Test", "style", "Products"]
+  "conventionalCommits.scopes": [
+    "blug",
+    "comment ",
+    "user",
+    "Auth",
+    "Test",
+    "style",
+    "Products",
+    "Brands",
+    "Cart",
+    "categories",
+    "Contact",
+    "upload",
+    "reviews",
+    "Wishlist"
+  ]
 }

@@ -17,14 +17,14 @@ import { ColorsField } from './fields/ColorsField';
 import { VariantsField } from './fields/VariantsField';
 import { SpecificationsField } from './fields/SpecificationsField';
 import { GalleryField } from './fields/GalleryField';
-import { ProductFormValues, productSchema } from './product.schema';
+import { productFormSchema, ProductFormType } from '@/lib/validation/product';
 
 type Brand = { slug: string; name: string };
 type Category = { slug: string; title: string };
 
 type Props = {
-  initialValues?: Partial<ProductFormValues>;
-  onSubmit: (data: ProductFormValues) => void;
+  initialValues?: Partial<ProductFormType>;
+  onSubmit: (data: ProductFormType) => void;
   isLoading?: boolean;
   brands?: Brand[];
   categories?: Category[];
@@ -37,8 +37,8 @@ export function ProductForm({
   brands = [],
   categories = [],
 }: Props) {
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productSchema),
+  const form = useForm<ProductFormType>({
+    resolver: zodResolver(productFormSchema),
     defaultValues: {
       title: initialValues?.title ?? '',
       description: initialValues?.description ?? '',
@@ -49,11 +49,13 @@ export function ProductForm({
       stockQuantity: initialValues?.stockQuantity ?? 0,
       specifications: initialValues?.specifications ?? [{ group: 'مشخصات عمومی', items: [] }],
       thumbnail: initialValues?.thumbnail ?? undefined,
-
       keyFeatures: initialValues?.keyFeatures ?? [],
       colors: initialValues?.colors ?? [],
       variants: initialValues?.variants ?? [],
       images: initialValues?.images ?? [],
+      isFeatured: initialValues?.isFeatured ?? false,
+      isNew: initialValues?.isNew ?? true,
+      status: initialValues?.status ?? 'PUBLISHED',
     },
   });
 
@@ -73,13 +75,11 @@ export function ProductForm({
         <CategoryField control={form.control} categories={categories} />
         <StockField control={form.control} />
         <ThumbnailField control={form.control} />
-
         <KeyFeaturesField control={form.control} />
         <ColorsField control={form.control} />
         <VariantsField control={form.control} />
         <SpecificationsField control={form.control} />
         <GalleryField control={form.control} />
-
         <Button type="submit" className="w-full" disabled={!!isLoading}>
           {isLoading ? 'در حال ذخیره...' : 'ثبت محصول'}
         </Button>

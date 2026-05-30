@@ -38,7 +38,7 @@ export default async function AdminDashboard() {
           className="rounded-2xl shadow-md border p-6 flex items-center gap-4 hover:shadow-lg transition-all"
         >
           <div className="p-3 rounded-xl transition-colors">
-            <Users className="size-6 " />
+            <Users className="size-6 " aria-hidden="true" />
           </div>
           <div>
             <h2 className="text-lg font-semibold  ">مدیریت کاربران</h2>
@@ -52,7 +52,7 @@ export default async function AdminDashboard() {
           className="rounded-2xl shadow-md border p-6 flex items-center gap-4 hover:shadow-lg  transition-all"
         >
           <div className="p-3 rounded-xl transition-colors">
-            <User className="size-6 text-purple-600" />
+            <User className="size-6 text-purple-600" aria-hidden="true" />
           </div>
           <div>
             <h2 className="text-lg font-semibold ">پروفایل</h2>

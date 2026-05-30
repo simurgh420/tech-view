@@ -8,9 +8,7 @@ export async function fetchCommentsApi(postId: string): Promise<CommentSafe[]> {
 }
 
 //برای داشبورد
-// export async function fetchAllCommentsWithPost(): Promise<
-//   (CommentSafe & { post: { id: string; slug: string; title: string } })[]
-// > {
-//   const { data } = await axios.get(`/api/dashboard/comments`);
-//   return data;
-// }
+export async function fetchAllCommentsAdminApi() {
+  const res = await axios.get('/api/comments');
+  return res.data;
+}

@@ -1,8 +1,6 @@
 // hooks/useBrands.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { BrandPayload } from '@/types/brand';
-
 import { fetchBrandBySlugApi, fetchBrandsApi } from '@/services/brands/api/queries';
 import {
   createBrandRequestApi,
@@ -10,6 +8,7 @@ import {
   updateBrandRequestApi,
 } from '@/services/brands/api/mutations';
 import { Brand } from '@/app/generated/prisma/client';
+import { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
 
 export function useBrands() {
   const qc = useQueryClient();
@@ -24,13 +23,13 @@ export function useBrands() {
     });
 
   const useCreateBrand = () =>
-    useMutation<Brand, Error, BrandPayload>({
+    useMutation<Brand, Error, CreateBrandInput>({
       mutationFn: payload => createBrandRequestApi(payload),
       onSuccess: () => qc.invalidateQueries({ queryKey: ['brands'] }),
     });
 
   const useUpdateBrand = () =>
-    useMutation<Brand, Error, { slug: string; data: Partial<BrandPayload> }>({
+    useMutation<Brand, Error, { slug: string; data: UpdateBrandInput }>({
       mutationFn: ({ slug, data }) => updateBrandRequestApi(slug, data),
       onSuccess: (_res, vars) => {
         qc.invalidateQueries({ queryKey: ['brands'] });

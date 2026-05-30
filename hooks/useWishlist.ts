@@ -1,60 +1,62 @@
 // hooks/useWishlist.ts
-
 import { WishlistItem } from '@/app/generated/prisma/client';
+import { WishlistItemInput } from '@/lib/validation/wishlist';
 import {
   addWishlistItemApi,
   deleteWishlistItemApi,
   deleteWishlistItemByUserAndProductApi,
 } from '@/services/wishlist/api/mutations';
-import { fetchWishlistApi } from '@/services/wishlist/api/queries';
-import {  WishlistPayload } from '@/types/wishlist';
+import { fetchWishlistApi, fetchWishlistCheckApi } from '@/services/wishlist/api/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export function useWishlist(userId: string) {
+export function useWishlist() {
   const qc = useQueryClient();
 
   const useGetWishlist = () =>
     useQuery<WishlistItem[]>({
-      queryKey: ['wishlist', userId],
-      queryFn: () => fetchWishlistApi(userId),
-      enabled: !!userId,
+      queryKey: ['wishlist'],
+      queryFn: fetchWishlistApi,
     });
 
   const useAddToWishlist = () =>
-    useMutation({
-      mutationFn: (payload: WishlistPayload) => addWishlistItemApi(payload),
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
-      },
+    useMutation<WishlistItem, Error, WishlistItemInput>({
+      mutationFn: addWishlistItemApi,
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
     });
 
   const useRemoveFromWishlist = () =>
-    useMutation({
-      mutationFn: (id: string) => deleteWishlistItemApi(id),
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
+    useMutation<{ success: boolean }, Error, string>({
+      mutationFn: deleteWishlistItemApi,
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['wishlist'] }),
+    });
+
+  const useCheckWishlist = (productId: string) =>
+    useQuery<{ inWishlist: boolean }>({
+      queryKey: ['wishlist', 'check', productId],
+      queryFn: () => fetchWishlistCheckApi(productId),
+      enabled: !!productId,
+    });
+
+  const useToggleWishlistByProduct = () =>
+    useMutation<{ success: boolean }, Error, { productId: string; exists: boolean }>({
+      mutationFn: async ({ productId, exists }) => {
+        if (exists) {
+          return deleteWishlistItemByUserAndProductApi(productId);
+        }
+        await addWishlistItemApi({ productId });
+        return { success: true };
+      },
+      onSuccess: (_data, variables) => {
+        qc.invalidateQueries({ queryKey: ['wishlist'] });
+        qc.invalidateQueries({ queryKey: ['wishlist', 'check', variables.productId] });
       },
     });
 
-  const useToggleWishlistByUserAndProduct = () =>
-    useMutation({
-      mutationFn: async (payload: WishlistPayload & { exists: boolean }) => {
-        if (payload.exists) {
-          return deleteWishlistItemByUserAndProductApi({
-            userId: payload.userId,
-            productId: payload.productId,
-          });
-        }
-        return addWishlistItemApi({ userId: payload.userId, productId: payload.productId });
-      },
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['wishlist', userId] });
-      },
-    });
   return {
     useGetWishlist,
     useAddToWishlist,
     useRemoveFromWishlist,
-    useToggleWishlistByUserAndProduct,
+    useCheckWishlist,
+    useToggleWishlistByProduct,
   };
 }

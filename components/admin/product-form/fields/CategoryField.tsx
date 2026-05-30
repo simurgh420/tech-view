@@ -8,12 +8,12 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { ProductFormType } from '@/lib/validation/product';
 import { Control } from 'react-hook-form';
-import { ProductFormValues } from '../product.schema';
 
 type Category = { slug: string; title: string };
 
-type Props = { control: Control<ProductFormValues>; categories: Category[] };
+type Props = { control: Control<ProductFormType>; categories: Category[] };
 
 export function CategoryField({ control, categories }: Props) {
   return (

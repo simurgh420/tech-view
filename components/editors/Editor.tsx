@@ -69,7 +69,6 @@ import 'reactjs-tiptap-editor/style.css';
 import { EditorContent, useEditor } from '@tiptap/react';
 import axios from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
   let timeout: ReturnType<typeof setTimeout>;
 
@@ -88,10 +87,8 @@ const deleteImageRequest = async (imageUrl: string) => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getImagesFromEditor = (editor: any): string[] => {
   const images: string[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   editor.state.doc.descendants((node: any) => {
     if (node.type.name === 'image' && node.attrs.src) {
       images.push(node.attrs.src);

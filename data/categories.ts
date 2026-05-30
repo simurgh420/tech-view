@@ -14,7 +14,7 @@ export const categories = [
   {
     name: 'Mobile Phones',
     icon: Smartphone,
-    link: '/products/mobile',
+    link: '/products/category/mobile',
     products: [
       {
         id: 1,
@@ -45,7 +45,7 @@ export const categories = [
   {
     name: 'Laptops & Computers',
     icon: Laptop,
-    link: '/products/laptops',
+    link: '/products/category/laptops',
     products: [
       {
         id: 5,
@@ -66,7 +66,7 @@ export const categories = [
   {
     name: 'Tablets & E-reader',
     icon: Tablet,
-    link: '/products/tablets',
+    link: '/products/category/tablets',
     products: [
       { id: 9, title: 'iPad Pro', image: '/img/products/ipad.png', link: '/products/tablets/ipad' },
       {
@@ -92,7 +92,7 @@ export const categories = [
   {
     name: 'Wearables',
     icon: Watch,
-    link: '/products/wearables',
+    link: '/products/category/wearables',
     products: [
       {
         id: 13,
@@ -123,7 +123,7 @@ export const categories = [
   {
     name: 'Audio',
     icon: Headphones,
-    link: '/products/audio',
+    link: '/products/category/audio',
     products: [
       {
         id: 17,
@@ -144,7 +144,7 @@ export const categories = [
   {
     name: 'Cameras',
     icon: Camera,
-    link: '/products/cameras',
+    link: '/products/category/cameras',
     products: [
       {
         id: 21,
@@ -175,7 +175,7 @@ export const categories = [
   {
     name: 'Gaming',
     icon: Gamepad2,
-    link: '/products/gaming',
+    link: '/products/category/gaming',
     products: [
       {
         id: 25,
@@ -206,7 +206,7 @@ export const categories = [
   {
     name: 'Networking',
     icon: Network,
-    link: '/products/networking',
+    link: '/products/category/networking',
     products: [
       {
         id: 29,
@@ -237,7 +237,7 @@ export const categories = [
   {
     name: 'Accessories',
     icon: Plug,
-    link: '/products/accessories',
+    link: '/products/category/accessories',
     products: [
       {
         id: 33,

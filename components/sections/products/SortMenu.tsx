@@ -6,7 +6,7 @@ import clsx from 'clsx';
 type SortValue = 'featured' | 'new' | 'price-asc' | 'price-desc';
 
 type Props = {
-  value: string;
+  value?: string | null;
   onChange: (val: SortValue) => void;
 };
 

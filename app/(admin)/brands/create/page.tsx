@@ -1,29 +1,34 @@
 'use client';
 
 //app/(admin)/brands/create/page.tsx
-import { BrandForm, BrandFormType } from '@/components/sections/brand/BrandForm';
+import { BrandForm } from '@/components/sections/brand/BrandForm';
 import { useBrands } from '@/hooks/useBrands';
+import { useNotify } from '@/hooks/useNotify';
+import { CreateBrandInput } from '@/lib/validation/brand';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+
 export default function CreateBrandPage() {
   const { useCreateBrand } = useBrands();
   const createMutation = useCreateBrand();
   const router = useRouter();
-  const handleSubmit = (data: BrandFormType) => {
+  const notify = useNotify();
+
+  const handleSubmit = (data: CreateBrandInput) => {
     createMutation.mutate(data, {
       onSuccess: () => {
-        toast.success('برند با موفقیت ایجاد شد ✅');
+        notify.success('برند با موفقیت ایجاد شد ✅');
         router.push('/brands');
       },
-      onError: err => {
+      onError: (err: any) => {
+        const message = err?.response?.data?.error || 'خطا در ایجاد برند ❌';
+        notify.error(message);
         console.error(err);
-        toast.error('خطا در ایجاد برند ❌');
       },
     });
   };
   return (
     <div className="container mx-auto py-10">
-      <BrandForm onSubmit={handleSubmit} isLoading={createMutation.isPending} />
+      <BrandForm mode="create" onSubmit={handleSubmit} isLoading={createMutation.isPending} />
     </div>
   );
 }

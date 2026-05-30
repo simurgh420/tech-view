@@ -3,12 +3,7 @@
 import { CartItem } from '@/app/generated/prisma/client';
 import axios from 'axios';
 
-export async function fetchCartApi(userId: string) {
-  const res = await axios.get(`/api/cart?userId=${userId}`);
-  return res.data;
-}
-
-export async function fetchCartItemsApi(cartId: string): Promise<CartItem[]> {
-  const res = await axios.get(`/api/cart?cartId=${cartId}`);
+export async function fetchCartApi(): Promise<CartItem[]> {
+  const res = await axios.get<CartItem[]>('/api/cart');
   return res.data;
 }

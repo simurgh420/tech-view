@@ -2,8 +2,8 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { BlogFormType } from '@/lib/validation/blog';
 import { Control } from 'react-hook-form';
-import { BlogFormType } from './BlogForm';
 
 export function BlogExcerptSection({ control }: { control: Control<BlogFormType> }) {
   return (

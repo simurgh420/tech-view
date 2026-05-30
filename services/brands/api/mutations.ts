@@ -1,16 +1,16 @@
 // services/brands/api/mutations.ts
 import axios from 'axios';
-import { BrandPayload } from '@/types/brand';
 import { Brand } from '@/app/generated/prisma/client';
+import { CreateBrandInput, UpdateBrandInput } from '@/lib/validation/brand';
 
-export async function createBrandRequestApi(payload: BrandPayload): Promise<Brand> {
+export async function createBrandRequestApi(payload: CreateBrandInput): Promise<Brand> {
   const res = await axios.post('/api/brands', payload);
   return res.data;
 }
 
 export async function updateBrandRequestApi(
   slug: string,
-  payload: Partial<BrandPayload>
+  payload: Partial<UpdateBrandInput>
 ): Promise<Brand> {
   const res = await axios.patch(`/api/brands/${slug}`, payload);
   return res.data;

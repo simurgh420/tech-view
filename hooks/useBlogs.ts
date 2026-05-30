@@ -3,14 +3,13 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { BlogListResponse, BlogPayload, BlogPost, UpdateBlogData } from '@/types/blog';
+import { BlogListResponse, BlogPost } from '@/types/blog';
 
-import { useRouter } from 'next/navigation';
 import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 import { createBlogApi, deleteBlogApi, updateBlogApi } from '@/services/blog/api/mutations';
+import { CreateBlogPayload, UpdateBlogInput } from '@/lib/validation/blog';
 
 export function useBlogs() {
-  const router = useRouter();
   const qc = useQueryClient();
 
   const useGetBlogs = (page = 1, pageSize = 10) =>
@@ -27,7 +26,7 @@ export function useBlogs() {
     });
 
   const useCreateBlog = () =>
-    useMutation<BlogPost, Error, BlogPayload>({
+    useMutation<BlogPost, Error, CreateBlogPayload>({
       mutationFn: createBlogApi,
       onSuccess: () => {
         qc.invalidateQueries({ queryKey: ['blogs'] });
@@ -35,20 +34,20 @@ export function useBlogs() {
     });
 
   const useUpdateBlog = (slug: string) =>
-    useMutation<BlogPost, Error, UpdateBlogData>({
+    useMutation<BlogPost, Error, UpdateBlogInput>({
       mutationFn: data => updateBlogApi(slug, data),
       onSuccess: updatedPost => {
         qc.invalidateQueries({ queryKey: ['blogs'] });
         qc.invalidateQueries({ queryKey: ['blog', updatedPost.slug] });
 
         if (updatedPost.slug !== slug) {
-          router.push(`/blog/${updatedPost.slug}`);
+          qc.invalidateQueries({ queryKey: ['blog', slug] }); // ← اسلاگ قدیمی
         }
       },
     });
 
   const useDeleteBlog = () =>
-    useMutation<unknown, Error, string, { prevBlogs?: BlogListResponse }>({
+    useMutation<{ success: boolean }, Error, string, { prevBlogs?: BlogListResponse }>({
       mutationFn: deleteBlogApi,
       onMutate: async slug => {
         await qc.cancelQueries({ queryKey: ['blogs'] });

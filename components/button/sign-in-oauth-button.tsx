@@ -20,7 +20,7 @@ export const SignInOauthButton = ({ provider, signUp, className }: SignInOauthBu
     await signIn.social({
       provider,
       callbackURL: '/profile',
-      errorCallbackURL: '/auth/login/error',
+      errorCallbackURL: '/login/error',
     });
 
     setIsPending(false);

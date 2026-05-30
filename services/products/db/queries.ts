@@ -1,72 +1,123 @@
 // services/products/db/queries.ts
 import prisma from '@/services/db/client';
+import { productIncludes, productWithReviews } from '../productIncludes';
+import { logger } from '@/lib/logger';
 
 export async function getProducts() {
-  return prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      brand: true,
-      category: true,
-      subCategory: true,
-      prices: true,
-      reviews: true,
-    },
-  });
+  const startTime = Date.now();
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: productIncludes,
+    });
+    logger.info('getProducts success', {
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+    return products;
+  } catch (error) {
+    logger.error('getProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
 }
 
 export async function getProductBySlug(slug: string) {
-  return prisma.product.findUnique({
-    where: { slug },
-    include: {
-      brand: true,
-      category: true,
-      subCategory: true,
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        include: { user: { select: { id: true, name: true } } },
-      },
-      prices: true,
-    },
-  });
+  const startTime = Date.now();
+  try {
+    const product = await prisma.product.findUnique({
+      where: { slug },
+      include: productWithReviews,
+    });
+    if (!product) {
+      logger.info('getProductBySlug: not found', { slug, duration: Date.now() - startTime });
+      return null;
+    }
+    logger.info('getProductBySlug success', { slug, duration: Date.now() - startTime });
+    return product;
+  } catch (error) {
+    logger.error('getProductBySlug failed', {
+      slug,
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
 }
 
 export async function getProductsByBrand(slug: string) {
-  return prisma.product.findMany({
-    where: { brand: { slug } },
-    orderBy: { createdAt: 'desc' },
-    include: { brand: true },
-  });
+  const startTime = Date.now();
+  try {
+    const products = await prisma.product.findMany({
+      where: { brand: { slug } },
+      orderBy: { createdAt: 'desc' },
+      include: { brand: true, specifications: true },
+    });
+    logger.info('getProductsByBrand success', {
+      slug,
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+    return products;
+  } catch (error) {
+    logger.error('getProductsByBrand failed', {
+      slug,
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
 }
 
 export async function getProductsByCategory(slug: string) {
-  return prisma.product.findMany({
-    where: { category: { slug } },
-    orderBy: { createdAt: 'desc' },
-    include: { category: true },
-  });
+  const startTime = Date.now();
+  try {
+    const products = await prisma.product.findMany({
+      where: { category: { slug } },
+      orderBy: { createdAt: 'desc' },
+      include: { category: true, specifications: true },
+    });
+    logger.info('getProductsByCategory success', {
+      slug,
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+    return products;
+  } catch (error) {
+    logger.error('getProductsByCategory failed', {
+      slug,
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
 }
 
 export async function getFeaturedProducts() {
-  return prisma.product.findMany({
-    where: { isFeatured: true, status: 'PUBLISHED' },
-    orderBy: { createdAt: 'desc' },
-    include: { brand: true, category: true },
-  });
+  const startTime = Date.now();
+  try {
+    const products = await prisma.product.findMany({
+      where: { isFeatured: true, status: 'PUBLISHED' },
+      orderBy: { createdAt: 'desc' },
+      include: productIncludes,
+    });
+    logger.info('getFeaturedProducts success', {
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+    return products;
+  } catch (error) {
+    logger.error('getFeaturedProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
 }
 
-// ✅ فانکشن عمومی برای فیلتر و مرتب‌سازی
-export async function getFilteredProducts({
-  brandSlug,
-  categorySlug,
-  subCategorySlug,
-  minPrice,
-  maxPrice,
-  sort = 'new',
-  q,
-  page,
-  perPage,
-  ram,
-}: {
+export async function getFilteredProducts(filters: {
   brandSlug?: string;
   categorySlug?: string;
   subCategorySlug?: string;
@@ -76,66 +127,101 @@ export async function getFilteredProducts({
   q?: string;
   page?: number;
   perPage?: number;
-  ram?: string[];
+  specs?: Record<string, string>;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let orderBy: any;
+  const startTime = Date.now();
+  try {
+    const {
+      brandSlug,
+      categorySlug,
+      subCategorySlug,
+      minPrice,
+      maxPrice,
+      sort,
+      q,
+      page,
+      perPage,
+      specs,
+    } = filters;
 
-  if (sort === 'price-asc') orderBy = { price: 'asc' };
-  else if (sort === 'price-desc') orderBy = { price: 'desc' };
-  else if (sort === 'featured') orderBy = [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
-  else orderBy = { createdAt: 'desc' }; // new
+    const where: any = { status: 'PUBLISHED' };
 
-  const skip = page && perPage ? (page - 1) * perPage : undefined;
-  const take = perPage ?? undefined;
+    if (brandSlug) where.brand = { slug: { equals: brandSlug, mode: 'insensitive' } };
+    if (categorySlug) where.category = { slug: categorySlug };
+    if (subCategorySlug) where.subCategory = { slug: subCategorySlug };
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+      if (minPrice !== undefined) where.price.gte = minPrice;
+      if (maxPrice !== undefined) where.price.lte = maxPrice;
+    }
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+      ];
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {
-    status: 'PUBLISHED',
-  };
+    // فیلتر مشخصات با استفاده از رابطه specifications (AND بین چند شرط)
+    if (specs && Object.keys(specs).length > 0) {
+      where.AND = [];
+      for (const [key, value] of Object.entries(specs)) {
+        where.AND.push({
+          specifications: {
+            some: {
+              key: key,
+              value: value,
+            },
+          },
+        });
+      }
+    }
 
-  if (brandSlug) {
-    where.brand = {
-      slug: { equals: brandSlug, mode: 'insensitive' },
+    let orderBy: any;
+    switch (sort) {
+      case 'price-asc':
+        orderBy = { price: 'asc' };
+        break;
+      case 'price-desc':
+        orderBy = { price: 'desc' };
+        break;
+      case 'featured':
+        orderBy = [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
+        break;
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
+
+    const take = perPage ?? 20;
+    const currentPage = page ?? 1;
+    const skip = (currentPage - 1) * take;
+
+    const [items, total] = await Promise.all([
+      prisma.product.findMany({ where, orderBy, skip, take, include: productIncludes }),
+      prisma.product.count({ where }),
+    ]);
+
+    logger.info('getFilteredProducts success', {
+      filterKeys: Object.keys(filters).filter(
+        k => filters[k as keyof typeof filters] !== undefined
+      ),
+      count: items.length,
+      total,
+      page: currentPage,
+      duration: Date.now() - startTime,
+    });
+
+    return {
+      items,
+      total,
+      page: currentPage,
+      perPage: take,
+      pages: Math.ceil(total / take),
     };
+  } catch (error) {
+    logger.error('getFilteredProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
   }
-
-  if (categorySlug) {
-    where.category = { slug: categorySlug };
-  }
-
-  if (subCategorySlug) {
-    where.subCategory = { slug: subCategorySlug };
-  }
-
-  if (minPrice !== undefined || maxPrice !== undefined) {
-    where.price = {
-      ...(minPrice !== undefined && { gte: minPrice }),
-      ...(maxPrice !== undefined && { lte: maxPrice }),
-    };
-  }
-
-  if (ram && ram.length > 0) {
-    where.ram = { in: ram };
-  }
-
-  if (q) {
-    where.OR = [
-      { title: { contains: q, mode: 'insensitive' } },
-      { description: { contains: q, mode: 'insensitive' } },
-    ];
-  }
-
-  return prisma.product.findMany({
-    where,
-    orderBy,
-    skip,
-    take,
-    include: {
-      brand: true,
-      category: true,
-      subCategory: true,
-      reviews: true,
-    },
-  });
 }

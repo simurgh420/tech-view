@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
 
-import { toast } from 'sonner';
-import { deleteUserAction } from '@/services/action/user/delete-user.action';
+import { deleteUserAction } from '@/services/action/user/deleteUserAction';
+import { useNotify } from '@/hooks/useNotify';
 
 interface DeleteUserButtonProps {
   userId: string;
@@ -13,15 +13,16 @@ interface DeleteUserButtonProps {
 
 export const DeleteUserButton = ({ userId }: DeleteUserButtonProps) => {
   const [isPending, setIsPending] = useState(false);
+  const notify = useNotify();
 
   async function handleClick() {
     setIsPending(true);
     const res = await deleteUserAction(userId);
 
     if (res.error) {
-      toast.error(res.error);
+      notify.error(res.error);
     } else {
-      toast.success('کاربر با موفقیت حذف شد');
+      notify.success('کاربر با موفقیت حذف شد');
     }
     setIsPending(false);
   }

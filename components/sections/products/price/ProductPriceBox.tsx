@@ -13,7 +13,7 @@ type Props = {
 
 export default function ProductPriceBox({ price, discountPrice, stock }: Props) {
   return (
-    <div className="p-5 rounded-xl border shadow-sm bg-white dark:bg-gray-900 space-y-6">
+    <div className="p-5 rounded-xl border shadow-sm space-y-6">
       <PriceDisplay price={price} discountPrice={discountPrice} />
 
       <StockStatus stock={stock} />

@@ -4,9 +4,9 @@ import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/for
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Control } from 'react-hook-form';
-import { ProductFormValues } from '../product.schema';
+import { ProductFormType } from '@/lib/validation/product';
 
-type Props = { control: Control<ProductFormValues> };
+type Props = { control: Control<ProductFormType> };
 
 export function VariantsField({ control }: Props) {
   return (

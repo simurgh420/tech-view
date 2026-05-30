@@ -10,9 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
-import { requestPasswordReset } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { requestPasswordResetAction } from '@/services/action/user/requestPasswordResetAction';
+import { useNotify } from '@/hooks/useNotify';
 
 const schema = z.object({
   email: z.email('لطفاً یک ایمیل معتبر وارد کنید'),
@@ -23,6 +23,7 @@ type FormValues = z.infer<typeof schema>;
 export const ForgotPasswordForm = () => {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  const notify = useNotify();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -33,22 +34,16 @@ export const ForgotPasswordForm = () => {
 
   async function onSubmit(values: FormValues) {
     setIsPending(true);
-
-    await requestPasswordReset({
+    const { error } = await requestPasswordResetAction({
       email: values.email,
       redirectTo: `${window.location.origin}/auth/reset-password`,
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success('لینک بازیابی رمز عبور به ایمیل شما ارسال شد.');
-          router.push('/auth/forgot-password/success');
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (ctx: any) => {
-          toast.error(ctx.error.message);
-        },
-        onResponse: () => setIsPending(false),
-      },
     });
+    if (error) {
+      notify.error(error);
+    } else {
+      notify.success('لینک بازیابی رمز عبور به ایمیل شما ارسال شد.');
+      router.push('/auth/forgot-password/success');
+    }
   }
 
   return (
@@ -56,7 +51,7 @@ export const ForgotPasswordForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-sm w-full space-y-6 p-6 rounded-xl shadow-md border dark:border-neutral-700 dark:bg-neutral-800"
+          className="max-w-sm w-full space-y-6 p-6 rounded-xl shadow-md border dark:border-neutral-700 "
         >
           <FormField
             control={form.control}

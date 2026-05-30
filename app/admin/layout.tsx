@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   if (session.user.role !== 'ADMIN') {
-    redirect('/');
+    redirect('/unauthorized');
   }
   return <>{children}</>;
 }

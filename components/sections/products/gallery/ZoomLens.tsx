@@ -32,19 +32,18 @@ export default function ZoomLens({ src, alt = 'product image' }: ZoomLensProps) 
       onMouseMove={handleMove}
       className="relative w-full h-full overflow-hidden"
     >
-      {/* لایهٔ اصلی با Next/Image */}
       <Image
         src={src}
         alt={alt}
         fill
-        className="object-contain transition-opacity duration-200"
+        className="object-cover transition-opacity duration-200"
         sizes="100vw"
       />
 
       <img
         src={src}
         alt={alt}
-        className={`absolute inset-0 w-full h-full object-contain pointer-events-none transition-transform duration-300 ${
+        className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-300 ${
           zoom ? 'scale-150 opacity-100' : 'scale-100 opacity-0'
         }`}
         style={{

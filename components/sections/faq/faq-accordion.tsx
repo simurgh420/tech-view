@@ -22,9 +22,10 @@ export function FaqAccordion({ category }: { category: FAQCategory }) {
     justify-between
     text-base
     font-medium
-    text-[oklch(90%_0.01_270)]
+    dark:text-[oklch(90%_0.01_270)]
+        text-black
     hover:no-underline
-    hover:text-[oklch(98%_0.1_270)]
+    hover:text-shadow-black
   "
           >
             {item.question}

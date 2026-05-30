@@ -14,12 +14,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { banUserAction } from '@/services/action/user/banUserAction';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { useNotify } from '@/hooks/useNotify';
 
 export function BanUserModal({ userId }: { userId: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit } = useForm<{ reason: string; duration: string }>();
+  const notify = useNotify();
 
   async function onSubmit(values: { reason: string; duration: string }) {
     const expiresIn = values.duration === 'forever' ? 0 : Number(values.duration) * 60 * 60 * 24;
@@ -29,9 +30,9 @@ export function BanUserModal({ userId }: { userId: string }) {
     if (res.success) {
       router.refresh();
       setOpen(false);
-      toast.success('کاربر با موفقیت بن شد');
+      notify.success('کاربر با موفقیت بن شد');
     } else {
-      toast.error(res.error);
+      notify.error(res.error || '');
     }
   }
 

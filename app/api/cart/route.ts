@@ -1,47 +1,121 @@
-// app/api/cart/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
+import { addCartItemSchema } from '@/lib/validation/cart';
+import { CartErrors } from '@/services/cart/constants';
 import { addCartItem, clearCart } from '@/services/cart/db/mutations';
-import { getCartItems } from '@/services/cart/db/queries';
-import { NextResponse } from 'next/server';
+import { getCart } from '@/services/cart/db/queries';
+import { logger } from '@/lib/logger';
 
-export async function GET(req: Request) {
+export async function GET() {
+  const startTime = Date.now();
   try {
-    const url = new URL(req.url);
-    const cartId = url.searchParams.get('cartId');
-    if (!cartId) {
-      return NextResponse.json({ success: false, message: 'cartId is required' }, { status: 400 });
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      logger.warn('GET /api/cart - Unauthorized', { duration: Date.now() - startTime });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const items = await getCartItems(cartId);
+    const items = await getCart(session.user.id);
+    logger.info('GET /api/cart succeeded', {
+      userId: session.user.id,
+      itemCount: items.length,
+      duration: Date.now() - startTime,
+    });
     return NextResponse.json(items);
   } catch (error) {
-    console.error('GET /api/cart Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to load cart items' },
-      { status: 500 }
-    );
+    logger.error('GET /api/cart failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      logger.warn('POST /api/cart - Unauthorized', { duration: Date.now() - startTime });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
-    const item = await addCartItem(body);
-    return NextResponse.json(item);
+    const parsed = addCartItemSchema.safeParse(body);
+    if (!parsed.success) {
+      logger.warn('POST /api/cart - Validation failed', {
+        errors: parsed.error.issues,
+        duration: Date.now() - startTime,
+      });
+      const details = parsed.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message,
+      }));
+      return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
+    }
+
+    const { productId, quantity } = parsed.data;
+
+    try {
+      const item = await addCartItem(session.user.id, productId, quantity);
+      logger.info('POST /api/cart - Item added', {
+        userId: session.user.id,
+        productId,
+        quantity,
+        cartItemId: item.id,
+        duration: Date.now() - startTime,
+      });
+      return NextResponse.json(item, { status: 201 });
+    } catch (error: any) {
+      if (error.message === CartErrors.PRODUCT_NOT_FOUND) {
+        logger.warn('POST /api/cart - Product not found', {
+          productId,
+          duration: Date.now() - startTime,
+        });
+        return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+      }
+      if (
+        error.message === CartErrors.INSUFFICIENT_STOCK ||
+        error.message === CartErrors.INSUFFICIENT_STOCK_UPDATE
+      ) {
+        logger.warn('POST /api/cart - Insufficient stock', {
+          productId,
+          quantity,
+          duration: Date.now() - startTime,
+        });
+        return NextResponse.json({ error: 'Insufficient stock' }, { status: 400 });
+      }
+      // خطای ناشناخته را دوباره پرتاب می‌کنیم تا catch بیرونی بگیرد
+      throw error;
+    }
   } catch (error) {
-    console.error('POST /api/cart Error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to add cart item' },
-      { status: 500 }
-    );
+    logger.error('POST /api/cart failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE() {
+  const startTime = Date.now();
   try {
-    const body = await req.json();
-    const result = await clearCart(body.cartId);
-    return NextResponse.json(result);
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      logger.warn('DELETE /api/cart - Unauthorized', { duration: Date.now() - startTime });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    await clearCart(session.user.id);
+    logger.info('DELETE /api/cart - Cleared', {
+      userId: session.user.id,
+      duration: Date.now() - startTime,
+    });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('DELETE /api/cart Error:', error);
-    return NextResponse.json({ success: false, message: 'Failed to clear cart' }, { status: 500 });
+    logger.error('DELETE /api/cart failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

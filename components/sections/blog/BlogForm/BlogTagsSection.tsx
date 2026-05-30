@@ -3,7 +3,7 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { TagsInput } from '@/components/Tags/TagsInput';
 import { Control } from 'react-hook-form';
-import { BlogFormType } from './BlogForm';
+import { BlogFormType } from '@/lib/validation/blog';
 
 export function BlogTagsSection({ control }: { control: Control<BlogFormType> }) {
   return (
