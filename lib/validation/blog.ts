@@ -5,7 +5,7 @@ import { z } from 'zod';
 export const blogFormSchema = z.object({
   title: z.string().min(3, 'عنوان باید حداقل ۳ کاراکتر باشد'),
   excerpt: z.string().min(10, 'خلاصه باید حداقل ۱۰ کاراکتر باشد'),
-  coverImageUrl: z.union([z.instanceof(File), z.url()]).optional(),
+  coverImageUrl: z.union([z.instanceof(File), z.string().min(1)]).optional(),
   content: z.string().min(20, 'محتوا باید حداقل ۲۰ کاراکتر باشد'),
   tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
 });
@@ -17,7 +17,7 @@ export const createBlogPayloadSchema = z.object({
   excerpt: z.string().min(10, 'خلاصه حداقل ۱۰ کاراکتر باشد'),
   content: z.string().min(20, 'محتوا حداقل ۲۰ کاراکتر باشد'),
   tags: z.array(z.string().min(2, 'تگ باید حداقل ۲ کاراکتر باشد')),
-  coverImageUrl: z.url().optional().nullable(),
+  coverImageUrl: z.string().optional().nullable(),
 });
 
 export type CreateBlogPayload = z.infer<typeof createBlogPayloadSchema>;
@@ -31,7 +31,7 @@ export const createBlogSchema = z.object({
   tags: z.array(z.string().min(2, 'تگ حداقل ۲ کاراکتر')),
   // فیلدهایی که در فرم نیستند و در API ساخته/تکمیل می‌شوند
   authorId: z.string().min(1, 'نویسنده الزامی است'), // از سشن گرفته می‌شود
-  coverImageUrl: z.url().nullable().default(null), // بعد از آپلود، URL نهایی
+  coverImageUrl: z.string().nullable().default(null),
   status: z.enum(['PUBLISHED', 'DRAFT']).default('PUBLISHED'),
   slug: z.string().optional(),
 });
@@ -44,7 +44,7 @@ export const updateBlogSchema = z.object({
   content: z.string().min(20).optional(),
   tags: z.array(z.string().min(2)).optional(),
   slug: z.string().min(1).optional(),
-  coverImageUrl: z.url().nullable().optional(),
+  coverImageUrl: z.string().nullable().optional(),
   status: z.enum(['PUBLISHED', 'DRAFT']).optional(),
 });
 export type UpdateBlogInput = z.infer<typeof updateBlogSchema>;

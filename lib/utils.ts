@@ -91,3 +91,7 @@ export function isValidPassword(password: string): { valid: boolean; error?: str
   }
   return { valid: true };
 }
+export const sanitizeUrl = (value: string | null | undefined): string | null => {
+  if (!value || value.trim().length === 0) return null;
+  return value;
+};

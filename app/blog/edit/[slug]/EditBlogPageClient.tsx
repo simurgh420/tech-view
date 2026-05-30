@@ -1,10 +1,11 @@
-// app/(whatever)/blog/[slug]/EditBlogPageClient.tsx
+// app/(whatever)/blog/edit/[slug]/EditBlogPageClient.tsx
 
 'use client';
 
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
+import { sanitizeUrl } from '@/lib/utils';
 import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
@@ -37,10 +38,17 @@ export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
       tags: blog.tags,
     },
   });
-  async function handleSubmit(data: BlogFormType) {
-    let imageUrl: string = blog.coverImageUrl ?? '';
 
+  async function handleSubmit(data: BlogFormType) {
+    // ۱. شروع با مقدار معتبر از دیتابیس
+    let imageUrl: string | null = null;
+
+    // ۲. کاربر یک فایل جدید انتخاب کرده
     if (data.coverImageUrl instanceof File) {
+      // حذف تصویر قدیمی (در صورت وجود)
+      if (blog.coverImageUrl) {
+        await axios.post('/api/images/delete', { imagePath: blog.coverImageUrl }).catch(() => {});
+      }
       const formData = new FormData();
       formData.append('file', data.coverImageUrl);
       formData.append('folder', `blogs/${slug}/cover`);
@@ -48,13 +56,15 @@ export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
       const res = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      imageUrl = res.data.imageUrl;
+      imageUrl = sanitizeUrl(res.data?.imageUrl);
+    } else {
+      imageUrl = sanitizeUrl(data.coverImageUrl);
 
-      if (blog.coverImageUrl) {
-        await axios.post('/api/images/delete', { imagePath: blog.coverImageUrl });
+      if (data.coverImageUrl === undefined && blog.coverImageUrl) {
+        await axios.post('/api/images/delete', { imagePath: blog.coverImageUrl }).catch(() => {});
+        imageUrl = null;
       }
     }
-
     updateMutation.mutate(
       {
         title: data.title,
@@ -94,6 +104,7 @@ export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
       }
     );
   }
+
   return (
     <BlogForm
       form={form}

@@ -1,4 +1,4 @@
-// app/(whatever)/blog/[slug]/edit/page.tsx
+// app/(whatever)/blog/edit//[slug]page.tsx
 
 import { auth } from '@/lib/auth';
 import { getPostBySlug } from '@/services/blog/db/queries';
@@ -14,8 +14,8 @@ interface EditBlogPageProps {
 }
 
 export default async function EditBlogPage({ params }: EditBlogPageProps) {
-  const { slug } = await params;
-
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
   // ۱. احراز هویت
 
   const session = await auth.api.getSession({ headers: await headers() });

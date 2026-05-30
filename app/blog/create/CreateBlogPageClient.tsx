@@ -29,7 +29,7 @@ export function CreateBlogPageClient() {
   });
   async function handleSubmit(data: BlogFormType) {
     const slug = toSlug(data.title);
-    let imageUrl = '';
+    let imageUrl: string | null = null;
 
     if (data.coverImageUrl instanceof File) {
       const formData = new FormData();
@@ -39,9 +39,8 @@ export function CreateBlogPageClient() {
       const res = await axios.post('/api/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      imageUrl = res.data.imageUrl;
+      imageUrl = res.data?.imageUrl || null;
     }
-
     createMutation.mutate(
       {
         title: data.title,
