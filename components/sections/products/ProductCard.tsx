@@ -15,13 +15,15 @@ export default function ProductCard({ product }: { product: Product }) {
                  flex flex-col"
     >
       {/* تصویر محصول */}
-      <Image
-        src={product.thumbnail || '/placeholder.jpg'}
-        alt={product.title}
-        width={300}
-        height={300}
-        className="w-full h-48 object-cover rounded mb-2"
-      />
+      <div className="relative w-full h-48 mb-2">
+        <Image
+          src={product.thumbnail || '/placeholder.jpg'}
+          alt={product.title}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className="object-cover rounded"
+        />
+      </div>
 
       {/* عنوان */}
       <h2 className="text-sm font-semibold line-clamp-2">{product.title}</h2>

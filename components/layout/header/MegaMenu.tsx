@@ -52,7 +52,13 @@ export function MegaMenu() {
                   className="group flex flex-col items-center gap-2 p-3 rounded transition hover:bg-gray-100 dark:hover:bg-zinc-700"
                 >
                   <div className="relative w-40 h-32 flex items-center justify-center">
-                    <Image src={item.image} alt={item.title} fill className="object-contain" />
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="160px"
+                      className="object-contain"
+                    />
                   </div>
                   <div className="w-0 h-0.5 bg-transparent group-hover:w-20 group-hover:bg-blue-500 group-hover:shadow-blue-500/50 group-hover:shadow-lg transition-all duration-700 ease-in-out" />
                   <p className="text-xs text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 text-center">

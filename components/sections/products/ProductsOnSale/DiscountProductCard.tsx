@@ -42,6 +42,7 @@ export function DiscountProductCard({
             src={image}
             alt={title}
             fill
+            sizes="200px"
             className="
     object-contain
     drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]

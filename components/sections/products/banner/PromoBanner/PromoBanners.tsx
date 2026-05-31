@@ -13,6 +13,7 @@ export function PromoBanners() {
             src="/img/banners/iphone15.png"
             alt="iPhone 15 Banner"
             fill
+            sizes="(max-width: 768px) 100vw, 66vw"
             className="object-cover"
           />
         </Link>
@@ -25,6 +26,7 @@ export function PromoBanners() {
             src="/img/banners/ps5-banner.png"
             alt="PlayStation 5 Banner"
             fill
+            sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover"
           />
         </Link>

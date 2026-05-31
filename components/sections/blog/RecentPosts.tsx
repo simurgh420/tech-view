@@ -20,7 +20,8 @@ export function RecentPosts({ items }: { items: BlogPostRecent[] }) {
                 src={post.coverImageUrl || '/Image-not-found.png'}
                 alt={post.title}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform"
+                sizes="96px"
+                className="object-cover"
               />
             </div>
 
