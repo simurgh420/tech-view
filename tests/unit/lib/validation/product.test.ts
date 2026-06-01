@@ -39,12 +39,25 @@ describe('Product Validation Schemas', () => {
       expect(productFormSchema.safeParse(withOptional).success).toBe(true);
     });
 
-    it('should reject invalid thumbnail (neither File nor URL)', () => {
+    it('should reject invalid thumbnail (neither File nor string)', () => {
       const invalid = { ...validInput, thumbnail: 123 };
       expect(productFormSchema.safeParse(invalid).success).toBe(false);
     });
 
-    // ... می‌توان تست‌های اعتبارسنجی فیلدهای اجباری مانند title, price و ... اضافه کرد
+    // 🆕 تست جدید: قبول مسیر نسبی برای thumbnail
+    it('should accept relative path string for thumbnail', () => {
+      const input = { ...validInput, thumbnail: '/uploads/test.jpg' };
+      expect(productFormSchema.safeParse(input).success).toBe(true);
+    });
+
+    // 🆕 تست جدید: قبول مسیر نسبی و URL در images
+    it('should accept mixed relative and absolute URLs in images', () => {
+      const input = {
+        ...validInput,
+        images: ['/uploads/img1.jpg', 'https://cdn.example.com/img2.png'],
+      };
+      expect(productFormSchema.safeParse(input).success).toBe(true);
+    });
   });
 
   // ---------- createProductPayloadSchema ----------
@@ -64,7 +77,7 @@ describe('Product Validation Schemas', () => {
 
     it('should apply default values for optional fields', () => {
       const result = createProductPayloadSchema.parse(validPayload);
-      expect(result.stockQuantity).toBe(10); // provided
+      expect(result.stockQuantity).toBe(10);
       expect(result.images).toEqual([]);
       expect(result.keyFeatures).toEqual([]);
       expect(result.colors).toEqual([]);
@@ -87,6 +100,18 @@ describe('Product Validation Schemas', () => {
     it('should reject negative stockQuantity', () => {
       const invalid = { ...validPayload, stockQuantity: -5 };
       expect(createProductPayloadSchema.safeParse(invalid).success).toBe(false);
+    });
+
+    // 🆕 تست جدید: قبول thumbnail به صورت رشته (مسیر نسبی)
+    it('should accept thumbnail as a relative path string', () => {
+      const input = { ...validPayload, thumbnail: '/uploads/thumb.jpg' };
+      expect(createProductPayloadSchema.safeParse(input).success).toBe(true);
+    });
+
+    // 🆕 تست جدید: قبول thumbnail به صورت null
+    it('should accept thumbnail as null', () => {
+      const input = { ...validPayload, thumbnail: null };
+      expect(createProductPayloadSchema.safeParse(input).success).toBe(true);
     });
   });
 
@@ -112,10 +137,11 @@ describe('Product Validation Schemas', () => {
 
     it('should apply defaults for optional arrays/booleans', () => {
       const result = createProductSchema.parse(validInput);
-      expect(result.images).toEqual([]);
+      // images دیگر default ندارد
+      expect(result.images).toBeUndefined(); // ← اصلاح شد
       expect(result.isFeatured).toBe(false);
       expect(result.isNew).toBe(true);
-      expect(result.publishedAt).toBeUndefined(); // optional, not default
+      expect(result.publishedAt).toBeUndefined();
     });
   });
 
