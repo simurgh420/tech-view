@@ -2,6 +2,7 @@
 import prisma from '@/services/db/client';
 import { productIncludes, productWithReviews } from '../productIncludes';
 import { logger } from '@/lib/logger';
+import { formatProduct } from '../utils/formatProduct';
 
 export async function getProducts() {
   const startTime = Date.now();
@@ -36,7 +37,7 @@ export async function getProductBySlug(slug: string) {
       return null;
     }
     logger.info('getProductBySlug success', { slug, duration: Date.now() - startTime });
-    return product;
+    return formatProduct(product);
   } catch (error) {
     logger.error('getProductBySlug failed', {
       slug,

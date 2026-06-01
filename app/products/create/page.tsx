@@ -1,6 +1,5 @@
 // app/products/create/page.tsx
 
-
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateProductPageClient from './CreateProductPageClient';
@@ -8,7 +7,6 @@ import CreateProductPageClient from './CreateProductPageClient';
 export default function CreateProductPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold mb-6">📦 ایجاد محصول جدید</h1>
       <Suspense
         fallback={
           <div className="space-y-6">
