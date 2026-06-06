@@ -12,7 +12,7 @@ import { FeatureBar } from '@/components/sections/services/FeatureBar';
 export default function Home() {
   return (
     <main>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16 lg:space-y-24">
         {/* Hero Section */}
         <HeroSection />
         {/* Categories Section */}

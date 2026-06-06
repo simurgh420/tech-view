@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
+
 export function ProductBanner() {
   return (
-    <section>
-      <div className=" h-auto">
-        {/* آیفون 17 */}
-        <Link href="/products/iphone17">
+    <section className="mt-10">
+      <div className="rounded-2xl shadow-lg overflow-hidden">
+        <Link href="/products/iphone17" className="block">
           <div className="relative w-full aspect-1224/420">
             <Image
               src="/img/banners/iphone17.png"
               alt="iPhone 17 Banner"
-              width={1224}
-              height={420}
-              className="object-cover w-full h-full"
+              fill
+              sizes="100vw"
+              className="object-cover"
             />
           </div>
         </Link>
