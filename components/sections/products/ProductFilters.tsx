@@ -40,12 +40,7 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
     } else {
       newSpecs[key] = value;
     }
-    setSelectedSpecs(newSpecs);
-    onChange({
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
-      ...(Object.keys(newSpecs).length > 0 && { specs: newSpecs }),
-    });
+    setSelectedSpecs(newSpecs); // ❗ فقط state، بدون onChange اینجا
   };
 
   return (
@@ -57,7 +52,7 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
         <Button
           onClick={() => setIsPriceOpen(p => !p)}
           className="w-full flex justify-between items-center"
-          variant={'outline'}
+          variant="outline"
         >
           <span>محدوده قیمت</span>
           <span>
@@ -73,14 +68,9 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
               step={1000}
               value={priceRange}
               onChange={value => {
-                if (Array.isArray(value)) setPriceRange(value);
+                if (Array.isArray(value)) setPriceRange(value); // ❗ فقط state
               }}
-              onChangeComplete={value => {
-                if (Array.isArray(value)) {
-                  setPriceRange(value);
-                  emit();
-                }
-              }}
+              // دیگه اینجا emit نمی‌کنیم
               styles={{
                 track: { backgroundColor: '#8a041a', height: 6 },
                 handle: {
@@ -102,7 +92,7 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
       {filtersLoading && <div className="text-sm text-gray-500">در حال بارگذاری فیلترها...</div>}
 
       {specFilters && Object.keys(specFilters).length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4 ">
           {Object.entries(specFilters).map(([key, values]) => (
             <div key={key}>
               <h4 className="font-medium mb-2 text-sm">{key}</h4>
@@ -127,6 +117,13 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
       {!filtersLoading && !specFilters && initialCategorySlug && (
         <div className="text-sm text-gray-500">هیچ فیلتری برای این دسته موجود نیست</div>
       )}
+
+      {/* دکمهٔ اعمال فیلترها */}
+      <div className=" flex justify-end">
+        <Button type="button" variant="ghost" onClick={emit} className="mt-2">
+          اعمال فیلترها
+        </Button>
+      </div>
     </div>
   );
 }

@@ -81,7 +81,7 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <section className="col-span-12 lg:col-span-9">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">دسته: {category}</h1>
+            <h1 className="text-xl font-bold">{category}</h1>
             <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
           </div>
 
@@ -90,28 +90,33 @@ export default function CategoryProductsClientPage({ category }: CategoryProduct
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
-
-          <div className="flex justify-center mt-6">
-            <Button
-              variant="outline"
-              disabled={filters.page === 1}
-              onClick={() => handlePageChange((filters.page ?? 1) - 1)}
-            >
-              قبلی
-            </Button>
-            <Button
-              variant="outline"
-              disabled={(filters.page ?? 1) >= totalPages} 
-              onClick={() => handlePageChange((filters.page ?? 1) + 1)}
-            >
-              بعدی
-            </Button>
-          </div>
         </section>
 
+        {/* فیلترها */}
         <aside className="col-span-12 lg:col-span-3">
           <ProductFilters onChange={handleFiltersChange} initialCategorySlug={category} />
         </aside>
+
+        {/* pagination — ردیف کامل */}
+        <div className="col-span-12 flex justify-center mt-6">
+          <Button
+            variant="outline"
+            disabled={filters.page === 1}
+            onClick={() => handlePageChange((filters.page ?? 1) - 1)}
+            className="mx-1"
+          >
+            قبلی
+          </Button>
+
+          <Button
+            variant="outline"
+            disabled={(filters.page ?? 1) >= totalPages}
+            onClick={() => handlePageChange((filters.page ?? 1) + 1)}
+            className="mx-1"
+          >
+            بعدی
+          </Button>
+        </div>
       </div>
     </div>
   );

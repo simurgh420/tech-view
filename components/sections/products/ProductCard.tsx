@@ -11,23 +11,22 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="border rounded-lg p-3 hover:shadow-lg transition 
-                 flex flex-col"
+      className="border rounded-lg p-3 hover:shadow-md transition flex flex-col"
     >
-      {/* تصویر محصول */}
-      <div className="relative w-full h-48 mb-2">
+      {/* تصویر */}
+      <div className="relative w-full aspect-4/5 mb-3">
         <Image
           src={product.thumbnail || '/placeholder.jpg'}
           alt={product.title}
           fill
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           className="object-cover rounded"
         />
       </div>
 
       {/* عنوان */}
-      <h2 className="text-sm font-semibold line-clamp-2">{product.title}</h2>
-      {/* قیمت‌ها */}
+      <h2 className="text-sm font-semibold line-clamp-2 leading-5">{product.title}</h2>
+
+      {/* قیمت */}
       <div className="mt-2 flex items-center gap-2">
         {product.isDiscounted ? (
           <>
@@ -38,7 +37,7 @@ export default function ProductCard({ product }: { product: Product }) {
               {formatPrice(product.price)} تومان
             </span>
             {product.discountPercentage !== null && (
-              <span className="bg-red-600  text-xs font-bold px-2 py-0.5 rounded">
+              <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
                 %{product.discountPercentage}
               </span>
             )}
@@ -49,17 +48,15 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* امتیاز */}
-      <div className="mt-1 flex items-center text-yellow-500 text-xs">
+      <div className="mt-1 text-yellow-500 text-xs">
         {'★'.repeat(Math.round(Number(product.rating) || 0)) || 'بدون امتیاز'}
       </div>
 
-      {/* برچسب ارسال */}
+      {/* ارسال */}
       <div className="mt-1 text-green-600 dark:text-green-400 text-xs">ارسال سریع</div>
-      {/* دکمه افزودن به سبد */}
-      <Button
-        variant="default"
-        className="mt-auto w-full bg-primary py-2 rounded text-sm hover:bg-primary-dark transition"
-      >
+
+      {/* دکمه */}
+      <Button variant="default" className="mt-auto w-full py-2 text-sm rounded">
         افزودن به سبد
       </Button>
     </Link>

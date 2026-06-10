@@ -1,4 +1,3 @@
-// components/product/SortMenu.tsx
 'use client';
 
 import clsx from 'clsx';
@@ -19,7 +18,7 @@ const SORT_OPTIONS: { value: SortValue; label: string }[] = [
 
 export default function SortMenu({ value, onChange }: Props) {
   return (
-    <section aria-label="مرتب‌سازی محصولات" className="flex items-center gap-4 border-b pb-2">
+    <section aria-label="مرتب‌سازی محصولات" className="flex items-center gap-4 border-b pb-3">
       {/* Sort options */}
       <ul
         className="
@@ -27,6 +26,7 @@ export default function SortMenu({ value, onChange }: Props) {
           overflow-x-auto
           no-scrollbar
           text-sm
+          py-1
         "
       >
         {SORT_OPTIONS.map(option => {
@@ -37,17 +37,15 @@ export default function SortMenu({ value, onChange }: Props) {
               <button
                 type="button"
                 onClick={() => onChange(option.value)}
-                aria-current={isActive ? 'true' : undefined}
                 className={clsx(
                   'relative pb-2 transition-colors duration-200 whitespace-nowrap',
                   isActive
-                    ? 'font-bold text-foreground'
+                    ? 'font-semibold text-foreground'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 {option.label}
 
-                {/* Active underline */}
                 {isActive && (
                   <span
                     className="
@@ -66,8 +64,6 @@ export default function SortMenu({ value, onChange }: Props) {
           );
         })}
       </ul>
-      {/* Label */}
-      <span className="text-sm text-muted-foreground whitespace-nowrap">مرتب‌سازی:</span>
     </section>
   );
 }
