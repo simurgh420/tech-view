@@ -1,9 +1,23 @@
 // components/product/price/BuyActions.tsx
+import { useNotify } from '@/hooks/useNotify';
+import { useCart } from '@/hooks/useCart';
 import { ShoppingCart } from 'lucide-react';
 
-export default function BuyActions({ stock }: { stock: number }) {
+export default function BuyActions({ stock, productId }: { stock: number; productId: string }) {
   const disabled = stock <= 0;
+  const add = useCart().useAddToCart();
+  const notify = useNotify();
+  const handleAdd = () => {
+    if (disabled) return;
 
+    add.mutate(
+      { productId, quantity: 1 },
+      {
+        onSuccess: () => notify.success('به سبد اضافه شد'),
+        onError: () => notify.error('خطا در افزودن به سبد'),
+      }
+    );
+  };
   return (
     <div className="space-y-4">
       {/* خرید فوری */}
@@ -25,6 +39,7 @@ export default function BuyActions({ stock }: { stock: number }) {
       {/* افزودن به سبد خرید */}
       <button
         disabled={disabled}
+        onClick={handleAdd}
         className={`
           w-full py-4 rounded-xl flex items-center justify-center gap-3 text-base font-medium
           transition-all duration-200 border

@@ -9,13 +9,14 @@ import {
   updateCartItemQuantityApi,
 } from '@/services/cart/api/mutations';
 import { fetchCartApi } from '@/services/cart/api/queries';
+import { CartItemWithProduct } from '@/types/cart';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useCart() {
   const qc = useQueryClient();
 
   const useGetCartItems = () => {
-    return useQuery<CartItem[]>({
+    return useQuery<CartItemWithProduct[]>({
       queryKey: ['cart'],
       queryFn: fetchCartApi,
     });

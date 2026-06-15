@@ -1,9 +1,9 @@
 // services/cart/api/queries.ts
 
-import { CartItem } from '@/app/generated/prisma/client';
+import { CartItemWithProduct } from '@/types/cart';
 import axios from 'axios';
 
-export async function fetchCartApi(): Promise<CartItem[]> {
-  const res = await axios.get<CartItem[]>('/api/cart');
+export async function fetchCartApi(): Promise<CartItemWithProduct[]> {
+  const res = await axios.get<CartItemWithProduct[]>('/api/cart');
   return res.data;
 }

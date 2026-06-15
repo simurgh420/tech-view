@@ -3,11 +3,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui';
+import { useCart } from '@/hooks/useCart';
+import { useNotify } from '@/hooks/useNotify';
 
 const formatPrice = (price: string | number) =>
   new Intl.NumberFormat('fa-IR').format(Number(price));
 
 export default function ProductCard({ product }: { product: Product }) {
+  const add = useCart().useAddToCart();
+  const notify = useNotify();
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault(); // جلوگیری از رفتن به صفحه محصول
+    add.mutate(
+      { productId: product.id, quantity: 1 },
+      {
+        onSuccess: () => notify.success('به سبد اضافه شد'),
+        onError: () => notify.error('خطا در افزودن به سبد'),
+      }
+    );
+  };
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -56,7 +70,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="mt-1 text-green-600 dark:text-green-400 text-xs">ارسال سریع</div>
 
       {/* دکمه */}
-      <Button variant="default" className="mt-auto w-full py-2 text-sm rounded">
+      <Button variant="default" className="mt-auto w-full py-2 text-sm rounded" onClick={handleAdd}>
         افزودن به سبد
       </Button>
     </Link>

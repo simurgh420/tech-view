@@ -77,6 +77,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
             price={Number(product.price)}
             discountPrice={product.discountPrice ? Number(product.discountPrice) : null}
             stock={product.stockQuantity ?? 0}
+             productId={product.id} 
           />
         </div>
       </div>
