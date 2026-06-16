@@ -3,6 +3,7 @@
 import { CartItemWithProduct } from '@/types/cart';
 import { useNotify } from '@/hooks/useNotify';
 import { Button } from '../ui';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   items: CartItemWithProduct[];
@@ -10,7 +11,7 @@ type Props = {
 
 export function CartCheckout({ items }: Props) {
   const notify = useNotify();
-
+  const router = useRouter();
   // محاسبه مجموع قیمت (با تخفیف اگر وجود داشته باشد)
   const total = items.reduce((sum, item) => {
     const price = item.product.isDiscounted
@@ -22,7 +23,8 @@ export function CartCheckout({ items }: Props) {
 
   const handleCheckout = () => {
     notify.info('در حال انتقال به صفحه پرداخت...');
-    // اینجا بعداً مسیر checkout را اضافه می‌کنیم
+    // انتقال به صفحه پرداخت
+    router.push('/checkout');
   };
 
   return (
@@ -35,7 +37,7 @@ export function CartCheckout({ items }: Props) {
       <Button
         variant={'secondary'}
         onClick={handleCheckout}
-        className="w-full btn-primary py-3 rounded-lg text-white font-medium"
+        className="w-full py-3 rounded-lg text-white font-medium"
       >
         ادامه فرآیند خرید
       </Button>

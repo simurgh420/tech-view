@@ -7,15 +7,21 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 export async function updateUserAction(formData: FormData) {
+  // 2. بررسی احراز هویت
+  const headersList = await headers();
+  const session = await auth.api.getSession({ headers: headersList });
+  if (!session?.user?.id) {
+    return { success: false, error: 'Unauthorized: لطفاً وارد شوید' };
+  }
+  const isAdmin = session.user.role === 'ADMIN';
   // 1. استخراج و اعتبارسنجی اولیه داده‌ها
-
   const name = String(formData.get('name') ?? '');
   const file = formData.get('file') as File | null;
   if (name && (name.length < 2 || name.length > 50)) {
     return { success: false, error: 'نام باید بین ۲ تا ۵۰ کاراکتر باشد' };
   }
-
-  if (file) {
+  const phone = String(formData.get('phone') ?? '');
+  if (file && !isAdmin) {
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
       return { success: false, error: 'فرمت فایل مجاز نیست (فقط JPEG, PNG, WEBP)' };
@@ -24,13 +30,6 @@ export async function updateUserAction(formData: FormData) {
     if (file.size > maxSize) {
       return { success: false, error: 'حجم فایل نباید بیشتر از ۵ مگابایت باشد' };
     }
-  }
-  // 2. بررسی احراز هویت
-
-  const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
-  if (!session?.user?.id) {
-    return { success: false, error: 'Unauthorized: لطفاً وارد شوید' };
   }
 
   let imageUrl: string | undefined;
@@ -53,6 +52,7 @@ export async function updateUserAction(formData: FormData) {
       headers: await headers(),
       body: {
         ...(name && { name }),
+        ...(phone && { phone }),
         ...(imageUrl && { image: imageUrl }),
       },
     });

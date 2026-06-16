@@ -10,12 +10,13 @@ import { CartEmpty } from './CartEmpty';
 import { CartList } from './CartList';
 import { useCartUI } from '@/stores/cart-ui.store';
 import { Button } from '../ui';
+import { useRouter } from 'next/navigation';
 
 export function CartDrawer() {
   const { isOpen, close } = useCartUI();
   const notify = useNotify();
   const { data, isLoading, isError } = useCart().useGetCartItems();
-
+  const router = useRouter();
   if (isError) notify.error('خطا در دریافت سبد خرید');
 
   const items = data ?? [];
@@ -55,8 +56,8 @@ export function CartDrawer() {
               variant={'secondary'}
               className="w-full py-3 rounded-lg  text-white text-sm font-medium hover:opacity-90 transition"
               onClick={() => {
-                // بعداً می‌تونی اینجا router.push('/cart') یا '/checkout' بذاری
                 notify.info('به زودی به صفحه سبد/پرداخت هدایت می‌شوید');
+                router.push('/checkout');
               }}
             >
               ادامه فرآیند خرید

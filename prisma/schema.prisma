@@ -126,7 +126,7 @@ model Product {
   prices             ProductPrice[]
   reviews            Review[]
   wishlistItems      WishlistItem[]
-  specifications     ProductSpecification[] // ← اضافه شد
+  specifications     ProductSpecification[]
 
   @@index([brandId])
   @@index([categoryId])
@@ -186,6 +186,7 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   name            String
+  phone           String?
   email           String           @unique
   emailVerified   Boolean          @default(false)
   image           String?
@@ -201,6 +202,7 @@ model User {
   wishlistItems   WishlistItem[]
   accounts        Account[]
   sessions        Session[]
+  orders          Order[]
 
   @@map("Users")
 }
@@ -307,6 +309,50 @@ model ContactMessage {
   @@index([createdAt])
 }
 
+
+model Order {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  total         Int
+  status        OrderStatus   @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  items         OrderItem[]
+  address       OrderAddress?
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+
+  productId String
+  title     String
+  price     Int
+  quantity  Int
+}
+
+model OrderAddress {
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  order       Order    @relation(fields: [orderId], references: [id])
+
+  fullName    String
+  phone       String
+  city        String
+  postalCode  String
+  address     String
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
 model playing_with_neon {
   id    Int    @id @default(autoincrement())
   name  String

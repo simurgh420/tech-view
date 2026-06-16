@@ -16,6 +16,7 @@ export async function registerAction(values: unknown) {
         email: parsed.email,
         password: parsed.password,
         name: parsed.name,
+        phone: parsed.phone,
       },
     });
 

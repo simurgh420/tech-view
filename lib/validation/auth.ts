@@ -8,6 +8,11 @@ export const RegisterSchema = z.object({
     .min(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد')
     .regex(/[A-Z]/, 'رمز عبور باید حداقل یک حرف بزرگ داشته باشد')
     .regex(/[0-9]/, 'رمز عبور باید حداقل یک عدد داشته باشد'),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .refine(val => !val || /^09\d{9}$/.test(val), 'شماره موبایل معتبر نیست'),
 });
 
 export type RegisterInput = z.infer<typeof RegisterSchema>;
