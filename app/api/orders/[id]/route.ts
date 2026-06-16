@@ -6,8 +6,9 @@ import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { getOrderByIdDB } from '@/services/orders/db/queries';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const startTime = Date.now();
+  const { id } = await params;
 
   try {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -19,11 +20,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const order = await getOrderByIdDB(params.id, session.user.id);
+    const order = await getOrderByIdDB(id, session.user.id);
 
     if (!order) {
       logger.warn('GET /api/orders/[id] - Not found', {
-        orderId: params.id,
+        orderId: id,
         userId: session.user.id,
         duration: Date.now() - startTime,
       });
@@ -31,7 +32,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 
     logger.info('GET /api/orders/[id] succeeded', {
-      orderId: params.id,
+      orderId: id,
       userId: session.user.id,
       duration: Date.now() - startTime,
     });
