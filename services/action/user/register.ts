@@ -4,9 +4,19 @@ import { auth } from '@/lib/auth';
 import { RegisterSchema } from '@/lib/validation/auth';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
+import { logger } from '@/lib/logger';
 
 export async function registerAction(values: unknown) {
-  const parsed = RegisterSchema.parse(values);
+  logger.info('RegisterAction started');
+
+  let parsed;
+  try {
+    parsed = RegisterSchema.parse(values);
+  } catch (err) {
+    logger.warn('Register validation failed', { error: err });
+    return { success: false, error: 'اطلاعات وارد شده معتبر نیست' };
+  }
+
   const headersList = await headers();
 
   try {
@@ -20,19 +30,26 @@ export async function registerAction(values: unknown) {
       },
     });
 
+    logger.info('User registered successfully', { email: parsed.email });
+
     return { success: true, data: res };
   } catch (err) {
     if (err instanceof APIError) {
-      // خطای 400 معمولاً برای ایمیل تکراری یا رمز ضعیف
+      logger.error('BetterAuth register error', {
+        status: err.status,
+        message: err.message,
+        email: parsed.email,
+      });
+
       if (err.status === 400) {
         return { success: false, error: 'ایمیل تکراری یا اطلاعات نامعتبر است' };
       }
+
       return { success: false, error: err.message };
     }
-    // خطای اعتبارسنجی Zod
-    if (err instanceof Error && err.name === 'ZodError') {
-      return { success: false, error: 'اطلاعات وارد شده معتبر نیست' };
-    }
+
+    logger.error('Unknown register error', { error: err });
+
     return { success: false, error: 'خطای داخلی سرور' };
   }
 }

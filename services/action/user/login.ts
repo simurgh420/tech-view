@@ -4,9 +4,19 @@ import { auth } from '@/lib/auth';
 import { LoginSchema } from '@/lib/validation/auth';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
+import { logger } from '@/lib/logger';
 
 export async function loginAction(values: unknown) {
-  const parsed = LoginSchema.parse(values);
+  logger.info('LoginAction started');
+
+  let parsed;
+  try {
+    parsed = LoginSchema.parse(values);
+  } catch (err) {
+    logger.warn('Login validation failed', { error: err });
+    return { success: false, error: 'اطلاعات وارد شده معتبر نیست' };
+  }
+
   const headersList = await headers();
 
   try {
@@ -18,19 +28,26 @@ export async function loginAction(values: unknown) {
       },
     });
 
+    logger.info('User logged in successfully', { email: parsed.email });
+
     return { success: true, data: res };
   } catch (err) {
     if (err instanceof APIError) {
-      // مدیریت خطاهای خاص مثل رمز اشتباه
+      logger.error('BetterAuth login error', {
+        status: err.status,
+        message: err.message,
+        email: parsed.email,
+      });
+
       if (err.status === 400) {
         return { success: false, error: 'ایمیل یا رمز عبور اشتباه است' };
       }
+
       return { success: false, error: err.message };
     }
-    // خطای اعتبارسنجی Zod
-    if (err instanceof Error && err.name === 'ZodError') {
-      return { success: false, error: 'اطلاعات وارد شده معتبر نیست' };
-    }
+
+    logger.error('Unknown login error', { error: err });
+
     return { success: false, error: 'خطای داخلی سرور' };
   }
 }

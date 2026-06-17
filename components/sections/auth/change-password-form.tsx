@@ -20,6 +20,7 @@ import {
 import { changePasswordAction } from '@/services/action/user/changePasswordAction';
 
 import { useNotify } from '@/hooks/useNotify';
+import { useRouter } from 'next/navigation';
 
 const schema = z
   .object({
@@ -45,6 +46,7 @@ type FormValues = z.infer<typeof schema>;
 export const ChangePasswordForm = () => {
   const [isPending, setIsPending] = useState(false);
   const notify = useNotify();
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -69,6 +71,7 @@ export const ChangePasswordForm = () => {
     } else {
       notify.success('رمز عبور با موفقیت تغییر کرد');
       form.reset();
+      router.push('/login');
     }
 
     setIsPending(false);
