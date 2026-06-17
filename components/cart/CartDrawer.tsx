@@ -21,9 +21,9 @@ export function CartDrawer() {
 
   const items = data ?? [];
   const total = items.reduce((sum, item) => {
-    const price = item.product.isDiscounted
-      ? Number(item.product.discountPrice)
-      : Number(item.product.price);
+    const price = item.product?.isDiscounted
+      ? Number(item.product?.discountPrice)
+      : Number(item.product?.price);
     return sum + price * item.quantity;
   }, 0);
 

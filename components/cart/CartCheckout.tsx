@@ -14,9 +14,9 @@ export function CartCheckout({ items }: Props) {
   const router = useRouter();
   // محاسبه مجموع قیمت (با تخفیف اگر وجود داشته باشد)
   const total = items.reduce((sum, item) => {
-    const price = item.product.isDiscounted
-      ? Number(item.product.discountPrice)
-      : Number(item.product.price);
+    const price = item.product?.isDiscounted
+      ? Number(item.product?.discountPrice)
+      : Number(item.product?.price);
 
     return sum + price * item.quantity;
   }, 0);

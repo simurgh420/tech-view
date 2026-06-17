@@ -7,9 +7,9 @@ type CheckoutSummaryProps = {
 
 export function CheckoutSummary({ items }: CheckoutSummaryProps) {
   const total = items.reduce((sum, item) => {
-    const price = item.product.isDiscounted
-      ? Number(item.product.discountPrice)
-      : Number(item.product.price);
+    const price = item.product?.isDiscounted
+      ? Number(item.product?.discountPrice)
+      : Number(item.product?.price);
     return sum + price * item.quantity;
   }, 0);
 
@@ -22,22 +22,22 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
           <div key={item.id} className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Image
-                src={item.product.thumbnail ?? '/placeholder.png'}
-                alt={item.product.title}
+                src={item.product?.thumbnail ?? '/placeholder.png'}
+                alt={item.product?.title ?? 'محصول'}
                 width={60}
                 height={60}
                 className="rounded-md border object-cover"
               />
 
               <div className="text-sm">
-                <p className="font-medium line-clamp-1">{item.product.title}</p>
+                <p className="font-medium line-clamp-1">{item.product?.title}</p>
                 <p className="text-gray-500 text-xs">تعداد: {item.quantity}</p>
               </div>
             </div>
 
             <span className="text-sm font-semibold whitespace-nowrap">
               {(
-                item.quantity * Number(item.product.discountPrice ?? item.product.price)
+                item.quantity * Number(item.product?.discountPrice ?? item.product?.price)
               ).toLocaleString()}{' '}
               تومان
             </span>

@@ -11,8 +11,8 @@ export function CartList({ items }: { items: CartItemWithProduct[] }) {
           {/* تصویر */}
           <div className="w-16 h-16 rounded-md bg-muted overflow-hidden shrink-0">
             <Image
-              src={item.product.thumbnail || '/placeholder.jpg'}
-              alt={item.product.title}
+              src={item.product?.thumbnail || '/placeholder.jpg'}
+              alt={item.product?.title ?? 'محصول'}
               width={64}
               height={64}
               className="object-cover w-full h-full"

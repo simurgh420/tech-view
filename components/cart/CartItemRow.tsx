@@ -10,32 +10,24 @@ type Props = {
 };
 export function CartItemRow({ item }: Props) {
   const notify = useNotify();
-  const update = useCart().useUpdateCartItemQuantity();
-  const remove = useCart().useRemoveFromCart();
-
+  const { mutate: updateQuantity } = useCart().useUpdateCartItemQuantity();
+  const { mutate: removeItem } = useCart().useRemoveFromCart();
   const inc = () => {
-    update.mutate(
+    updateQuantity(
       { id: item.id, quantity: item.quantity + 1 },
-      {
-        onSuccess: () => notify.success('تعداد افزایش یافت'),
-        onError: () => notify.error('خطا در افزایش تعداد'),
-      }
+      { onError: () => notify.error('خطا در افزایش تعداد') }
     );
   };
 
   const dec = () => {
-    update.mutate(
+    updateQuantity(
       { id: item.id, quantity: item.quantity - 1 },
-      {
-        onSuccess: () => notify.success('تعداد کاهش یافت'),
-        onError: () => notify.error('خطا در کاهش تعداد'),
-      }
+      { onError: () => notify.error('خطا در کاهش تعداد') }
     );
   };
 
   const del = () => {
-    remove.mutate(item.id, {
-      onSuccess: () => notify.success('آیتم حذف شد'),
+    removeItem(item.id, {
       onError: () => notify.error('خطا در حذف آیتم'),
     });
   };
@@ -43,8 +35,10 @@ export function CartItemRow({ item }: Props) {
   return (
     <div className="flex justify-between items-center">
       <div>
-        <p className="font-medium">{item.product.title}</p>
-        <p className="text-sm text-muted-foreground">{item.product.price.toLocaleString()} تومان</p>
+        <p className="font-medium">{item.product?.title}</p>
+        <p className="text-sm text-muted-foreground">
+          {item.product?.price.toLocaleString()} تومان
+        </p>
       </div>
 
       <div className="flex items-center gap-2">

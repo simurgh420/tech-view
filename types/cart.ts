@@ -16,5 +16,5 @@ export type SelectedProduct = Pick<Product, ProductSelectKeys>;
 
 // ساخت نوع CartItemWithProduct
 export type CartItemWithProduct = CartItem & {
-  product: SelectedProduct;
+  product?: SelectedProduct;
 };

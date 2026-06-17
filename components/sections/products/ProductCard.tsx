@@ -17,7 +17,6 @@ export default function ProductCard({ product }: { product: Product }) {
     add.mutate(
       { productId: product.id, quantity: 1 },
       {
-        onSuccess: () => notify.success('به سبد اضافه شد'),
         onError: () => notify.error('خطا در افزودن به سبد'),
       }
     );
