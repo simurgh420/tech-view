@@ -39,7 +39,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
     rating: r.rating,
     comment: r.content,
   }));
-
+  console.log('ProductPageClient specsArray:', JSON.stringify(specsArray, null, 2));
   return (
     <div className="container mx-auto py-6 space-y-12">
       {/* Breadcrumb */}
@@ -77,6 +77,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
             price={Number(product.price)}
             discountPrice={product.discountPrice ? Number(product.discountPrice) : null}
             stock={product.stockQuantity ?? 0}
+             productId={product.id} 
           />
         </div>
       </div>

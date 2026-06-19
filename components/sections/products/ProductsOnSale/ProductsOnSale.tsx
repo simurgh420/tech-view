@@ -39,7 +39,7 @@ export function ProductsOnSale() {
           {/* لیست محصولات */}
           <div
             ref={scrollRef}
-            className="overflow-x-auto scrollbar-hide px-2"
+            className="overflow-x-auto scrollbar-hide"
             style={{ scrollBehavior: 'smooth' }}
           >
             <div className="flex gap-6 min-h-full">

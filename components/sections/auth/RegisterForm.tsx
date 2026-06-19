@@ -30,7 +30,7 @@ export function RegisterForm() {
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: '',phone: '', password: '' },
     mode: 'onSubmit',
   });
 
@@ -72,7 +72,7 @@ export function RegisterForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white ">نام</FormLabel>
+                <FormLabel className="text-white ">*نام</FormLabel>
                 <FormControl>
                   <Input placeholder="نام شما" {...field} className=" h-11 text-base" />
                 </FormControl>
@@ -86,7 +86,7 @@ export function RegisterForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">ایمیل</FormLabel>
+                <FormLabel className="text-white">*ایمیل</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -101,10 +101,23 @@ export function RegisterForm() {
           />
           <FormField
             control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">شماره موبایل</FormLabel>
+                <FormControl>
+                  <Input placeholder="مثال: 09123456789" {...field} className="h-11 text-base" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">رمز عبور</FormLabel>
+                <FormLabel className="text-white">*رمز عبور</FormLabel>
                 <FormControl>
                   <Input
                     type="password"

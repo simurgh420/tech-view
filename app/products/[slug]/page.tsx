@@ -6,9 +6,11 @@ import { SkeletonProductDetail } from '@/components/ui/skeleton';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const deCodeSlug = decodeURIComponent(slug);
+
   return (
     <Suspense fallback={<SkeletonProductDetail />}>
-      <ProductPageClient slug={slug} />
+      <ProductPageClient slug={deCodeSlug} />
     </Suspense>
   );
 }

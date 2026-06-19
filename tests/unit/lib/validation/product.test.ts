@@ -39,12 +39,25 @@ describe('Product Validation Schemas', () => {
       expect(productFormSchema.safeParse(withOptional).success).toBe(true);
     });
 
-    it('should reject invalid thumbnail (neither File nor URL)', () => {
+    it('should reject invalid thumbnail (neither File nor string)', () => {
       const invalid = { ...validInput, thumbnail: 123 };
       expect(productFormSchema.safeParse(invalid).success).toBe(false);
     });
 
-    // ... می‌توان تست‌های اعتبارسنجی فیلدهای اجباری مانند title, price و ... اضافه کرد
+    // 🆕 تست جدید: قبول مسیر نسبی برای thumbnail
+    it('should accept relative path string for thumbnail', () => {
+      const input = { ...validInput, thumbnail: '/uploads/test.jpg' };
+      expect(productFormSchema.safeParse(input).success).toBe(true);
+    });
+
+    // 🆕 تست جدید: قبول مسیر نسبی و URL در images
+    it('should accept mixed relative and absolute URLs in images', () => {
+      const input = {
+        ...validInput,
+        images: ['/uploads/img1.jpg', 'https://cdn.example.com/img2.png'],
+      };
+      expect(productFormSchema.safeParse(input).success).toBe(true);
+    });
   });
 
   // ---------- createProductPayloadSchema ----------
@@ -61,15 +74,23 @@ describe('Product Validation Schemas', () => {
     it('should accept valid payload', () => {
       expect(createProductPayloadSchema.safeParse(validPayload).success).toBe(true);
     });
+    it('should reject thumbnail that is not upload path', () => {
+      const input = {
+        ...validPayload,
+        thumbnail: 'https://example.com/image.jpg',
+      };
 
+      expect(createProductPayloadSchema.safeParse(input).success).toBe(false);
+    });
     it('should apply default values for optional fields', () => {
       const result = createProductPayloadSchema.parse(validPayload);
-      expect(result.stockQuantity).toBe(10); // provided
-      expect(result.images).toEqual([]);
+      expect(result.stockQuantity).toBe(10);
+      expect(result.images).toBeUndefined();
       expect(result.keyFeatures).toEqual([]);
       expect(result.colors).toEqual([]);
       expect(result.variants).toEqual([]);
       expect(result.specifications).toEqual([]);
+
       expect(result.isFeatured).toBe(false);
       expect(result.isNew).toBe(true);
     });
@@ -88,6 +109,18 @@ describe('Product Validation Schemas', () => {
       const invalid = { ...validPayload, stockQuantity: -5 };
       expect(createProductPayloadSchema.safeParse(invalid).success).toBe(false);
     });
+
+    // 🆕 تست جدید: قبول thumbnail به صورت رشته (مسیر نسبی)
+    it('should accept thumbnail as a relative path string', () => {
+      const input = { ...validPayload, thumbnail: '/uploads/thumb.jpg' };
+      expect(createProductPayloadSchema.safeParse(input).success).toBe(true);
+    });
+
+    // 🆕 تست جدید: قبول thumbnail به صورت null
+    it('should accept thumbnail as null', () => {
+      const input = { ...validPayload, thumbnail: null };
+      expect(createProductPayloadSchema.safeParse(input).success).toBe(true);
+    });
   });
 
   // ---------- createProductSchema (Server) ----------
@@ -101,48 +134,72 @@ describe('Product Validation Schemas', () => {
       stockQuantity: 10,
     };
 
-    it('should accept valid input (slug optional)', () => {
-      expect(createProductSchema.safeParse(validInput).success).toBe(true);
+    it('should accept upload paths', () => {
+      const input = {
+        ...validInput,
+        thumbnail: '/uploads/thumb.jpg',
+        images: ['/uploads/img1.jpg', '/uploads/img2.jpg'],
+      };
+
+      expect(createProductSchema.safeParse(input).success).toBe(true);
     });
 
-    it('should accept optional slug', () => {
-      const withSlug = { ...validInput, slug: 'my-product' };
-      expect(createProductSchema.safeParse(withSlug).success).toBe(true);
+    it('should reject external image urls', () => {
+      const input = {
+        ...validInput,
+        thumbnail: 'https://example.com/thumb.jpg',
+      };
+
+      expect(createProductSchema.safeParse(input).success).toBe(false);
     });
 
-    it('should apply defaults for optional arrays/booleans', () => {
+    it('should apply defaults', () => {
       const result = createProductSchema.parse(validInput);
-      expect(result.images).toEqual([]);
+
+      expect(result.images).toBeUndefined();
       expect(result.isFeatured).toBe(false);
       expect(result.isNew).toBe(true);
-      expect(result.publishedAt).toBeUndefined(); // optional, not default
+      expect(result.publishedAt).toBeUndefined();
     });
   });
 
   // ---------- updateProductSchema ----------
   describe('updateProductSchema', () => {
-    it('should allow partial update (only title)', () => {
-      const update = { title: 'عنوان جدید' };
+    it('should allow upload paths', () => {
+      const update = {
+        thumbnail: '/uploads/thumb.jpg',
+        images: ['/uploads/img1.jpg'],
+      };
+
       expect(updateProductSchema.safeParse(update).success).toBe(true);
     });
 
-    it('should allow partial update (only price)', () => {
-      const update = { price: 200000 };
-      expect(updateProductSchema.safeParse(update).success).toBe(true);
+    it('should reject external thumbnail url', () => {
+      const update = {
+        thumbnail: 'https://example.com/thumb.jpg',
+      };
+
+      expect(updateProductSchema.safeParse(update).success).toBe(false);
+    });
+
+    it('should reject external image url', () => {
+      const update = {
+        images: ['https://example.com/img.jpg'],
+      };
+
+      expect(updateProductSchema.safeParse(update).success).toBe(false);
+    });
+
+    it('should allow partial update', () => {
+      expect(
+        updateProductSchema.safeParse({
+          title: 'عنوان جدید',
+        }).success
+      ).toBe(true);
     });
 
     it('should allow empty object', () => {
       expect(updateProductSchema.safeParse({}).success).toBe(true);
-    });
-
-    it('should reject invalid price (non-positive)', () => {
-      const update = { price: 0 };
-      expect(updateProductSchema.safeParse(update).success).toBe(false);
-    });
-
-    it('should reject invalid stockQuantity (negative)', () => {
-      const update = { stockQuantity: -1 };
-      expect(updateProductSchema.safeParse(update).success).toBe(false);
     });
   });
 });

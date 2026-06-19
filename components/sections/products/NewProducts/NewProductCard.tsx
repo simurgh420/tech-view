@@ -17,7 +17,7 @@ export function ProductCard({ title, image, colors, price, rating }: NewProps) {
     >
       <div className=" rounded-lg shadow-sm hover:shadow-md transition p-4 text-center h-75 flex flex-col justify-between">
         <div className="relative w-full h-37.5 mb-3">
-          <Image src={image} alt={title} fill className="object-contain" />
+          <Image src={image} alt={title} fill sizes="200px" className="object-contain" />{' '}
         </div>
         <h3 className="text-sm font-semibold  mb-1">{title}</h3>
         <div className="flex items-center justify-between gap-2 mt-auto">

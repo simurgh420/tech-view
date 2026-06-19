@@ -88,6 +88,7 @@ export default function BlogError({
               className="mt-10 flex flex-wrap items-center justify-center gap-4"
             >
               <button
+                type="button"
                 onClick={handleRetry}
                 className="group inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-2.5 
                            text-sm font-semibold text-white shadow-lg shadow-red-200 

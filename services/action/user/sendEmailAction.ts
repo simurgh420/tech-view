@@ -1,6 +1,7 @@
 'use server';
 
 import transporter from '@/lib/auth/nodemailer';
+import { logger } from '@/lib/logger';
 
 export async function sendEmailAction({
   to,
@@ -14,26 +15,31 @@ export async function sendEmailAction({
     link: string;
   };
 }) {
+  logger.info('SendEmailAction started', { to, subject });
   // 1. اعتبارسنجی ورودی‌ها
   if (!to || typeof to !== 'string' || !to.includes('@')) {
+    logger.warn('Invalid email address provided', { to });
     return { success: false, error: 'آدرس ایمیل گیرنده معتبر نیست' };
   }
   if (!subject || typeof subject !== 'string') {
+    logger.warn('Invalid email subject', { subject });
     return { success: false, error: 'موضوع ایمیل نامعتبر است' };
   }
   if (!meta?.description || !meta?.link) {
+    logger.warn('Incomplete email meta data', { meta });
     return { success: false, error: 'محتوای ایمیل کامل نیست' };
   }
   // 2. اعتبارسنجی امنیتی لینک (جلوگیری از open redirect یا لینک‌های مخرب)
   try {
     new URL(meta.link);
   } catch {
+    logger.warn('Invalid email link', { link: meta.link });
     return { success: false, error: 'لینک نامعتبر است' };
   }
   // بررسی پیکربندی SMTP
 
   if (!process.env.NODEMAILER_USER || !transporter) {
-    console.error('[SendEmail] SMTP configuration missing');
+    logger.error('SMTP configuration missing');
     return { success: false, error: 'سیستم ارسال ایمیل پیکربندی نشده است' };
   }
 
@@ -119,10 +125,10 @@ export async function sendEmailAction({
       subject: `BetterAuthy - ${subject}`,
       html,
     });
-
+    logger.info('Email sent successfully', { to, subject });
     return { success: true, error: null };
   } catch (err) {
-    console.error('[SendEmail] Error:', err);
+    logger.error('SendEmail error', { error: err });
     return { success: false, error: 'خطا در ارسال ایمیل. لطفاً دقایقی دیگر تلاش کنید.' };
   }
 }

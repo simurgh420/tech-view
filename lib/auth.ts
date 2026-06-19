@@ -97,6 +97,11 @@ const options = {
       },
       banReason: { type: 'string', input: false },
       banExpiresAt: { type: 'date', input: false },
+      phone: {
+        type: 'string',
+        input: true,
+        required: false,
+      },
     },
   },
   session: {
@@ -155,6 +160,7 @@ export const auth = betterAuth({
           image: user.image,
           createdAt: user.createdAt,
           role: user.role,
+          phone: user.phone,
         },
       };
     }, options),

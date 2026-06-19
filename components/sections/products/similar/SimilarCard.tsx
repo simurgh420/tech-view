@@ -9,7 +9,13 @@ export default function SimilarCard({ product }: { product: any }) {
   return (
     <div className="border rounded-xl p-3 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition cursor-pointer">
       <div className="relative w-full h-40 mb-3">
-        <Image src={product.thumbnail} alt={product.title} fill className="object-contain" />
+        <Image
+          src={product.thumbnail}
+          alt={product.title}
+          fill
+          sizes="250px"
+          className="object-contain"
+        />
       </div>
 
       <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2">

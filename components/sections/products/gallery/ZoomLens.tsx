@@ -37,7 +37,7 @@ export default function ZoomLens({ src, alt = 'product image' }: ZoomLensProps) 
         alt={alt}
         fill
         className="object-cover transition-opacity duration-200"
-        sizes="100vw"
+        sizes="(max-width: 768px) 100vw, 600px"
       />
 
       <img

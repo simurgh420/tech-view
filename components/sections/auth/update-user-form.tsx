@@ -28,6 +28,10 @@ import { deleteUserImageAction } from '@/services/action/user/deleteUserImageAct
 const schema = z
   .object({
     name: z.string().optional(),
+    phone: z
+      .string()
+      .optional()
+      .refine(val => !val || /^09\d{9}$/.test(val), 'شماره موبایل معتبر نیست'),
     file: z
       .any()
       .optional()
@@ -47,9 +51,10 @@ type FormValues = z.infer<typeof schema>;
 interface UpdateUserFormProps {
   name: string;
   image: string;
+  phone: string;
 }
 
-export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
+export const UpdateUserForm = ({ name, image, phone }: UpdateUserFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const [preview, setPreview] = useState<string | null>(image);
   const router = useRouter();
@@ -59,6 +64,7 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
     resolver: zodResolver(schema),
     defaultValues: {
       name,
+      phone,
       file: undefined,
     },
   });
@@ -68,6 +74,7 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
 
     const formData = new FormData();
     if (values.name) formData.append('name', values.name);
+    if (values.phone) formData.append('phone', values.phone);
     if (values.file?.[0]) formData.append('file', values.file[0]);
 
     const { error, imageUrl } = await updateUserAction(formData);
@@ -145,7 +152,20 @@ export const UpdateUserForm = ({ name, image }: UpdateUserFormProps) => {
             </FormItem>
           )}
         />
-
+        {/* Phone */}
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>شماره موبایل</FormLabel>
+              <FormControl>
+                <Input placeholder="مثال: 09123456789" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Image Upload */}
         <FormField
           control={form.control}

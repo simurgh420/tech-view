@@ -201,8 +201,4 @@
     border-color: var(--border);
   }
 }
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
+

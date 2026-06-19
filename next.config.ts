@@ -3,12 +3,16 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@node-rs/argon2'],
   images: {
-    domains: ['localhost'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'cdn.brandfetch.io',
         pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+        port: '3000',
       },
     ],
   },

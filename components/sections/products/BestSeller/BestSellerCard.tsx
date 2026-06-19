@@ -27,7 +27,7 @@ export function BestSellerCard({
     >
       <div className="rounded-lg shadow-sm hover:shadow-md transition px-4 text-center h-75 flex flex-col justify-between">
         <div className="relative w-full h-37.5 mb-3">
-          <Image src={image} alt={title} fill className="object-contain" />
+          <Image src={image} alt={title} fill sizes="200px" className="object-contain" />
           {discount !== undefined && (
             <div className="absolute top-2 left-2 bg-orange-500 text-sm font-bold px-2 py-1 rounded">
               -{discount}%

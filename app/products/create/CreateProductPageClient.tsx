@@ -55,6 +55,7 @@ export default function CreateProductPageClient() {
         imageUrls.push(img);
       }
     }
+    const cleanedColors = (data.colors ?? []).filter(c => c.name && c.hex);
     /* ------------------ final payload ------------------ */
     const payload: CreateProductPayload = {
       title: data.title,
@@ -65,7 +66,7 @@ export default function CreateProductPageClient() {
       thumbnail: thumbnailUrl || null,
       images: imageUrls,
       keyFeatures: data.keyFeatures ?? [],
-      colors: data.colors ?? [],
+      colors: cleanedColors,
       variants: data.variants ?? [],
       specifications: data.specifications ?? [],
       isFeatured: data.isFeatured ?? false,

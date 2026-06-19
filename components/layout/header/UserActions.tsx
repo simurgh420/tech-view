@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogoutButton } from '@/components/button/LogoutButton';
+import { CartButton } from '@/components/cart/CartButton';
 
 interface UserActionsProps {
   session: Awaited<ReturnType<typeof import('@/lib/auth').auth.api.getSession>> | null;
@@ -24,13 +25,25 @@ export function UserActions({ session }: UserActionsProps) {
   return (
     <div className="flex items-center gap-5">
       {/* Search */}
-      <button className="p-2 rounded-full dark:hover:bg-gray-500 transition-colors">
-        <Search className="size-4 " />
+      <button
+        type="button"
+        aria-label="جستجو"
+        className="
+    relative flex items-center justify-center
+    w-11 h-11 rounded-full
+    bg-white/70 dark:bg-gray-800/60
+    backdrop-blur-md
+    shadow-sm hover:shadow-md
+    border border-gray-200/50 dark:border-gray-700/50
+    transition-all duration-200
+    hover:scale-105 active:scale-95
+  "
+      >
+        <Search className="size-5 text-gray-700 dark:text-gray-200" />
       </button>
+
       {/* Cart */}
-      <button className="p-2 rounded-full dark:hover:bg-gray-500 transition-colors">
-        <ShoppingCart className="size-5 " />
-      </button>
+      <CartButton />
 
       {/* Not logged in */}
       {!user && (

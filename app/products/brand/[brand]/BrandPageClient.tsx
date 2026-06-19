@@ -83,7 +83,7 @@ export default function BrandProductsClientPage({ brand }: BrandProductsPageProp
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <section className="col-span-12 lg:col-span-9">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">برند: {brand}</h1>
+            <h1 className="text-xl font-bold">{brand}</h1>
             <SortMenu value={filters.sort ?? 'new'} onChange={handleSortChange} />
           </div>
 

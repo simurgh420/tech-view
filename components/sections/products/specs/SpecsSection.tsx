@@ -28,8 +28,8 @@ export default function SpecsSection({ title, items }: Props) {
       {/* Content */}
       {open && (
         <div className="divide-y">
-          {items.map((item, i) => (
-            <SpecsRow key={i} label={item.label} value={item.value} />
+          {items.map(item => (
+            <SpecsRow key={`${item.label}-${item.value}`} label={item.label} value={item.value} />
           ))}
         </div>
       )}

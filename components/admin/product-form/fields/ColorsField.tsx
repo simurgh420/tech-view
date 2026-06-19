@@ -66,8 +66,12 @@ export function ColorsField({ control }: Props) {
                 variant="secondary"
                 size="sm"
                 onClick={() => {
-                  if (colors.length > 0 && !colors[colors.length - 1].name) return;
-                  field.onChange([...colors, { name: '', hex: '#000000' }]);
+                  if (colors.length > 0) {
+                    const last = colors[colors.length - 1];
+                    if (!last.name || !last.hex) return;
+                  }
+
+                  field.onChange([...colors, { name: '', hex: '#ffffff' }]);
                 }}
               >
                 افزودن رنگ جدید

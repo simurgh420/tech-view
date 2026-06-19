@@ -3,8 +3,8 @@ import { CategoryCard } from './CategoryCard';
 
 export function CategoriesSection() {
   return (
-    <section className="mt-2 px-6 sm:px-6 lg:px-6 lg:ml-25">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1 justify-center">
+    <section className="mt-10">
+      <div className="w-max mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 md:gap-6">
         {categories.map(cat => (
           <CategoryCard key={cat.title} {...cat} />
         ))}

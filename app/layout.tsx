@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/footer';
 import { Providers } from './providers';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { CartDrawer } from '@/components/cart/CartDrawer';
 
 export const metadata: Metadata = {
   title: 'Tech-view',
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" suppressHydrationWarning>
-      <body>
+      <body className="min-h-screen bg-background antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -31,6 +32,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <Toaster richColors position="top-right" />
+            <CartDrawer />
           </Providers>
         </ThemeProvider>
       </body>

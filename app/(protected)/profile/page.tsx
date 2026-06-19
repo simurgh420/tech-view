@@ -16,13 +16,13 @@ export default async function ProfilePage() {
     return <div className="text-center ">Not authenticated</div>;
   }
 
-  const { name, image } = session.user;
+  const { name, image, phone } = session.user;
 
   return (
     <div className="max-w-lg mx-auto mt-10 space-y-8">
       <h1 className="text-2xl font-semibold">Profile</h1>
 
-      <UpdateUserForm name={name ?? ''} image={image ?? ''} />
+      <UpdateUserForm name={name ?? ''} image={image ?? ''} phone={phone ?? ''} />
     </div>
   );
 }

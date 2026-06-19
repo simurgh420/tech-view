@@ -8,6 +8,7 @@ export function HeroImage() {
         alt="Modern laptops"
         width={728}
         height={443}
+        loading="eager"
         className="drop-shadow-xl"
       />
     </div>

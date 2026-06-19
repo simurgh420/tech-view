@@ -70,6 +70,7 @@ export const SignInOauthButton = ({ provider, signUp, className }: SignInOauthBu
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={isPending}
       className={cn(
