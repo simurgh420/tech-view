@@ -4,6 +4,7 @@
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
+import { logger } from '@/lib/logger';
 import { toSlug } from '@/lib/slug-common';
 import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -66,7 +67,7 @@ export function CreateBlogPageClient() {
           } else {
             notify.error('خطا در ایجاد بلاگ');
           }
-          console.error(error);
+          logger.error(error);
         },
       }
     );
