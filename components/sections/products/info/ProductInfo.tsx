@@ -29,7 +29,7 @@ export default function ProductInfo({
   variants = [],
 }: Props) {
   return (
-    <div className="space-y-6">
+    <div dir="rtl" className="space-y-6">
       <ProductTitle title={title} brand={brand} />
 
       <ProductRating rating={rating} ratingCount={ratingCount} />
