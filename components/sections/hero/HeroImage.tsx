@@ -30,11 +30,12 @@ export function HeroImage() {
       <div
         className="
     absolute inset-0
+    pointer-events-none
     bg-linear-to-br from-purple-600/40 via-blue-600/30 to-indigo-700/40
     blur-[120px]
     scale-[1.6]
     rounded-full
-    animate-pulse-slow
+animate-pulse-slow
   "
       />
 
