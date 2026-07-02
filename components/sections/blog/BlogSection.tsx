@@ -7,7 +7,7 @@ export async function BlogSection() {
   if (!recent?.length) return null;
 
   return (
-    <section className="mt-10">
+    <section className="mt-10 text-right" dir="rtl">
       <div className="rounded-2xl shadow-lg px-6 py-10 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -24,7 +24,7 @@ export async function BlogSection() {
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="group rounded-xl overflow-hidden shadow-sm hover:shadow-md 
+              className="group rounded-xl overflow-hidden shadow-sm hover:shadow-md
                          transition-all duration-300 flex flex-col hover:-translate-y-1"
               aria-label={post.title}
             >
