@@ -35,6 +35,7 @@
     "upload",
     "reviews",
     "Wishlist",
-    "checkout"
+    "checkout",
+    "Search"
   ]
 }
