@@ -8,6 +8,16 @@ export type SpecsGroup = {
   group: string;
   items: SpecsItem[];
 };
+export interface ProductReview {
+  id: string;
+  rating: number;
+  title: string | null;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId: string | null;
+  user: { id: string; name: string; image: string | null } | null;
+}
 
 export type ProductPayload = {
   title: string;
@@ -51,15 +61,7 @@ export type Product = {
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   rating: string | null;
   reviewCount: number;
-  reviews?: {
-    rating: number;
-    content: string;
-    user: {
-      id: string;
-      name: string;
-      image: string | null;
-    };
-  }[];
+  reviews?: ProductReview[];
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;

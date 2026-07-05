@@ -8,13 +8,14 @@ import {
   updateReviewApi,
 } from '@/services/reviews/api/mutations';
 import { fetchReviewsByProductApi } from '@/services/reviews/api/queries';
+import { ReviewWithAuthor } from '@/types/review';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useReviews(slug: string) {
   const qc = useQueryClient();
   const useGetReviews = () =>
-    useQuery<Review[]>({
+    useQuery<ReviewWithAuthor[]>({
       queryKey: ['reviews', slug],
       queryFn: () => fetchReviewsByProductApi(slug),
       enabled: !!slug,
