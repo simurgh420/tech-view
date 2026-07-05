@@ -125,6 +125,7 @@ model Product {
   subCategory        Category?      @relation("SubCategoryProducts", fields: [subCategoryId], references: [id])
   prices             ProductPrice[]
   reviews            Review[]
+  comments           ProductComment[]
   wishlistItems      WishlistItem[]
   specifications     ProductSpecification[]
 
@@ -203,7 +204,7 @@ model User {
   accounts        Account[]
   sessions        Session[]
   orders          Order[]
-
+  productComments   ProductComment[]
   @@map("Users")
 }
 
@@ -346,6 +347,30 @@ model OrderAddress {
   address     String
 }
 
+
+model ProductComment {
+  id        String           @id @default(cuid())
+  content   String
+  productId String
+  authorId  String?
+  parentId  String?
+  depth     Int              @default(0)
+
+  status    CommentStatus    @default(APPROVED)
+  deletedAt                  DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  product   Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  author    User?            @relation(fields: [authorId], references: [id])
+  parent    ProductComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   ProductComment[] @relation("CommentReplies")
+
+  @@index([productId])
+  @@index([parentId])
+  @@index([authorId])
+  @@index([status])
+}
 enum OrderStatus {
   PENDING
   PAID
@@ -386,4 +411,8 @@ enum UserRole {
   ADMIN
   USER
 }
-
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

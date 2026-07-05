@@ -1,5 +1,4 @@
-//app/products/[slug]/ProductPageClient.tsx
-
+// app/products/[slug]/ProductPageClient.tsx
 'use client';
 
 import { useProducts } from '@/hooks/useProducts';
@@ -27,22 +26,15 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
     return <p className="p-10 text-center">محصول یافت نشد ❌</p>;
   }
 
-  // ایمن‌سازی داده‌ها
   const images = product.images ?? [];
   const thumbnail = product.thumbnail ?? null;
-
   const brandName = product.brand?.name ?? '';
   const categoryTitle = product.category?.title ?? '';
   const categorySlug = product.category?.slug ?? '';
   const specsArray = product.specifications ?? [];
-  const reviews = (product.reviews ?? []).map(r => ({
-    rating: r.rating,
-    comment: r.content,
-  }));
-  console.log('ProductPageClient specsArray:', JSON.stringify(specsArray, null, 2));
+
   return (
-    <div className="container mx-auto py-6 space-y-12">
-      {/* Breadcrumb */}
+    <div className="container mx-auto space-y-12 py-6">
       <ProductBreadcrumb
         items={[
           { label: 'خانه', href: '/' },
@@ -51,14 +43,11 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
         ]}
       />
 
-      {/* بخش بالا */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* گالری */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <ProductGallery images={images} thumbnail={thumbnail} />
         </div>
 
-        {/* اطلاعات محصول */}
         <div className="lg:col-span-4">
           <ProductInfo
             title={product.title}
@@ -71,23 +60,20 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
           />
         </div>
 
-        {/* قیمت و خرید */}
         <div className="lg:col-span-3">
           <ProductPriceBox
             price={Number(product.price)}
             discountPrice={product.discountPrice ? Number(product.discountPrice) : null}
             stock={product.stockQuantity ?? 0}
-             productId={product.id} 
+            productId={product.id}
           />
         </div>
       </div>
 
-      {/* تب‌ها */}
       <ProductTabs
+        productSlug={slug}
         description={product.description ?? ''}
         specsArray={specsArray}
-        reviews={reviews}
-        questions={[]}
       />
     </div>
   );
