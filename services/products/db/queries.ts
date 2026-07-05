@@ -15,7 +15,7 @@ export async function getProducts() {
       count: products.length,
       duration: Date.now() - startTime,
     });
-    return products;
+    return products.map(formatProduct);
   } catch (error) {
     logger.error('getProducts failed', {
       error: error instanceof Error ? error.message : 'Unknown',
@@ -61,7 +61,7 @@ export async function getProductsByBrand(slug: string) {
       count: products.length,
       duration: Date.now() - startTime,
     });
-    return products;
+    return products.map(formatProduct);
   } catch (error) {
     logger.error('getProductsByBrand failed', {
       slug,
@@ -85,7 +85,7 @@ export async function getProductsByCategory(slug: string) {
       count: products.length,
       duration: Date.now() - startTime,
     });
-    return products;
+    return products.map(formatProduct);
   } catch (error) {
     logger.error('getProductsByCategory failed', {
       slug,
@@ -108,7 +108,7 @@ export async function getFeaturedProducts() {
       count: products.length,
       duration: Date.now() - startTime,
     });
-    return products;
+    return products.map(formatProduct);
   } catch (error) {
     logger.error('getFeaturedProducts failed', {
       error: error instanceof Error ? error.message : 'Unknown',
@@ -212,7 +212,7 @@ export async function getFilteredProducts(filters: {
     });
 
     return {
-      items,
+      items: items.map(formatProduct),
       total,
       page: currentPage,
       perPage: take,
