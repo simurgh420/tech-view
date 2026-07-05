@@ -14,10 +14,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNotify } from '@/hooks/useNotify';
 import { CreateCommentInput, createCommentSchema } from '@/lib/validation/comment';
+import { StarRatingInput } from '@/components/ui/star-rating-input';
 
 export function CommentForm({ postId }: { postId: string }) {
   const { data: session } = useSession();
@@ -87,15 +87,9 @@ export function CommentForm({ postId }: { postId: string }) {
           name="rating"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-semibold">امتیاز (۱ تا ۵)</FormLabel>
+              <FormLabel className="font-semibold">امتیاز شما</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={5}
-                  {...field}
-                  onChange={e => field.onChange(+e.target.value)}
-                />
+                <StarRatingInput value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -5,7 +5,6 @@ import { useReviews } from '@/hooks/useReviews';
 import { useSession } from '@/lib/auth-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { StarRatingDisplay } from '@/components/ui/star-rating-input';
 import { DeleteReviewModal } from './DeleteReviewModal';
 import { ReviewForm } from './ReviewForm';
 import Image from 'next/image';
@@ -63,9 +62,8 @@ export function ReviewsSection({ productSlug }: { productSlug: string }) {
                       {review.user?.name?.charAt(0) ?? '؟'}
                     </div>
                   )}
-                  <div>
-                    <p className="text-sm font-medium">{review.user?.name ?? 'کاربر مهمان'}</p>
-                    <StarRatingDisplay value={review.rating} />
+                  <div className="mr-auto text-sm font-semibold text-yellow-600">
+                    ★ {review.rating.toFixed(1)}
                   </div>
                 </div>
                 <span className="text-xs font-normal text-muted-foreground">
