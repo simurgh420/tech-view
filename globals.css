@@ -7,6 +7,7 @@
   /* Main Colors */
   --primary: oklch(0.21 0.034 264.665);
   --secondary: oklch(0.967 0.003 264.542);
+
   /* Primary Tints & Shades */
   --primary-tint-90: #e6f0ff;
   --primary-tint-70: #99c2ff;
@@ -15,6 +16,7 @@
   --primary-shade-30: #0052cc;
   --primary-shade-50: #003d99;
   --primary-shade-70: #002966;
+
   /* Secondary Tints & Shades */
   --secondary-tint-90: #ffece0;
   --secondary-tint-70: #ffb380;
@@ -23,12 +25,14 @@
   --secondary-shade-30: #cc5200;
   --secondary-shade-50: #993d00;
   --secondary-shade-70: #662900;
+
   /* Neutral Colors */
   --neutral-black: #000000;
   --neutral-dark: #1c1c1c;
   --neutral-medium: #4c4c4c;
   --neutral-light: #b3b3b3;
   --neutral-white: #ffffff;
+
   /* Status Colors */
   --error-50: #ff4d4d;
   --error-30: #ff0000;
@@ -36,6 +40,7 @@
   --success-30: #008000;
   --warning-50: #ffbf4d;
   --warning-30: #ffa500;
+
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.13 0.028 261.692);
@@ -64,6 +69,7 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+
   /* Blue Theme */
   --btn-blue-bg: #0d63ff;
   --btn-blue-hover: #002967;
@@ -72,6 +78,7 @@
   --btn-blue-text: #ffffff;
   --btn-blue-disabled-bg: #e6f0ff;
   --btn-blue-disabled-text: #99c2ff;
+
   /* Orange Theme */
   --btn-orange-bg: #f45c00;
   --btn-orange-hover: #ae4703;
@@ -80,6 +87,7 @@
   --btn-orange-text: #ffffff;
   --btn-orange-disabled-bg: #ffece0;
   --btn-orange-disabled-text: #ffb380;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.13 0.028 261.692);
 }
@@ -122,51 +130,52 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* انیمیشن‌های سفارشی که به‌عنوان یوتیلیتی Tailwind قابل استفاده‌ان */
   --animate-shimmer: shimmer 2s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 1.2s ease forwards;
+  --animate-fade-in: fade-in 1.4s ease forwards;
+  --animate-pulse-slow: pulse-slow 5s ease-in-out infinite;
 }
 
 .dark {
   /* Base */
-  --background: oklch(15% 0.01 270); /* پس‌زمینه تیره‌تر، نزدیک #232323 */
-  --foreground: oklch(85% 0.01 270); /* متن خاکستری روشن */
+  --background: oklch(15% 0.01 270);
+  --foreground: oklch(85% 0.01 270);
 
   /* Surfaces */
-  --card: oklch(20% 0.015 270); /* کارت کمی روشن‌تر از پس‌زمینه */
-  --card-foreground: oklch(90% 0.01 270); /* متن کارت سفید/خاکستری روشن */
-
+  --card: oklch(20% 0.015 270);
+  --card-foreground: oklch(90% 0.01 270);
   --popover: oklch(22% 0.015 270);
   --popover-foreground: oklch(90% 0.01 270);
 
-  --primary: oklch(68% 0.22 280); /* آبی‑بنفش متعادل‌تر */
+  --primary: oklch(68% 0.22 280);
   --primary-foreground: oklch(98% 0 0);
 
-  --secondary: oklch(55% 0.18 200); /* فیروزه‌ای/سبز آبی */
+  --secondary: oklch(55% 0.18 200);
   --secondary-foreground: oklch(98% 0 0);
 
-  --accent: oklch(70.959% 0.24265 319.772 / 0.594); /* صورتی-بنفش نئونی */
+  --accent: oklch(70.959% 0.24265 319.772 / 0.594);
   --accent-foreground: oklch(98% 0 0);
 
-  /* Muted */
   --muted: oklch(30% 0.01 270);
   --muted-foreground: oklch(70% 0.01 270);
 
-  /* Status */
-  --destructive: oklch(55% 0.18 25); /* قرمز هشدار */
-  --success: oklch(60% 0.15 150); /* سبز موفقیت */
-  --warning: oklch(75% 0.15 80); /* نارنجی هشدار */
+  --destructive: oklch(55% 0.18 25);
+  --success: oklch(60% 0.15 150);
+  --warning: oklch(75% 0.15 80);
 
   --border: oklch(25% 0.01 270 / 0.5);
   --input: oklch(25% 0.01 270 / 0.6);
   --ring: oklch(65% 0.25 280);
 
-  /* Charts */
-  --chart-1: oklch(65% 0.25 280); /* آبی نئونی */
-  --chart-2: oklch(60% 0.2 200); /* فیروزه‌ای */
-  --chart-3: oklch(70% 0.25 320); /* صورتی نئونی */
-  --chart-4: oklch(55% 0.22 160); /* سبز آبی */
-  --chart-5: oklch(75% 0.25 40); /* زرد-نارنجی */
+  --chart-1: oklch(65% 0.25 280);
+  --chart-2: oklch(60% 0.2 200);
+  --chart-3: oklch(70% 0.25 320);
+  --chart-4: oklch(55% 0.22 160);
+  --chart-5: oklch(75% 0.25 40);
 
-  /* Sidebar */
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -177,22 +186,29 @@
   --sidebar-ring: var(--ring);
 }
 
-/* انتخاب متن */
 .dark ::selection {
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
 
+/* مخفی کردن اسکرول‌بار برای اسکرولرهای افقی عمدی (کاروسل/لیست‌های محصول) */
 .scrollbar-hide {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox 64+، Chrome 121+، Edge 121+ */
+  -ms-overflow-style: none; /* IE/Edge قدیمی */
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome/Safari/Edge (Chromium) — fallback برای نسخه‌های قبل از پشتیبانی scrollbar-width */
 }
+
 @layer base {
+  html {
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    width: 100%;
   }
 
   *,
@@ -214,10 +230,6 @@
   }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -229,10 +241,6 @@
   }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 1.2s ease forwards;
-}
-
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -240,10 +248,6 @@
   to {
     opacity: 1;
   }
-}
-
-.animate-fade-in {
-  animation: fade-in 1.4s ease forwards;
 }
 
 @keyframes pulse-slow {
@@ -258,6 +262,35 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* کلاس‌های صریح برای زمانی‌که مستقیم از className استفاده می‌کنید (نه یوتیلیتی animate-*) */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-fade-in-up {
+  animation: fade-in-up 1.2s ease forwards;
+}
+.animate-fade-in {
+  animation: fade-in 1.4s ease forwards;
+}
 .animate-pulse-slow {
   animation: pulse-slow 5s ease-in-out infinite;
+}
+
+/* احترام به تنظیمات کاربرانی که حرکت کاهش‌یافته را ترجیح می‌دهند (دسترس‌پذیری) */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-pulse-slow {
+    animation: none;
+  }
 }

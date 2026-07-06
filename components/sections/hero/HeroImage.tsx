@@ -1,3 +1,4 @@
+// components/sections/hero/HeroImage.tsx
 'use client';
 
 import Image from 'next/image';
@@ -25,28 +26,13 @@ const slides = [
 
 export function HeroImage() {
   return (
-    <div className="relative flex justify-center items-center">
-      {/* Glow Background */}
-      <div
-        className="
-    absolute inset-0
-    pointer-events-none
-    bg-linear-to-br from-purple-600/40 via-blue-600/30 to-indigo-700/40
-    blur-[120px]
-    scale-[1.6]
-    rounded-full
-animate-pulse-slow
-  "
-      />
-
+    <div className="relative flex w-full min-w-0 items-center justify-center">
       <Carousel
-        className="w-182"
-        opts={{
-          loop: true,
-        }}
+        className="w-full max-w-182 min-w-0"
+        opts={{ loop: true }}
         plugins={[
           Autoplay({
-            delay: 3000, // هر ۳ ثانیه اسلاید بعدی
+            delay: 3000,
             stopOnInteraction: false,
           }),
         ]}
@@ -54,13 +40,14 @@ animate-pulse-slow
         <CarouselContent>
           {slides.map((slide, i) => (
             <CarouselItem key={i}>
-              <Link href={slide.href} className="block group">
+              <Link href={slide.href} className="group block">
                 <Image
                   src={slide.image}
                   alt={slide.title}
                   width={728}
                   height={443}
-                  className="rounded-xl drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.03]"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="h-auto w-full rounded-xl drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.03]"
                   priority={i === 0}
                 />
               </Link>

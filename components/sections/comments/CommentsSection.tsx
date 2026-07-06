@@ -5,6 +5,7 @@ import { useComments } from '@/hooks/useComments';
 import Image from 'next/image';
 import { CommentForm } from './CommentForm';
 import { Skeleton } from '@/components/ui/skeleton';
+import { StarRatingDisplay } from '@/components/ui/star-rating-input';
 
 export function CommentsSection({ postId }: { postId: string }) {
   const { useGetComments } = useComments(postId);
@@ -54,9 +55,7 @@ export function CommentsSection({ postId }: { postId: string }) {
                     {new Date(c.createdAt).toLocaleDateString('fa-IR')}
                   </span>
                 </div>
-                <div className="mr-auto text-sm font-semibold text-yellow-600">
-                  ★ {c.rating.toFixed(1)}
-                </div>
+                <StarRatingDisplay value={c.rating} size={16} showLabel />
               </div>
               <p className="text-sm leading-6 text-gray-700">{c.content}</p>
             </li>

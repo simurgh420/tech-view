@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DeleteReviewModal } from './DeleteReviewModal';
 import { ReviewForm } from './ReviewForm';
 import Image from 'next/image';
+import { StarRatingDisplay } from '@/components/ui/star-rating-input';
 
 export function ReviewsSection({ productSlug }: { productSlug: string }) {
   const { data: session } = useSession();
@@ -62,9 +63,7 @@ export function ReviewsSection({ productSlug }: { productSlug: string }) {
                       {review.user?.name?.charAt(0) ?? '؟'}
                     </div>
                   )}
-                  <div className="mr-auto text-sm font-semibold text-yellow-600">
-                    ★ {review.rating.toFixed(1)}
-                  </div>
+                  <StarRatingDisplay value={review.rating} size={16} showLabel />
                 </div>
                 <span className="text-xs font-normal text-muted-foreground">
                   {new Date(review.createdAt).toLocaleDateString('fa-IR')}
