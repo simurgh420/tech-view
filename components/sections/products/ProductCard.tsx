@@ -2,10 +2,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types/product';
-import { Button } from '@/components/ui';
 import { useCart } from '@/hooks/useCart';
 import { useNotify } from '@/hooks/useNotify';
-import { Divide, ShoppingCart, Star, Zap } from 'lucide-react';
+import { ShoppingCart, Star, Zap } from 'lucide-react';
 
 const formatPrice = (price: string | number) =>
   new Intl.NumberFormat('fa-IR').format(Number(price));

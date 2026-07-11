@@ -7,6 +7,7 @@ import ProductSpecs from '../specs/ProductSpecs';
 import { SpecsGroup } from '@/types/product';
 import { ReviewsSection } from '@/components/sections/reviews/ReviewsSection';
 import { ProductCommentsSection } from '@/components/sections/product-comments/ProductCommentsSection';
+import RichContentViewer from '@/components/shared/RichContentViewer';
 
 type TabId = 'description' | 'specs' | 'reviews' | 'questions';
 
@@ -76,12 +77,7 @@ export default function ProductTabs({ productSlug, description, specsArray }: Pr
 
       {/* توضیحات */}
       <section id="description" ref={descriptionRef} dir="rtl" className="scroll-mt-28">
-        <div
-          className="prose leading-relaxed dark:prose-invert
-            prose-headings:text-right prose-p:text-right prose-li:text-right
-            prose-img:mx-auto prose-img:h-auto prose-img:w-full prose-img:rounded-lg"
-          dangerouslySetInnerHTML={{ __html: description }}
-        />
+        <RichContentViewer html={description} />
       </section>
 
       {/* مشخصات */}

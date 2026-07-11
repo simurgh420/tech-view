@@ -1,7 +1,9 @@
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
+import { CalendarDays, Clock, PenLine } from 'lucide-react';
 import { PostActions } from './PostActions';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import RichContentViewer from '@/components/shared/RichContentViewer';
 
 type Props = {
   post: BlogPost;
@@ -11,77 +13,67 @@ export function PostContent({ post }: Props) {
   const { title, author, publishedAt, readingMinutes, coverImageUrl, content, tags, slug } = post;
 
   return (
-    <main
-      className="
-        container mx-auto max-w-3xl px-4 py-10
-        prose prose-lg prose-neutral dark:prose-invert
-        prose-headings:font-bold prose-headings:tracking-tight
-        prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
-        prose-p:leading-8 prose-p:text-[17px]
-        prose-img:rounded-xl prose-img:shadow-lg
-        prose-a:text-blue-600 dark:prose-a:text-blue-400
-        prose-strong:text-gray-900 dark:prose-strong:text-gray-100
-        prose-blockquote:border-l-4 prose-blockquote:border-blue-500
-        prose-blockquote:bg-gray-100 dark:prose-blockquote:bg-gray-800
-        prose-blockquote:py-3 prose-blockquote:px-4
-        prose-code:bg-gray-200 dark:prose-code:bg-gray-800
-        prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-        prose-pre:bg-gray-900 prose-pre:text-gray-100
-        prose-pre:rounded-xl prose-pre:p-4
-      "
-    >
-      {/* مسیر صفحه */}
-      <div className="mb-6 not-prose">
+    <main dir="rtl" className="container mx-auto max-w-3xl px-4 py-10 text-right">
+      <div className="mb-6">
         <Breadcrumb />
       </div>
 
-      {/* عنوان */}
-      <h1 className="mb-4">{title}</h1>
+      <h1 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
+        {title}
+      </h1>
 
-      {/* اطلاعات پست */}
-      <div className="not-prose text-sm text-gray-500 dark:text-gray-400 mb-8 flex flex-wrap items-center gap-4">
-        {author?.name && <span>🖊 {author.name}</span>}
+      <div className="mb-8 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+        {author?.name && (
+          <span className="flex items-center gap-1.5">
+            <PenLine size={15} />
+            {author.name}
+          </span>
+        )}
 
-        {publishedAt && <span>📅 {new Date(publishedAt).toLocaleDateString('fa-IR')}</span>}
+        {publishedAt && (
+          <span className="flex items-center gap-1.5">
+            <CalendarDays size={15} />
+            {new Date(publishedAt).toLocaleDateString('fa-IR')}
+          </span>
+        )}
 
-        {readingMinutes && <span>⏱ {readingMinutes} دقیقه مطالعه</span>}
+        {readingMinutes && (
+          <span className="flex items-center gap-1.5">
+            <Clock size={15} />
+            {readingMinutes} دقیقه مطالعه
+          </span>
+        )}
       </div>
 
-      {/* اکشن‌ها */}
-      <div className="not-prose mb-8">
+      <div className="mb-8">
         <PostActions slug={slug} />
       </div>
 
-      {/* تصویر کاور */}
-      <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xl mb-10 bg-gray-900/10">
+      <div className="relative mb-10 aspect-video w-full overflow-hidden rounded-xl bg-gray-900/10 shadow-xl">
         <Image
           src={coverImageUrl || '/Image-not-found.png'}
           alt={title}
-          width={808}
-          height={406}
+          fill
+          sizes="(max-width: 768px) 100vw, 768px"
           className="object-cover"
           priority
         />
       </div>
 
-      {/* محتوای HTML */}
-      <article dangerouslySetInnerHTML={{ __html: content }} />
+      <RichContentViewer html={content} />
 
-      {/* برچسب‌ها */}
       {tags.length > 0 && (
-        <section className="not-prose mt-12">
-          <h4 className="text-sm font-semibold mb-3">برچسب‌ها</h4>
-
+        <section className="mt-12">
+          <h4 className="mb-3 text-sm font-semibold">برچسب‌ها</h4>
           <div className="flex flex-wrap gap-2">
             {tags.map(({ tag }) => (
               <span
                 key={tag.id}
                 className="
-                  text-xs px-3 py-1 rounded-full
-                  bg-gray-200 dark:bg-gray-700
-                  text-gray-700 dark:text-gray-200
-                  hover:bg-gray-300 dark:hover:bg-gray-600
-                  transition
+                  rounded-full px-3 py-1 text-xs
+                  bg-gray-200 text-gray-700
+                  transition hover:bg-gray-300
+                  dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600
                 "
               >
                 #{tag.name}
