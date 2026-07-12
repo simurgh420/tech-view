@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { contacts: ['read'] },
+        permissions: { contacts: ['read'] },
       },
     });
     if (!permission?.success) {
@@ -61,7 +61,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { contacts: ['delete'] },
+        permissions: { contacts: ['delete'] },
       },
     });
     if (!permission?.success) {

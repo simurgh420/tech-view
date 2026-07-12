@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { posts: ['create'] },
+        permissions: { posts: ['create'] },
       },
     });
     if (permission.error || !permission.success) {

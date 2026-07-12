@@ -27,7 +27,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const action = comment.authorId === session.user.id ? 'update:own' : 'update';
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { productComments: [action] } },
+      body: { userId: session.user.id, permissions: { productComments: [action] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`PATCH /api/product-comments/${id} - Forbidden`, {
@@ -51,7 +51,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (parsed.data.status !== undefined && action !== 'update') {
       const statusPermission = await auth.api.userHasPermission({
         headers: await headers(),
-        body: { userId: session.user.id, permission: { productComments: ['moderate'] } },
+        body: { userId: session.user.id, permissions: { productComments: ['moderate'] } },
       });
       if (statusPermission.error || !statusPermission.success) {
         return NextResponse.json({ error: 'Forbidden: cannot change status' }, { status: 403 });
@@ -91,7 +91,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const action = comment.authorId === session.user.id ? 'delete:own' : 'delete';
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { productComments: [action] } },
+      body: { userId: session.user.id, permissions: { productComments: [action] } },
     });
     if (permission.error || !permission.success) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

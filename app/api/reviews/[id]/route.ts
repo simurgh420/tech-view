@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const action = review.authorId === session.user.id ? 'update:own' : 'update';
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { reviews: [action] } },
+      body: { userId: session.user.id, permissions: { reviews: [action] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`PATCH /api/reviews/${id} - Forbidden`, {
@@ -89,7 +89,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const action = review.authorId === session.user.id ? 'delete:own' : 'delete';
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { reviews: [action] } },
+      body: { userId: session.user.id, permissions: { reviews: [action] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`DELETE /api/reviews/${id} - Forbidden`, {

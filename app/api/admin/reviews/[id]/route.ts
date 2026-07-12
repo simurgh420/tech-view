@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { reviews: ['read'] },
+        permissions: { reviews: ['read'] },
       },
     });
     if (permission.error || !permission.success) {
@@ -68,7 +68,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { reviews: ['delete'] },
+        permissions: { reviews: ['delete'] },
       },
     });
     if (permission.error || !permission.success) {

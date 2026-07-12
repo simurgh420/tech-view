@@ -21,7 +21,7 @@ export async function GET() {
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { contacts: ['read'] },
+        permissions: { contacts: ['read'] },
       },
     });
     if (permission.error || !permission?.success) {

@@ -24,7 +24,7 @@ export async function banUserAction(userId: string, reason: string, expiresIn: n
     headers: headersList,
     body: {
       userId: session?.user.id,
-      permission: { user: ['ban'] },
+      permissions: { user: ['ban'] },
     },
   });
 

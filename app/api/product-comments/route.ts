@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { productComments: ['create'] } },
+      body: { userId: session.user.id, permissions: { productComments: ['create'] } },
     });
     if (permission.error || !permission.success) {
       logger.warn('POST /api/product-comments - Forbidden', {

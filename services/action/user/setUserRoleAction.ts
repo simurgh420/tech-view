@@ -29,7 +29,7 @@ export async function setUserRoleAction(userId: string, role: 'USER' | 'ADMIN') 
     headers: headersList,
     body: {
       userId: session.user.id,
-      permission: { user: ['set-role'] }, // ✅ مفرد "permission"
+      permissions: { user: ['set-role'] }, // ✅ مفرد "permission"
     },
   });
 

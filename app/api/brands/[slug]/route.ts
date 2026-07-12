@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ sl
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { brands: ['update'] },
+        permissions: { brands: ['update'] },
       },
     });
     if (permission.error || !permission.success) {
@@ -97,7 +97,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ s
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { brands: ['delete'] },
+        permissions: { brands: ['delete'] },
       },
     });
     if (permission.error || !permission.success) {

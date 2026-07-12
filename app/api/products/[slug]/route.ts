@@ -7,10 +7,7 @@ import { deleteProduct, updateProduct } from '@/services/products/db/mutations';
 import { updateProductSchema } from '@/lib/validation/product';
 import { logger } from '@/lib/logger';
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const startTime = Date.now();
   const { slug } = await params;
   try {
@@ -30,22 +27,21 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const startTime = Date.now();
   const { slug } = await params;
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
-      logger.warn(`PATCH /api/products/${slug} - Unauthorized`, { duration: Date.now() - startTime });
+      logger.warn(`PATCH /api/products/${slug} - Unauthorized`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { products: ['update'] } },
+      body: { userId: session.user.id, permissions: { products: ['update'] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`PATCH /api/products/${slug} - Forbidden`, {
@@ -71,7 +67,9 @@ export async function PATCH(
 
     const product = await updateProduct(slug, parsed.data);
     if (!product) {
-      logger.warn(`PATCH /api/products/${slug} - Product not found`, { duration: Date.now() - startTime });
+      logger.warn(`PATCH /api/products/${slug} - Product not found`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     logger.info(`PATCH /api/products/${slug} - Updated`, {
@@ -91,22 +89,21 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const startTime = Date.now();
   const { slug } = await params;
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
-      logger.warn(`DELETE /api/products/${slug} - Unauthorized`, { duration: Date.now() - startTime });
+      logger.warn(`DELETE /api/products/${slug} - Unauthorized`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { products: ['delete'] } },
+      body: { userId: session.user.id, permissions: { products: ['delete'] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`DELETE /api/products/${slug} - Forbidden`, {
@@ -118,7 +115,9 @@ export async function DELETE(
 
     const result = await deleteProduct(slug);
     if (!result) {
-      logger.warn(`DELETE /api/products/${slug} - Product not found`, { duration: Date.now() - startTime });
+      logger.warn(`DELETE /api/products/${slug} - Product not found`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     logger.info(`DELETE /api/products/${slug} - Deleted`, { duration: Date.now() - startTime });

@@ -20,7 +20,7 @@ export async function DELETE(req: NextRequest) {
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { wishlist: ['delete'] },
+        permissions: { wishlist: ['delete'] },
       },
     });
     if (permission.error || !permission.success) {
