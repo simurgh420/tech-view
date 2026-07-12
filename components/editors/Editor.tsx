@@ -82,7 +82,6 @@ const deleteImageRequest = async (imageUrl: string) => {
   }
 };
 
-// استخراج src عکس‌ها از سند فعال ادیتور (بعد از mount شدن)
 const getImagesFromEditor = (editor: any): string[] => {
   const images: string[] = [];
   editor.state.doc.descendants((node: any) => {
@@ -93,7 +92,6 @@ const getImagesFromEditor = (editor: any): string[] => {
   return images;
 };
 
-// استخراج src عکس‌ها مستقیم از رشتهٔ HTML اولیه (قبل از mount شدن ادیتور)
 function extractImageSrcs(html: string): string[] {
   const matches = html.matchAll(/<img[^>]+src=["']([^"']+)["']/g);
   return Array.from(matches, m => m[1]);
@@ -101,7 +99,7 @@ function extractImageSrcs(html: string): string[] {
 
 const RichTextToolbar = () => {
   return (
-    <div className="flex items-center p-1 gap-2 flex-wrap border-b border-solid border-border">
+    <div className="flex items-center p-1 gap-2 flex-wrap border-b border-solid border-(--tt-border-color)">
       <RichTextUndo />
       <RichTextRedo />
       <RichTextSearchAndReplace />
@@ -143,33 +141,10 @@ type Props = {
 };
 
 export default function Editor({ value, onChange, slug }: Props) {
-  // فقط برای بوکیپینگ بین رندرها استفاده می‌شود (نه برای نمایش UI)،
-  // پس useRef درسته نه useState — هیچ رندری تریگر نمی‌کند
   const prevImagesRef = useRef<string[]>(extractImageSrcs(value || ''));
   const debouncedOnChange = useRef<(val: string) => void>(() => {});
-
-  // آخرین HTMLـی که خودمان از طریق onChange به بیرون فرستادیم.
-  // برای تشخیص "این تغییرِ value، اکوی خودمونه یا واقعاً از بیرون اومده؟"
   const lastEmittedRef = useRef<string>(value || '');
 
-  // ─────────────────────────────────────────────────────────────
-  // ریشهٔ اصلی باگ چشمک‌زدن اینجا بود:
-  // قبلاً extensions هر بار که کامپوننت رندر می‌شد از نو ساخته می‌شد،
-  // چون Image.configure(...) / TextDirection.configure(...) و بقیه
-  // هر بار یک شیء (object) کاملاً جدید برمی‌گردانند — یعنی رفرنس آرایه
-  // هیچ‌وقت پایدار نبود.
-  //
-  // useEditor با دیدن رفرنس جدید extensions، فکر می‌کند پیکربندی عوض
-  // شده و کل ادیتور را نابود و از نو می‌سازد. ساختن دوبارهٔ ادیتور خودش
-  // یک آپدیت داخلی تولید می‌کند که onUpdate را صدا می‌زند؛ onUpdate هم
-  // (بعد از debounce) دوباره باعث رندر کامپوننت می‌شود؛ رندر دوباره یعنی
-  // extensions دوباره ساخته می‌شود؛ و این چرخه بی‌نهایت ادامه پیدا می‌کند
-  // — دقیقاً همان چشمک‌زدن مداوم، حتی بدون اینکه کاربر کاری کرده باشد.
-  //
-  // با useMemo و وابستگی فقط به slug، این آرایه بین رندرها پایدار
-  // می‌ماند و ادیتور دیگر هرگز به‌خاطر رندر مجدد کامپوننت از نو
-  // ساخته نمی‌شود.
-  // ─────────────────────────────────────────────────────────────
   const extensions = useMemo(() => {
     const BaseKit = [
       Document,
@@ -212,8 +187,6 @@ export default function Editor({ value, onChange, slug }: Props) {
       TaskList,
       Link,
       Image.configure({
-        // width/height را عمداً روی خود المان با استایل اینلاین ست نمی‌کنیم؛
-        // نمایش نهایی (RichContentViewer) خودش تصویر را ریسپانسیو می‌کند.
         async upload(file: File) {
           const formData = new FormData();
           formData.append('file', file);
@@ -243,18 +216,13 @@ export default function Editor({ value, onChange, slug }: Props) {
       Code,
       CodeBlock,
       Table,
-
       TextDirection.configure({
         types: ['heading', 'paragraph'],
         defaultDirection: 'rtl',
       }),
-
       SlashCommand,
       Callout,
     ];
-    // فقط وقتی slug عوض بشه extensions باید دوباره ساخته بشه
-    // (چون مسیر آپلود عکس به آن وابسته است)؛ به value/onChange عمداً
-    // وابسته نیست تا رفرنس این آرایه هرگز به‌خاطر تایپ‌کردن عوض نشود.
   }, [slug]);
 
   useEffect(() => {
@@ -269,13 +237,9 @@ export default function Editor({ value, onChange, slug }: Props) {
   }, []);
 
   const editor = useEditor({
-    // این مقدار فقط برای ساخت اولیهٔ سند استفاده می‌شود؛ بعد از این هرگز
-    // دستی به این option برنمی‌گردیم (برخلاف قبل که content یک state بود
-    // و هر تغییرش دوباره به اینجا فید می‌شد و باعث ریست شدن انتخاب/سند می‌شد)
     content: value || '',
     extensions,
     immediatelyRender: false,
-    // جهت راست‌به‌چپ باید روی خودِ DOM ادیتور هم ست بشه، نه فقط روی محتوای تولیدشده.
     editorProps: {
       attributes: {
         dir: 'rtl',
@@ -286,7 +250,6 @@ export default function Editor({ value, onChange, slug }: Props) {
       const html = editor.getHTML();
       onValueChange(html);
 
-      // مقایسهٔ عکس‌های فعلی با عکس‌های قبلی و حذف خودکار عکس‌های حذف‌شده از استوریج
       const currentImages = getImagesFromEditor(editor);
       const removedImages = prevImagesRef.current.filter(img => !currentImages.includes(img));
       removedImages.forEach(img => deleteImageRequest(img));
@@ -294,12 +257,6 @@ export default function Editor({ value, onChange, slug }: Props) {
     },
   });
 
-  // اگر value واقعاً از بیرون تغییر کند (مثلاً بعد از fetch شدن دیتای اولیه
-  // با تأخیر، یا سوییچ بین دو مقالهٔ مختلف)، فقط در آن صورت محتوای ادیتور
-  // را sync کن. اگر این تغییر، خودِ اکوی onChange قبلیِ خودمان باشد،
-  // هیچ کاری نکن — وگرنه هر بار وسط تایپ‌کردن دوباره چرخهٔ ریست‌شدن
-  // برمی‌گردد. این افکت یک "سیستم خارجی" (خود instance ادیتور) را
-  // sync می‌کند، نه یک React state، پس با قوانین Effect هم مغایرتی ندارد.
   useEffect(() => {
     if (!editor) return;
     if (value === lastEmittedRef.current) return;
@@ -314,16 +271,17 @@ export default function Editor({ value, onChange, slug }: Props) {
   if (!editor) return null;
 
   return (
-    <div className="w-full max-w-3xl mx-auto my-6 px-4" dir="rtl">
+    // اضافه شدن کلاس tt-editor برای اعمال ایزوله‌ی متغیرها به این کامپوننت
+    <div className="w-full max-w-3xl mx-auto my-6 px-4 tt-editor" dir="rtl">
       <RichTextProvider editor={editor}>
         <div
           className="
             overflow-hidden
-            rounded-xl
-            bg-white dark:bg-zinc-900
-            border border-gray-200 dark:border-zinc-700
-            shadow-md hover:shadow-lg
-            transition-shadow duration-300 ease-in-out
+            rounded-(--tt-radius-xl)
+            bg-(--tt-bg-color)
+            border border-(--tt-border-color)
+            shadow-(--tt-shadow-elevated-md)
+            transition-all duration-(--tt-transition-duration-default) ease-(--tt-transition-easing-default)
           "
         >
           <div className="flex flex-col">
@@ -331,8 +289,8 @@ export default function Editor({ value, onChange, slug }: Props) {
             <div
               className="
                 flex items-center flex-wrap gap-2
-                border-b border-gray-200 dark:border-zinc-700
-                bg-gray-50 dark:bg-zinc-800
+                border-b border-(--tt-border-color)
+                bg-(--tt-sidebar-bg-color)
                 px-3 py-2
                 sticky top-0 z-10
               "
@@ -348,11 +306,11 @@ export default function Editor({ value, onChange, slug }: Props) {
                 prose dark:prose-invert
                 max-w-none
                 px-4 py-6
-                text-gray-900 dark:text-gray-100
+                text-white
                 leading-relaxed
                 text-right
                 focus:outline-none
-                [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg
+                [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-(--tt-radius-md)
               "
             />
 
