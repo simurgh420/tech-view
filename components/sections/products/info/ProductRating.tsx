@@ -7,5 +7,5 @@ export default function ProductRating({
   rating?: number;
   ratingCount?: number;
 }) {
-  return <StarRatingDisplay value={rating} size={18} showLabel count={ratingCount} />;
+  return <StarRatingDisplay value={rating} size={18} count={ratingCount} />;
 }

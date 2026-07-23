@@ -64,34 +64,111 @@ export default function ProductTabs({ productSlug, description, specsArray }: Pr
   }, [active]);
 
   return (
-    <div className="mt-10 space-y-10">
-      <div className="sticky top-0 z-40 border-b bg-white shadow-sm dark:bg-black">
-        <TabHeader
-          active={active}
-          onChange={(tab: TabId) => {
-            setActive(tab);
-            scrollToSection(tab);
-          }}
-        />
+    <div className="mt-10 space-y-8">
+      <div
+        className="
+    sticky
+    top-20
+    z-30
+    mb-8
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white/80
+    backdrop-blur-xl
+    shadow-sm
+    dark:border-neutral-800/80
+    dark:bg-[#15181D]/80
+  "
+      >
+        <div className="flex justify-end">
+          <TabHeader
+            active={active}
+            onChange={(tab: TabId) => {
+              setActive(tab);
+              scrollToSection(tab);
+            }}
+          />
+        </div>
       </div>
 
       {/* توضیحات */}
-      <section id="description" ref={descriptionRef} dir="rtl" className="scroll-mt-28">
+      <section
+        id="description"
+        ref={descriptionRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
         <RichContentViewer html={description} />
       </section>
 
       {/* مشخصات */}
-      <section id="specs" ref={specsRef} dir="rtl" className="scroll-mt-28">
+      <section
+        id="specs"
+        ref={specsRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
         <ProductSpecs specs={specsArray} />
       </section>
 
       {/* نظرات (ریویو) */}
-      <section id="reviews" ref={reviewsRef} dir="rtl" className="scroll-mt-28">
+      <section
+        id="reviews"
+        ref={reviewsRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
         <ReviewsSection productSlug={productSlug} />
       </section>
 
       {/* پرسش و پاسخ (کامنت) */}
-      <section id="questions" ref={questionsRef} dir="rtl" className="scroll-mt-28">
+      <section
+        id="questions"
+        ref={questionsRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
         <ProductCommentsSection productSlug={productSlug} />
       </section>
     </div>

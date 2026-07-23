@@ -1,57 +1,110 @@
-// components/product/price/BuyActions.tsx
-import { useNotify } from '@/hooks/useNotify';
-import { useCart } from '@/hooks/useCart';
 import { ShoppingCart } from 'lucide-react';
 
-export default function BuyActions({ stock, productId }: { stock: number; productId: string }) {
+import { useCart } from '@/hooks/useCart';
+import { useNotify } from '@/hooks/useNotify';
+
+type Props = {
+  stock: number;
+  productId: string;
+};
+
+export default function BuyActions({ stock, productId }: Props) {
   const disabled = stock <= 0;
+
   const add = useCart().useAddToCart();
   const notify = useNotify();
+
   const handleAdd = () => {
-    if (disabled) return;
+    if (disabled || add.isPending) return;
 
     add.mutate(
-      { productId, quantity: 1 },
       {
-        onSuccess: () => notify.success('به سبد اضافه شد'),
-        onError: () => notify.error('خطا در افزودن به سبد'),
+        productId,
+        quantity: 1,
+      },
+      {
+        onSuccess: () => notify.success('به سبد خرید اضافه شد'),
+        onError: () => notify.error('خطا در افزودن به سبد خرید'),
       }
     );
   };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* خرید فوری */}
       <button
-        disabled={disabled}
+        disabled={disabled || add.isPending}
         className={`
-          w-full py-4 rounded-xl font-semibold text-white text-lg
-          transition-all duration-200 shadow-sm
+          flex h-12 w-full items-center justify-center rounded-xl
+          text-sm font-semibold text-white
+          transition-all duration-200
+          active:scale-[0.98]
+
           ${
             disabled
-              ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-              : 'bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-md hover:shadow-lg'
+              ? `
+                cursor-not-allowed
+                bg-neutral-300
+                text-neutral-500
+                dark:bg-neutral-800
+                dark:text-neutral-500
+              `
+              : `
+                bg-linear-to-l
+                from-red-500
+                to-rose-600
+                shadow-lg
+                shadow-red-500/20
+
+                hover:-translate-y-0.5
+                hover:shadow-xl
+                hover:shadow-red-500/30
+              `
           }
         `}
       >
         خرید فوری
       </button>
 
-      {/* افزودن به سبد خرید */}
+      {/* افزودن به سبد */}
       <button
-        disabled={disabled}
+        type="button"
         onClick={handleAdd}
+        disabled={disabled || add.isPending}
         className={`
-          w-full py-4 rounded-xl flex items-center justify-center gap-3 text-base font-medium
-          transition-all duration-200 border
+          flex h-12 w-full items-center justify-center gap-2
+          rounded-xl border
+          text-sm font-semibold
+          transition-all duration-200
+          active:scale-[0.98]
+
           ${
             disabled
-              ? 'border-gray-300 text-gray-400 cursor-not-allowed'
-              : 'border-red-500 text-red-600 hover:bg-red-50 hover:shadow-md'
+              ? `
+                cursor-not-allowed
+                border-neutral-300
+                text-neutral-400
+
+                dark:border-neutral-700
+                dark:text-neutral-500
+              `
+              : `
+                border-red-500/70
+                text-red-600
+
+                hover:bg-red-50
+                hover:border-red-600
+
+                dark:border-red-500/60
+                dark:text-red-400
+                dark:hover:bg-red-500/10
+              `
           }
         `}
       >
-        <ShoppingCart size={20} className={disabled ? 'text-gray-400' : 'text-red-600'} />
-        افزودن به سبد خرید
+        <ShoppingCart size={18} />
+
+        {add.isPending ? 'در حال افزودن...' : 'افزودن به سبد خرید'}
       </button>
     </div>
   );
