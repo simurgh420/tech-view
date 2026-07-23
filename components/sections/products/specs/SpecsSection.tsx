@@ -43,7 +43,7 @@ export default function SpecsSection({ title, items }: Props) {
           transition-colors
           duration-200
           hover:bg-neutral-50
-          dark:hover:bg-white/[0.03]
+          dark:hover:bg-white/3
         "
       >
         <span

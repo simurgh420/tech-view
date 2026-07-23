@@ -203,7 +203,7 @@ function AuthenticatedReviewForm({ productSlug }: Props) {
             type="submit"
             disabled={isPending}
             className="
-              bg-gradient-to-r
+              bg-linear-to-r
 
               from-blue-600
               to-indigo-600

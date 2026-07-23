@@ -2,8 +2,6 @@
 
 'use client';
 
-import Image from 'next/image';
-
 import { useReviews } from '@/hooks/useReviews';
 import { useSession } from '@/lib/auth-client';
 

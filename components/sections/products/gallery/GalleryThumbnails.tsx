@@ -21,7 +21,7 @@ export default function GalleryThumbnails({
         gap-3
         overflow-y-auto
         pr-1
-        max-h-[560px]
+        max-h-140
         no-scrollbar
       "
     >
