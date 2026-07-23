@@ -19,7 +19,7 @@ export async function GET() {
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { reviews: ['read'] },
+        permissions: { reviews: ['read'] },
       },
     });
     if (permission.error || !permission.success) {

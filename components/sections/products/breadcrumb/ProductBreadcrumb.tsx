@@ -1,33 +1,83 @@
 // components/product/breadcrumb/ProductBreadcrumb.tsx
+
 'use client';
 
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 type Crumb = {
   label: string;
   href?: string;
 };
 
-export default function ProductBreadcrumb({ items }: { items: Crumb[] }) {
+type Props = {
+  items: Crumb[];
+};
+
+export default function ProductBreadcrumb({ items }: Props) {
   return (
-    <nav className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 overflow-x-auto whitespace-nowrap py-2">
+    <nav
+      aria-label="breadcrumb"
+      className="
+        flex
+        items-center
+        gap-2
+
+        overflow-x-auto
+        whitespace-nowrap
+        flex-nowrap
+
+        py-2
+
+        text-sm
+        text-muted-foreground
+      "
+    >
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
 
         return (
-          <div key={index} className="flex items-center gap-2">
-            {/* لینک‌دار یا غیر لینک‌دار */}
+          <div
+            key={`${item.label}-${index}`}
+            className="
+              flex
+              items-center
+              gap-2
+              shrink-0
+            "
+          >
             {isLast ? (
-              <span className="font-medium text-gray-900 dark:text-gray-100">{item.label}</span>
-            ) : (
-              <Link href={item.href || '#'} className="hover:text-blue-600 transition">
+              <span
+                className="
+                  font-medium
+                  text-foreground
+                "
+              >
+                {item.label}
+              </span>
+            ) : item.href ? (
+              <Link
+                href={item.href}
+                className="
+                  transition-colors
+                  hover:text-primary
+                "
+              >
                 {item.label}
               </Link>
+            ) : (
+              <span>{item.label}</span>
             )}
 
-            {/* جداکننده */}
-            {!isLast && <ChevronLeft size={16} className="text-gray-400" />}
+            {!isLast && (
+              <ChevronRight
+                size={16}
+                className="
+                  text-muted-foreground/60
+                  shrink-0
+                "
+              />
+            )}
           </div>
         );
       })}

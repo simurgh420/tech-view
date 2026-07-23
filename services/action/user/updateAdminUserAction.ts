@@ -24,7 +24,7 @@ export async function updateAdminUserAction(
     headers: headersList,
     body: {
       userId: session.user.id,
-      permission: { user: ['set-role'] },
+      permissions: { user: ['set-role'] },
     },
   });
 

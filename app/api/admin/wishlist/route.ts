@@ -18,7 +18,7 @@ export async function GET() {
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { wishlist: ['read'] },
+        permissions: { wishlist: ['read'] },
       },
     });
     if (permission.error || !permission.success) {

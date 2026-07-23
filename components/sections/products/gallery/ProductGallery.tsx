@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
 import GalleryMainImage from './GalleryMainImage';
 import GalleryThumbnails from './GalleryThumbnails';
 import Lightbox from './Lightbox';
@@ -12,7 +13,7 @@ type Props = {
 
 export default function ProductGallery({ images, thumbnail }: Props) {
   const cleanedImages = useMemo(
-    () => images.filter(img => typeof img === 'string' && img.trim() !== ''),
+    () => images.filter((img): img is string => typeof img === 'string' && img.trim() !== ''),
     [images]
   );
 
@@ -20,26 +21,71 @@ export default function ProductGallery({ images, thumbnail }: Props) {
     if (thumbnail && !cleanedImages.includes(thumbnail)) {
       return [thumbnail, ...cleanedImages];
     }
+
     return cleanedImages;
   }, [thumbnail, cleanedImages]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
+  // جلوگیری از خارج شدن index از محدوده
+  const safeIndex =
+    normalizedImages.length > 0 ? Math.min(activeIndex, normalizedImages.length - 1) : 0;
+
+  if (!normalizedImages.length) {
+    return (
+      <div
+        className="
+          aspect-square
+          rounded-xl
+          bg-muted
+          flex
+          items-center
+          justify-center
+          text-sm
+          text-muted-foreground
+        "
+      >
+        تصویری موجود نیست
+      </div>
+    );
+  }
+
   return (
     <div className="w-full space-y-4">
-      <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-3">
+      <div
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-12
+          gap-4
+        "
+      >
+        {/* Thumbnails */}
+        <div
+          className="
+            order-2
+            md:order-1
+            md:col-span-3
+          "
+        >
           <GalleryThumbnails
             images={normalizedImages}
-            activeIndex={activeIndex}
+            activeIndex={safeIndex}
             onSelect={setActiveIndex}
           />
         </div>
 
-        <div className="col-span-9">
+        {/* Main Image */}
+        <div
+          className="
+            order-1
+            md:order-2
+            md:col-span-9
+          "
+        >
           <GalleryMainImage
-            src={normalizedImages[activeIndex]}
+            src={normalizedImages[safeIndex]}
             onClick={() => setLightboxOpen(true)}
           />
         </div>
@@ -48,7 +94,7 @@ export default function ProductGallery({ images, thumbnail }: Props) {
       {lightboxOpen && (
         <Lightbox
           images={normalizedImages}
-          index={activeIndex}
+          index={safeIndex}
           onClose={() => setLightboxOpen(false)}
           onChange={setActiveIndex}
         />

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 type LightboxProps = {
   images: string[];
@@ -11,83 +11,143 @@ type LightboxProps = {
 };
 
 export default function Lightbox({ images, index, onClose, onChange }: LightboxProps) {
-  // ESC key to close
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const safeIndex = Math.min(Math.max(index, 0), Math.max(images.length - 1, 0));
+
+  const currentImage = images[safeIndex];
+
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    document.body.style.overflow = 'hidden';
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+
+      if (e.key === 'ArrowLeft' && safeIndex > 0) {
+        onChange(safeIndex - 1);
+      }
+
+      if (e.key === 'ArrowRight' && safeIndex < images.length - 1) {
+        onChange(safeIndex + 1);
+      }
     };
 
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [onClose]);
+    window.addEventListener('keydown', handleKey);
 
-  // محافظت از index اشتباه
-  const safeIndex = Math.min(Math.max(index, 0), images.length - 1);
-  const currentImage = images[safeIndex];
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, [onClose, onChange, safeIndex, images.length]);
+
+  useEffect(() => {
+    thumbnailRefs.current[safeIndex]?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    });
+  }, [safeIndex]);
+
+  if (!currentImage) return null;
 
   return (
     <div
-      className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-4"
-      onClick={onClose} // کلیک روی پس‌زمینه → بستن
-    >
-      {/* Wrapper برای جلوگیری از بسته شدن هنگام کلیک روی عکس */}
-      <div className="relative flex flex-col items-center gap-6" onClick={e => e.stopPropagation()}>
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-0 right-0 text-white text-3xl"
-        >
-          ✕
-        </button>
+      className="
+        fixed
+        inset-0
+        z-50
 
+        bg-black/90
+
+        flex
+        items-center
+        justify-center
+
+        p-4
+      "
+      onClick={onClose}
+    >
+      {/* Close */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="
+          fixed
+          top-5
+          right-5
+
+          z-50
+
+          text-white
+          text-4xl
+
+          hover:scale-110
+          transition
+        "
+      >
+        ×
+      </button>
+
+      <div
+        className="
+          relative
+
+          flex
+          flex-col
+          items-center
+
+          gap-4
+        "
+        onClick={e => e.stopPropagation()}
+      >
         {/* Main image */}
-        <div className="relative max-w-[90vw] max-h-[70vh] w-full h-full">
+        <div
+          className="
+            relative
+
+            w-[90vw]
+            max-w-5xl
+
+            h-[75vh]
+
+            rounded-xl
+            overflow-hidden
+          "
+        >
           <Image
             src={currentImage}
-            alt={`lightbox-image-${safeIndex}`}
-            width={1000}
-            height={1000}
-            className="object-contain transition-all duration-300"
-            sizes="100vw"
+            alt={`image-${safeIndex}`}
+            fill
             priority
+            sizes="90vw"
+            className="
+              object-contain
+            "
           />
-        </div>
-
-        {/* Thumbnail gallery */}
-        <div className="w-full overflow-hidden">
-          <div className="flex justify-center gap-3 overflow-x-auto w-full py-2 scrollbar-hide">
-            <div className="flex gap-3 w-max">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => onChange(i)}
-                  className={`w-20 h-20 shrink-0 rounded-lg overflow-hidden border ${
-                    i === safeIndex ? 'border-blue-500' : 'border-gray-400'
-                  }`}
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={img}
-                      alt={`thumb-${i}`}
-                      fill
-                      className="object-cover"
-                      sizes="100px"
-                    />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Prev */}
         {safeIndex > 0 && (
           <button
             type="button"
-            onClick={() => onChange(safeIndex - 1)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl"
+            onClick={e => {
+              e.stopPropagation();
+              onChange(safeIndex - 1);
+            }}
+            className="
+              fixed
+              left-5
+              top-1/2
+              -translate-y-1/2
+              w-10
+              text-white
+              text-5xl
+
+              hover:scale-110
+              transition
+            "
           >
             ‹
           </button>
@@ -97,12 +157,76 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
         {safeIndex < images.length - 1 && (
           <button
             type="button"
-            onClick={() => onChange(safeIndex + 1)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl"
+            onClick={e => {
+              e.stopPropagation();
+              onChange(safeIndex + 1);
+            }}
+            className="
+              fixed
+              right-5
+              w-10
+              top-1/2
+              -translate-y-1/2
+
+              text-white
+              text-5xl
+
+              hover:scale-110
+              transition
+            "
           >
             ›
           </button>
         )}
+
+        {/* Thumbnails */}
+        <div
+          className="
+            max-w-[90vw]
+            overflow-x-auto
+            scrollbar-hide
+          "
+        >
+          <div className="flex gap-3 px-2">
+            {images.map((img, i) => (
+              <button
+                key={`${img}-${i}`}
+                ref={el => {
+                  thumbnailRefs.current[i] = el;
+                }}
+                type="button"
+                onClick={() => onChange(i)}
+                className={`
+                  relative
+
+                  w-20
+                  h-20
+
+                  shrink-0
+
+                  overflow-hidden
+                  rounded-lg
+
+                  border-2
+
+                  transition
+
+                  ${i === safeIndex ? 'border-blue-500 scale-105' : 'border-transparent opacity-70'}
+                `}
+              >
+                <Image
+                  src={img}
+                  alt={`thumbnail-${i}`}
+                  fill
+                  sizes="80px"
+                  className="
+                    object-cover
+                  "
+                />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

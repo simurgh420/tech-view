@@ -28,7 +28,7 @@ export async function unbanUserAction(userId: string) {
     headers: headersList,
     body: {
       userId: session.user.id,
-      permission: { user: ['ban'] },
+      permissions: { user: ['ban'] },
     },
   });
 

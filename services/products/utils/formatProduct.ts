@@ -1,7 +1,7 @@
-import { Product } from "@/types/product";
+// services/products/utils/formatProduct.ts
+import { Product } from '@/types/product';
 
 export function formatProduct(raw: any): Product {
-  // تبدیل مشخصات از آرایه رابطه به فرمت گروهی
   const specsMap = new Map<string, { group: string; items: { label: string; value: string }[] }>();
   if (raw.specifications && Array.isArray(raw.specifications)) {
     for (const spec of raw.specifications) {
@@ -31,7 +31,7 @@ export function formatProduct(raw: any): Product {
     keyFeatures: raw.keyFeatures ?? [],
     colors: raw.colors ?? [],
     variants: raw.variants ?? [],
-    specifications, // مشخصات گروه‌بندی شده
+    specifications,
     status: raw.status,
     rating: raw.rating?.toString() ?? null,
     reviewCount: raw.reviewCount,
@@ -41,5 +41,20 @@ export function formatProduct(raw: any): Product {
     brand: raw.brand ?? null,
     category: raw.category ?? null,
     subCategory: raw.subCategory ?? null,
+    // ✅ اضافه شد — فقط وقتی از productWithReviews کوئری گرفته باشیم موجوده
+    ...(raw.reviews !== undefined
+      ? {
+          reviews: raw.reviews.map((r: any) => ({
+            id: r.id,
+            rating: r.rating,
+            title: r.title ?? null,
+            content: r.content,
+            createdAt: r.createdAt.toISOString(),
+            updatedAt: r.updatedAt.toISOString(),
+            authorId: r.authorId ?? null,
+            user: r.user ?? null,
+          })),
+        }
+      : {}),
   };
 }

@@ -8,10 +8,7 @@ import { getCommentsByPostId } from '@/services/comments/db/queries';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ postId: string }> }) {
   const startTime = Date.now();
   try {
     const { postId } = await params;
@@ -30,15 +27,14 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ postId: string }> }) {
   const startTime = Date.now();
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
-      logger.warn('POST /api/posts/[postId]/comments - Unauthorized', { duration: Date.now() - startTime });
+      logger.warn('POST /api/posts/[postId]/comments - Unauthorized', {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -46,7 +42,7 @@ export async function POST(
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { comments: ['create'] },
+        permissions: { comments: ['create'] },
       },
     });
     if (permission.error || !permission.success) {
@@ -60,7 +56,9 @@ export async function POST(
     const { postId } = await params;
     const post = await prisma.blogPost.findUnique({ where: { id: postId } });
     if (!post) {
-      logger.warn(`POST /api/posts/${postId}/comments - Post not found`, { duration: Date.now() - startTime });
+      logger.warn(`POST /api/posts/${postId}/comments - Post not found`, {
+        duration: Date.now() - startTime,
+      });
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 

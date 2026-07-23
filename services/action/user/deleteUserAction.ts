@@ -34,7 +34,7 @@ export async function deleteUserAction(userId: string) {
     headers: headersList,
     body: {
       userId: session.user.id,
-      permission: { user: ['delete'] },
+      permissions: { user: ['delete'] },
     },
   });
 

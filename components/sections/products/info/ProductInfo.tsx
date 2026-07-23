@@ -1,9 +1,8 @@
-// components/product/info/ProductInfo.tsx
 'use client';
 
-import ProductTitle from './ProductTitle';
-import ProductRating from './ProductRating';
 import ProductKeyFeatures from './ProductKeyFeatures';
+import ProductRating from './ProductRating';
+import ProductTitle from './ProductTitle';
 import ProductVariants from './ProductVariants';
 
 type Props = {
@@ -23,20 +22,35 @@ export default function ProductInfo({
   brand,
   rating,
   ratingCount,
-
   keyFeatures = [],
   colors = [],
   variants = [],
 }: Props) {
   return (
-    <div className="space-y-6">
+    <section
+      dir="rtl"
+      className="
+        flex
+        flex-col
+        gap-7
+      "
+    >
       <ProductTitle title={title} brand={brand} />
 
-      <ProductRating rating={rating} ratingCount={ratingCount} />
+      <div
+        className="
+          border-b
+          border-neutral-200/70
+          pb-5
+          dark:border-neutral-800/70
+        "
+      >
+        <ProductRating rating={rating} ratingCount={ratingCount} />
+      </div>
 
       <ProductKeyFeatures features={keyFeatures} />
 
       <ProductVariants colors={colors} variants={variants} />
-    </div>
+    </section>
   );
 }

@@ -1,25 +1,23 @@
+// components/sections/products/tabs/ProductTabs.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import TabHeader from './TabHeader';
 import ProductSpecs from '../specs/ProductSpecs';
 import { SpecsGroup } from '@/types/product';
+import { ReviewsSection } from '@/components/sections/reviews/ReviewsSection';
+import { ProductCommentsSection } from '@/components/sections/product-comments/ProductCommentsSection';
+import RichContentViewer from '@/components/shared/RichContentViewer';
 
 type TabId = 'description' | 'specs' | 'reviews' | 'questions';
 
 type Props = {
+  productSlug: string;
   description: string;
   specsArray: SpecsGroup[];
-  reviews?: { rating: number; comment: string }[];
-  questions?: { user: string; question: string }[];
 };
 
-export default function ProductTabs({
-  description,
-  specsArray,
-  reviews = [],
-  questions = [],
-}: Props) {
+export default function ProductTabs({ productSlug, description, specsArray }: Props) {
   const [active, setActive] = useState<TabId>('description');
 
   const descriptionRef = useRef<HTMLDivElement | null>(null);
@@ -27,20 +25,13 @@ export default function ProductTabs({
   const reviewsRef = useRef<HTMLDivElement | null>(null);
   const questionsRef = useRef<HTMLDivElement | null>(null);
 
-  // اسکرول نرم هنگام کلیک روی تب
   const scrollToSection = (id: TabId) => {
     const el = document.getElementById(id);
     if (!el) return;
-
     const top = el.getBoundingClientRect().top + window.scrollY - 90;
-
-    window.scrollTo({
-      top,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top, behavior: 'smooth' });
   };
 
-  // فعال شدن تب‌ها با اسکرول (Scroll Spy)
   useEffect(() => {
     const sections: { id: TabId; ref: React.RefObject<HTMLDivElement | null> }[] = [
       { id: 'description', ref: descriptionRef },
@@ -52,22 +43,17 @@ export default function ProductTabs({
     const observer = new IntersectionObserver(
       entries => {
         let best: { id: TabId; ratio: number } | null = null;
-
         for (const entry of entries) {
           const id = entry.target.id as TabId;
           if (!best || entry.intersectionRatio > best.ratio) {
             best = { id, ratio: entry.intersectionRatio };
           }
         }
-
         if (best && best.ratio > 0.3 && best.id !== active) {
           setActive(best.id);
         }
       },
-      {
-        threshold: [0.3, 0.5, 0.7],
-        rootMargin: '-120px 0px 0px 0px',
-      }
+      { threshold: [0.3, 0.5, 0.7], rootMargin: '-120px 0px 0px 0px' }
     );
 
     sections.forEach(sec => {
@@ -78,66 +64,112 @@ export default function ProductTabs({
   }, [active]);
 
   return (
-    <div className="mt-10 space-y-10">
-      {/* تب‌بار چسبان + اسکرول افقی + انیمیشن */}
-      <div className="sticky top-0 z-40 bg-white dark:bg-black border-b shadow-sm">
-        <TabHeader
-          active={active}
-          onChange={(tab: TabId) => {
-            setActive(tab);
-            scrollToSection(tab);
-          }}
-        />
+    <div className="mt-10 space-y-8">
+      <div
+        className="
+    sticky
+    top-20
+    z-30
+    mb-8
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white/80
+    backdrop-blur-xl
+    shadow-sm
+    dark:border-neutral-800/80
+    dark:bg-[#15181D]/80
+  "
+      >
+        <div className="flex justify-end">
+          <TabHeader
+            active={active}
+            onChange={(tab: TabId) => {
+              setActive(tab);
+              scrollToSection(tab);
+            }}
+          />
+        </div>
       </div>
 
       {/* توضیحات */}
-      <section id="description" ref={descriptionRef} dir="rtl" className="scroll-mt-28">
-        <div
-          className="
-            prose dark:prose-invert leading-relaxed
-        
-            prose-headings:text-right prose-p:text-right prose-li:text-right
-            prose-img:mx-auto prose-img:rounded-lg prose-img:w-full prose-img:h-auto
-          "
-          dangerouslySetInnerHTML={{ __html: description }}
-        />
+      <section
+        id="description"
+        ref={descriptionRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
+        <RichContentViewer html={description} />
       </section>
 
       {/* مشخصات */}
-      <section id="specs" ref={specsRef} dir="rtl" className="scroll-mt-28">
+      <section
+        id="specs"
+        ref={specsRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
         <ProductSpecs specs={specsArray} />
       </section>
 
-      {/* نظرات */}
-      <section id="reviews" ref={reviewsRef} dir="rtl" className="scroll-mt-28 rtl">
-        {reviews.length === 0 ? (
-          <div className="text-gray-600 dark:text-gray-300">هنوز نظری ثبت نشده است.</div>
-        ) : (
-          <div className="space-y-4">
-            {reviews.map((r, i) => (
-              <div key={i} className="border rounded-lg p-4">
-                <div className="text-yellow-500">⭐ {r.rating}</div>
-                <p className="text-gray-600 dark:text-gray-300">{r.comment}</p>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* نظرات (ریویو) */}
+      <section
+        id="reviews"
+        ref={reviewsRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
+        <ReviewsSection productSlug={productSlug} />
       </section>
 
-      {/* پرسش‌ها */}
-      <section id="questions" ref={questionsRef} dir="rtl" className="scroll-mt-28 rtl">
-        {questions.length === 0 ? (
-          <div className="text-gray-600 dark:text-gray-300">هنوز پرسشی ثبت نشده است.</div>
-        ) : (
-          <div className="space-y-4">
-            {questions.map((q, i) => (
-              <div key={i} className="border rounded-lg p-4">
-                <div className="font-semibold">{q.user}</div>
-                <p className="text-gray-600 dark:text-gray-300">{q.question}</p>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* پرسش و پاسخ (کامنت) */}
+      <section
+        id="questions"
+        ref={questionsRef}
+        dir="rtl"
+        className="
+    scroll-mt-28
+    rounded-2xl
+    border
+    border-neutral-200/70
+    bg-white
+    p-6
+    shadow-sm
+    dark:border-neutral-800/70
+    dark:bg-[#15181D]
+  "
+      >
+        <ProductCommentsSection productSlug={productSlug} />
       </section>
     </div>
   );

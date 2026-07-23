@@ -11,6 +11,7 @@ const statements = {
   products: ['create', 'read', 'update', 'delete'],
   reviews: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
   wishlist: ['create', 'read', 'delete'],
+  productComments: ['create', 'read', 'update', 'update:own', 'delete', 'delete:own', 'moderate'],
 } as const;
 
 export const ac = createAccessControl(statements);
@@ -22,6 +23,7 @@ export const roles = {
     products: ['read'],
     reviews: ['create', 'update:own', 'delete:own'],
     wishlist: ['create'],
+    productComments: ['create', 'read', 'update:own', 'delete:own'],
   }),
 
   ADMIN: ac.newRole({
@@ -33,6 +35,7 @@ export const roles = {
     contacts: ['read', 'delete'],
     reviews: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     wishlist: ['create', 'read', 'delete'],
+    productComments: ['create', 'read', 'update', 'update:own', 'delete', 'delete:own', 'moderate'],
     ...adminAc.statements,
   }),
 };

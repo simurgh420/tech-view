@@ -132,7 +132,6 @@ const options = {
     },
   },
   plugins: [
-    nextCookies(),
     admin({
       defaultRole: 'USER',
       adminRoles: ['ADMIN'],
@@ -164,6 +163,7 @@ export const auth = betterAuth({
         },
       };
     }, options),
+    nextCookies(),
   ],
 });
 

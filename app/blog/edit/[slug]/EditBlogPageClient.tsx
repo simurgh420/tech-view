@@ -5,6 +5,7 @@
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
+import { logger } from '@/lib/logger';
 import { sanitizeUrl } from '@/lib/utils';
 import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -99,7 +100,7 @@ export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
           } else {
             notify.error('خطا در ویرایش بلاگ');
           }
-          console.error(error);
+          logger.error(error);
         },
       }
     );

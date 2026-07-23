@@ -31,7 +31,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { comments: [action] },
+        permissions: { comments: [action] },
       },
     });
     if (permission.error || !permission.success) {
@@ -103,7 +103,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { comments: [action] },
+        permissions: { comments: [action] },
       },
     });
     if (permission.error || !permission.success) {

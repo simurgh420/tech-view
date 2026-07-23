@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+'use client';
+
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { RichTextProvider } from 'reactjs-tiptap-editor';
 
@@ -21,9 +23,7 @@ import { Clear, RichTextClear } from 'reactjs-tiptap-editor/clear';
 import { Code, RichTextCode } from 'reactjs-tiptap-editor/code';
 import { CodeBlock, RichTextCodeBlock } from 'reactjs-tiptap-editor/codeblock';
 import { Color, RichTextColor } from 'reactjs-tiptap-editor/color';
-
 import { Emoji, RichTextEmoji } from 'reactjs-tiptap-editor/emoji';
-
 import { FontFamily, RichTextFontFamily } from 'reactjs-tiptap-editor/fontfamily';
 import { FontSize, RichTextFontSize } from 'reactjs-tiptap-editor/fontsize';
 import { Heading, RichTextHeading } from 'reactjs-tiptap-editor/heading';
@@ -34,10 +34,8 @@ import { Image, RichTextImage } from 'reactjs-tiptap-editor/image';
 import { ImageGif, RichTextImageGif } from 'reactjs-tiptap-editor/imagegif';
 import { Indent, RichTextIndent } from 'reactjs-tiptap-editor/indent';
 import { Italic, RichTextItalic } from 'reactjs-tiptap-editor/italic';
-
 import { LineHeight, RichTextLineHeight } from 'reactjs-tiptap-editor/lineheight';
 import { Link, RichTextLink } from 'reactjs-tiptap-editor/link';
-
 import { MoreMark, RichTextMoreMark } from 'reactjs-tiptap-editor/moremark';
 import { OrderedList, RichTextOrderedList } from 'reactjs-tiptap-editor/orderedlist';
 import { RichTextSearchAndReplace, SearchAndReplace } from 'reactjs-tiptap-editor/searchandreplace';
@@ -47,7 +45,6 @@ import { RichTextTaskList, TaskList } from 'reactjs-tiptap-editor/tasklist';
 import { RichTextAlign, TextAlign } from 'reactjs-tiptap-editor/textalign';
 import { TextDirection } from 'reactjs-tiptap-editor/textdirection';
 import { RichTextUnderline, TextUnderline } from 'reactjs-tiptap-editor/textunderline';
-
 import { RichTextVideo, Video } from 'reactjs-tiptap-editor/video';
 import { RichTextCallout, Callout } from 'reactjs-tiptap-editor/callout';
 
@@ -71,17 +68,15 @@ import axios from 'axios';
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
   let timeout: ReturnType<typeof setTimeout>;
-
   return (...args: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
   };
 }
+
 const deleteImageRequest = async (imageUrl: string) => {
   try {
-    await axios.post('/api/images/delete', {
-      imagePath: imageUrl,
-    });
+    await axios.post('/api/images/delete', { imagePath: imageUrl });
   } catch (err) {
     console.error('Error deleting image:', err);
   }
@@ -97,9 +92,14 @@ const getImagesFromEditor = (editor: any): string[] => {
   return images;
 };
 
+function extractImageSrcs(html: string): string[] {
+  const matches = html.matchAll(/<img[^>]+src=["']([^"']+)["']/g);
+  return Array.from(matches, m => m[1]);
+}
+
 const RichTextToolbar = () => {
   return (
-    <div className="flex items-center p-1 gap-2 flex-wrap border-b border-solid border-border">
+    <div className="flex items-center p-1 gap-2 flex-wrap border-b border-solid border-(--tt-border-color)">
       <RichTextUndo />
       <RichTextRedo />
       <RichTextSearchAndReplace />
@@ -133,6 +133,7 @@ const RichTextToolbar = () => {
     </div>
   );
 };
+
 type Props = {
   value: string;
   onChange: (val: string) => void;
@@ -140,180 +141,193 @@ type Props = {
 };
 
 export default function Editor({ value, onChange, slug }: Props) {
-  const [content, setContent] = useState(value || '');
-  const BaseKit = [
-    Document,
-    Text,
-    Paragraph,
-    Dropcursor,
-    Gapcursor,
-    HardBreak,
-    ListItem,
-    TextStyle,
-    Placeholder.configure({
-      placeholder: "Press '/' for commands",
-    }),
-  ];
+  const prevImagesRef = useRef<string[]>(extractImageSrcs(value || ''));
+  const debouncedOnChange = useRef<(val: string) => void>(() => {});
+  const lastEmittedRef = useRef<string>(value || '');
 
-  const extensions = [
-    ...BaseKit,
-    History,
-    SearchAndReplace,
-    Clear,
-    FontFamily,
-    Heading,
-    FontSize,
-    Bold,
-    Italic,
-    TextUnderline,
-    Strike,
-    MoreMark,
-    Emoji,
-    Color,
-    Highlight,
-    BulletList,
-    OrderedList,
-    TextAlign,
-    Indent,
-    LineHeight,
-    TaskList,
-    Link,
-    Image.configure({
-      async upload(file: File) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('folder', `blogs/${slug}/editor`);
-        formData.append('baseName', file.name);
-        const res = await axios.post('/api/images/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        return res.data.imageUrl as string;
-      },
-    }),
-    Video.configure({
-      upload: (files: File) => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(URL.createObjectURL(files));
-          }, 300);
-        });
-      },
-    }),
-    ImageGif.configure({
-      provider: 'giphy',
-      API_KEY: process.env.NEXT_PUBLIC_GIPHY_API_KEY as string,
-    }),
-    Blockquote,
-    HorizontalRule,
-    Code,
-    CodeBlock,
+  const extensions = useMemo(() => {
+    const BaseKit = [
+      Document,
+      Text,
+      Paragraph,
+      Dropcursor,
+      Gapcursor,
+      HardBreak,
+      ListItem,
+      TextStyle,
+      Placeholder.configure({
+        placeholder: 'برای دستورات از / استفاده کنید',
+      }),
+    ];
 
-    Table,
+    return [
+      ...BaseKit,
+      History,
+      SearchAndReplace,
+      Clear,
+      FontFamily,
+      Heading,
+      FontSize,
+      Bold,
+      Italic,
+      TextUnderline,
+      Strike,
+      MoreMark,
+      Emoji,
+      Color,
+      Highlight,
+      BulletList,
+      OrderedList,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+        defaultAlignment: 'right',
+      }),
+      Indent,
+      LineHeight,
+      TaskList,
+      Link,
+      Image.configure({
+        async upload(file: File) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('folder', `blogs/${slug}/editor`);
+          formData.append('baseName', file.name);
+          const res = await axios.post('/api/images/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          return res.data.imageUrl as string;
+        },
+      }),
+      Video.configure({
+        upload: (files: File) => {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              resolve(URL.createObjectURL(files));
+            }, 300);
+          });
+        },
+      }),
+      ImageGif.configure({
+        provider: 'giphy',
+        API_KEY: process.env.NEXT_PUBLIC_GIPHY_API_KEY as string,
+      }),
+      Blockquote,
+      HorizontalRule,
+      Code,
+      CodeBlock,
+      Table,
+      TextDirection.configure({
+        types: ['heading', 'paragraph'],
+        defaultDirection: 'rtl',
+      }),
+      SlashCommand,
+      Callout,
+    ];
+  }, [slug]);
 
-    TextDirection,
-    SlashCommand,
-    Callout,
-  ];
+  useEffect(() => {
+    debouncedOnChange.current = debounce((val: string) => {
+      lastEmittedRef.current = val;
+      onChange(val);
+    }, 300);
+  }, [onChange]);
 
-  const debouncedUpdate = useMemo(
-    () =>
-      debounce((val: string) => {
-        setContent(val);
-        onChange(val);
-      }, 300),
-    [onChange]
-  );
-
-  const onValueChange = useCallback(
-    (val: string) => {
-      debouncedUpdate(val);
-    },
-    [debouncedUpdate]
-  );
+  const onValueChange = useCallback((val: string) => {
+    debouncedOnChange.current(val);
+  }, []);
 
   const editor = useEditor({
-    textDirection: 'auto',
-    content,
+    content: value || '',
     extensions,
-
     immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        dir: 'rtl',
+        class: 'text-right',
+      },
+    },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onValueChange(html);
+
       const currentImages = getImagesFromEditor(editor);
-      const removedImages = prevImages.filter(img => !currentImages.includes(img));
+      const removedImages = prevImagesRef.current.filter(img => !currentImages.includes(img));
       removedImages.forEach(img => deleteImageRequest(img));
-      setPrevImages(currentImages);
+      prevImagesRef.current = currentImages;
     },
   });
-  const [prevImages, setPrevImages] = useState<string[]>(() => {
-    if (editor) return getImagesFromEditor(editor);
-    return [];
-  });
+
   useEffect(() => {
-    if (editor) {
-      setPrevImages(getImagesFromEditor(editor));
-    }
-  }, [editor]);
+    if (!editor) return;
+    if (value === lastEmittedRef.current) return;
+    if (value === editor.getHTML()) return;
+
+    editor.commands.setContent(value || '', {
+      emitUpdate: false,
+    });
+    lastEmittedRef.current = value || '';
+  }, [value, editor]);
+
   if (!editor) return null;
 
   return (
-    <>
-      {/* Editor container */}
-      <div className="w-full max-w-3xl mx-auto my-6 px-4 ">
-        <RichTextProvider editor={editor}>
-          <div
-            className="
-          overflow-hidden 
-          rounded-xl 
-          bg-white dark:bg-zinc-900 
-          border border-gray-200 dark:border-zinc-700 
-          shadow-md hover:shadow-lg 
-          transition-shadow duration-300 ease-in-out
-        "
-          >
-            <div className="flex flex-col">
-              {/* Toolbar */}
-              <div
-                className="
-              flex items-center flex-wrap gap-2 
-              border-b border-gray-200 dark:border-zinc-700 
-              bg-gray-50 dark:bg-zinc-600 
-              px-3 py-2 
-              sticky top-0 z-10
-            "
-              >
-                <RichTextToolbar />
-              </div>
-
-              {/* Editor */}
-              <EditorContent
-                editor={editor}
-                className="
-              prose dark:prose-invert 
-              max-w-none 
-              px-4 py-6 
-              text-gray-900 dark:text-gray-100 
-              leading-relaxed 
-              focus:outline-none
+    // اضافه شدن کلاس tt-editor برای اعمال ایزوله‌ی متغیرها به این کامپوننت
+    <div className="w-full max-w-3xl mx-auto my-6 px-4 tt-editor" dir="rtl">
+      <RichTextProvider editor={editor}>
+        <div
+          className="
+            overflow-hidden
+            rounded-(--tt-radius-xl)
+            bg-(--tt-bg-color)
+            border border-(--tt-border-color)
+            shadow-(--tt-shadow-elevated-md)
+            transition-all duration-(--tt-transition-duration-default) ease-(--tt-transition-easing-default)
+          "
+        >
+          <div className="flex flex-col">
+            {/* Toolbar */}
+            <div
+              className="
+                flex items-center flex-wrap gap-2
+                border-b border-(--tt-border-color)
+                bg-(--tt-sidebar-bg-color)
+                px-3 py-2
+                sticky top-0 z-10
               "
-              />
+            >
+              <RichTextToolbar />
+            </div>
 
-              {/* Bubble & Slash menus */}
-              <div className="relative">
-                <RichTextBubbleLink />
-                <RichTextBubbleImage />
-                <RichTextBubbleVideo />
-                <RichTextBubbleImageGif />
-                <RichTextBubbleText />
-                <RichTextBubbleCallout />
-                <SlashCommandList />
-                <RichTextBubbleMenuDragHandle />
-              </div>
+            {/* Editor */}
+            <EditorContent
+              editor={editor}
+              dir="rtl"
+              className="
+                prose dark:prose-invert
+                max-w-none
+                px-4 py-6
+                text-white
+                leading-relaxed
+                text-right
+                focus:outline-none
+                [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-(--tt-radius-md)
+              "
+            />
+
+            {/* Bubble & Slash menus */}
+            <div className="relative">
+              <RichTextBubbleLink />
+              <RichTextBubbleImage />
+              <RichTextBubbleVideo />
+              <RichTextBubbleImageGif />
+              <RichTextBubbleText />
+              <RichTextBubbleCallout />
+              <SlashCommandList />
+              <RichTextBubbleMenuDragHandle />
             </div>
           </div>
-        </RichTextProvider>
-      </div>
-    </>
+        </div>
+      </RichTextProvider>
+    </div>
   );
 }

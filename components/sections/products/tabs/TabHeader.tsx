@@ -9,46 +9,64 @@ type Props = {
 
 export default function TabHeader({ active, onChange }: Props) {
   const tabs: { id: TabId; label: string }[] = [
-    { id: 'description', label: 'توضیحات' },
-    { id: 'specs', label: 'مشخصات فنی' },
-    { id: 'reviews', label: 'نظرات کاربران' },
     { id: 'questions', label: 'پرسش و پاسخ' },
+    { id: 'reviews', label: 'نظرات کاربران' },
+    { id: 'specs', label: 'مشخصات فنی' },
+    { id: 'description', label: 'توضیحات' },
   ];
 
   return (
     <div
       className="
-        flex gap-6 overflow-x-auto no-scrollbar border-b rtl
-        px-2 py-3 relative
+        flex
+        justify-end
+        gap-2
+        overflow-x-auto
+        no-scrollbar
+        p-2
       "
     >
-      {tabs.map(tab => (
-        <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
-          className={`
-            relative pb-3 text-sm font-medium whitespace-nowrap transition-all
-            ${
-              active === tab.id
-                ? 'text-blue-600'
-                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-            }
-          `}
-        >
-          {tab.label}
+      {tabs.map(tab => {
+        const activeTab = active === tab.id;
 
-          {/* indicator انیمیشنی */}
-          {active === tab.id && (
-            <span
-              className="
-                absolute bottom-0 right-0 left-0 h-0.5
-                bg-blue-600 rounded-full
-                transition-all duration-300
-              "
-            />
-          )}
-        </button>
-      ))}
+        return (
+          <button
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            className={`
+              whitespace-nowrap
+              rounded-xl
+              px-4
+              py-2
+              text-sm
+              font-medium
+              transition-all
+              duration-200
+
+              ${
+                activeTab
+                  ? `
+                    bg-red-500
+                    text-white
+                    shadow-md
+                    shadow-red-500/20
+                  `
+                  : `
+                    text-neutral-600
+                    hover:bg-neutral-100
+                    hover:text-neutral-900
+
+                    dark:text-neutral-400
+                    dark:hover:bg-neutral-800
+                    dark:hover:text-neutral-100
+                  `
+              }
+            `}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

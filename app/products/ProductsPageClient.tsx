@@ -37,8 +37,13 @@ export default function ProductsPageClient() {
   const totalPages = data?.pages ?? 1;
   useEffect(() => {
     const query = buildFiltersQueryString(filters);
-    router.replace(query ? `?${query}` : window.location.pathname, { scroll: false });
-  }, [filters, router]);
+
+    const current = searchParams.toString();
+
+    if (query !== current) {
+      router.replace(`?${query}`, { scroll: false });
+    }
+  }, [filters, searchParams, router]);
 
   function handleSortChange(sort: string) {
     setFilters(prev => ({ ...prev, sort: sort as FiltersProduct['sort'], page: 1 }));

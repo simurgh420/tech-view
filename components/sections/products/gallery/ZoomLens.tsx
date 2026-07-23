@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import Image from 'next/image';
@@ -11,17 +10,27 @@ type ZoomLensProps = {
 
 export default function ZoomLens({ src, alt = 'product image' }: ZoomLensProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
   const [zoom, setZoom] = useState(false);
-  const [pos, setPos] = useState({ x: 50, y: 50 });
+
+  const [pos, setPos] = useState({
+    x: 50,
+    y: 50,
+  });
 
   function handleMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = containerRef.current?.getBoundingClientRect();
+
     if (!rect) return;
 
     const x = ((e.clientX - rect.left) / rect.width) * 100;
+
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    setPos({ x, y });
+    setPos({
+      x,
+      y,
+    });
   }
 
   return (
@@ -30,26 +39,53 @@ export default function ZoomLens({ src, alt = 'product image' }: ZoomLensProps) 
       onMouseEnter={() => setZoom(true)}
       onMouseLeave={() => setZoom(false)}
       onMouseMove={handleMove}
-      className="relative w-full h-full overflow-hidden"
+      className="
+        relative
+        w-full
+        h-full
+        overflow-hidden
+        cursor-zoom-in
+      "
     >
       <Image
         src={src}
         alt={alt}
         fill
-        className="object-cover transition-opacity duration-200"
-        sizes="(max-width: 768px) 100vw, 600px"
-      />
-
-      <img
-        src={src}
-        alt={alt}
-        className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-300 ${
-          zoom ? 'scale-150 opacity-100' : 'scale-100 opacity-0'
-        }`}
+        priority
+        sizes="
+          (max-width:768px) 100vw,
+          600px
+        "
+        className="
+        object-contain
+        select-none
+        "
         style={{
           transformOrigin: `${pos.x}% ${pos.y}%`,
+          transform: zoom ? 'scale(1.8)' : 'scale(1)',
+          transition: zoom ? 'transform 0.05s ease-out' : 'transform 0.2s ease',
         }}
       />
+
+      {zoom && (
+        <div
+          className="
+            absolute
+            pointer-events-none
+            border
+            border-white/50
+            rounded-full
+            w-20
+            h-20
+            bg-white/10
+          "
+          style={{
+            left: `${pos.x}%`,
+            top: `${pos.y}%`,
+            transform: 'translate(-50%, -50%)',
+          }}
+        />
+      )}
     </div>
   );
 }

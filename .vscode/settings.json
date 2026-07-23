@@ -4,6 +4,7 @@
     "brandfetch",
     "cuid",
     "Dropcursor",
+    "embla",
     "gapcursor",
     "GIPHY",
     "heroimg",
@@ -34,6 +35,7 @@
     "upload",
     "reviews",
     "Wishlist",
-    "checkout"
+    "checkout",
+    "Search"
   ]
 }

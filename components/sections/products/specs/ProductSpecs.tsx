@@ -14,9 +14,8 @@ type Props = {
 };
 
 export default function ProductSpecs({ specs }: Props) {
-  console.log('ProductSpecs received:', JSON.stringify(specs, null, 2));
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {specs.map(section => (
         <SpecsSection key={section.group} title={section.group} items={section.items} />
       ))}

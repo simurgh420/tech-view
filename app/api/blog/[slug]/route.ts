@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug
     const action = post.authorId === session.user.id ? 'update:own' : 'update';
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { posts: [action] } },
+      body: { userId: session.user.id, permissions: { posts: [action] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`PUT /api/blog/${slug} - Forbidden`, { userId: session.user.id });
@@ -105,7 +105,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ s
     const action = post.authorId === session.user.id ? 'delete:own' : 'delete';
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { posts: [action] } },
+      body: { userId: session.user.id, permissions: { posts: [action] } },
     });
     if (permission.error || !permission.success) {
       logger.warn(`DELETE /api/blog/${slug} - Forbidden`, { userId: session.user.id });

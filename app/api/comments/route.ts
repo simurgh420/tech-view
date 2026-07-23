@@ -17,7 +17,7 @@ export async function GET() {
       headers: await headers(),
       body: {
         userId: session.user.id,
-        permission: { comments: ['read'] },
+        permissions: { comments: ['read'] },
       },
     });
     if (permission.error || !permission.success) {

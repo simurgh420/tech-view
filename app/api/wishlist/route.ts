@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
-      body: { userId: session.user.id, permission: { wishlist: ['create'] } },
+      body: { userId: session.user.id, permissions: { wishlist: ['create'] } },
     });
     if (permission.error || !permission.success) {
       logger.warn('POST /api/wishlist - Forbidden', {
