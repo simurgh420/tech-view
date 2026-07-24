@@ -1,3 +1,4 @@
+// components/product/specs/SpecsSection.tsx
 'use client';
 
 import { useState } from 'react';
@@ -33,6 +34,7 @@ export default function SpecsSection({ title, items }: Props) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
+        aria-expanded={open} // اضافه‌شده برای دسترسی‌پذیری
         className="
           flex
           w-full
@@ -43,7 +45,7 @@ export default function SpecsSection({ title, items }: Props) {
           transition-colors
           duration-200
           hover:bg-neutral-50
-          dark:hover:bg-white/3
+          dark:hover:bg-white/5
         "
       >
         <span
@@ -70,7 +72,9 @@ export default function SpecsSection({ title, items }: Props) {
       </button>
 
       {open && (
-        <div>
+        <div className="px-5 pb-2">
+          {' '}
+          {/* کمی پدینگ برای زیبایی محتوای داخل */}
           {items.map(item => (
             <SpecsRow key={`${item.label}-${item.value}`} label={item.label} value={item.value} />
           ))}

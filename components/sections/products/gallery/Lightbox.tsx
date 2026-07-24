@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type LightboxProps = {
   images: string[];
@@ -14,24 +15,15 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const safeIndex = Math.min(Math.max(index, 0), Math.max(images.length - 1, 0));
-
   const currentImage = images[safeIndex];
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
 
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-
-      if (e.key === 'ArrowLeft' && safeIndex > 0) {
-        onChange(safeIndex - 1);
-      }
-
-      if (e.key === 'ArrowRight' && safeIndex < images.length - 1) {
-        onChange(safeIndex + 1);
-      }
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft' && safeIndex > 0) onChange(safeIndex - 1);
+      if (e.key === 'ArrowRight' && safeIndex < images.length - 1) onChange(safeIndex + 1);
     };
 
     window.addEventListener('keydown', handleKey);
@@ -54,22 +46,10 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
 
   return (
     <div
-      className="
-        fixed
-        inset-0
-        z-50
-
-        bg-black/90
-
-        flex
-        items-center
-        justify-center
-
-        p-4
-      "
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Close */}
+      {/* دکمه بستن */}
       <button
         type="button"
         onClick={onClose}
@@ -77,41 +57,23 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
           fixed
           top-5
           right-5
-
           z-50
-
           text-white
-          text-4xl
-
           hover:scale-110
           transition
         "
       >
-        ×
+        <X className="w-8 h-8" />
       </button>
 
-      <div
-        className="
-          relative
-
-          flex
-          flex-col
-          items-center
-
-          gap-4
-        "
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Main image */}
+      <div className="relative flex flex-col items-center gap-4" onClick={e => e.stopPropagation()}>
+        {/* تصویر اصلی */}
         <div
           className="
             relative
-
             w-[90vw]
             max-w-5xl
-
             h-[75vh]
-
             rounded-xl
             overflow-hidden
           "
@@ -122,13 +84,11 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
             fill
             priority
             sizes="90vw"
-            className="
-              object-contain
-            "
+            className="object-contain"
           />
         </div>
 
-        {/* Prev */}
+        {/* دکمه قبلی */}
         {safeIndex > 0 && (
           <button
             type="button"
@@ -141,19 +101,16 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
               left-5
               top-1/2
               -translate-y-1/2
-              w-10
               text-white
-              text-5xl
-
               hover:scale-110
               transition
             "
           >
-            ‹
+            <ChevronLeft className="w-12 h-12" />
           </button>
         )}
 
-        {/* Next */}
+        {/* دکمه بعدی */}
         {safeIndex < images.length - 1 && (
           <button
             type="button"
@@ -164,29 +121,19 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
             className="
               fixed
               right-5
-              w-10
               top-1/2
               -translate-y-1/2
-
               text-white
-              text-5xl
-
               hover:scale-110
               transition
             "
           >
-            ›
+            <ChevronRight className="w-12 h-12" />
           </button>
         )}
 
-        {/* Thumbnails */}
-        <div
-          className="
-            max-w-[90vw]
-            overflow-x-auto
-            scrollbar-hide
-          "
-        >
+        {/* تامنیل‌ها */}
+        <div className="max-w-[90vw] overflow-x-auto scrollbar-hide">
           <div className="flex gap-3 px-2">
             {images.map((img, i) => (
               <button
@@ -198,20 +145,14 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
                 onClick={() => onChange(i)}
                 className={`
                   relative
-
                   w-20
                   h-20
-
                   shrink-0
-
                   overflow-hidden
                   rounded-lg
-
                   border-2
-
                   transition
-
-                  ${i === safeIndex ? 'border-blue-500 scale-105' : 'border-transparent opacity-70'}
+                  ${i === safeIndex ? 'border-red-500 scale-105' : 'border-transparent opacity-70'}
                 `}
               >
                 <Image
@@ -219,9 +160,7 @@ export default function Lightbox({ images, index, onClose, onChange }: LightboxP
                   alt={`thumbnail-${i}`}
                   fill
                   sizes="80px"
-                  className="
-                    object-cover
-                  "
+                  className="object-cover"
                 />
               </button>
             ))}

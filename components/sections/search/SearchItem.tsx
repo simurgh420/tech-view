@@ -1,7 +1,12 @@
+'use client';
+
 import Image from 'next/image';
-import { NormalizedSearchResult } from '@/types/search';
 import Link from 'next/link';
+import { ChevronLeft, FileText, FolderTree, Package } from 'lucide-react';
+
 import { getSearchItemUrl } from '@/lib/getSearchItemUrl';
+import { formatPrice } from '@/lib/formatPrice';
+import { NormalizedSearchResult } from '@/types/search';
 
 interface SearchItemProps {
   item: NormalizedSearchResult;
@@ -9,80 +14,165 @@ interface SearchItemProps {
 
 export function SearchItem({ item }: SearchItemProps) {
   const url = getSearchItemUrl(item);
+
+  const icon =
+    item.type === 'product' ? (
+      <Package className="h-5 w-5 text-red-500" />
+    ) : item.type === 'category' ? (
+      <FolderTree className="h-5 w-5 text-blue-500" />
+    ) : (
+      <FileText className="h-5 w-5 text-emerald-500" />
+    );
+
   return (
     <Link href={url}>
-      <div className="border p-4 rounded-md hover:bg-muted/50 transition">
-        <p className="text-xs text-muted-foreground mb-1">{item.type}</p>
+      <article
+        className="
+          group
+          flex
+          items-center
+          gap-4
 
-        <h3 className="font-bold">{item.title}</h3>
+          rounded-2xl
 
-        {/* BLOG */}
-        {item.type === 'blog' && (
-          <>
-            {item.description && (
-              <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-            )}
+          p-3
 
-            {item.image && (
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={80}
-                height={80}
-                className="object-cover rounded-md mt-3"
-              />
-            )}
+          transition-all
+          duration-200
 
-            {item.tags.length > 0 && (
-              <div className="flex gap-2 mt-2 flex-wrap">
-                {item.tags.map(tag => (
-                  <span key={tag} className="text-xs bg-muted px-2 py-1 rounded-md">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </>
-        )}
+          hover:bg-accent
+          hover:shadow-sm
+        "
+      >
+        {/* Image */}
 
-        {/* PRODUCT */}
-        {item.type === 'product' && (
-          <>
-            <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+        <div
+          className="
+            flex
+            h-16
+            w-16
+            shrink-0
+            items-center
+            justify-center
 
-            {item.price && <p className="text-green-600 font-semibold mt-2">{item.price} تومان</p>}
+            overflow-hidden
+            rounded-xl
 
-            {item.image && (
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={80}
-                height={80}
-                className="object-cover rounded-md mt-3"
-              />
-            )}
-          </>
-        )}
-
-        {/* CATEGORY */}
-        {item.type === 'category' && (
-          <>
-            {item.icon && (
+            bg-muted
+          "
+        >
+          {item.type === 'category' ? (
+            item.icon ? (
               <Image
                 src={item.icon}
                 alt={item.title}
-                width={40}
-                height={40}
-                className="object-cover rounded-md mt-3"
+                width={64}
+                height={64}
+                className="h-full w-full object-cover"
               />
-            )}
+            ) : (
+              icon
+            )
+          ) : item.image ? (
+            <Image
+              src={item.image}
+              alt={item.title}
+              width={64}
+              height={64}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            icon
+          )}
+        </div>
 
-            {item.parent && (
-              <p className="text-xs text-muted-foreground mt-2">زیرمجموعه: {item.parent}</p>
-            )}
-          </>
-        )}
-      </div>
+        {/* Content */}
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            {icon}
+
+            <span className="text-xs text-muted-foreground">
+              {item.type === 'product' ? 'محصول' : item.type === 'blog' ? 'مقاله' : 'دسته‌بندی'}
+            </span>
+          </div>
+
+          <h3 className="mt-1 line-clamp-1 text-sm font-bold">{item.title}</h3>
+
+          {/* Product */}
+
+          {item.type === 'product' && (
+            <>
+              {item.description && (
+                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                  {item.description}
+                </p>
+              )}
+
+              {item.price && (
+                <p className="mt-2 text-sm font-bold text-red-600 dark:text-red-400">
+                  {formatPrice(item.price)} تومان
+                </p>
+              )}
+            </>
+          )}
+
+          {/* Blog */}
+
+          {item.type === 'blog' && (
+            <>
+              {item.description && (
+                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                  {item.description}
+                </p>
+              )}
+
+              {item.tags.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {item.tags.slice(0, 3).map(tag => (
+                    <span
+                      key={tag}
+                      className="
+                        rounded-full
+                        bg-muted
+
+                        px-2
+                        py-1
+
+                        text-[10px]
+                      "
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Category */}
+
+          {item.type === 'category' && item.parent && (
+            <p className="mt-2 text-xs text-muted-foreground">زیر مجموعه {item.parent}</p>
+          )}
+        </div>
+
+        <ChevronLeft
+          className="
+            h-5
+            w-5
+
+            text-muted-foreground
+
+            opacity-0
+
+            transition-all
+
+            group-hover:translate-x-1
+            group-hover:opacity-100
+          "
+        />
+      </article>
     </Link>
   );
 }

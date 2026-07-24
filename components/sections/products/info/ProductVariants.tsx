@@ -70,8 +70,6 @@ export default function ProductVariants({ colors, variants }: Props) {
           </div>
         </section>
       )}
-
-      {/* نسخه‌ها */}
       {/* نسخه‌ها */}
       {variants.length > 0 && (
         <section className="space-y-3">

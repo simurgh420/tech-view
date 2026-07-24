@@ -9,10 +9,27 @@ import { Button } from '@/components/ui';
 import { useNotify } from '@/hooks/useNotify';
 import { useOrders } from '@/hooks/useOrders';
 import { useRouter } from 'next/navigation';
+import { User, MapPin, Loader2 } from 'lucide-react';
 
 type CheckoutFormProps = {
   defaultValues: CheckoutPayloadType;
 };
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="mt-1 text-xs text-red-500 dark:text-red-400">{message}</p>;
+}
+
+function SectionHeading({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
+  return (
+    <div className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-gray-100">
+      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400">
+        <Icon size={15} />
+      </span>
+      {title}
+    </div>
+  );
+}
 
 export function CheckoutForm({ defaultValues }: CheckoutFormProps) {
   const notify = useNotify();
@@ -26,8 +43,6 @@ export function CheckoutForm({ defaultValues }: CheckoutFormProps) {
   });
 
   const onSubmit = (data: CheckoutPayloadType) => {
-    notify.info('در حال ثبت سفارش…');
-
     createOrder.mutate(data, {
       onSuccess: res => {
         notify.success('سفارش با موفقیت ثبت شد');
@@ -40,49 +55,66 @@ export function CheckoutForm({ defaultValues }: CheckoutFormProps) {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-xl">
-      <h1 className="text-xl font-semibold">تکمیل اطلاعات سفارش</h1>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-xl space-y-8 text-start">
+      <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">تکمیل اطلاعات سفارش</h1>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <Input {...form.register('fullName')} placeholder="نام و نام خانوادگی" />
-          {form.formState.errors.fullName && (
-            <p className="text-red-500 text-xs mt-1">{form.formState.errors.fullName.message}</p>
-          )}
-        </div>
+      {/* اطلاعات تماس */}
+      <div className="space-y-4 rounded-2xl border border-gray-200 p-5 dark:border-gray-800">
+        <SectionHeading icon={User} title="اطلاعات تماس" />
 
-        <div>
-          <Input {...form.register('phone')} placeholder="شماره موبایل" />
-          {form.formState.errors.phone && (
-            <p className="text-red-500 text-xs mt-1">{form.formState.errors.phone.message}</p>
-          )}
-        </div>
-      </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <Input {...form.register('fullName')} placeholder="نام و نام خانوادگی" />
+            <FieldError message={form.formState.errors.fullName?.message} />
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <Input {...form.register('city')} placeholder="شهر" />
-          {form.formState.errors.city && (
-            <p className="text-red-500 text-xs mt-1">{form.formState.errors.city.message}</p>
-          )}
-        </div>
-
-        <div>
-          <Input {...form.register('postalCode')} placeholder="کد پستی" />
-          {form.formState.errors.postalCode && (
-            <p className="text-red-500 text-xs mt-1">{form.formState.errors.postalCode.message}</p>
-          )}
+          <div>
+            <Input
+              {...form.register('phone')}
+              placeholder="شماره موبایل"
+              dir="ltr"
+              className="text-end"
+            />
+            <FieldError message={form.formState.errors.phone?.message} />
+          </div>
         </div>
       </div>
 
-      <div>
-        <Textarea {...form.register('address')} placeholder="آدرس کامل" rows={3} />
-        {form.formState.errors.address && (
-          <p className="text-red-500 text-xs mt-1">{form.formState.errors.address.message}</p>
-        )}
+      {/* اطلاعات ارسال */}
+      <div className="space-y-4 rounded-2xl border border-gray-200 p-5 dark:border-gray-800">
+        <SectionHeading icon={MapPin} title="اطلاعات ارسال" />
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <Input {...form.register('city')} placeholder="شهر" />
+            <FieldError message={form.formState.errors.city?.message} />
+          </div>
+
+          <div>
+            <Input
+              {...form.register('postalCode')}
+              placeholder="کد پستی"
+              dir="ltr"
+              className="text-end"
+            />
+            <FieldError message={form.formState.errors.postalCode?.message} />
+          </div>
+        </div>
+
+        <div>
+          <Textarea {...form.register('address')} placeholder="آدرس کامل" rows={3} />
+          <FieldError message={form.formState.errors.address?.message} />
+        </div>
       </div>
 
-      <Button className="w-full py-3">ثبت سفارش</Button>
+      <Button
+        type="submit"
+        disabled={createOrder.isPending}
+        className="w-full gap-2 bg-gradient-to-l from-red-500 to-rose-600 py-3 text-base font-semibold shadow-md shadow-red-500/25 transition-all hover:shadow-lg hover:shadow-red-500/40 disabled:opacity-60"
+      >
+        {createOrder.isPending && <Loader2 size={16} className="animate-spin" />}
+        {createOrder.isPending ? 'در حال ثبت سفارش...' : 'ثبت سفارش'}
+      </Button>
     </form>
   );
 }

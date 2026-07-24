@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 
 import GalleryMainImage from './GalleryMainImage';
 import GalleryThumbnails from './GalleryThumbnails';
+import GalleryMobileSlider from './GalleryMobileSlider';
 import Lightbox from './Lightbox';
 
 type Props = {
@@ -21,7 +22,6 @@ export default function ProductGallery({ images, thumbnail }: Props) {
     if (thumbnail && !cleanedImages.includes(thumbnail)) {
       return [thumbnail, ...cleanedImages];
     }
-
     return cleanedImages;
   }, [thumbnail, cleanedImages]);
 
@@ -53,22 +53,24 @@ export default function ProductGallery({ images, thumbnail }: Props) {
 
   return (
     <div className="w-full space-y-4">
+      {/* نمای موبایل (اسلایدر لمسی) */}
+      <div className="block md:hidden">
+        <GalleryMobileSlider
+          images={normalizedImages}
+          activeIndex={safeIndex}
+          onChange={setActiveIndex}
+        />
+      </div>
+      {/* نمای دسکتاپ (تامنیل‌ها + تصویر اصلی) */}
       <div
         className="
-          grid
-          grid-cols-1
+          hidden
+          md:grid
           md:grid-cols-12
           gap-4
         "
       >
-        {/* Thumbnails */}
-        <div
-          className="
-            order-2
-            md:order-1
-            md:col-span-3
-          "
-        >
+        <div className="md:col-span-3">
           <GalleryThumbnails
             images={normalizedImages}
             activeIndex={safeIndex}
@@ -76,14 +78,7 @@ export default function ProductGallery({ images, thumbnail }: Props) {
           />
         </div>
 
-        {/* Main Image */}
-        <div
-          className="
-            order-1
-            md:order-2
-            md:col-span-9
-          "
-        >
+        <div className="md:col-span-9">
           <GalleryMainImage
             src={normalizedImages[safeIndex]}
             onClick={() => setLightboxOpen(true)}
