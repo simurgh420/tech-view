@@ -39,10 +39,11 @@ export default function GalleryThumbnails({
               overflow-hidden
               rounded-2xl
               border
-              bg-white
               p-2
               transition-all
               duration-200
+              bg-white
+              dark:bg-neutral-900
 
               ${
                 active
@@ -57,7 +58,6 @@ export default function GalleryThumbnails({
                     hover:shadow-sm
 
                     dark:border-neutral-700
-                    dark:bg-neutral-900
                     dark:hover:border-neutral-600
                   `
               }
@@ -83,9 +83,9 @@ export default function GalleryThumbnails({
                 className="
                   absolute
                   inset-y-3
-                  right-0
+                  end-0
                   w-1
-                  rounded-l-full
+                  rounded-s-full
                   bg-red-500
                 "
               />

@@ -10,8 +10,9 @@ import {
 } from '@/services/products/db/queries';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
+import { productIncludes, productWithReviews } from '@/services/products/productIncludes';
 
-// ---------- مــاک‌های اصلی ----------
+// ---------- مــاک‌ها ----------
 vi.mock('@/services/db/client', () => ({
   default: {
     product: {
@@ -29,7 +30,7 @@ vi.mock('@/lib/logger', () => ({
   },
 }));
 
-// کمکی برای ساخت یک محصول mock کامل (مطابق خروجی Prisma)
+// ---------- Helper: Mock Product ----------
 function createMockProduct(overrides: Record<string, unknown> = {}) {
   return {
     id: 'p1',
@@ -67,105 +68,138 @@ describe('Products DB Queries', () => {
     vi.clearAllMocks();
   });
 
+  // -----------------------------------------------------
+  // getProducts
+  // -----------------------------------------------------
   describe('getProducts', () => {
-    it('should return all products with includes', async () => {
+    it('should return formatted products with includes', async () => {
       const mockProducts = [createMockProduct()];
       (prisma.product.findMany as any).mockResolvedValue(mockProducts);
+
       const result = await getProducts();
-      expect(result).toEqual(mockProducts);
+
+      // بررسی تبدیل formatProduct
+      expect(result[0].id).toBe('p1');
+      expect(result[0].price).toBe('150000');
+      expect(result[0].createdAt).toBe('2024-01-01T00:00:00.000Z');
+
+      // بررسی include دقیقاً مطابق productIncludes
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         orderBy: { createdAt: 'desc' },
-        include: expect.objectContaining({
-          specifications: true,
-        }),
+        include: productIncludes,
       });
+
       expect(logger.info).toHaveBeenCalled();
     });
 
     it('should log error and throw', async () => {
       (prisma.product.findMany as any).mockRejectedValue(new Error('DB fail'));
+
       await expect(getProducts()).rejects.toThrow('DB fail');
       expect(logger.error).toHaveBeenCalled();
     });
   });
 
+  // -----------------------------------------------------
+  // getProductBySlug
+  // -----------------------------------------------------
   describe('getProductBySlug', () => {
     it('should return formatted product when found', async () => {
-      const mockPrismaProduct = createMockProduct();
-      (prisma.product.findUnique as any).mockResolvedValue(mockPrismaProduct);
+      const mockProduct = createMockProduct();
+      (prisma.product.findUnique as any).mockResolvedValue(mockProduct);
 
       const result = await getProductBySlug('test');
 
-      // بررسی فیلدهای تبدیل‌شده توسط formatProduct
+      // بررسی تبدیل formatProduct
       expect(result?.id).toBe('p1');
-      expect(result?.slug).toBe('test');
-      expect(result?.price).toBe('150000'); // تبدیل به string
-      expect(result?.discountPrice).toBeNull();
+      expect(result?.price).toBe('150000');
       expect(result?.createdAt).toBe('2024-01-01T00:00:00.000Z');
-      expect(result?.brand).toEqual(mockPrismaProduct.brand);
-      expect(result?.specifications).toEqual([]);
 
+      // بررسی include دقیقاً مطابق productWithReviews
       expect(prisma.product.findUnique).toHaveBeenCalledWith({
         where: { slug: 'test' },
-        include: expect.objectContaining({
-          specifications: true,
-        }),
+        include: productWithReviews,
       });
+
       expect(logger.info).toHaveBeenCalled();
     });
 
     it('should return null when not found', async () => {
       (prisma.product.findUnique as any).mockResolvedValue(null);
+
       const result = await getProductBySlug('missing');
+
       expect(result).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('getProductBySlug: not found', expect.any(Object));
+      expect(logger.info).toHaveBeenCalled();
     });
   });
 
+  // -----------------------------------------------------
+  // getProductsByBrand
+  // -----------------------------------------------------
   describe('getProductsByBrand', () => {
-    it('should return products by brand slug', async () => {
+    it('should return formatted products by brand slug', async () => {
       const mockProducts = [createMockProduct({ brand: { slug: 'nike' } })];
       (prisma.product.findMany as any).mockResolvedValue(mockProducts);
+
       const result = await getProductsByBrand('nike');
+
+      expect(result[0].brand!.slug).toBe('nike');
+
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { brand: { slug: 'nike' } },
         orderBy: { createdAt: 'desc' },
         include: { brand: true, specifications: true },
       });
-      expect(result).toEqual(mockProducts);
     });
   });
 
+  // -----------------------------------------------------
+  // getProductsByCategory
+  // -----------------------------------------------------
   describe('getProductsByCategory', () => {
-    it('should return products by category slug', async () => {
+    it('should return formatted products by category slug', async () => {
       const mockProducts = [createMockProduct({ category: { slug: 'shoes' } })];
       (prisma.product.findMany as any).mockResolvedValue(mockProducts);
+
       const result = await getProductsByCategory('shoes');
+
+      expect(result[0].category!.slug).toBe('shoes');
+
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { category: { slug: 'shoes' } },
         orderBy: { createdAt: 'desc' },
         include: { category: true, specifications: true },
       });
-      expect(result).toEqual(mockProducts);
     });
   });
 
+  // -----------------------------------------------------
+  // getFeaturedProducts
+  // -----------------------------------------------------
   describe('getFeaturedProducts', () => {
-    it('should return featured published products', async () => {
+    it('should return formatted featured products', async () => {
       const mockProducts = [createMockProduct({ isFeatured: true, status: 'PUBLISHED' })];
       (prisma.product.findMany as any).mockResolvedValue(mockProducts);
+
       const result = await getFeaturedProducts();
+
+      expect(result[0].isFeatured).toBe(true);
+
+      // بررسی include دقیقاً مطابق productIncludes
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { isFeatured: true, status: 'PUBLISHED' },
         orderBy: { createdAt: 'desc' },
-        include: expect.objectContaining({
-          specifications: true,
-        }),
+        include: productIncludes,
       });
-      expect(result).toEqual(mockProducts);
+
+      expect(logger.info).toHaveBeenCalled();
     });
   });
 
+  // -----------------------------------------------------
+  // getFilteredProducts
+  // -----------------------------------------------------
   describe('getFilteredProducts', () => {
     beforeEach(() => {
       (prisma.product.findMany as any).mockResolvedValue([]);

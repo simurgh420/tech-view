@@ -29,6 +29,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
   const images = product.images ?? [];
   const thumbnail = product.thumbnail ?? null;
   const brandName = product.brand?.name ?? '';
+  const brandSlug = product.brand?.slug ?? '';
   const categoryTitle = product.category?.title ?? '';
   const categorySlug = product.category?.slug ?? '';
   const specsArray = product.specifications ?? [];
@@ -83,6 +84,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
             <ProductInfo
               title={product.title}
               brand={brandName}
+              brandSlug={brandSlug}
               rating={product.rating ? Number(product.rating) : 0}
               ratingCount={product.reviewCount ?? 0}
               keyFeatures={product.keyFeatures ?? []}

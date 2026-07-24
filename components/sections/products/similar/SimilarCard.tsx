@@ -4,6 +4,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { formatPrice } from '@/lib/formatPrice';
 
 type Product = {
   id: string;
@@ -11,8 +12,6 @@ type Product = {
   price: number;
   thumbnail: string;
 };
-
-const formatPrice = (value: number) => new Intl.NumberFormat('en-US').format(value);
 
 export default function SimilarCard({ product }: { product: Product }) {
   return (

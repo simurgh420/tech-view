@@ -1,6 +1,4 @@
 // components/product/specs/ProductSpecs.tsx
-'use client';
-
 import SpecsSection from './SpecsSection';
 
 type Props = {

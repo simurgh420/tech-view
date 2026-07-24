@@ -1,4 +1,6 @@
-const formatPrice = (value: number) => new Intl.NumberFormat('en-US').format(value);
+// components/product/price/PriceDisplay.tsx
+import { formatPrice } from '@/lib/formatPrice';
+
 type Props = {
   price: number;
   discountPrice?: number | null;
@@ -54,17 +56,6 @@ export default function PriceDisplay({ price, discountPrice }: Props) {
               "
             >
               {formatPrice(discountPrice)}
-            </div>
-
-            <div
-              className="
-                text-sm
-                font-medium
-                text-neutral-500
-                dark:text-neutral-400
-              "
-            >
-              تومان
             </div>
           </div>
         </>

@@ -9,11 +9,10 @@ import { Product } from '@/types/product';
 import { useCart } from '@/hooks/useCart';
 import { useNotify } from '@/hooks/useNotify';
 import { StarRatingDisplay } from '@/components/ui/star-rating-input';
+import { formatPrice } from '@/lib/formatPrice';
 
 type ProductCardProps = {
   product: Product;
-  locale?: string;
-  currencyLabel?: string;
   addToCartLabel?: string;
   addingLabel?: string;
   fastShippingLabel?: string;
@@ -21,22 +20,12 @@ type ProductCardProps = {
 
 export default function ProductCard({
   product,
-  locale,
-  currencyLabel = 'تومان',
   addToCartLabel = 'افزودن به سبد',
   addingLabel = 'در حال افزودن...',
   fastShippingLabel = 'ارسال سریع',
 }: ProductCardProps) {
   const add = useCart().useAddToCart();
   const notify = useNotify();
-
-  const resolvedLocale =
-    locale ??
-    (typeof document !== 'undefined' ? document.documentElement.lang : 'fa-IR') ??
-    'fa-IR';
-
-  const formatPrice = (value: string | number) =>
-    new Intl.NumberFormat(resolvedLocale).format(Number(value));
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -163,10 +152,9 @@ export default function ProductCard({
             "
           >
             <Zap size={11} fill="currentColor" />
-
             <span>{fastShippingLabel}</span>
           </div>
-        </div>{' '}
+        </div>
         {/* قیمت */}
         <div className="mt-auto space-y-2 pt-1">
           {product.isDiscounted ? (
@@ -174,7 +162,7 @@ export default function ProductCard({
               <div className="flex items-center gap-2">
                 <span
                   className="
-                    text-lg
+                    text-base
                     font-bold
                     tracking-tight
                     text-red-600
@@ -183,7 +171,6 @@ export default function ProductCard({
                 >
                   {formatPrice(product.discountPrice ?? product.price)}
                 </span>
-
                 <span
                   className="
                     text-xs
@@ -194,24 +181,13 @@ export default function ProductCard({
                 >
                   {formatPrice(product.price)}
                 </span>
-
-                <span
-                  className="
-                    text-[11px]
-                    font-medium
-                    text-neutral-500
-                    dark:text-neutral-400
-                  "
-                >
-                  {currencyLabel}
-                </span>
               </div>
             </>
           ) : (
             <div className="flex items-center gap-1">
               <span
                 className="
-                  text-lg
+                  text-xs
                   font-bold
                   tracking-tight
                   text-neutral-900
@@ -219,17 +195,6 @@ export default function ProductCard({
                 "
               >
                 {formatPrice(product.price)}
-              </span>
-
-              <span
-                className="
-                  text-[11px]
-                  font-medium
-                  text-neutral-500
-                  dark:text-neutral-400
-                "
-              >
-                {currencyLabel}
               </span>
             </div>
           )}

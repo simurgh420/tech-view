@@ -8,10 +8,9 @@ import ProductVariants from './ProductVariants';
 type Props = {
   title: string;
   brand: string;
-
+  brandSlug?: string;
   rating?: number;
   ratingCount?: number;
-
   keyFeatures?: string[];
   colors?: { name: string; hex: string }[];
   variants?: { ram: string; storage: string }[];
@@ -22,6 +21,7 @@ export default function ProductInfo({
   brand,
   rating,
   ratingCount,
+  brandSlug,
   keyFeatures = [],
   colors = [],
   variants = [],
@@ -35,7 +35,7 @@ export default function ProductInfo({
         gap-7
       "
     >
-      <ProductTitle title={title} brand={brand} />
+      <ProductTitle title={title} brand={brand} brandSlug={brandSlug} />
 
       <div
         className="

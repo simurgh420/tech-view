@@ -1,5 +1,4 @@
 // components/product/specs/SpecsRow.tsx
-
 type Props = {
   label: string;
   value: string | number;
@@ -22,12 +21,12 @@ export default function SpecsRow({ label, value }: Props) {
         hover:bg-neutral-50
         last:border-b-0
         dark:border-neutral-800/70
-        dark:hover:bg-white/2
+        dark:hover:bg-white/5
       "
     >
       <span
         className="
-          min-w-35
+          min-w-36
           text-sm
           font-medium
           text-neutral-500
@@ -40,11 +39,11 @@ export default function SpecsRow({ label, value }: Props) {
       <span
         className="
           flex-1
+          wrap-break-word
           text-start
           text-sm
           font-semibold
           text-neutral-900
-          wrap-break-word
           dark:text-neutral-100
         "
       >
