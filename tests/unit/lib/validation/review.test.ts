@@ -65,8 +65,9 @@ describe('Review Validation Schemas', () => {
   });
 
   describe('updateReviewSchema', () => {
-    it('should allow empty object (no updates)', () => {
-      expect(updateReviewSchema.safeParse({}).success).toBe(true);
+    it('should NOT allow empty object', () => {
+      const result = updateReviewSchema.safeParse({});
+      expect(result.success).toBe(false);
     });
 
     it('should allow partial data (only rating)', () => {

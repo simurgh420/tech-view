@@ -99,7 +99,7 @@ export function SuccessPageClient({ order }: SuccessPageClientProps) {
 
       <Button
         onClick={() => router.push('/orders')}
-        className="mt-8 gap-2 bg-gradient-to-l from-red-500 to-rose-600 px-8 shadow-md shadow-red-500/25 hover:shadow-lg hover:shadow-red-500/40"
+        className="mt-8 gap-2 bg-linear-to-l from-red-500 to-rose-600 px-8 shadow-md shadow-red-500/25 hover:shadow-lg hover:shadow-red-500/40"
       >
         مشاهدهٔ سفارش‌ها
       </Button>

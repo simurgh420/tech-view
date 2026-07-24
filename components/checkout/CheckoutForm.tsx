@@ -110,7 +110,7 @@ export function CheckoutForm({ defaultValues }: CheckoutFormProps) {
       <Button
         type="submit"
         disabled={createOrder.isPending}
-        className="w-full gap-2 bg-gradient-to-l from-red-500 to-rose-600 py-3 text-base font-semibold shadow-md shadow-red-500/25 transition-all hover:shadow-lg hover:shadow-red-500/40 disabled:opacity-60"
+        className="w-full gap-2 bg-linear-to-l from-red-500 to-rose-600 py-3 text-base font-semibold shadow-md shadow-red-500/25 transition-all hover:shadow-lg hover:shadow-red-500/40 disabled:opacity-60"
       >
         {createOrder.isPending && <Loader2 size={16} className="animate-spin" />}
         {createOrder.isPending ? 'در حال ثبت سفارش...' : 'ثبت سفارش'}
