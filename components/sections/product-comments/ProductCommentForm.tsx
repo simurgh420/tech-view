@@ -9,7 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
-import { useProductComments } from '@/hooks/useProductComments';
 import { useNotify } from '@/hooks/useNotify';
 import { useSession } from '@/lib/auth-client';
 
@@ -17,6 +16,7 @@ import {
   CreateProductCommentInput,
   createProductCommentSchema,
 } from '@/lib/validation/productComment';
+import { useCreateComment } from '@/hooks/useProductComments';
 
 interface ProductCommentFormProps {
   productSlug: string;
@@ -77,9 +77,7 @@ function AuthenticatedCommentForm({
   onSuccess,
   onCancel,
 }: ProductCommentFormProps) {
-  const { useCreateComment } = useProductComments(productSlug);
-
-  const createComment = useCreateComment();
+  const createComment = useCreateComment(productSlug);
 
   const notify = useNotify();
 

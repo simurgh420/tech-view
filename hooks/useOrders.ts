@@ -1,43 +1,52 @@
 // hooks/useOrders.ts
-
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createOrderApi } from '@/services/orders/api/mutations';
 import { getOrderByIdApi, getUserOrdersApi } from '@/services/orders/api/queries';
 import { CheckoutPayloadType } from '@/lib/validation/checkout';
+import { cartKeys } from '@/hooks/useCart';
 
-export function useOrders() {
+/** کلیدهای کوئری متمرکز برای سفارش‌ها */
+export const orderKeys = {
+  all: ['orders'] as const,
+  detail: (orderId: string) => [...orderKeys.all, orderId] as const,
+};
+
+// ─────────────────────────────────────────────
+// Queries
+// ─────────────────────────────────────────────
+
+/** لیست سفارش‌های کاربر */
+export function useGetUserOrders() {
+  return useQuery({
+    queryKey: orderKeys.all,
+    queryFn: getUserOrdersApi,
+  });
+}
+
+/** جزئیات یک سفارش بر اساس شناسه */
+export function useGetOrderById(orderId: string) {
+  return useQuery({
+    queryKey: orderKeys.detail(orderId),
+    queryFn: () => getOrderByIdApi(orderId),
+    enabled: !!orderId,
+  });
+}
+
+// ─────────────────────────────────────────────
+// Mutations
+// ─────────────────────────────────────────────
+
+/** ثبت سفارش — بعد از موفقیت، سفارش‌ها و سبد خرید invalidate می‌شوند */
+export function useCreateOrder() {
   const qc = useQueryClient();
 
-  // لیست سفارش‌های کاربر
-  const useGetUserOrders = () =>
-    useQuery({
-      queryKey: ['orders'],
-      queryFn: getUserOrdersApi,
-    });
-
-  // جزئیات یک سفارش
-  const useGetOrderById = (orderId: string) =>
-    useQuery({
-      queryKey: ['orders', orderId],
-      queryFn: () => getOrderByIdApi(orderId),
-      enabled: !!orderId,
-    });
-
-  // ثبت سفارش
-  const useCreateOrder = () =>
-    useMutation({
-      mutationFn: (payload: CheckoutPayloadType) => createOrderApi(payload),
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['orders'] });
-        qc.invalidateQueries({ queryKey: ['cart'] });
-      },
-    });
-
-  return {
-    useGetUserOrders,
-    useGetOrderById,
-    useCreateOrder,
-  };
+  return useMutation({
+    mutationFn: (payload: CheckoutPayloadType) => createOrderApi(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: orderKeys.all });
+      qc.invalidateQueries({ queryKey: cartKeys.all });
+    },
+  });
 }

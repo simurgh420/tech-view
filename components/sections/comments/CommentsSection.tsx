@@ -1,15 +1,14 @@
 // components/sections/comments/CommentsSection.tsx
 'use client';
 
-import { useComments } from '@/hooks/useComments';
 import Image from 'next/image';
 import { CommentForm } from './CommentForm';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StarRatingDisplay } from '@/components/ui/star-rating-input';
+import { useGetComments } from '@/hooks/useComments';
 
 export function CommentsSection({ postId }: { postId: string }) {
-  const { useGetComments } = useComments(postId);
-  const { data: comments = [], isLoading, error } = useGetComments();
+  const { data: comments = [], isLoading, error } = useGetComments(postId);
 
   if (isLoading) {
     return (

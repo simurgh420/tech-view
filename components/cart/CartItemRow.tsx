@@ -1,10 +1,10 @@
 'use client';
 
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import { useCart } from '@/hooks/useCart';
 import { useNotify } from '@/hooks/useNotify';
 import { CartItemWithProduct } from '@/types/cart';
 import { formatPrice } from '@/lib/formatPrice';
+import { useRemoveFromCart, useUpdateCartItemQuantity } from '@/hooks/useCart';
 
 type Props = {
   item: CartItemWithProduct;
@@ -12,12 +12,9 @@ type Props = {
 
 export function CartItemRow({ item }: Props) {
   const notify = useNotify();
-  const { mutate: updateQuantity, isPending: isUpdating } = useCart().useUpdateCartItemQuantity();
-  const { mutate: removeItem, isPending: isRemoving } = useCart().useRemoveFromCart();
+  const { mutate: updateQuantity, isPending: isUpdating } = useUpdateCartItemQuantity();
+  const { mutate: removeItem, isPending: isRemoving } = useRemoveFromCart();
 
-  // قبلاً همیشه قیمت اصلی (بدون تخفیف) نمایش داده می‌شد، درحالی‌که مجموع کل
-  // (در CartCheckout/CartDrawer) درست discountPrice را حساب می‌کرد — یعنی
-  // قیمت تک‌کالا با جمع کل ناهماهنگ بود
   const unitPrice = item.product?.isDiscounted
     ? Number(item.product?.discountPrice)
     : Number(item.product?.price);

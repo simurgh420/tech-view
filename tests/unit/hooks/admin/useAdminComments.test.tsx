@@ -3,9 +3,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
+
+import {
+  useGetAdminComments,
+  useDeleteAdminComment,
+  adminCommentKeys,
+} from '@/hooks/useAdmin/useAdminComments';
+
 import * as queries from '@/services/comments/api/queries';
 import * as mutations from '@/services/comments/api/mutations';
-import { useAdminComments } from '@/hooks/useAdmin/useAdminComments';
 
 vi.mock('@/services/comments/api/queries', () => ({
   fetchAllCommentsAdminApi: vi.fn(),
@@ -26,79 +32,72 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useAdminComments', () => {
+describe('useAdminComments hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should fetch comments and return data', async () => {
-    const mockComments = [{ id: '1', content: 'Test comment' }];
-    (queries.fetchAllCommentsAdminApi as any).mockResolvedValue(mockComments);
-    const { result } = renderHook(() => useAdminComments(), {
-      wrapper: createWrapper(),
+  describe('useGetAdminComments', () => {
+    it('should fetch comments and return data', async () => {
+      const mockComments = [{ id: '1', content: 'Test comment' }];
+      (queries.fetchAllCommentsAdminApi as any).mockResolvedValue(mockComments);
+
+      const { result } = renderHook(() => useGetAdminComments(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(result.current.data).toEqual(mockComments);
+      expect(queries.fetchAllCommentsAdminApi).toHaveBeenCalledTimes(1);
     });
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.comments).toEqual(mockComments);
-    expect(result.current.isError).toBe(false);
-    expect(result.current.error).toBe(null);
+
+    it('should handle fetch error', async () => {
+      const error = new Error('Network error');
+      (queries.fetchAllCommentsAdminApi as any).mockRejectedValue(error);
+
+      const { result } = renderHook(() => useGetAdminComments(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isError).toBe(true));
+      expect(result.current.error).toEqual(error);
+    });
   });
 
-  it('should return empty array if no comments', async () => {
-    (queries.fetchAllCommentsAdminApi as any).mockResolvedValue([]);
-    const { result } = renderHook(() => useAdminComments(), {
-      wrapper: createWrapper(),
-    });
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.comments).toEqual([]);
-  });
+  describe('useDeleteAdminComment', () => {
+    it('should delete comment and invalidate admin-comments query', async () => {
+      (mutations.deleteCommentApi as any).mockResolvedValue({ success: true });
 
-  it('should handle fetch error', async () => {
-    const error = new Error('Network error');
-    (queries.fetchAllCommentsAdminApi as any).mockRejectedValue(error);
-    const { result } = renderHook(() => useAdminComments(), {
-      wrapper: createWrapper(),
-    });
-    await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.comments).toEqual([]);
-    expect(result.current.error).toEqual(error);
-  });
+      const queryClient = new QueryClient();
+      const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-  it('should delete comment and invalidate queries', async () => {
-    const mockComments = [{ id: '1', content: 'Test' }];
-    (queries.fetchAllCommentsAdminApi as any).mockResolvedValue(mockComments);
-    (mutations.deleteCommentApi as any).mockResolvedValue({ success: true });
+      const { result } = renderHook(() => useDeleteAdminComment(), {
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+      });
 
-    const queryClient = new QueryClient();
-    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+      result.current.mutate('1');
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    const { result } = renderHook(() => useAdminComments(), {
-      wrapper: ({ children }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      ),
+      expect(mutations.deleteCommentApi).toHaveBeenCalledWith('1');
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: adminCommentKeys.all });
     });
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    it('should handle error in delete mutation', async () => {
+      const error = new Error('Delete failed');
+      (mutations.deleteCommentApi as any).mockRejectedValue(error);
 
-    result.current.deleteComment.mutate('1');
-    await waitFor(() => expect(result.current.deleteComment.isSuccess).toBe(true));
-    expect(mutations.deleteCommentApi).toHaveBeenCalledWith('1');
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['admin-comments'] });
-  });
+      const queryClient = new QueryClient();
+      const { result } = renderHook(() => useDeleteAdminComment(), {
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+      });
 
-  it('should handle error in delete mutation', async () => {
-    const mockComments = [{ id: '1', content: 'Test' }];
-    (queries.fetchAllCommentsAdminApi as any).mockResolvedValue(mockComments);
-    const error = new Error('Delete failed');
-    (mutations.deleteCommentApi as any).mockRejectedValue(error);
-
-    const { result } = renderHook(() => useAdminComments(), {
-      wrapper: createWrapper(),
+      result.current.mutate('1');
+      await waitFor(() => expect(result.current.isError).toBe(true));
+      expect(result.current.error).toEqual(error);
     });
-
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-    result.current.deleteComment.mutate('1');
-    await waitFor(() => expect(result.current.deleteComment.isError).toBe(true));
-    expect(result.current.deleteComment.error).toEqual(error);
   });
 });

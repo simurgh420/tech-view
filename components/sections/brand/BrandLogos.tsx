@@ -1,10 +1,9 @@
 'use client';
-import { useBrands } from '@/hooks/useBrands';
+import { useGetBrands } from '@/hooks/useBrands';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function BrandLogos() {
-  const { useGetBrands } = useBrands();
   const { data: brands, isLoading, isError } = useGetBrands();
 
   if (isLoading) return <p>در حال بارگذاری...</p>;

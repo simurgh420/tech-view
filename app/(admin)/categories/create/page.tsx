@@ -2,14 +2,13 @@
 'use client';
 
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
-import { useCategories } from '@/hooks/useCategories';
+import { useCreateCategory } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
 import { CreateCategoryInput } from '@/lib/validation/category';
 import { useRouter } from 'next/navigation';
 
 export default function CreateCategoryPage() {
   const router = useRouter();
-  const { useCreateCategory } = useCategories();
   const createMutation = useCreateCategory();
   const notify = useNotify();
 

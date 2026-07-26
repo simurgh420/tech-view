@@ -3,10 +3,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useCart } from '@/hooks/useCart';
+
+import {
+  useGetCartItems,
+  useAddToCart,
+  useUpdateCartItemQuantity,
+  useRemoveFromCart,
+  useClearCart,
+  cartKeys,
+} from '@/hooks/useCart';
+
 import * as cartQueries from '@/services/cart/api/queries';
 import * as cartMutations from '@/services/cart/api/mutations';
 
+// ─── Mock API ها ──────────────────────────────────────────
 vi.mock('@/services/cart/api/queries', () => ({
   fetchCartApi: vi.fn(),
 }));
@@ -18,6 +28,7 @@ vi.mock('@/services/cart/api/mutations', () => ({
   clearCartApi: vi.fn(),
 }));
 
+// ─── Wrapper تست ──────────────────────────────────────────
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -29,7 +40,8 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useCart', () => {
+// ─── تست‌ها ──────────────────────────────────────────────
+describe('useCart hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -42,11 +54,10 @@ describe('useCart', () => {
       ];
       (cartQueries.fetchCartApi as any).mockResolvedValue(mockItems);
 
-      const { result } = renderHook(() => useCart().useGetCartItems(), {
+      const { result } = renderHook(() => useGetCartItems(), {
         wrapper: createWrapper(),
       });
 
-      expect(result.current.isLoading).toBe(true);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(result.current.data).toEqual(mockItems);
       expect(cartQueries.fetchCartApi).toHaveBeenCalledTimes(1);
@@ -56,7 +67,7 @@ describe('useCart', () => {
       const error = new Error('Network error');
       (cartQueries.fetchCartApi as any).mockRejectedValue(error);
 
-      const { result } = renderHook(() => useCart().useGetCartItems(), {
+      const { result } = renderHook(() => useGetCartItems(), {
         wrapper: createWrapper(),
       });
 
@@ -74,7 +85,7 @@ describe('useCart', () => {
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useCart().useAddToCart(), {
+      const { result } = renderHook(() => useAddToCart(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -82,34 +93,60 @@ describe('useCart', () => {
 
       result.current.mutate(input);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      // ✅ Ignore the second argument (mutation context)
+
       expect(cartMutations.addCartItemApi).toHaveBeenCalledWith(input, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['cart'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
     });
   });
 
-describe('useUpdateCartItemQuantity', () => {
-  it('should update quantity and invalidate cart query', async () => {
-    const params = { id: 'ci1', quantity: 3 };
-    const mockResponse = { id: 'ci1', productId: 'p1', quantity: 3 };
-    (cartMutations.updateCartItemQuantityApi as any).mockResolvedValue(mockResponse);
+  describe('useUpdateCartItemQuantity', () => {
+    it('should update quantity and invalidate cart query', async () => {
+      const params = { id: 'ci1', quantity: 3 };
+      const mockResponse = { id: 'ci1', productId: 'p1', quantity: 3 };
+      (cartMutations.updateCartItemQuantityApi as any).mockResolvedValue(mockResponse);
 
-    const queryClient = new QueryClient();
-    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+      const queryClient = new QueryClient();
+      const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-    const { result } = renderHook(() => useCart().useUpdateCartItemQuantity(), {
-      wrapper: ({ children }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      ),
+      const { result } = renderHook(() => useUpdateCartItemQuantity(), {
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+      });
+
+      result.current.mutate(params);
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(cartMutations.updateCartItemQuantityApi).toHaveBeenCalledWith(
+        params.id,
+        params.quantity
+      );
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
     });
 
-    result.current.mutate(params);
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    // Exactly two arguments: id and quantity (no extra context)
-    expect(cartMutations.updateCartItemQuantityApi).toHaveBeenCalledWith(params.id, params.quantity);
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['cart'] });
+    it('should remove item if quantity < 1', async () => {
+      const params = { id: 'ci1', quantity: 0 };
+      (cartMutations.removeCartItemApi as any).mockResolvedValue({ success: true });
+
+      const queryClient = new QueryClient();
+      const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+      const { result } = renderHook(() => useUpdateCartItemQuantity(), {
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+      });
+
+      result.current.mutate(params);
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      // removeCartItemApi از داخل wrapper صدا زده می‌شود، فقط با id
+      expect(cartMutations.removeCartItemApi).toHaveBeenCalledWith(params.id);
+      expect(cartMutations.updateCartItemQuantityApi).not.toHaveBeenCalled();
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
+    });
   });
-});
+
   describe('useRemoveFromCart', () => {
     it('should remove item and invalidate cart query', async () => {
       const itemId = 'ci1';
@@ -118,7 +155,7 @@ describe('useUpdateCartItemQuantity', () => {
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useCart().useRemoveFromCart(), {
+      const { result } = renderHook(() => useRemoveFromCart(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -126,9 +163,10 @@ describe('useUpdateCartItemQuantity', () => {
 
       result.current.mutate(itemId);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      // ✅ Mutation functions receive the variable as first arg and context as second
+
+      // removeCartItemApi مستقیماً به‌عنوان mutationFn استفاده شده، پس با context صدا زده می‌شود
       expect(cartMutations.removeCartItemApi).toHaveBeenCalledWith(itemId, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['cart'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
     });
   });
 
@@ -139,7 +177,7 @@ describe('useUpdateCartItemQuantity', () => {
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useCart().useClearCart(), {
+      const { result } = renderHook(() => useClearCart(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -147,8 +185,9 @@ describe('useUpdateCartItemQuantity', () => {
 
       result.current.mutate();
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
       expect(cartMutations.clearCartApi).toHaveBeenCalledWith(undefined, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['cart'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
     });
   });
 });

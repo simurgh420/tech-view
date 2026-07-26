@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui';
 import { useNotify } from '@/hooks/useNotify';
-import { useOrders } from '@/hooks/useOrders';
 import { useRouter } from 'next/navigation';
 import { User, MapPin, Loader2 } from 'lucide-react';
+import { useCreateOrder } from '@/hooks/useOrders';
 
 type CheckoutFormProps = {
   defaultValues: CheckoutPayloadType;
@@ -34,7 +34,6 @@ function SectionHeading({ icon: Icon, title }: { icon: React.ElementType; title:
 export function CheckoutForm({ defaultValues }: CheckoutFormProps) {
   const notify = useNotify();
   const router = useRouter();
-  const { useCreateOrder } = useOrders();
   const createOrder = useCreateOrder();
 
   const form = useForm<CheckoutPayloadType>({

@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { useBlogs } from '@/hooks/useBlogs';
+import { useDeleteBlog } from '@/hooks/useBlogs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -12,7 +12,6 @@ type Props = {
 };
 export function PostActions({ slug }: Props) {
   const router = useRouter();
-  const { useDeleteBlog } = useBlogs();
   const { mutate: deleteBlog } = useDeleteBlog();
 
   return (

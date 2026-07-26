@@ -2,7 +2,6 @@
 
 'use client';
 
-import { useReviews } from '@/hooks/useReviews';
 import { useSession } from '@/lib/auth-client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +14,7 @@ import { DeleteReviewModal } from './DeleteReviewModal';
 import { ReviewForm } from './ReviewForm';
 
 import { StarRatingDisplay } from '@/components/ui/star-rating-input';
+import { useGetReviews } from '@/hooks/useReviews';
 
 type Props = {
   productSlug: string;
@@ -29,9 +29,7 @@ export function ReviewsSection({ productSlug }: Props) {
 
   const userId = session?.user?.id;
 
-  const { useGetReviews } = useReviews(productSlug);
-
-  const { data: reviews = [], isLoading, isError } = useGetReviews();
+  const { data: reviews = [], isLoading, isError } = useGetReviews(productSlug);
 
   return (
     <section

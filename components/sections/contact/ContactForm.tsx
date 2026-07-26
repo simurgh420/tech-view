@@ -7,12 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
-import { useContact } from '@/hooks/useContact';
 import { ContactFormValues, contactSchema } from '@/lib/validation/contact';
 import { useNotify } from '@/hooks/useNotify';
+import { useCreateContact } from '@/hooks/useContact';
 
 export function ContactForm() {
-  const { useCreateContact } = useContact();
   const createContact = useCreateContact();
   const notify = useNotify();
 
@@ -63,8 +62,8 @@ export function ContactForm() {
             placeholder="نام و نام خانوادگی"
             disabled={createContact.isPending}
             className="
-            border border-white/10 
-              rounded-xl px-4 py-3 
+            border border-white/10
+              rounded-xl px-4 py-3
                focus-visible:ring-1
               transition disabled:opacity-50
             "
@@ -81,8 +80,8 @@ export function ContactForm() {
             placeholder="ایمیل"
             disabled={createContact.isPending}
             className="
-             border border-white/10 
-              rounded-xl px-4 py-3 
+             border border-white/10
+              rounded-xl px-4 py-3
                    focus-visible:ring-1
               transition disabled:opacity-50
             "
@@ -99,8 +98,8 @@ export function ContactForm() {
             placeholder="شماره تماس"
             disabled={createContact.isPending}
             className="
-               border border-white/10 
-              rounded-xl px-4 py-3 
+               border border-white/10
+              rounded-xl px-4 py-3
                   focus-visible:ring-1
               transition disabled:opacity-50
             "
@@ -117,8 +116,8 @@ export function ContactForm() {
             placeholder="موضوع پیام"
             disabled={createContact.isPending}
             className="
-              border border-white/10 
-              rounded-xl px-4 py-3 
+              border border-white/10
+              rounded-xl px-4 py-3
                    focus-visible:ring-1
               transition disabled:opacity-50
             "
@@ -135,8 +134,8 @@ export function ContactForm() {
             placeholder="متن پیام شما..."
             disabled={createContact.isPending}
             className="
-              h-25 w-full border border-white/10 
-              rounded-xl px-4 py-3 
+              h-25 w-full border border-white/10
+              rounded-xl px-4 py-3
                    focus-visible:ring-0 focus-visible:border-e-blue-600
               transition disabled:opacity-50
             "

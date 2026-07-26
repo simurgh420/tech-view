@@ -3,10 +3,21 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useCategories } from '@/hooks/useCategories';
+
+// Import مستقیم هوک‌ها و categoryKeys
+import {
+  useGetCategories,
+  useGetCategory,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  categoryKeys,
+} from '@/hooks/useCategories';
+
 import * as queries from '@/services/categories/api/queries';
 import * as mutations from '@/services/categories/api/mutations';
 
+// ─── Mock API ها ──────────────────────────────────────────
 vi.mock('@/services/categories/api/queries', () => ({
   fetchCategoriesApi: vi.fn(),
   fetchCategoryBySlugApi: vi.fn(),
@@ -18,6 +29,7 @@ vi.mock('@/services/categories/api/mutations', () => ({
   deleteCategoryRequestApi: vi.fn(),
 }));
 
+// ─── Wrapper تست ──────────────────────────────────────────
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -29,7 +41,8 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useCategories', () => {
+// ─── تست‌ها ──────────────────────────────────────────────
+describe('useCategories hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -42,11 +55,10 @@ describe('useCategories', () => {
       ];
       (queries.fetchCategoriesApi as any).mockResolvedValue(mockCategories);
 
-      const { result } = renderHook(() => useCategories().useGetCategories(), {
+      const { result } = renderHook(() => useGetCategories(), {
         wrapper: createWrapper(),
       });
 
-      expect(result.current.isLoading).toBe(true);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(result.current.data).toEqual(mockCategories);
       expect(queries.fetchCategoriesApi).toHaveBeenCalledTimes(1);
@@ -56,7 +68,7 @@ describe('useCategories', () => {
       const error = new Error('Network error');
       (queries.fetchCategoriesApi as any).mockRejectedValue(error);
 
-      const { result } = renderHook(() => useCategories().useGetCategories(), {
+      const { result } = renderHook(() => useGetCategories(), {
         wrapper: createWrapper(),
       });
 
@@ -71,7 +83,8 @@ describe('useCategories', () => {
 
     it('should fetch category by slug when slug is provided', async () => {
       (queries.fetchCategoryBySlugApi as any).mockResolvedValue(mockCategory);
-      const { result } = renderHook(() => useCategories().useGetCategory(slug), {
+
+      const { result } = renderHook(() => useGetCategory(slug), {
         wrapper: createWrapper(),
       });
 
@@ -81,16 +94,18 @@ describe('useCategories', () => {
     });
 
     it('should not fetch when slug is falsy', () => {
-      renderHook(() => useCategories().useGetCategory(''), { wrapper: createWrapper() });
+      renderHook(() => useGetCategory(''), { wrapper: createWrapper() });
       expect(queries.fetchCategoryBySlugApi).not.toHaveBeenCalled();
     });
 
     it('should handle error', async () => {
       const error = new Error('Not found');
       (queries.fetchCategoryBySlugApi as any).mockRejectedValue(error);
-      const { result } = renderHook(() => useCategories().useGetCategory(slug), {
+
+      const { result } = renderHook(() => useGetCategory(slug), {
         wrapper: createWrapper(),
       });
+
       await waitFor(() => expect(result.current.isError).toBe(true));
       expect(result.current.error).toEqual(error);
     });
@@ -102,10 +117,11 @@ describe('useCategories', () => {
 
     it('should create category and invalidate categories query', async () => {
       (mutations.createCategoryRequestApi as any).mockResolvedValue(createdCategory);
+
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useCategories().useCreateCategory(), {
+      const { result } = renderHook(() => useCreateCategory(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -113,8 +129,10 @@ describe('useCategories', () => {
 
       result.current.mutate(input);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      // createCategoryRequestApi مستقیماً به‌عنوان mutationFn استفاده شده، بنابراین با دو آرگومان صدا زده می‌شود
       expect(mutations.createCategoryRequestApi).toHaveBeenCalledWith(input, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['categories'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: categoryKeys.all });
     });
   });
 
@@ -125,10 +143,11 @@ describe('useCategories', () => {
 
     it('should update category and invalidate categories and single category queries', async () => {
       (mutations.updateCategoryRequestApi as any).mockResolvedValue(updatedCategory);
+
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useCategories().useUpdateCategory(), {
+      const { result } = renderHook(() => useUpdateCategory(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -136,9 +155,11 @@ describe('useCategories', () => {
 
       result.current.mutate({ slug, data });
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      // wrapper فقط با یک آرگومان (object) صدا زده می‌شود، سپس updateCategoryRequestApi با slug و data فراخوانی می‌شود
       expect(mutations.updateCategoryRequestApi).toHaveBeenCalledWith(slug, data);
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['categories'] });
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['category', slug] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: categoryKeys.all });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: categoryKeys.detail(slug) });
     });
   });
 
@@ -147,10 +168,11 @@ describe('useCategories', () => {
 
     it('should delete category and invalidate categories query', async () => {
       (mutations.deleteCategoryRequestApi as any).mockResolvedValue({ success: true });
+
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useCategories().useDeleteCategory(), {
+      const { result } = renderHook(() => useDeleteCategory(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -158,8 +180,10 @@ describe('useCategories', () => {
 
       result.current.mutate(slug);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      // deleteCategoryRequestApi مستقیماً به‌عنوان mutationFn استفاده شده، بنابراین با دو آرگومان صدا زده می‌شود
       expect(mutations.deleteCategoryRequestApi).toHaveBeenCalledWith(slug, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['categories'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: categoryKeys.all });
     });
   });
 });

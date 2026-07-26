@@ -2,12 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { useBrands } from '@/hooks/useBrands';
+import { useDeleteBrand } from '@/hooks/useBrands';
 import { useRouter } from 'next/navigation';
 
 export function BrandActions({ slug }: { slug: string }) {
   const router = useRouter();
-  const { useDeleteBrand } = useBrands();
   const { mutate: deleteBrand } = useDeleteBrand();
 
   return (

@@ -3,7 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useReviews } from '@/hooks/useReviews';
+
+// Import مستقیم هوک‌ها و reviewKeys
+import {
+  useGetReviews,
+  useCreateReview,
+  useUpdateReview,
+  useDeleteReview,
+  reviewKeys,
+} from '@/hooks/useReviews';
+
 import * as queries from '@/services/reviews/api/queries';
 import * as mutations from '@/services/reviews/api/mutations';
 
@@ -28,7 +37,7 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useReviews', () => {
+describe('useReviews hooks', () => {
   const slug = 'test-product';
 
   beforeEach(() => {
@@ -39,7 +48,7 @@ describe('useReviews', () => {
     it('should fetch reviews when slug is provided', async () => {
       const mockReviews = [{ id: 'r1', rating: 5, content: 'Great!' }];
       (queries.fetchReviewsByProductApi as any).mockResolvedValue(mockReviews);
-      const { result } = renderHook(() => useReviews(slug).useGetReviews(), {
+      const { result } = renderHook(() => useGetReviews(slug), {
         wrapper: createWrapper(),
       });
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -48,7 +57,7 @@ describe('useReviews', () => {
     });
 
     it('should not fetch when slug is falsy', () => {
-      renderHook(() => useReviews('').useGetReviews(), { wrapper: createWrapper() });
+      renderHook(() => useGetReviews(''), { wrapper: createWrapper() });
       expect(queries.fetchReviewsByProductApi).not.toHaveBeenCalled();
     });
   });
@@ -67,15 +76,16 @@ describe('useReviews', () => {
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useReviews(slug).useCreateReview(), {
+      const { result } = renderHook(() => useCreateReview(slug), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate(input);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      // آرگومان دوم context را نادیده می‌گیریم
       expect(mutations.createReviewApi).toHaveBeenCalledWith(input, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['reviews', slug] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: reviewKeys.byProduct(slug) });
     });
   });
 
@@ -89,15 +99,16 @@ describe('useReviews', () => {
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useReviews(slug).useUpdateReview(), {
+      const { result } = renderHook(() => useUpdateReview(slug), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate({ id, data });
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      // updateReviewApi مستقیماً با id و data صدا زده می‌شود (بدون context)
       expect(mutations.updateReviewApi).toHaveBeenCalledWith(id, data);
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['reviews', slug] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: reviewKeys.byProduct(slug) });
     });
   });
 
@@ -109,15 +120,16 @@ describe('useReviews', () => {
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useReviews(slug).useDeleteReview(), {
+      const { result } = renderHook(() => useDeleteReview(slug), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate(id);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      // آرگومان دوم context را نادیده می‌گیریم
       expect(mutations.deleteReviewApi).toHaveBeenCalledWith(id, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['reviews', slug] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: reviewKeys.byProduct(slug) });
     });
   });
 });

@@ -1,15 +1,22 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 
 export function useOnClickOutside<T extends HTMLElement>(
   ref: RefObject<T | null>,
   handler: (event: MouseEvent | TouchEvent) => void
 ) {
+  const handlerRef = useRef(handler);
+
+  // همیشه آخرین نسخه‌ی handler رو نگه می‌داریم، بدون اینکه effect رو دوباره اجرا کنیم
+  useEffect(() => {
+    handlerRef.current = handler;
+  });
+
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
       if (!ref.current || ref.current.contains(event.target as Node)) {
         return;
       }
-      handler(event);
+      handlerRef.current(event);
     };
 
     document.addEventListener('mousedown', listener);
@@ -19,5 +26,5 @@ export function useOnClickOutside<T extends HTMLElement>(
       document.removeEventListener('mousedown', listener);
       document.removeEventListener('touchstart', listener);
     };
-  }, [ref, handler]);
+  }, [ref]); // فقط ref — نه handler
 }

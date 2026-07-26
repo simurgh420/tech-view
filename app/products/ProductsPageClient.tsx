@@ -8,7 +8,7 @@ import ProductFilters from '@/components/sections/products/ProductFilters';
 import SortMenu from '@/components/sections/products/SortMenu';
 import { Button } from '@/components/ui';
 import { SkeletonCard } from '@/components/ui/skeleton';
-import { useProducts } from '@/hooks/useProducts';
+import { useGetFilteredProducts } from '@/hooks/useProducts';
 import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
 import { FiltersProduct } from '@/types/product';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -17,8 +17,6 @@ import { useEffect, useState } from 'react';
 export default function ProductsPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const { useGetFilteredProducts } = useProducts();
 
   const initialFilters: FiltersProduct = {
     brandSlug: searchParams.get('brandSlug') || undefined,

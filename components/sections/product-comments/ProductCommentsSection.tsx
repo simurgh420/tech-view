@@ -2,21 +2,18 @@
 
 'use client';
 
-import { useProductComments } from '@/hooks/useProductComments';
-
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { ProductCommentForm } from './ProductCommentForm';
 import { ProductCommentItem } from './ProductCommentItem';
+import { useGetComments } from '@/hooks/useProductComments';
 
 type Props = {
   productSlug: string;
 };
 
 export function ProductCommentsSection({ productSlug }: Props) {
-  const { useGetComments } = useProductComments(productSlug);
-
-  const { data: comments = [], isLoading, isError } = useGetComments();
+  const { data: comments = [], isLoading, isError } = useGetComments(productSlug);
 
   if (isLoading) {
     return (

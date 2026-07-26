@@ -4,10 +4,10 @@
 
 import { ProductForm } from '@/components/admin/product-form/ProductForm';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useBrands } from '@/hooks/useBrands';
-import { useCategories } from '@/hooks/useCategories';
+import { useGetBrands } from '@/hooks/useBrands';
+import { useGetCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
-import { useProducts } from '@/hooks/useProducts';
+import { useGetProduct, useUpdateProduct } from '@/hooks/useProducts';
 import { ProductFormType, UpdateProductInput } from '@/lib/validation/product';
 
 import axios from 'axios';
@@ -19,14 +19,11 @@ type EditProductProps = {
 
 export default function EditProductClientPage({ slug }: EditProductProps) {
   const router = useRouter();
-  const { useGetProduct, useUpdateProduct } = useProducts();
 
   const { data: product, isLoading, isError } = useGetProduct(slug);
 
-  const { useGetBrands } = useBrands();
   const { data: brands } = useGetBrands();
 
-  const { useGetCategories } = useCategories();
   const { data: categories } = useGetCategories();
 
   const updateMutation = useUpdateProduct();

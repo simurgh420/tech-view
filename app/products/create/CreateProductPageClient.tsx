@@ -1,12 +1,10 @@
 // app//products/create/CreateProductPageClient.tsx
-
 'use client';
-
 import { ProductForm } from '@/components/admin/product-form/ProductForm';
-import { useBrands } from '@/hooks/useBrands';
-import { useCategories } from '@/hooks/useCategories';
+import { useGetBrands } from '@/hooks/useBrands';
+import { useGetCategories } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
-import { useProducts } from '@/hooks/useProducts';
+import { useCreateProduct } from '@/hooks/useProducts';
 import { toSlug } from '@/lib/slug-common';
 import { CreateProductPayload, ProductFormType } from '@/lib/validation/product';
 import axios from 'axios';
@@ -14,11 +12,8 @@ import { useRouter } from 'next/navigation';
 
 export default function CreateProductPageClient() {
   const router = useRouter();
-  const { useCreateProduct } = useProducts();
   const createMutation = useCreateProduct();
-  const { useGetBrands } = useBrands();
   const { data: brands } = useGetBrands();
-  const { useGetCategories } = useCategories();
   const { data: categories } = useGetCategories();
   const notify = useNotify();
 

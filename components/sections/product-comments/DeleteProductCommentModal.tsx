@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 
 import { useNotify } from '@/hooks/useNotify';
-import { useProductComments } from '@/hooks/useProductComments';
+import { useDeleteComment } from '@/hooks/useProductComments';
 
 type Props = {
   commentId: string;
@@ -25,9 +25,7 @@ type Props = {
 export function DeleteProductCommentModal({ commentId, productSlug }: Props) {
   const [open, setOpen] = useState(false);
 
-  const { useDeleteComment } = useProductComments(productSlug);
-
-  const deleteComment = useDeleteComment();
+  const deleteComment = useDeleteComment(productSlug);
 
   const notify = useNotify();
 

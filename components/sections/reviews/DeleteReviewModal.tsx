@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 
 import { useNotify } from '@/hooks/useNotify';
-import { useReviews } from '@/hooks/useReviews';
+import { useDeleteReview } from '@/hooks/useReviews';
 
 interface DeleteReviewModalProps {
   reviewId: string;
@@ -25,9 +25,7 @@ interface DeleteReviewModalProps {
 export function DeleteReviewModal({ reviewId, productSlug }: DeleteReviewModalProps) {
   const [open, setOpen] = useState(false);
 
-  const { useDeleteReview } = useReviews(productSlug);
-
-  const deleteReview = useDeleteReview();
+  const deleteReview = useDeleteReview(productSlug);
 
   const notify = useNotify();
 

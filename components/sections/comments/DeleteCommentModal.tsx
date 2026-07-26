@@ -10,11 +10,11 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useNotify } from '@/hooks/useNotify';
-import { useAdminComments } from '@/hooks/useAdmin/useAdminComments';
+import { useDeleteAdminComment } from '@/hooks/useAdmin/useAdminComments';
 
 export function DeleteCommentModal({ commentId }: { commentId: string }) {
   const [open, setOpen] = useState(false);
-  const { deleteComment } = useAdminComments();
+  const deleteComment = useDeleteAdminComment();
   const notify = useNotify();
 
   async function handleDelete() {

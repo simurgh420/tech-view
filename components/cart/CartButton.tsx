@@ -1,11 +1,11 @@
 'use client';
 
-import { useCart } from '@/hooks/useCart';
+import { useGetCartItems } from '@/hooks/useCart';
 import { useCartUI } from '@/stores/cart-ui.store';
 import { ShoppingCart } from 'lucide-react';
 
 export function CartButton() {
-  const { data } = useCart().useGetCartItems();
+  const { data } = useGetCartItems();
   const open = useCartUI(s => s.open);
 
   const count = data?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
