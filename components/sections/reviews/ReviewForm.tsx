@@ -20,12 +20,12 @@ import { Button } from '@/components/ui/button';
 
 import { StarRatingInput } from '@/components/ui/star-rating-input';
 
-import { useReviews } from '@/hooks/useReviews';
 import { useNotify } from '@/hooks/useNotify';
 
 import { useSession } from '@/lib/auth-client';
 
 import { CreateReviewInput, createReviewSchema } from '@/lib/validation/review';
+import { useCreateReview } from '@/hooks/useReviews';
 
 type Props = {
   productSlug: string;
@@ -58,9 +58,7 @@ export function ReviewForm({ productSlug }: Props) {
 }
 
 function AuthenticatedReviewForm({ productSlug }: Props) {
-  const { useCreateReview } = useReviews(productSlug);
-
-  const createReview = useCreateReview();
+  const createReview = useCreateReview(productSlug);
 
   const notify = useNotify();
 
@@ -91,7 +89,7 @@ function AuthenticatedReviewForm({ productSlug }: Props) {
         });
       },
 
-      onError: error => {
+      onError: (error: { message: string }) => {
         notify.error(error instanceof Error ? error.message : 'خطا در ثبت نظر ❌');
       },
     });

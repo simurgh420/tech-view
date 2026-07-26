@@ -1,6 +1,5 @@
 'use client';
 
-import { useComments } from '@/hooks/useComments';
 import { useSession } from '@/lib/auth-client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,13 +17,13 @@ import { Button } from '@/components/ui/button';
 import { useNotify } from '@/hooks/useNotify';
 import { CreateCommentInput, createCommentSchema } from '@/lib/validation/comment';
 import { StarRatingInput } from '@/components/ui/star-rating-input';
+import { useAddComment } from '@/hooks/useComments';
 
 export function CommentForm({ postId }: { postId: string }) {
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
-  const { useAddComment } = useComments(postId);
-  const addCommentMutation = useAddComment();
+  const addCommentMutation = useAddComment(postId);
   const notify = useNotify();
 
   const form = useForm<CreateCommentInput>({

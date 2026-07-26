@@ -12,34 +12,61 @@ import {
 } from '@/services/productComments/api/mutations';
 import { fetchCommentsByProductApi } from '@/services/productComments/api/queries';
 
-export function useProductComments(slug: string) {
+/** کلیدهای کوئری متمرکز برای دیدگاه‌های محصول */
+export const productCommentKeys = {
+  byProduct: (slug: string) => ['product-comments', slug] as const,
+};
+
+// ─────────────────────────────────────────────
+// Queries
+// ─────────────────────────────────────────────
+
+/** دیدگاه‌های یک محصول بر اساس اسلاگ */
+export function useGetComments(slug: string) {
+  return useQuery<CommentNode[]>({
+    queryKey: productCommentKeys.byProduct(slug),
+    queryFn: () => fetchCommentsByProductApi(slug),
+    enabled: !!slug,
+  });
+}
+
+// ─────────────────────────────────────────────
+// Mutations
+// ─────────────────────────────────────────────
+
+/** ثبت دیدگاه جدید — slug برای invalidate کردن کش لازم است */
+export function useCreateComment(slug: string) {
   const qc = useQueryClient();
 
-  const useGetComments = () =>
-    useQuery<CommentNode[]>({
-      queryKey: ['product-comments', slug],
-      queryFn: () => fetchCommentsByProductApi(slug),
-      enabled: !!slug,
-    });
+  return useMutation({
+    mutationFn: (payload: CreateProductCommentInput) => createCommentApi(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: productCommentKeys.byProduct(slug) });
+    },
+  });
+}
 
-  const useCreateComment = () =>
-    useMutation({
-      mutationFn: (payload: CreateProductCommentInput) => createCommentApi(payload),
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['product-comments', slug] }),
-    });
+/** ویرایش دیدگاه */
+export function useUpdateComment(slug: string) {
+  const qc = useQueryClient();
 
-  const useUpdateComment = () =>
-    useMutation({
-      mutationFn: ({ id, data }: { id: string; data: UpdateProductCommentInput }) =>
-        updateCommentApi(id, data),
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['product-comments', slug] }),
-    });
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateProductCommentInput }) =>
+      updateCommentApi(id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: productCommentKeys.byProduct(slug) });
+    },
+  });
+}
 
-  const useDeleteComment = () =>
-    useMutation({
-      mutationFn: (id: string) => deleteCommentApi(id),
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['product-comments', slug] }),
-    });
+/** حذف دیدگاه */
+export function useDeleteComment(slug: string) {
+  const qc = useQueryClient();
 
-  return { useGetComments, useCreateComment, useUpdateComment, useDeleteComment };
+  return useMutation({
+    mutationFn: (id: string) => deleteCommentApi(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: productCommentKeys.byProduct(slug) });
+    },
+  });
 }

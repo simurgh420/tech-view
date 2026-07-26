@@ -9,69 +9,104 @@ import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 import { createBlogApi, deleteBlogApi, updateBlogApi } from '@/services/blog/api/mutations';
 import { CreateBlogPayload, UpdateBlogInput } from '@/lib/validation/blog';
 
-export function useBlogs() {
+/** کلیدهای کوئری متمرکز برای بلاگ */
+export const blogKeys = {
+  all: ['blogs'] as const,
+  list: (page: number, pageSize: number) => ['blogs', page, pageSize] as const,
+  detail: (slug: string) => ['blog', slug] as const,
+};
+
+// ─────────────────────────────────────────────
+// Queries
+// ─────────────────────────────────────────────
+
+/** لیست صفحه‌بندی‌شده‌ی پست‌های بلاگ */
+export function useGetBlogs(page = 1, pageSize = 10) {
+  return useQuery<BlogListResponse>({
+    queryKey: blogKeys.list(page, pageSize),
+    queryFn: () => fetchBlogsApi(page, pageSize),
+  });
+}
+
+/** یک پست بلاگ بر اساس اسلاگ */
+export function useGetBlog(slug: string) {
+  return useQuery<BlogPost>({
+    queryKey: blogKeys.detail(slug),
+    queryFn: () => fetchBlogBySlugApi(slug),
+    enabled: !!slug,
+  });
+}
+
+// ─────────────────────────────────────────────
+// Mutations
+// ─────────────────────────────────────────────
+
+/** ایجاد پست جدید */
+export function useCreateBlog() {
   const qc = useQueryClient();
 
-  const useGetBlogs = (page = 1, pageSize = 10) =>
-    useQuery<BlogListResponse>({
-      queryKey: ['blogs', page, pageSize],
-      queryFn: () => fetchBlogsApi(page, pageSize),
-    });
+  return useMutation<BlogPost, Error, CreateBlogPayload>({
+    mutationFn: createBlogApi,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: blogKeys.all });
+    },
+  });
+}
 
-  const useGetBlog = (slug: string) =>
-    useQuery<BlogPost>({
-      queryKey: ['blog', slug],
-      queryFn: () => fetchBlogBySlugApi(slug),
-      enabled: !!slug,
-    });
+/** ویرایش پست — اگر اسلاگ تغییر کند، کش اسلاگ قدیمی هم invalidate می‌شود */
+export function useUpdateBlog(slug: string) {
+  const qc = useQueryClient();
 
-  const useCreateBlog = () =>
-    useMutation<BlogPost, Error, CreateBlogPayload>({
-      mutationFn: createBlogApi,
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: ['blogs'] });
-      },
-    });
+  return useMutation<BlogPost, Error, UpdateBlogInput>({
+    mutationFn: data => updateBlogApi(slug, data),
+    onSuccess: updatedPost => {
+      qc.invalidateQueries({ queryKey: blogKeys.all });
+      qc.invalidateQueries({ queryKey: blogKeys.detail(updatedPost.slug) });
 
-  const useUpdateBlog = (slug: string) =>
-    useMutation<BlogPost, Error, UpdateBlogInput>({
-      mutationFn: data => updateBlogApi(slug, data),
-      onSuccess: updatedPost => {
-        qc.invalidateQueries({ queryKey: ['blogs'] });
-        qc.invalidateQueries({ queryKey: ['blog', updatedPost.slug] });
+      if (updatedPost.slug !== slug) {
+        qc.invalidateQueries({ queryKey: blogKeys.detail(slug) }); // اسلاگ قدیمی
+      }
+    },
+  });
+}
 
-        if (updatedPost.slug !== slug) {
-          qc.invalidateQueries({ queryKey: ['blog', slug] }); // ← اسلاگ قدیمی
-        }
-      },
-    });
+/**
+ * حذف پست — Optimistic
+ * نکته: چون useGetBlogs صفحه‌بندی‌شده است (کلید واقعی ['blogs', page, pageSize] است، نه ['blogs']),
+ * برای آپدیت optimistic باید همه‌ی صفحات کش‌شده را با setQueriesData (partial match) پیدا و آپدیت کرد؛
+ * getQueryData/setQueryData با کلید ناقص ['blogs'] هیچ‌وقت با این کلیدها match نمی‌شود.
+ */
+export function useDeleteBlog() {
+  const qc = useQueryClient();
 
-  const useDeleteBlog = () =>
-    useMutation<{ success: boolean }, Error, string, { prevBlogs?: BlogListResponse }>({
-      mutationFn: deleteBlogApi,
-      onMutate: async slug => {
-        await qc.cancelQueries({ queryKey: ['blogs'] });
-        const prevBlogs = qc.getQueryData<BlogListResponse>(['blogs']);
-        qc.setQueryData<BlogListResponse>(['blogs'], old =>
-          old ? { ...old, items: old.items.filter(b => b.slug !== slug) } : old
-        );
-        return { prevBlogs };
-      },
-      onError: (_err, _slug, context) => {
-        if (context?.prevBlogs) {
-          qc.setQueryData(['blogs'], context.prevBlogs);
-        }
-      },
-      onSettled: () => {
-        qc.invalidateQueries({ queryKey: ['blogs'] });
-      },
-    });
+  return useMutation<
+    { success: boolean },
+    Error,
+    string,
+    { prevBlogsEntries: [readonly unknown[], BlogListResponse | undefined][] }
+  >({
+    mutationFn: deleteBlogApi,
 
-  return {
-    useGetBlogs,
-    useGetBlog,
-    useCreateBlog,
-    useUpdateBlog,
-    useDeleteBlog,
-  };
+    onMutate: async slug => {
+      await qc.cancelQueries({ queryKey: blogKeys.all });
+
+      const prevBlogsEntries = qc.getQueriesData<BlogListResponse>({ queryKey: blogKeys.all });
+
+      qc.setQueriesData<BlogListResponse>({ queryKey: blogKeys.all }, old =>
+        old ? { ...old, items: old.items.filter(b => b.slug !== slug) } : old
+      );
+
+      return { prevBlogsEntries };
+    },
+
+    onError: (_err, _slug, context) => {
+      context?.prevBlogsEntries.forEach(([key, data]) => {
+        qc.setQueryData(key, data);
+      });
+    },
+
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: blogKeys.all });
+    },
+  });
 }

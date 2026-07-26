@@ -1,7 +1,7 @@
 import { ShoppingCart } from 'lucide-react';
 
-import { useCart } from '@/hooks/useCart';
 import { useNotify } from '@/hooks/useNotify';
+import { useAddToCart } from '@/hooks/useCart';
 
 type Props = {
   stock: number;
@@ -11,7 +11,7 @@ type Props = {
 export default function BuyActions({ stock, productId }: Props) {
   const disabled = stock <= 0;
 
-  const add = useCart().useAddToCart();
+  const add = useAddToCart();
   const notify = useNotify();
 
   const handleAdd = () => {

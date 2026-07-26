@@ -2,7 +2,7 @@
 'use client';
 
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
-import { useBlogs } from '@/hooks/useBlogs';
+import { useCreateBlog } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
 import { logger } from '@/lib/logger';
 import { toSlug } from '@/lib/slug-common';
@@ -14,7 +14,6 @@ import { useForm } from 'react-hook-form';
 
 export function CreateBlogPageClient() {
   const router = useRouter();
-  const { useCreateBlog } = useBlogs();
   const createMutation = useCreateBlog();
   const notify = useNotify();
 

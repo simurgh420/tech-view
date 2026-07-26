@@ -9,46 +9,70 @@ import { fetchCategoriesApi, fetchCategoryBySlugApi } from '@/services/categorie
 import { Category } from '@/app/generated/prisma/client';
 import { CreateCategoryInput, EditCategoryInput } from '@/lib/validation/category';
 
-export function useCategories() {
+/** کلیدهای کوئری متمرکز برای دسته‌بندی‌ها */
+export const categoryKeys = {
+  all: ['categories'] as const,
+  detail: (slug: string) => ['category', slug] as const,
+};
+
+// ─────────────────────────────────────────────
+// Queries
+// ─────────────────────────────────────────────
+
+/** لیست کامل دسته‌بندی‌ها */
+export function useGetCategories() {
+  return useQuery<Category[]>({
+    queryKey: categoryKeys.all,
+    queryFn: fetchCategoriesApi,
+  });
+}
+
+/** یک دسته‌بندی بر اساس اسلاگ */
+export function useGetCategory(slug: string) {
+  return useQuery<Category>({
+    queryKey: categoryKeys.detail(slug),
+    queryFn: () => fetchCategoryBySlugApi(slug),
+    enabled: !!slug,
+  });
+}
+
+// ─────────────────────────────────────────────
+// Mutations
+// ─────────────────────────────────────────────
+
+/** ایجاد دسته‌بندی جدید */
+export function useCreateCategory() {
   const qc = useQueryClient();
 
-  const useGetCategories = () =>
-    useQuery<Category[]>({
-      queryKey: ['categories'],
-      queryFn: fetchCategoriesApi,
-    });
+  return useMutation<Category, Error, CreateCategoryInput>({
+    mutationFn: createCategoryRequestApi,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: categoryKeys.all });
+    },
+  });
+}
 
-  const useGetCategory = (slug: string) =>
-    useQuery<Category>({
-      queryKey: ['category', slug],
-      queryFn: () => fetchCategoryBySlugApi(slug),
-      enabled: !!slug,
-    });
+/** به‌روزرسانی دسته‌بندی */
+export function useUpdateCategory() {
+  const qc = useQueryClient();
 
-  const useCreateCategory = () =>
-    useMutation<Category, Error, CreateCategoryInput>({
-      mutationFn: createCategoryRequestApi,
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
-    });
-  const useUpdateCategory = () =>
-    useMutation<Category, Error, { slug: string; data: EditCategoryInput }>({
-      mutationFn: ({ slug, data }) => updateCategoryRequestApi(slug, data),
-      onSuccess: (_res, vars) => {
-        qc.invalidateQueries({ queryKey: ['categories'] });
-        qc.invalidateQueries({ queryKey: ['category', vars.slug] });
-      },
-    });
+  return useMutation<Category, Error, { slug: string; data: EditCategoryInput }>({
+    mutationFn: ({ slug, data }) => updateCategoryRequestApi(slug, data),
+    onSuccess: (_res, vars) => {
+      qc.invalidateQueries({ queryKey: categoryKeys.all });
+      qc.invalidateQueries({ queryKey: categoryKeys.detail(vars.slug) });
+    },
+  });
+}
 
-  const useDeleteCategory = () =>
-    useMutation<{ success: boolean }, Error, string>({
-      mutationFn: deleteCategoryRequestApi,
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
-    });
-  return {
-    useGetCategories,
-    useGetCategory,
-    useCreateCategory,
-    useUpdateCategory,
-    useDeleteCategory,
-  };
+/** حذف دسته‌بندی */
+export function useDeleteCategory() {
+  const qc = useQueryClient();
+
+  return useMutation<{ success: boolean }, Error, string>({
+    mutationFn: deleteCategoryRequestApi,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: categoryKeys.all });
+    },
+  });
 }

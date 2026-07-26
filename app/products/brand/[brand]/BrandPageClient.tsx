@@ -4,7 +4,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useProducts } from '@/hooks/useProducts';
 
 import SortMenu from '@/components/sections/products/SortMenu';
 import ProductCard from '@/components/sections/products/ProductCard';
@@ -14,6 +13,7 @@ import { FiltersProduct } from '@/types/product';
 import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
 import { SkeletonCard } from '@/components/ui/skeleton';
 import { ProductEmptyState } from '@/components/sections/products/empty-state';
+import { useGetFilteredProducts } from '@/hooks/useProducts';
 
 type BrandProductsPageProps = {
   brand: string;
@@ -22,7 +22,6 @@ type BrandProductsPageProps = {
 export default function BrandProductsClientPage({ brand }: BrandProductsPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { useGetFilteredProducts } = useProducts();
 
   const initialFilters: FiltersProduct = {
     brandSlug: brand,

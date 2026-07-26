@@ -2,12 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { useCategories } from '@/hooks/useCategories';
+import { useDeleteCategory } from '@/hooks/useCategories';
 import { useRouter } from 'next/navigation';
 
 export function CategoryActions({ slug }: { slug: string }) {
   const router = useRouter();
-  const { useDeleteCategory } = useCategories();
   const { mutate: deleteCategory } = useDeleteCategory();
 
   return (

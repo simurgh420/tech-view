@@ -1,11 +1,10 @@
 'use client';
 
-import { useCategories } from '@/hooks/useCategories';
 import Link from 'next/link';
 import { Shirt, Phone, Book, Laptop, Camera } from 'lucide-react';
+import { useGetCategories } from '@/hooks/useCategories';
 
 export default function CategoryList() {
-  const { useGetCategories } = useCategories();
   const { data: categories, isLoading, isError } = useGetCategories();
 
   if (isLoading) return <p>در حال بارگذاری...</p>;

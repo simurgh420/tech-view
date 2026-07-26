@@ -3,7 +3,7 @@
 'use client';
 
 import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
-import { useBlogs } from '@/hooks/useBlogs';
+import { useUpdateBlog } from '@/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
 import { logger } from '@/lib/logger';
 import { sanitizeUrl } from '@/lib/utils';
@@ -26,7 +26,6 @@ interface EditBlogFormProps {
 
 export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
   const router = useRouter();
-  const { useUpdateBlog } = useBlogs();
   const updateMutation = useUpdateBlog(slug);
   const notify = useNotify();
   const form = useForm<BlogFormType>({

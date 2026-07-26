@@ -3,14 +3,14 @@
 import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { useAdminComments } from '@/hooks/useAdmin/useAdminComments';
+import { useGetAdminComments } from '@/hooks/useAdmin/useAdminComments';
 import { DeleteCommentModal } from './DeleteCommentModal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNotify } from '@/hooks/useNotify';
 import { AdminComment } from '@/types/comment';
 
 export function CommentsList() {
-  const { comments, isLoading, isError, error } = useAdminComments();
+  const { data: comments, isLoading, isError, error } = useGetAdminComments();
   const notify = useNotify();
 
   // نمایش خطا در صورت وجود

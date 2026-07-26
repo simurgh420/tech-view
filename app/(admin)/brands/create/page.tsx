@@ -2,13 +2,12 @@
 
 //app/(admin)/brands/create/page.tsx
 import { BrandForm } from '@/components/sections/brand/BrandForm';
-import { useBrands } from '@/hooks/useBrands';
+import { useCreateBrand } from '@/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
 import { CreateBrandInput } from '@/lib/validation/brand';
 import { useRouter } from 'next/navigation';
 
 export default function CreateBrandPage() {
-  const { useCreateBrand } = useBrands();
   const createMutation = useCreateBrand();
   const router = useRouter();
   const notify = useNotify();

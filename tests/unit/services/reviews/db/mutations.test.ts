@@ -16,10 +16,6 @@ vi.mock('@/services/db/client', () => {
       delete: vi.fn(),
       aggregate: vi.fn(),
     },
-
-    productRating: {
-      upsert: vi.fn(),
-    },
   };
 
   return {
@@ -50,7 +46,6 @@ describe('Reviews DB Mutations', () => {
     });
 
     (prisma.product.update as any).mockResolvedValue({});
-    (prisma.productRating.upsert as any).mockResolvedValue({});
   });
 
   describe('createReview', () => {

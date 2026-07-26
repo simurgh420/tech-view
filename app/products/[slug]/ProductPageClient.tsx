@@ -1,21 +1,19 @@
 // app/products/[slug]/ProductPageClient.tsx
 'use client';
 
-import { useProducts } from '@/hooks/useProducts';
-
 import ProductBreadcrumb from '@/components/sections/products/breadcrumb/ProductBreadcrumb';
 import ProductGallery from '@/components/sections/products/gallery/ProductGallery';
 import ProductInfo from '@/components/sections/products/info/ProductInfo';
 import ProductPriceBox from '@/components/sections/products/price/ProductPriceBox';
 import ProductTabs from '@/components/sections/products/tabs/ProductTabs';
 import { SkeletonProductDetail } from '@/components/ui/skeleton';
+import { useGetProduct } from '@/hooks/useProducts';
 
 type ProductPageClientProps = {
   slug: string;
 };
 
 export default function ProductPageClient({ slug }: ProductPageClientProps) {
-  const { useGetProduct } = useProducts();
   const { data: product, isLoading, isError } = useGetProduct(slug);
 
   if (isLoading) {

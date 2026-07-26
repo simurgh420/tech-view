@@ -3,10 +3,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useComments } from '@/hooks/useComments';
+
+// Import مستقیم هوک‌ها و commentKeys
+import {
+  useGetComments,
+  useAddComment,
+  useUpdateComment,
+  useDeleteComment,
+  commentKeys,
+} from '@/hooks/useComments';
+
 import * as queries from '@/services/comments/api/queries';
 import * as mutations from '@/services/comments/api/mutations';
 
+// ─── Mock API ها ──────────────────────────────────────────
 vi.mock('@/services/comments/api/queries', () => ({
   fetchCommentsApi: vi.fn(),
 }));
@@ -17,6 +27,7 @@ vi.mock('@/services/comments/api/mutations', () => ({
   deleteCommentApi: vi.fn(),
 }));
 
+// ─── Wrapper تست ──────────────────────────────────────────
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -28,8 +39,10 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useComments', () => {
+// ─── تست‌ها ──────────────────────────────────────────────
+describe('useComments hooks', () => {
   const postId = 'post-123';
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -38,9 +51,11 @@ describe('useComments', () => {
     it('should fetch comments successfully', async () => {
       const mockComments = [{ id: 'c1', content: 'Great!', authorName: 'John' }];
       (queries.fetchCommentsApi as any).mockResolvedValue(mockComments);
-      const { result } = renderHook(() => useComments(postId).useGetComments(), {
+
+      const { result } = renderHook(() => useGetComments(postId), {
         wrapper: createWrapper(),
       });
+
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(result.current.data).toEqual(mockComments);
       expect(queries.fetchCommentsApi).toHaveBeenCalledWith(postId);
@@ -49,11 +64,18 @@ describe('useComments', () => {
     it('should handle error when fetch fails', async () => {
       const error = new Error('Network error');
       (queries.fetchCommentsApi as any).mockRejectedValue(error);
-      const { result } = renderHook(() => useComments(postId).useGetComments(), {
+
+      const { result } = renderHook(() => useGetComments(postId), {
         wrapper: createWrapper(),
       });
+
       await waitFor(() => expect(result.current.isError).toBe(true));
       expect(result.current.error).toEqual(error);
+    });
+
+    it('should not fetch when postId is falsy', () => {
+      renderHook(() => useGetComments(''), { wrapper: createWrapper() });
+      expect(queries.fetchCommentsApi).not.toHaveBeenCalled();
     });
   });
 
@@ -63,18 +85,24 @@ describe('useComments', () => {
 
     it('should add comment and invalidate comments query', async () => {
       (mutations.addCommentApi as any).mockResolvedValue(mockComment);
+
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useComments(postId).useAddComment(), {
+      const { result } = renderHook(() => useAddComment(postId), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
+
       result.current.mutate(input);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      // addCommentApi با دو آرگومان (postId, data) صدا زده می‌شود
       expect(mutations.addCommentApi).toHaveBeenCalledWith(postId, input);
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['comments', postId] });
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: commentKeys.byPost(postId),
+      });
     });
   });
 
@@ -84,18 +112,23 @@ describe('useComments', () => {
 
     it('should update comment and invalidate comments query', async () => {
       (mutations.updateCommentApi as any).mockResolvedValue(mockUpdated);
+
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useComments(postId).useUpdateComment(), {
+      const { result } = renderHook(() => useUpdateComment(postId), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
+
       result.current.mutate(params);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
       expect(mutations.updateCommentApi).toHaveBeenCalledWith(params.commentId, params.data);
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['comments', postId] });
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: commentKeys.byPost(postId),
+      });
     });
   });
 
@@ -104,18 +137,23 @@ describe('useComments', () => {
 
     it('should delete comment and invalidate comments query', async () => {
       (mutations.deleteCommentApi as any).mockResolvedValue({ success: true });
+
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
-      const { result } = renderHook(() => useComments(postId).useDeleteComment(), {
+      const { result } = renderHook(() => useDeleteComment(postId), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
+
       result.current.mutate(commentId);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
       expect(mutations.deleteCommentApi).toHaveBeenCalledWith(commentId);
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['comments', postId] });
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: commentKeys.byPost(postId),
+      });
     });
   });
 });

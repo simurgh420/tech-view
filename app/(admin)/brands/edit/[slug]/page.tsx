@@ -3,7 +3,7 @@
 
 import { BrandForm } from '@/components/sections/brand/BrandForm';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useBrands } from '@/hooks/useBrands';
+import { useGetBrand, useUpdateBrand } from '@/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
 import { UpdateBrandInput } from '@/lib/validation/brand';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,7 +12,6 @@ export default function EditBrandPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug as string;
-  const { useGetBrand, useUpdateBrand } = useBrands();
   const { data: brand, isLoading } = useGetBrand(slug);
   const updateMutation = useUpdateBrand();
   const notify = useNotify();

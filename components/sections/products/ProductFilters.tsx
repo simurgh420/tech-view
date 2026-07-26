@@ -4,8 +4,8 @@ import { useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Button } from '@/components/ui';
-import { useProducts } from '@/hooks/useProducts';
 import type { FiltersProduct } from '@/types/product';
+import { useProductFilters } from '@/hooks/useProducts';
 
 type Props = {
   onChange: (filters: Partial<FiltersProduct>) => void;
@@ -20,7 +20,6 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [selectedSpecs, setSelectedSpecs] = useState<Record<string, string>>({});
 
-  const { useProductFilters } = useProducts();
   const { data: specFilters, isLoading: filtersLoading } = useProductFilters(
     initialCategorySlug ?? ''
   );

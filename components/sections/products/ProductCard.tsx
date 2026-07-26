@@ -6,10 +6,10 @@ import Image from 'next/image';
 import { ShoppingCart, Zap } from 'lucide-react';
 
 import { Product } from '@/types/product';
-import { useCart } from '@/hooks/useCart';
 import { useNotify } from '@/hooks/useNotify';
 import { StarRatingDisplay } from '@/components/ui/star-rating-input';
 import { formatPrice } from '@/lib/formatPrice';
+import { useAddToCart } from '@/hooks/useCart';
 
 type ProductCardProps = {
   product: Product;
@@ -24,7 +24,7 @@ export default function ProductCard({
   addingLabel = 'در حال افزودن...',
   fastShippingLabel = 'ارسال سریع',
 }: ProductCardProps) {
-  const add = useCart().useAddToCart();
+  const add = useAddToCart();
   const notify = useNotify();
 
   const handleAdd = (e: React.MouseEvent) => {

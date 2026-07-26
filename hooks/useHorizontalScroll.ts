@@ -9,7 +9,7 @@ export function useHorizontalScroll() {
     const handleWheel = (e: WheelEvent) => {
       if (e.deltaY === 0) return;
       e.preventDefault();
-      el.scrollBy({ left: e.deltaY, behavior: 'smooth' });
+      el.scrollBy({ left: e.deltaY, behavior: 'auto' });
     };
     el.addEventListener('wheel', handleWheel, { passive: false });
     return () => el.removeEventListener('wheel', handleWheel);

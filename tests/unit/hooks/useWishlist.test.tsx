@@ -3,9 +3,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useWishlist } from '@/hooks/useWishlist';
 import * as queries from '@/services/wishlist/api/queries';
 import * as mutations from '@/services/wishlist/api/mutations';
+
+// Import hooks به‌صورت مستقیم
+import {
+  useGetWishlist,
+  useCheckWishlist,
+  useAddToWishlist,
+  useRemoveFromWishlist,
+  useToggleWishlistByProduct,
+  wishlistKeys,
+} from '@/hooks/useWishlist';
 
 vi.mock('@/services/wishlist/api/queries', () => ({
   fetchWishlistApi: vi.fn(),
@@ -29,7 +38,7 @@ const createWrapper = () => {
   return Wrapper;
 };
 
-describe('useWishlist', () => {
+describe('useWishlist hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -38,7 +47,7 @@ describe('useWishlist', () => {
     it('should fetch wishlist items successfully', async () => {
       const mockItems = [{ id: 'w1', productId: 'p1', product: { title: 'Product 1' } }];
       (queries.fetchWishlistApi as any).mockResolvedValue(mockItems);
-      const { result } = renderHook(() => useWishlist().useGetWishlist(), {
+      const { result } = renderHook(() => useGetWishlist(), {
         wrapper: createWrapper(),
       });
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -49,11 +58,30 @@ describe('useWishlist', () => {
     it('should handle error when fetch fails', async () => {
       const error = new Error('Network error');
       (queries.fetchWishlistApi as any).mockRejectedValue(error);
-      const { result } = renderHook(() => useWishlist().useGetWishlist(), {
+      const { result } = renderHook(() => useGetWishlist(), {
         wrapper: createWrapper(),
       });
       await waitFor(() => expect(result.current.isError).toBe(true));
       expect(result.current.error).toEqual(error);
+    });
+  });
+
+  describe('useCheckWishlist', () => {
+    const productId = 'p1';
+
+    it('should fetch check status when productId is provided', async () => {
+      (queries.fetchWishlistCheckApi as any).mockResolvedValue({ inWishlist: true });
+      const { result } = renderHook(() => useCheckWishlist(productId), {
+        wrapper: createWrapper(),
+      });
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(result.current.data).toEqual({ inWishlist: true });
+      expect(queries.fetchWishlistCheckApi).toHaveBeenCalledWith(productId);
+    });
+
+    it('should not fetch when productId is falsy', () => {
+      renderHook(() => useCheckWishlist(''), { wrapper: createWrapper() });
+      expect(queries.fetchWishlistCheckApi).not.toHaveBeenCalled();
     });
   });
 
@@ -65,16 +93,16 @@ describe('useWishlist', () => {
       (mutations.addWishlistItemApi as any).mockResolvedValue(createdItem);
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-      const { result } = renderHook(() => useWishlist().useAddToWishlist(), {
+      const { result } = renderHook(() => useAddToWishlist(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate(input);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      // ✅ استفاده از expect.anything() برای نادیده گرفتن آرگومان context
+      // توجه: آرگومان دوم context را با expect.anything() نادیده می‌گیریم
       expect(mutations.addWishlistItemApi).toHaveBeenCalledWith(input, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['wishlist'] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: wishlistKeys.all });
     });
   });
 
@@ -85,35 +113,16 @@ describe('useWishlist', () => {
       (mutations.deleteWishlistItemApi as any).mockResolvedValue({ success: true });
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-      const { result } = renderHook(() => useWishlist().useRemoveFromWishlist(), {
+      const { result } = renderHook(() => useRemoveFromWishlist(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate(id);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      // ✅ استفاده از expect.anything() برای نادیده گرفتن آرگومان context
+      // توجه: آرگومان دوم context را با expect.anything() نادیده می‌گیریم
       expect(mutations.deleteWishlistItemApi).toHaveBeenCalledWith(id, expect.anything());
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['wishlist'] });
-    });
-  });
-
-  describe('useCheckWishlist', () => {
-    const productId = 'p1';
-
-    it('should fetch check status when productId is provided', async () => {
-      (queries.fetchWishlistCheckApi as any).mockResolvedValue({ inWishlist: true });
-      const { result } = renderHook(() => useWishlist().useCheckWishlist(productId), {
-        wrapper: createWrapper(),
-      });
-      await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      expect(result.current.data).toEqual({ inWishlist: true });
-      expect(queries.fetchWishlistCheckApi).toHaveBeenCalledWith(productId);
-    });
-
-    it('should not fetch when productId is falsy', () => {
-      renderHook(() => useWishlist().useCheckWishlist(''), { wrapper: createWrapper() });
-      expect(queries.fetchWishlistCheckApi).not.toHaveBeenCalled();
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: wishlistKeys.all });
     });
   });
 
@@ -127,41 +136,41 @@ describe('useWishlist', () => {
       );
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-      const { result } = renderHook(() => useWishlist().useToggleWishlistByProduct(), {
+      const { result } = renderHook(() => useToggleWishlistByProduct(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate({ productId, exists: true });
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      // ✅ فقط یک آرگومان (productId)
+      // این تابع فقط با productId صدا زده می‌شود (بدون context)
       expect(mutations.deleteWishlistItemByUserAndProductApi).toHaveBeenCalledWith(productId);
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['wishlist'] });
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['wishlist', 'check', productId] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: wishlistKeys.all });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: wishlistKeys.check(productId) });
     });
 
     it('should add when exists is false and invalidate both wishlist and check queries', async () => {
       (mutations.addWishlistItemApi as any).mockResolvedValue({});
       const queryClient = new QueryClient();
       const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-      const { result } = renderHook(() => useWishlist().useToggleWishlistByProduct(), {
+      const { result } = renderHook(() => useToggleWishlistByProduct(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
       });
       result.current.mutate({ productId, exists: false });
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      // ✅ فقط یک آرگومان (آبجکت productId)
+      // این تابع فقط با آبجکت { productId } صدا زده می‌شود
       expect(mutations.addWishlistItemApi).toHaveBeenCalledWith({ productId });
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['wishlist'] });
-      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['wishlist', 'check', productId] });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: wishlistKeys.all });
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: wishlistKeys.check(productId) });
     });
 
     it('should propagate error when delete fails', async () => {
       const error = new Error('Delete failed');
       (mutations.deleteWishlistItemByUserAndProductApi as any).mockRejectedValue(error);
       const queryClient = new QueryClient();
-      const { result } = renderHook(() => useWishlist().useToggleWishlistByProduct(), {
+      const { result } = renderHook(() => useToggleWishlistByProduct(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),
@@ -175,7 +184,7 @@ describe('useWishlist', () => {
       const error = new Error('Add failed');
       (mutations.addWishlistItemApi as any).mockRejectedValue(error);
       const queryClient = new QueryClient();
-      const { result } = renderHook(() => useWishlist().useToggleWishlistByProduct(), {
+      const { result } = renderHook(() => useToggleWishlistByProduct(), {
         wrapper: ({ children }) => (
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         ),

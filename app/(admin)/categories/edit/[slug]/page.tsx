@@ -3,7 +3,7 @@
 
 import { CategoryForm } from '@/components/sections/categories/CategoryForm';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useCategories } from '@/hooks/useCategories';
+import { useGetCategory, useUpdateCategory } from '@/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
 import { EditCategoryInput } from '@/lib/validation/category';
 import { useParams } from 'next/navigation';
@@ -11,7 +11,6 @@ import { useParams } from 'next/navigation';
 export default function EditCategoryPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const { useGetCategory, useUpdateCategory } = useCategories();
   const { data: category, isLoading } = useGetCategory(slug);
   const updateMutation = useUpdateCategory();
   const notify = useNotify();

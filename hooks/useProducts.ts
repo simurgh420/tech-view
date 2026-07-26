@@ -19,92 +19,121 @@ import {
 } from '@/services/products/api/queries';
 import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/product';
 
-export function useProducts() {
+
+export const productKeys = {
+  all: ['products'] as const,
+  lists: () => [...productKeys.all, 'list'] as const,
+  filtered: (filters: FiltersProduct) => [...productKeys.all, 'filtered', filters] as const,
+  detail: (slug: string) => [...productKeys.all, 'detail', slug] as const,
+  byCategory: (slug: string) => [...productKeys.all, 'category', slug] as const,
+  byBrand: (slug: string) => [...productKeys.all, 'brand', slug] as const,
+  featured: () => [...productKeys.all, 'featured'] as const,
+  filtersOf: (categorySlug: string) => ['product-filters', categorySlug] as const,
+};
+
+// ─────────────────────────────────────────────
+// Queries
+// ─────────────────────────────────────────────
+
+/** لیست ساده‌ی محصولات */
+export function useGetProducts() {
+  return useQuery<Product[]>({
+    queryKey: productKeys.lists(),
+    queryFn: fetchProductsApi,
+  });
+}
+
+/** فیلتر و مرتب‌سازی محصولات */
+export function useGetFilteredProducts(filters: FiltersProduct) {
+  return useQuery<PaginatedResponse<Product>>({
+    queryKey: productKeys.filtered(filters),
+    queryFn: () => fetchFilteredProductsApi(filters),
+    staleTime: 1000 * 60 * 2,
+  });
+}
+
+/** گرفتن یک محصول تکی بر اساس اسلاگ */
+export function useGetProduct(slug: string) {
+  return useQuery<Product>({
+    queryKey: productKeys.detail(slug),
+    queryFn: () => fetchProductBySlugApi(slug),
+    enabled: !!slug,
+  });
+}
+
+/** محصولات یک دسته‌بندی */
+export function useGetProductsByCategory(slug: string) {
+  return useQuery<Product[]>({
+    queryKey: productKeys.byCategory(slug),
+    queryFn: () => fetchProductsByCategoryApi(slug),
+    enabled: !!slug,
+  });
+}
+
+/** محصولات یک برند */
+export function useGetProductsByBrand(slug: string) {
+  return useQuery<Product[]>({
+    queryKey: productKeys.byBrand(slug),
+    queryFn: () => fetchProductsByBrandApi(slug),
+    enabled: !!slug,
+  });
+}
+
+/** محصولات ویژه */
+export function useGetFeatured() {
+  return useQuery<Product[]>({
+    queryKey: productKeys.featured(),
+    queryFn: fetchFeaturedProductsApi,
+  });
+}
+
+/** آپشن‌های فیلتر برای یک دسته‌بندی (رنگ، سایز، برند و ...) */
+export function useProductFilters(categorySlug: string) {
+  return useQuery<Record<string, string[]>>({
+    queryKey: productKeys.filtersOf(categorySlug),
+    queryFn: () => fetchProductFiltersApi(categorySlug),
+    enabled: !!categorySlug,
+    staleTime: 1000 * 60 * 30,
+  });
+}
+
+// ─────────────────────────────────────────────
+// Mutations
+// ─────────────────────────────────────────────
+
+/** ایجاد محصول جدید */
+export function useCreateProduct() {
   const qc = useQueryClient();
 
-  // ✅ هوک عمومی برای فیلتر و مرتب‌سازی
-  const useGetFilteredProducts = (filters: FiltersProduct) =>
-    useQuery<PaginatedResponse<Product>>({
-      queryKey: ['products', filters],
-      queryFn: () => fetchFilteredProductsApi(filters),
-      staleTime: 1000 * 60 * 2,
-    });
+  return useMutation<Product, Error, CreateProductPayload>({
+    mutationFn: createProductApi,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
+}
 
-  // ✅ لیست ساده محصولات
-  const useGetProducts = () =>
-    useQuery<Product[]>({
-      queryKey: ['products'],
-      queryFn: fetchProductsApi,
-    });
-  // ✅ گرفتن محصول تکی
-  const useGetProduct = (slug: string) =>
-    useQuery<Product>({
-      queryKey: ['product', slug],
-      queryFn: () => fetchProductBySlugApi(slug),
-      enabled: !!slug,
-    });
+/** به‌روزرسانی محصول */
+export function useUpdateProduct() {
+  const qc = useQueryClient();
 
-  // ✅ ایجاد محصول
-  const useCreateProduct = () =>
-    useMutation<Product, Error, CreateProductPayload>({
-      mutationFn: createProductApi,
+  return useMutation<Product, Error, { slug: string; data: UpdateProductInput }>({
+    mutationFn: ({ slug, data }) => updateProductApi(slug, data),
+    onSuccess: (_res, vars) => {
+      qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: productKeys.detail(vars.slug) });
+    },
+  });
+}
 
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
-    });
+/** حذف محصول */
+export function useDeleteProduct() {
+  const qc = useQueryClient();
 
-  // ✅ آپدیت محصول
-  const useUpdateProduct = () =>
-    useMutation<Product, Error, { slug: string; data: UpdateProductInput }>({
-      mutationFn: ({ slug, data }) => updateProductApi(slug, data),
-      onSuccess: (_res, vars) => {
-        qc.invalidateQueries({ queryKey: ['products'] });
-        qc.invalidateQueries({ queryKey: ['product', vars.slug] });
-      },
-    });
-  // ✅ حذف محصول
-  const useDeleteProduct = () =>
-    useMutation<{ success: boolean }, Error, string>({
-      mutationFn: deleteProductApi,
-      onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
-    });
-
-  // ✅ محصولات بر اساس دسته‌بندی
-  const useGetProductsByCategory = (slug: string) =>
-    useQuery<Product[]>({
-      queryKey: ['products', 'category', slug],
-      queryFn: () => fetchProductsByCategoryApi(slug),
-      enabled: !!slug,
-    });
-  // ✅ محصولات بر اساس برند
-  const useGetProductsByBrand = (slug: string) =>
-    useQuery<Product[]>({
-      queryKey: ['products', 'brand', slug],
-      queryFn: () => fetchProductsByBrandApi(slug),
-      enabled: !!slug,
-    });
-  // ✅ محصولات ویژه
-  const useGetFeatured = () =>
-    useQuery<Product[]>({
-      queryKey: ['products', 'featured'],
-      queryFn: fetchFeaturedProductsApi,
-    });
-  const useProductFilters = (categorySlug: string) =>
-    useQuery<Record<string, string[]>>({
-      queryKey: ['product-filters', categorySlug],
-      queryFn: () => fetchProductFiltersApi(categorySlug),
-      enabled: !!categorySlug,
-      staleTime: 1000 * 60 * 30,
-    });
-  return {
-    useGetFilteredProducts,
-    useGetProducts,
-    useGetProduct,
-    useCreateProduct,
-    useUpdateProduct,
-    useDeleteProduct,
-    useGetProductsByCategory,
-    useGetProductsByBrand,
-    useGetFeatured,
-    useProductFilters,
-  };
+  return useMutation<{ success: boolean }, Error, string>({
+    mutationFn: deleteProductApi,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
 }
