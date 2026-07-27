@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Search } from 'lucide-react';
-import { CartButton } from '@/components/cart/CartButton';
+import { CartButton } from '@/components/layout/header/CartButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -16,6 +16,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogoutButton } from '@/components/button/LogoutButton';
 import { SearchModal } from '@/components/sections/search/SearchModal';
+import { ModeToggle } from '@/components/ui/theme-toggle';
+import { HeaderIconButton } from './Headericonbutton';
+import { cn } from '@/lib/utils';
 
 interface UserActionsProps {
   session: Awaited<ReturnType<typeof import('@/lib/auth').auth.api.getSession>> | null;
@@ -23,6 +26,7 @@ interface UserActionsProps {
 
 export function UserActions({ session }: UserActionsProps) {
   const user = session?.user;
+  const isAdmin = user?.role === 'ADMIN';
 
   const [openSearch, setOpenSearch] = useState(false);
 
@@ -31,25 +35,13 @@ export function UserActions({ session }: UserActionsProps) {
       {/* Search Modal */}
       <SearchModal open={openSearch} onClose={() => setOpenSearch(false)} />
 
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4">
+        <ModeToggle />
+
         {/* Search Button */}
-        <button
-          type="button"
-          aria-label="جستجو"
-          onClick={() => setOpenSearch(true)}
-          className="
-            relative flex items-center justify-center
-            w-11 h-11 rounded-full
-            bg-white/70 dark:bg-gray-800/60
-            backdrop-blur-md
-            shadow-sm hover:shadow-md
-            border border-gray-200/50 dark:border-gray-700/50
-            transition-all duration-200
-            hover:scale-105 active:scale-95
-          "
-        >
+        <HeaderIconButton aria-label="جستجو" onClick={() => setOpenSearch(true)}>
           <Search className="size-5 text-gray-700 dark:text-gray-200" />
-        </button>
+        </HeaderIconButton>
 
         {/* Cart */}
         <CartButton />
@@ -60,7 +52,7 @@ export function UserActions({ session }: UserActionsProps) {
             <Button
               size="sm"
               variant="ghost"
-              className="rounded-full px-5 py-2 text-sm font-medium shadow-sm hover:shadow transition-all"
+              className="rounded-full px-5 py-2 text-sm font-medium shadow-sm transition-all hover:text-red-600 hover:shadow dark:hover:text-red-400"
             >
               ورود / ثبت‌نام
             </Button>
@@ -71,34 +63,39 @@ export function UserActions({ session }: UserActionsProps) {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 cursor-pointer group">
-                <Avatar className="size-9 ring-1 ring-gray-200 group-hover:ring-gray-300 transition-all">
+              <button className="group flex cursor-pointer items-center gap-3">
+                {/* برای کاربر ادمین، به‌جای بج متنی، یک حلقهٔ سبز دور خودِ
+                    آواتار می‌کشیم — شبیه نشان verified که فقط با نگاه به
+                    عکس پروفایل، بدون نیاز به خواندن متن، فهمیده می‌شود */}
+                <Avatar
+                  className={cn(
+                    'size-9 transition-all',
+                    isAdmin
+                      ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-background group-hover:ring-emerald-400'
+                      : 'ring-1 ring-gray-200 group-hover:ring-gray-300 dark:ring-gray-700 dark:group-hover:ring-gray-600'
+                  )}
+                >
                   <AvatarImage src={user.image ?? ''} alt={user.name} />
-                  <AvatarFallback className="bg-gray-100 text-gray-600">
+                  <AvatarFallback className="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     {user.name?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
 
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`inline-block size-2 rounded-full ${
-                      user.role === 'ADMIN' ? 'bg-green-500' : 'bg-orange-700'
-                    }`}
-                  />
-                  <span className="text-sm font-medium group-hover:text-gray-900 transition-colors">
-                    {user.name}
-                  </span>
-                </div>
+                <span className="text-sm font-medium text-gray-700 transition-colors group-hover:text-gray-900 dark:text-gray-200 dark:group-hover:text-white">
+                  {user.name}
+                </span>
               </button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent
               align="end"
-              className="w-56 rounded-xl shadow-lg border border-gray-100"
+              className="w-56 rounded-xl border border-gray-100 shadow-lg dark:border-gray-800"
             >
-              <DropdownMenuLabel className="text-xs text-gray-500">حساب کاربری</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-xs text-gray-500 dark:text-gray-400">
+                حساب کاربری
+              </DropdownMenuLabel>
 
-              {user.role === 'ADMIN' && (
+              {isAdmin && (
                 <DropdownMenuItem asChild>
                   <Link href="/admin/dashboard">داشبورد</Link>
                 </DropdownMenuItem>
@@ -115,7 +112,7 @@ export function UserActions({ session }: UserActionsProps) {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem asChild>
-                <LogoutButton className="w-full text-left text-red-600 cursor-pointer hover:bg-red-50" />
+                <LogoutButton className="w-full text-start text-red-600 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/30" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

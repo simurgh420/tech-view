@@ -15,7 +15,6 @@ export function ProductsOnSale() {
         <div
           className="
   rounded-2xl
-  bg-linear-to-r
   from-[oklch(18%_0.015_270)]
   via-[oklch(22%_0.02_270)]
   to-[oklch(18%_0.015_270)]
