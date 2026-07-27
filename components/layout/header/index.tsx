@@ -11,15 +11,16 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="container grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
-        <Logo />
-
-        <div className="flex justify-center">
-          {/* MegaMenu حالا در دل NavLinks رندر می‌شود */}
-          <NavLinks />
-        </div>
-
+      {/* تغییر ساختار از Grid به Flex */}
+      <div className="container flex items-center justify-between gap-4 py-4">
+        {/* سمت راست: دکمه‌های کاربری */}
         <UserActions session={session} />
+
+        {/* سمت چپ: منو و لوگو با هم گروه شدند */}
+        <div className="flex items-center gap-6 lg:gap-10">
+          <NavLinks />
+          <Logo />
+        </div>
       </div>
     </header>
   );

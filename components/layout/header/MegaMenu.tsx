@@ -24,7 +24,8 @@ export function MegaMenu() {
       {/* Trigger */}
       <NavigationMenuTrigger
         className={clsx(
-          'h-auto rounded-none bg-transparent px-2 py-2 text-sm font-medium transition-all hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent',
+          // استفاده از !bg-transparent برای خنثی کردنِ قطعیِ رنگ بنفش در زمان هاور و باز شدن منو
+          'h-auto rounded-none bg-transparent! px-2 py-2 text-sm font-medium transition-all hover:bg-transparent! focus:bg-transparent! data-[state=open]:bg-transparent! data-active:bg-transparent!',
           isParentActive
             ? 'border-b-2 border-red-600 font-extrabold text-red-600 dark:border-red-400 dark:text-red-400'
             : 'border-b-2 border-transparent text-muted-foreground hover:border-gray-300 hover:text-gray-900 focus:text-gray-900 dark:hover:border-gray-600 dark:hover:text-gray-100 dark:focus:text-gray-100'
@@ -35,6 +36,7 @@ export function MegaMenu() {
 
       {/* Content */}
       <NavigationMenuContent>
+        {/* تگِ div مزاحم حاوی border-red-500 به طور کامل حذف شد */}
         <div className="grid w-[90vw] max-w-237.5 grid-cols-1 gap-4 p-4 md:w-187.5 md:grid-cols-4 lg:w-237.5 lg:gap-6">
           <div className="border-e border-gray-100 pe-3 md:col-span-1 dark:border-zinc-800">
             <h4 className="mb-3 px-1 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -43,8 +45,9 @@ export function MegaMenu() {
             <ul className="flex flex-col space-y-1">
               {categories.map(cat => (
                 <li key={cat.name}>
-                  <Link href={cat.link} legacyBehavior passHref>
-                    <NavigationMenuLink
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={cat.link}
                       onMouseEnter={() => setActiveCategory(cat)}
                       onFocus={() => setActiveCategory(cat)}
                       className={clsx(
@@ -61,8 +64,8 @@ export function MegaMenu() {
                         )}
                       />
                       {cat.name}
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
               ))}
             </ul>
@@ -81,10 +84,11 @@ export function MegaMenu() {
 
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {activeCategory.products.map(item => (
-                <Link key={item.id} href={item.link} legacyBehavior passHref>
-                  {/* کارت محصول: استایل متریال با افکت Lift */}
-                  <NavigationMenuLink className="group flex flex-col items-center gap-3 rounded-xl border border-transparent bg-transparent p-2 transition-all duration-300 hover:-translate-y-1 hover:border-gray-100 hover:bg-white hover:shadow-lg hover:shadow-gray-200/50 focus:-translate-y-1 focus:bg-white focus:shadow-lg outline-none dark:hover:border-zinc-800 dark:hover:bg-zinc-900 dark:hover:shadow-black/50 dark:focus:bg-zinc-900">
-                    {/* قاب عکس: پس‌زمینه ملایم برای جلوه بهتر عکس‌های PNG */}
+                <NavigationMenuLink key={item.id} asChild>
+                  <Link
+                    href={item.link}
+                    className="group flex flex-col items-center gap-3 rounded-xl border border-transparent bg-transparent p-2 transition-all duration-300 hover:-translate-y-1 hover:border-gray-100 hover:bg-white hover:shadow-lg hover:shadow-gray-200/50 focus:-translate-y-1 focus:bg-white focus:shadow-lg outline-none dark:hover:border-zinc-800 dark:hover:bg-zinc-900 dark:hover:shadow-black/50 dark:focus:bg-zinc-900"
+                  >
                     <div className="relative flex h-20 w-full items-center justify-center rounded-lg bg-gray-50/80 p-2 transition-colors group-hover:bg-transparent dark:bg-zinc-800/30 dark:group-hover:bg-transparent">
                       <Image
                         src={item.image}
@@ -98,8 +102,8 @@ export function MegaMenu() {
                     <p className="text-center text-xs font-semibold text-gray-700 transition-colors group-hover:text-red-600 dark:text-gray-300 dark:group-hover:text-red-400">
                       {item.title}
                     </p>
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               ))}
             </div>
           </div>

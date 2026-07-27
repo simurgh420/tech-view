@@ -64,9 +64,6 @@ export function UserActions({ session }: UserActionsProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="group flex cursor-pointer items-center gap-3">
-                {/* برای کاربر ادمین، به‌جای بج متنی، یک حلقهٔ سبز دور خودِ
-                    آواتار می‌کشیم — شبیه نشان verified که فقط با نگاه به
-                    عکس پروفایل، بدون نیاز به خواندن متن، فهمیده می‌شود */}
                 <Avatar
                   className={cn(
                     'size-9 transition-all',

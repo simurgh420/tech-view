@@ -25,9 +25,7 @@ export function CartDrawer() {
 
   return (
     <Sheet open={isOpen} onOpenChange={close}>
-      {/* عرض قبلاً w-95 / sm:w-105 بود که اصلاً در مقیاس پیش‌فرض Tailwind
-          وجود ندارد (هیچ CSSای تولید نمی‌کرد)؛ با مقدار دلخواه جایگزین شد */}
-      <SheetContent side="right" className="flex w-95 flex-col p-0 sm:w-105">
+      <SheetContent side="left" className="flex w-95 flex-col p-0 sm:w-105">
         <SheetHeader className="border-b border-gray-200 p-4 dark:border-gray-800">
           <SheetTitle>سبد خرید</SheetTitle>
         </SheetHeader>
@@ -40,8 +38,6 @@ export function CartDrawer() {
           {items.length > 0 && <CartList items={items} />}
         </div>
 
-        {/* بخش پایین: جمع کل + دکمه (از همان CartCheckout استفاده می‌شود تا
-            منطق محاسبهٔ مجموع و متن دکمه در دو جا تکرار/ناهماهنگ نباشد) */}
         {items.length > 0 && (
           <div className="border-t border-gray-200 p-4 dark:border-gray-800">
             <CartCheckout items={items} />

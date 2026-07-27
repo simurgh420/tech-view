@@ -37,11 +37,12 @@ export function NavLinks() {
   return (
     <NavigationMenu dir="rtl" className="hidden md:flex z-50">
       <NavigationMenuList className="gap-2">
-        {/* لینک خانه */}
         <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className={getLinkClasses('/')}>خانه</NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink asChild>
+            <Link href="/" className={getLinkClasses('/')}>
+              خانه
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
         {/* مگامنو محصولات */}
@@ -52,11 +53,11 @@ export function NavLinks() {
           .filter(l => l.href !== '/')
           .map(link => (
             <NavigationMenuItem key={link.href}>
-              <Link href={link.href} legacyBehavior passHref>
-                <NavigationMenuLink className={getLinkClasses(link.href)}>
+              <NavigationMenuLink asChild>
+                <Link href={link.href} className={getLinkClasses(link.href)}>
                   {link.label}
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           ))}
       </NavigationMenuList>
