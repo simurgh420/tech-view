@@ -7,12 +7,11 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-import { CommentNode } from '@/services/productComments/db/queries';
-
 import { ProductCommentForm } from './ProductCommentForm';
 import { DeleteProductCommentModal } from './DeleteProductCommentModal';
 
 import { useSession } from '@/lib/auth-client';
+import { CommentNode } from '@/types/CommentProduct';
 
 interface ProductCommentItemProps {
   comment: CommentNode;

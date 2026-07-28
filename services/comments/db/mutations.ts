@@ -1,6 +1,7 @@
 // services/comments/db/mutations.ts
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
+import { authorSelect } from '../constants';
 
 export async function createComment(data: {
   postId: string;
@@ -17,9 +18,7 @@ export async function createComment(data: {
         rating: data.rating ?? 5,
         authorId: data.authorId,
       },
-      include: {
-        author: { select: { name: true, image: true } },
-      },
+      include: { author: { select: authorSelect } },
     });
     logger.info('createComment success', {
       commentId: comment.id,
@@ -59,9 +58,7 @@ export async function updateComment(
     const comment = await prisma.comment.update({
       where: { id: commentId },
       data,
-      include: {
-        author: { select: { name: true, image: true } },
-      },
+      include: { author: { select: authorSelect } },
     });
     logger.info('updateComment success', {
       commentId,

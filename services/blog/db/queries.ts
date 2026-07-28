@@ -2,7 +2,7 @@ import prisma from '@/services/db/client';
 import { BlogPostSafe } from '@/types/blog';
 import { authorSelect } from '../authorSelect';
 import { logger } from '@/lib/logger';
-import {  , formatBlogPost } from '../utils/formatBlogPost';
+import { BlogPostWithRelations, formatBlogPost } from '../utils/formatBlogPost';
 
 export async function getPublishedPosts(params: { page?: number; pageSize?: number }) {
   const startTime = Date.now();

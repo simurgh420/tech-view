@@ -1,5 +1,5 @@
 // services/productComments/api/queries.ts
-import { CommentNode } from '@/services/productComments/db/queries';
+import { CommentNode } from '@/types/CommentProduct';
 import axios from 'axios';
 
 export async function fetchCommentsByProductApi(slug: string): Promise<CommentNode[]> {

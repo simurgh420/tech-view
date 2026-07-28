@@ -1,3 +1,5 @@
+import { Prisma } from '@/app/generated/prisma/client';
+
 export const productSelect = {
   id: true,
   title: true,
@@ -7,7 +9,7 @@ export const productSelect = {
   discountPrice: true,
   isDiscounted: true,
   stockQuantity: true,
-} as const;
+} satisfies Prisma.ProductSelect;
 
 export const CartErrors = {
   PRODUCT_NOT_FOUND: 'Product not found',

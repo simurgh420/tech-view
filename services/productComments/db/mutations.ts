@@ -1,9 +1,8 @@
-// services/productComments/db/mutations.ts
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
 import { DELETED_COMMENT_PLACEHOLDER, MAX_COMMENT_DEPTH } from '@/lib/constants/comments';
 
-const authorSelect = { id: true, name: true, image: true } as const;
+import { commentInclude, ProductCommentErrors } from '../constants';
 
 export async function createComment(data: {
   productSlug: string;
@@ -12,13 +11,15 @@ export async function createComment(data: {
   parentId?: string;
 }) {
   const startTime = Date.now();
+
   try {
     const product = await prisma.product.findUnique({
       where: { slug: data.productSlug },
       select: { id: true },
     });
+
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error(ProductCommentErrors.PRODUCT_NOT_FOUND);
     }
 
     let depth = 0;
@@ -26,14 +27,21 @@ export async function createComment(data: {
     if (data.parentId) {
       const parent = await prisma.productComment.findUnique({
         where: { id: data.parentId },
-        select: { productId: true, depth: true, deletedAt: true },
+        select: {
+          productId: true,
+          depth: true,
+          deletedAt: true,
+        },
       });
+
       if (!parent || parent.productId !== product.id) {
-        throw new Error('Parent comment not found in this product');
+        throw new Error(ProductCommentErrors.PARENT_COMMENT_NOT_FOUND);
       }
+
       if (parent.depth >= MAX_COMMENT_DEPTH) {
-        throw new Error('MAX_DEPTH_REACHED');
+        throw new Error(ProductCommentErrors.MAX_DEPTH_REACHED);
       }
+
       depth = parent.depth + 1;
     }
 
@@ -45,7 +53,7 @@ export async function createComment(data: {
         parentId: data.parentId ?? null,
         depth,
       },
-      include: { author: { select: authorSelect } },
+      include: commentInclude,
     });
 
     logger.info('createComment success', {
@@ -56,34 +64,42 @@ export async function createComment(data: {
       depth,
       duration: Date.now() - startTime,
     });
+
     return comment;
-  } catch (error: any) {
+  } catch (error) {
     logger.error('createComment failed', {
       productSlug: data.productSlug,
       authorId: data.authorId,
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
+
     throw error;
   }
 }
 
 export async function updateComment(
   id: string,
-  data: Partial<{ content: string; status: 'PENDING' | 'APPROVED' | 'REJECTED' }>
+  data: Partial<{
+    content: string;
+    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  }>
 ) {
   const startTime = Date.now();
+
   try {
     const comment = await prisma.productComment.update({
       where: { id },
       data,
-      include: { author: { select: authorSelect } },
+      include: commentInclude,
     });
+
     logger.info('updateComment success', {
       commentId: id,
       updatedFields: Object.keys(data),
       duration: Date.now() - startTime,
     });
+
     return comment;
   } catch (error) {
     logger.error('updateComment failed', {
@@ -91,17 +107,20 @@ export async function updateComment(
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
+
     throw error;
   }
 }
 
 export async function deleteComment(id: string) {
   const startTime = Date.now();
+
   try {
     const hasReplies = await prisma.productComment.findFirst({
       where: { parentId: id },
       select: { id: true },
     });
+
     if (hasReplies) {
       await prisma.productComment.update({
         where: { id },
@@ -111,25 +130,38 @@ export async function deleteComment(id: string) {
           deletedAt: new Date(),
         },
       });
+
       logger.info('deleteComment success (soft-delete)', {
         commentId: id,
         duration: Date.now() - startTime,
       });
-      return { success: true, softDeleted: true };
+
+      return {
+        success: true,
+        softDeleted: true,
+      };
     }
 
-    await prisma.productComment.delete({ where: { id } });
+    await prisma.productComment.delete({
+      where: { id },
+    });
+
     logger.info('deleteComment success (hard-delete)', {
       commentId: id,
       duration: Date.now() - startTime,
     });
-    return { success: true, softDeleted: false };
+
+    return {
+      success: true,
+      softDeleted: false,
+    };
   } catch (error) {
     logger.error('deleteComment failed', {
       commentId: id,
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
+
     throw error;
   }
 }

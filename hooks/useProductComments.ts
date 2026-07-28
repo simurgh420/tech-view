@@ -1,6 +1,5 @@
 // hooks/useProductComments.ts
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CommentNode } from '@/services/productComments/db/queries';
 import {
   CreateProductCommentInput,
   UpdateProductCommentInput,
@@ -11,6 +10,7 @@ import {
   updateCommentApi,
 } from '@/services/productComments/api/mutations';
 import { fetchCommentsByProductApi } from '@/services/productComments/api/queries';
+import { CommentNode } from '@/types/CommentProduct';
 
 /** کلیدهای کوئری متمرکز برای دیدگاه‌های محصول */
 export const productCommentKeys = {
