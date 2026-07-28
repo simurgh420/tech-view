@@ -54,7 +54,7 @@ export async function getProductsByBrand(slug: string) {
     const products = await prisma.product.findMany({
       where: { brand: { slug } },
       orderBy: { createdAt: 'desc' },
-      include: { brand: true, specifications: true },
+      include: productIncludes,
     });
     logger.info('getProductsByBrand success', {
       slug,
@@ -78,7 +78,7 @@ export async function getProductsByCategory(slug: string) {
     const products = await prisma.product.findMany({
       where: { category: { slug } },
       orderBy: { createdAt: 'desc' },
-      include: { category: true, specifications: true },
+      include: productIncludes,
     });
     logger.info('getProductsByCategory success', {
       slug,

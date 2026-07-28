@@ -6,6 +6,7 @@ import { authorSelect } from '../authorSelect';
 import { CreateBlogInput, UpdateBlogInput } from '@/lib/validation/blog';
 import { logger } from '@/lib/logger';
 import { calculateReadingMinutes, toSlug } from '@/lib/slug-common';
+import { Prisma } from '@/app/generated/prisma/client';
 
 // ساخت بلاگ جدید
 export async function createBlogPost(data: CreateBlogInput) {
@@ -25,7 +26,7 @@ export async function createBlogPost(data: CreateBlogInput) {
         authorId: data.authorId,
         status: data.status,
         tags: {
-          create: data.tags.map(tagName => ({
+          create: (data.tags ?? []).map(tagName => ({
             tag: {
               connectOrCreate: {
                 where: { slug: toSlug(tagName) },
@@ -82,7 +83,7 @@ export async function updatePost(slug: string, data: UpdateBlogInput) {
     }
 
     const updatedPost = await prisma.$transaction(async tx => {
-      const updateData: any = {};
+      const updateData: Prisma.BlogPostUpdateInput = {};
 
       if (data.title !== undefined) {
         updateData.title = data.title;
@@ -185,6 +186,7 @@ export async function deletePost(slug: string) {
       return null;
     }
 
+    const deleted = await prisma.blogPost.delete({ where: { slug } });
     if (post.coverImageUrl) {
       await deleteImage(post.coverImageUrl).catch(err => {
         logger.error('deletePost: failed to delete image', {
@@ -194,7 +196,6 @@ export async function deletePost(slug: string) {
       });
     }
 
-    const deleted = await prisma.blogPost.delete({ where: { slug } });
     logger.info('deletePost success', { slug, duration: Date.now() - startTime });
     return deleted;
   } catch (error) {
