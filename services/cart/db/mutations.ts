@@ -24,29 +24,23 @@ export async function addCartItem(userId: string, productId: string, quantity: n
       });
       if (!product) throw new Error(CartErrors.PRODUCT_NOT_FOUND);
 
-      if (quantity > product.stockQuantity) {
-        throw new Error(CartErrors.INSUFFICIENT_STOCK);
-      }
-
       const cart = await ensureCart(tx, userId);
-      const existing = await tx.cartItem.findFirst({
-        where: { cartId: cart.id, productId },
+
+      const existing = await tx.cartItem.findUnique({
+        where: { cartId_productId: { cartId: cart.id, productId } },
       });
 
-      if (existing) {
-        const newQuantity = existing.quantity + quantity;
-        if (newQuantity > product.stockQuantity) {
-          throw new Error(CartErrors.INSUFFICIENT_STOCK_UPDATE);
-        }
-        return tx.cartItem.update({
-          where: { id: existing.id },
-          data: { quantity: newQuantity },
-          include: { product: { select: productSelect } },
-        });
+      const newQuantity = (existing?.quantity ?? 0) + quantity;
+      if (newQuantity > product.stockQuantity) {
+        throw new Error(
+          existing ? CartErrors.INSUFFICIENT_STOCK_UPDATE : CartErrors.INSUFFICIENT_STOCK
+        );
       }
 
-      return tx.cartItem.create({
-        data: {
+      return tx.cartItem.upsert({
+        where: { cartId_productId: { cartId: cart.id, productId } },
+        update: { quantity: newQuantity },
+        create: {
           cartId: cart.id,
           productId,
           quantity,

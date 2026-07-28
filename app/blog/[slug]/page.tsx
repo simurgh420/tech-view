@@ -7,7 +7,7 @@ import { getPostBySlug } from '@/services/blog/db/queries';
 import { getCommentsByPostId } from '@/services/comments/db/queries';
 import { dehydrate } from '@tanstack/react-query';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;

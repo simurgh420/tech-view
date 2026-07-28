@@ -179,24 +179,20 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
 
   try {
     const existing = await prisma.product.findUnique({
-      where: {
-        slug,
-      },
-      select: {
-        id: true,
-        title: true,
-        price: true,
-        discountPrice: true,
-      },
+      where: { slug },
+      select: { id: true, title: true, price: true, discountPrice: true },
     });
 
     if (!existing) {
-      logger.info('updateProduct: product not found', {
-        slug,
-        duration: Date.now() - startTime,
-      });
-
+      logger.info('updateProduct: product not found', { slug, duration: Date.now() - startTime });
       return null;
+    }
+
+    // ✅ محاسبه‌ی slug جدید قبل از شروع تراکنش
+    let newSlug: string | undefined;
+    if (data.slug !== undefined || data.title !== undefined) {
+      const baseSlug = data.slug || toSlug(data.title ?? existing.title);
+      newSlug = await generateUniqueSlug(baseSlug, existing.id);
     }
 
     const updated = await prisma.$transaction(
@@ -204,77 +200,42 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
         const updateData: Prisma.ProductUpdateInput = {};
 
         if (data.title !== undefined) updateData.title = data.title;
-
         if (data.description !== undefined) updateData.description = data.description;
-
         if (data.stockQuantity !== undefined) updateData.stockQuantity = data.stockQuantity;
-
         if (data.thumbnail !== undefined) updateData.thumbnail = data.thumbnail;
-
         if (data.images !== undefined) updateData.images = data.images;
-
         if (data.keyFeatures !== undefined) updateData.keyFeatures = data.keyFeatures;
-
         if (data.colors !== undefined) updateData.colors = data.colors;
-
         if (data.variants !== undefined) updateData.variants = data.variants;
-
         if (data.isFeatured !== undefined) updateData.isFeatured = data.isFeatured;
-
         if (data.isNew !== undefined) updateData.isNew = data.isNew;
-
         if (data.status !== undefined) updateData.status = data.status;
 
         if (data.publishedAt !== undefined) {
           updateData.publishedAt = data.publishedAt ? new Date(data.publishedAt) : null;
         }
 
-        /**
-         * slug update
-         */
-        if (data.slug !== undefined || data.title !== undefined) {
-          const baseSlug = data.slug || toSlug(data.title ?? existing.title);
-
-          updateData.slug = await generateUniqueSlug(baseSlug, existing.id);
+        // ✅ از قبل حساب شده، دیگه await داخل تراکنش نداره
+        if (newSlug !== undefined) {
+          updateData.slug = newSlug;
         }
 
-        /**
-         * relations
-         */
         if (data.brandSlug !== undefined) {
-          updateData.brand = {
-            connect: {
-              slug: data.brandSlug,
-            },
-          };
+          updateData.brand = { connect: { slug: data.brandSlug } };
         }
 
         if (data.categorySlug !== undefined) {
-          updateData.category = {
-            connect: {
-              slug: data.categorySlug,
-            },
-          };
+          updateData.category = { connect: { slug: data.categorySlug } };
         }
 
         if (data.subCategorySlug === null) {
-          updateData.subCategory = {
-            disconnect: true,
-          };
+          updateData.subCategory = { disconnect: true };
         } else if (data.subCategorySlug !== undefined) {
-          updateData.subCategory = {
-            connect: {
-              slug: data.subCategorySlug,
-            },
-          };
+          updateData.subCategory = { connect: { slug: data.subCategorySlug } };
         }
 
-        /**
-         * price calculation
-         */
         if (data.price !== undefined || data.discountPrice !== undefined) {
           const finalPrice = data.price ?? Number(existing.price);
-
           const finalDiscountPrice =
             data.discountPrice !== undefined
               ? data.discountPrice
@@ -288,32 +249,19 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
           );
 
           updateData.price = finalPrice;
-
           updateData.discountPrice = finalDiscountPrice;
-
           updateData.isDiscounted = isDiscounted;
-
           updateData.discountPercentage = discountPercentage;
         }
 
-        /**
-         * update product
-         */
         await tx.product.update({
-          where: {
-            id: existing.id,
-          },
+          where: { id: existing.id },
           data: updateData,
         });
 
-        /**
-         * replace specifications
-         */
         if (data.specifications !== undefined) {
           await tx.productSpecification.deleteMany({
-            where: {
-              productId: existing.id,
-            },
+            where: { productId: existing.id },
           });
 
           const specifications = data.specifications.flatMap(group =>
@@ -326,29 +274,17 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
           );
 
           if (specifications.length > 0) {
-            await tx.productSpecification.createMany({
-              data: specifications,
-            });
+            await tx.productSpecification.createMany({ data: specifications });
           }
         }
 
-        return {
-          id: existing.id,
-        };
+        return { id: existing.id };
       },
-      {
-        timeout: 15000,
-      }
+      { timeout: 15000 }
     );
 
-    /**
-     * گرفتن محصول کامل بعد از commit
-     */
     const product = await prisma.product.findUniqueOrThrow({
-      where: {
-        id: updated.id,
-      },
-
+      where: { id: updated.id },
       include: productIncludes,
     });
 
@@ -364,11 +300,8 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
   } catch (error: any) {
     logger.error('updateProduct failed', {
       slug,
-
       error: error instanceof Error ? error.message : 'Unknown',
-
       code: error.code,
-
       duration: Date.now() - startTime,
     });
 

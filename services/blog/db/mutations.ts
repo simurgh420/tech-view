@@ -63,11 +63,13 @@ export async function createBlogPost(data: CreateBlogInput) {
 // ویرایش بلاگ
 export async function updatePost(slug: string, data: UpdateBlogInput) {
   const startTime = Date.now();
+
   try {
     const existingPost = await prisma.blogPost.findUnique({
       where: { slug },
-      include: { tags: true },
+      include: { tags: { include: { tag: true } } },
     });
+
     if (!existingPost) {
       logger.info('updatePost: post not found', { slug, duration: Date.now() - startTime });
       return null;
@@ -82,74 +84,76 @@ export async function updatePost(slug: string, data: UpdateBlogInput) {
       oldImageUrl = existingPost.coverImageUrl;
     }
 
-    const updatedPost = await prisma.$transaction(async tx => {
-      const updateData: Prisma.BlogPostUpdateInput = {};
-
-      if (data.title !== undefined) {
-        updateData.title = data.title;
-        let newSlug = toSlug(data.title);
-        // چک کردن اسلاگ تکراری نباشد
-        const slugConflict = await tx.blogPost.findFirst({
-          where: { slug: newSlug, id: { not: existingPost.id } },
-        });
-        if (slugConflict) {
-          newSlug = await generateUniqueSlug(newSlug, existingPost.id);
-        }
-        updateData.slug = newSlug;
-      }
-
-      if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
-      if (data.content !== undefined) {
-        updateData.content = data.content;
-        updateData.readingMinutes = calculateReadingMinutes(data.content);
-      }
-      if (data.coverImageUrl !== undefined) updateData.coverImageUrl = data.coverImageUrl;
-
-      if (data.status !== undefined) {
-        const oldStatus = existingPost.status;
-        updateData.status = data.status;
-        if (data.status === 'PUBLISHED' && oldStatus !== 'PUBLISHED') {
-          updateData.publishedAt = new Date();
-        } else if (data.status !== 'PUBLISHED') {
-          updateData.publishedAt = null;
-        }
-      }
-
-      await tx.blogPost.update({
-        where: { id: existingPost.id },
-        data: updateData,
+    // ✅ محاسبه‌ی slug جدید قبل از شروع تراکنش، خارج از تراکنش
+    let newSlug: string | undefined;
+    if (data.title !== undefined) {
+      const candidateSlug = toSlug(data.title);
+      const slugConflict = await prisma.blogPost.findFirst({
+        where: { slug: candidateSlug, id: { not: existingPost.id } },
       });
+      newSlug = slugConflict
+        ? await generateUniqueSlug(candidateSlug, existingPost.id)
+        : candidateSlug;
+    }
 
-      if (data.tags !== undefined) {
-        const tagsToSet = data.tags;
-        await tx.tagOnPost.deleteMany({ where: { postId: existingPost.id } });
-        if (tagsToSet.length > 0) {
-          await tx.blogPost.update({
-            where: { id: existingPost.id },
-            data: {
-              tags: {
-                create: tagsToSet.map(tagName => ({
-                  tag: {
-                    connectOrCreate: {
-                      where: { slug: toSlug(tagName) },
-                      create: { name: tagName, slug: toSlug(tagName) },
-                    },
-                  },
-                })),
+    const updatedPost = await prisma.$transaction(
+      async tx => {
+        const updateData: Prisma.BlogPostUpdateInput = {};
+
+        if (data.title !== undefined) {
+          updateData.title = data.title;
+          updateData.slug = newSlug; // از قبل حساب شده
+        }
+
+        if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
+
+        if (data.content !== undefined) {
+          updateData.content = data.content;
+          updateData.readingMinutes = calculateReadingMinutes(data.content);
+        }
+
+        if (data.coverImageUrl !== undefined) {
+          updateData.coverImageUrl = data.coverImageUrl;
+        }
+
+        if (data.status !== undefined) {
+          updateData.status = data.status;
+          if (data.status === 'PUBLISHED' && existingPost.status !== 'PUBLISHED') {
+            updateData.publishedAt = new Date();
+          } else if (data.status !== 'PUBLISHED') {
+            updateData.publishedAt = null;
+          }
+        }
+
+        if (data.tags !== undefined) {
+          const uniqueTags = Array.from(
+            new Map(data.tags.map(tag => [toSlug(tag), tag.trim()])).values()
+          );
+
+          updateData.tags = {
+            deleteMany: {},
+            create: uniqueTags.map(tagName => ({
+              tag: {
+                connectOrCreate: {
+                  where: { slug: toSlug(tagName) },
+                  create: { name: tagName, slug: toSlug(tagName) },
+                },
               },
-            },
-          });
+            })),
+          };
         }
-      }
 
-      return tx.blogPost.findUnique({
-        where: { id: existingPost.id },
-        include: {
-          author: { select: authorSelect },
-          tags: { include: { tag: true } },
-        },
-      });
-    });
+        return tx.blogPost.update({
+          where: { id: existingPost.id },
+          data: updateData,
+          include: {
+            author: { select: authorSelect },
+            tags: { include: { tag: true } },
+          },
+        });
+      },
+      { timeout: 15000, maxWait: 5000 } // ✅ تایم‌اوت رو هم بیشتر کن
+    );
 
     if (oldImageUrl) {
       await deleteImage(oldImageUrl).catch(err => {
@@ -165,6 +169,7 @@ export async function updatePost(slug: string, data: UpdateBlogInput) {
       updatedFields: Object.keys(data),
       duration: Date.now() - startTime,
     });
+
     return updatedPost;
   } catch (error) {
     logger.error('updatePost failed', {
