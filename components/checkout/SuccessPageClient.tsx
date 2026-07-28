@@ -20,9 +20,7 @@ export function SuccessPageClient({ order }: SuccessPageClientProps) {
       await navigator.clipboard.writeText(order.id);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // clipboard access denied — silently ignore, not critical
-    }
+    } catch {}
   };
 
   return (
@@ -46,7 +44,7 @@ export function SuccessPageClient({ order }: SuccessPageClientProps) {
         onClick={handleCopy}
         className="mx-auto mt-5 flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-xs text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       >
-        شماره سفارش:{' '}
+        شماره سفارش:
         <span dir="ltr" className="font-mono font-medium">
           {order.id}
         </span>

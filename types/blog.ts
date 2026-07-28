@@ -36,15 +36,6 @@ export type BlogPostSafe = {
   tags: string[];
 };
 
-export type BlogPostRecent = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  publishedAt: Date | null;
-  coverImageUrl: string | null;
-};
-
 export type BlogListResponse = {
   items: BlogPostSafe[];
   total: number;

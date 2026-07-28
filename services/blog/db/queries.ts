@@ -2,6 +2,7 @@ import prisma from '@/services/db/client';
 import { BlogPostSafe } from '@/types/blog';
 import { authorSelect } from '../authorSelect';
 import { logger } from '@/lib/logger';
+import { formatBlogPost } from '../utils/formatBlogPost';
 
 export async function getPublishedPosts(params: { page?: number; pageSize?: number }) {
   const startTime = Date.now();
@@ -24,17 +25,10 @@ export async function getPublishedPosts(params: { page?: number; pageSize?: numb
       prisma.blogPost.count({ where: { status: 'PUBLISHED' } }),
     ]);
 
-    const safeItems: BlogPostSafe[] = items.map(post => ({
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      excerpt: post.excerpt,
-      coverImageUrl: post.coverImageUrl,
-      readingMinutes: post.readingMinutes,
-      publishedAt: post.publishedAt,
-      authorName: post.author?.name ?? null,
-      tags: post.tags.map(t => t.tag.name),
-    }));
+    // قبلاً این فرمت دستی و inline اینجا نوشته شده بود؛ الان از همان
+    // formatBlogPost مشترکی استفاده می‌کند که در services/blog/utils است —
+    // تا با getRecentPosts (که قبلاً اصلاً فرمت نمی‌شد) هم‌منبع بماند
+    const safeItems: BlogPostSafe[] = items.map(formatBlogPost);
 
     logger.info('getPublishedPosts success', {
       page,
@@ -85,7 +79,7 @@ export async function getPostBySlug(slug: string) {
   }
 }
 
-export async function getRecentPosts(limit = 3) {
+export async function getRecentPosts(limit = 3): Promise<BlogPostSafe[]> {
   const startTime = Date.now();
   try {
     const posts = await prisma.blogPost.findMany({
@@ -97,12 +91,14 @@ export async function getRecentPosts(limit = 3) {
         tags: { include: { tag: true } },
       },
     });
+    const safePosts = posts.map(formatBlogPost);
+
     logger.info('getRecentPosts success', {
       limit,
-      count: posts.length,
+      count: safePosts.length,
       duration: Date.now() - startTime,
     });
-    return posts;
+    return safePosts;
   } catch (error) {
     logger.error('getRecentPosts failed', {
       limit,

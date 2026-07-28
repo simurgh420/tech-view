@@ -29,7 +29,7 @@ export function CheckoutPageClient({ user, items }: CheckoutPageClientProps) {
           برای ادامه به مرحلهٔ پرداخت، ابتدا محصولی به سبد خرید اضافه کنید.
         </p>
         <Button asChild className="mt-6">
-          <Link href="/">مشاهدهٔ محصولات</Link>
+          <Link href="/products">مشاهدهٔ محصولات</Link>
         </Button>
       </div>
     );

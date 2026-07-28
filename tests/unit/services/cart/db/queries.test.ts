@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getCart, getCartItems } from '@/services/cart/db/queries';
+import { getCart, getCartForCheckout } from '@/services/cart/db/queries';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
 
@@ -7,9 +7,6 @@ vi.mock('@/services/db/client', () => ({
   default: {
     cart: {
       findUnique: vi.fn(),
-    },
-    cartItem: {
-      findMany: vi.fn(),
     },
   },
 }));
@@ -22,44 +19,48 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 describe('Cart DB Queries', () => {
+  const userId = 'user-1';
+  const cartId = 'cart-1';
+  const mockItems = [
+    { id: 'item1', product: { id: 'p1' } },
+    { id: 'item2', product: { id: 'p2' } },
+  ];
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('getCart', () => {
-    const userId = 'user-1';
-    const mockCart = { id: 'cart-1' };
-    const mockItems = [
-      { id: 'item1', product: { id: 'p1' } },
-      { id: 'item2', product: { id: 'p2' } },
-    ];
-
     it('should return items when cart exists', async () => {
-      (prisma.cart.findUnique as any).mockResolvedValue(mockCart);
-      (prisma.cartItem.findMany as any).mockResolvedValue(mockItems);
+      vi.mocked(prisma.cart.findUnique).mockResolvedValue({
+        id: cartId,
+        items: mockItems,
+      } as any);
 
       const result = await getCart(userId);
 
       expect(prisma.cart.findUnique).toHaveBeenCalledWith({
         where: { userId },
-        select: { id: true },
-      });
-      expect(prisma.cartItem.findMany).toHaveBeenCalledWith({
-        where: { cartId: mockCart.id },
-        orderBy: { createdAt: 'desc' },
-        include: { product: { select: expect.any(Object) } },
+        include: {
+          items: {
+            orderBy: { createdAt: 'desc' },
+            include: { product: { select: expect.any(Object) } },
+          },
+        },
       });
       expect(result).toEqual(mockItems);
-      expect(logger.info).toHaveBeenCalledTimes(2);
+      expect(logger.info).toHaveBeenCalledWith(
+        'getCart success',
+        expect.objectContaining({ userId, itemCount: 2 })
+      );
     });
 
     it('should return empty array when cart does not exist', async () => {
-      (prisma.cart.findUnique as any).mockResolvedValue(null);
+      vi.mocked(prisma.cart.findUnique).mockResolvedValue(null);
 
       const result = await getCart(userId);
 
       expect(result).toEqual([]);
-      expect(prisma.cartItem.findMany).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         'getCart: no cart found',
         expect.objectContaining({ userId })
@@ -68,7 +69,7 @@ describe('Cart DB Queries', () => {
 
     it('should throw and log error on database failure', async () => {
       const dbError = new Error('DB connection lost');
-      (prisma.cart.findUnique as any).mockRejectedValue(dbError);
+      vi.mocked(prisma.cart.findUnique).mockRejectedValue(dbError);
 
       await expect(getCart(userId)).rejects.toThrow('DB connection lost');
       expect(logger.error).toHaveBeenCalledWith(
@@ -78,50 +79,54 @@ describe('Cart DB Queries', () => {
     });
   });
 
-  describe('getCartItems', () => {
-    const cartId = 'cart-1';
-    const mockItems = [
-      { id: 'item1', product: { id: 'p1' } },
-      { id: 'item2', product: { id: 'p2' } },
-    ];
+  describe('getCartForCheckout', () => {
+    it('should return cartId and items when cart exists', async () => {
+      vi.mocked(prisma.cart.findUnique).mockResolvedValue({
+        id: cartId,
+        items: mockItems,
+      } as any);
 
-    it('should return items for given cartId', async () => {
-      (prisma.cartItem.findMany as any).mockResolvedValue(mockItems);
+      const result = await getCartForCheckout(userId);
 
-      const result = await getCartItems(cartId);
-
-      expect(prisma.cartItem.findMany).toHaveBeenCalledWith({
-        where: { cartId },
-        orderBy: { createdAt: 'desc' },
-        include: { product: { select: expect.any(Object) } },
+      expect(prisma.cart.findUnique).toHaveBeenCalledWith({
+        where: { userId },
+        include: {
+          items: {
+            orderBy: { createdAt: 'desc' },
+            include: { product: { select: expect.any(Object) } },
+          },
+        },
       });
-      expect(result).toEqual(mockItems);
+      expect(result).toEqual({
+        cartId,
+        items: mockItems,
+      });
       expect(logger.info).toHaveBeenCalledWith(
-        'getCartItems success',
-        expect.objectContaining({ cartId, itemCount: 2 })
+        'getCartForCheckout success',
+        expect.objectContaining({ userId, itemCount: 2 })
       );
     });
 
-    it('should return empty array when no items found', async () => {
-      (prisma.cartItem.findMany as any).mockResolvedValue([]);
+    it('should return null when cart does not exist', async () => {
+      vi.mocked(prisma.cart.findUnique).mockResolvedValue(null);
 
-      const result = await getCartItems(cartId);
+      const result = await getCartForCheckout(userId);
 
-      expect(result).toEqual([]);
+      expect(result).toBeNull();
       expect(logger.info).toHaveBeenCalledWith(
-        'getCartItems success',
-        expect.objectContaining({ cartId, itemCount: 0 })
+        'getCartForCheckout: no cart found',
+        expect.objectContaining({ userId })
       );
     });
 
     it('should throw and log error on database failure', async () => {
-      const dbError = new Error('DB error');
-      (prisma.cartItem.findMany as any).mockRejectedValue(dbError);
+      const dbError = new Error('DB connection lost');
+      vi.mocked(prisma.cart.findUnique).mockRejectedValue(dbError);
 
-      await expect(getCartItems(cartId)).rejects.toThrow('DB error');
+      await expect(getCartForCheckout(userId)).rejects.toThrow('DB connection lost');
       expect(logger.error).toHaveBeenCalledWith(
-        'getCartItems failed',
-        expect.objectContaining({ cartId, error: 'DB error' })
+        'getCartForCheckout failed',
+        expect.objectContaining({ userId, error: 'DB connection lost' })
       );
     });
   });

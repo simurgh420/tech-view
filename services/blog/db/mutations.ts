@@ -87,6 +87,7 @@ export async function updatePost(slug: string, data: UpdateBlogInput) {
       if (data.title !== undefined) {
         updateData.title = data.title;
         let newSlug = toSlug(data.title);
+        // چک کردن اسلاگ تکراری نباشد
         const slugConflict = await tx.blogPost.findFirst({
           where: { slug: newSlug, id: { not: existingPost.id } },
         });
