@@ -47,7 +47,7 @@ describe('Products DB Mutations', () => {
     (slugCommon.toSlug as any).mockImplementation((str: string) =>
       str.toLowerCase().replace(/\s+/g, '-')
     );
-    (slugServer.generateUniqueSlug as any).mockResolvedValue((base: string) => base);
+    (slugServer.generateUniqueSlug as any).mockImplementation(async (base: string) => base);
   });
 
   describe('createProduct', () => {
