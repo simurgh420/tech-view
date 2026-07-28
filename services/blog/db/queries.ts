@@ -2,7 +2,7 @@ import prisma from '@/services/db/client';
 import { BlogPostSafe } from '@/types/blog';
 import { authorSelect } from '../authorSelect';
 import { logger } from '@/lib/logger';
-import { formatBlogPost } from '../utils/formatBlogPost';
+import {  , formatBlogPost } from '../utils/formatBlogPost';
 
 export async function getPublishedPosts(params: { page?: number; pageSize?: number }) {
   const startTime = Date.now();
@@ -25,9 +25,6 @@ export async function getPublishedPosts(params: { page?: number; pageSize?: numb
       prisma.blogPost.count({ where: { status: 'PUBLISHED' } }),
     ]);
 
-    // قبلاً این فرمت دستی و inline اینجا نوشته شده بود؛ الان از همان
-    // formatBlogPost مشترکی استفاده می‌کند که در services/blog/utils است —
-    // تا با getRecentPosts (که قبلاً اصلاً فرمت نمی‌شد) هم‌منبع بماند
     const safeItems: BlogPostSafe[] = items.map(formatBlogPost);
 
     logger.info('getPublishedPosts success', {
@@ -53,7 +50,7 @@ export async function getPublishedPosts(params: { page?: number; pageSize?: numb
   }
 }
 
-export async function getPostBySlug(slug: string) {
+export async function getPostBySlug(slug: string): Promise<BlogPostWithRelations | null> {
   const startTime = Date.now();
   try {
     const post = await prisma.blogPost.findUnique({
