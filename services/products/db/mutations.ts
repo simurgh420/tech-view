@@ -6,6 +6,7 @@ import { logger } from '@/lib/logger';
 import { toSlug } from '@/lib/slug-common';
 import { formatProduct } from '../utils/formatProduct';
 import { productIncludes } from '../productIncludes';
+import { normalizeSpecText } from '@/lib/utils';
 
 function calculateDiscount(price: number, discountPrice: number | null) {
   if (discountPrice !== null && discountPrice < price) {
@@ -32,9 +33,9 @@ function prepareSpecifications(
   return specifications.flatMap(group =>
     (group.items ?? []).map(item => ({
       productId,
-      key: item.label,
-      value: item.value,
-      groupName: group.group,
+      key: normalizeSpecText(item.label),
+      value: normalizeSpecText(item.value),
+      groupName: normalizeSpecText(group.group),
     }))
   );
 }
@@ -267,9 +268,9 @@ export async function updateProduct(slug: string, data: UpdateProductInput) {
           const specifications = data.specifications.flatMap(group =>
             (group.items ?? []).map(item => ({
               productId: existing.id,
-              key: item.label,
-              value: item.value,
-              groupName: group.group,
+              key: normalizeSpecText(item.label),
+              value: normalizeSpecText(item.value),
+              groupName: normalizeSpecText(group.group),
             }))
           );
 
