@@ -16,19 +16,16 @@ const SORT_OPTIONS: { value: SortValue; label: string }[] = [
   { value: 'price-desc', label: 'گران‌ترین' },
 ];
 
+// رنگ برند سایت (همون قرمزی که تو دکمه‌ی «افزودن به سبد» استفاده می‌شه)
+const BRAND = '#F3043B';
+
 export default function SortMenu({ value, onChange }: Props) {
   return (
-    <section aria-label="مرتب‌سازی محصولات" className="flex items-center gap-4 border-b pb-3">
-      {/* Sort options */}
-      <ul
-        className="
-          flex items-center gap-6
-          overflow-x-auto
-          no-scrollbar
-          text-sm
-          py-1
-        "
-      >
+    <section
+      aria-label="مرتب‌سازی محصولات"
+      className="flex items-center gap-4 border-b border-white/5 pb-3"
+    >
+      <ul className="no-scrollbar flex items-center gap-6 overflow-x-auto py-1 text-sm">
         {SORT_OPTIONS.map(option => {
           const isActive = option.value === value;
 
@@ -38,25 +35,16 @@ export default function SortMenu({ value, onChange }: Props) {
                 type="button"
                 onClick={() => onChange(option.value)}
                 className={clsx(
-                  'relative pb-2 transition-colors duration-200 whitespace-nowrap',
-                  isActive
-                    ? 'font-semibold text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
+                  'relative pb-2 whitespace-nowrap transition-colors duration-200',
+                  isActive ? 'font-semibold text-white' : 'text-neutral-400 hover:text-white'
                 )}
               >
                 {option.label}
 
                 {isActive && (
                   <span
-                    className="
-                      absolute
-                      bottom-0
-                      right-0
-                      left-0
-                      h-0.5
-                      bg-primary
-                      rounded-full
-                    "
+                    className="absolute inset-x-0 bottom-0 h-0.5 rounded-full"
+                    style={{ backgroundColor: BRAND }}
                   />
                 )}
               </button>

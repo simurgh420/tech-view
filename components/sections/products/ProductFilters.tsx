@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { ChevronDown, SlidersHorizontal, X } from 'lucide-react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { Button } from '@/components/ui';
 import type { FiltersProduct } from '@/types/product';
 import { useProductFilters } from '@/hooks/useProducts';
 
@@ -12,116 +12,254 @@ type Props = {
   initialCategorySlug?: string;
 };
 
+// رنگ برند سایت (همون قرمزی که تو دکمه‌ی «افزودن به سبد» و بج‌های تخفیف استفاده می‌شه)
+const BRAND = '#F3043B';
+const BRAND_HOVER = '#D1032F';
+
 export default function ProductFilters({ onChange, initialCategorySlug }: Props) {
   const PRICE_MIN = 0;
   const PRICE_MAX = 50_000_000;
 
   const [priceRange, setPriceRange] = useState<number[]>([PRICE_MIN, PRICE_MAX]);
-  const [isPriceOpen, setIsPriceOpen] = useState(false);
+  const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [selectedSpecs, setSelectedSpecs] = useState<Record<string, string>>({});
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
 
   const { data: specFilters, isLoading: filtersLoading } = useProductFilters(
     initialCategorySlug ?? ''
   );
 
+  const selectedCount = Object.keys(selectedSpecs).length;
+  const priceChanged = priceRange[0] !== PRICE_MIN || priceRange[1] !== PRICE_MAX;
+
   function emit() {
     onChange({
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
-      ...(Object.keys(selectedSpecs).length > 0 && { specs: selectedSpecs }),
+      ...(selectedCount > 0 && { specs: selectedSpecs }),
     });
   }
 
-  const handleSpecChange = (key: string, value: string) => {
-    const newSpecs = { ...selectedSpecs };
-    if (newSpecs[key] === value) {
-      delete newSpecs[key];
-    } else {
-      newSpecs[key] = value;
-    }
-    setSelectedSpecs(newSpecs); // ❗ فقط state، بدون onChange اینجا
-  };
+  function handleSpecChange(key: string, value: string) {
+    setSelectedSpecs(prev => {
+      const next = { ...prev };
+      if (next[key] === value) delete next[key];
+      else next[key] = value;
+      return next;
+    });
+  }
+
+  function toggleGroup(key: string) {
+    setOpenGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function clearAll() {
+    setPriceRange([PRICE_MIN, PRICE_MAX]);
+    setSelectedSpecs({});
+    onChange({ minPrice: PRICE_MIN, maxPrice: PRICE_MAX });
+  }
 
   return (
-    <div className="p-6 rounded-lg shadow-lg space-y-6">
-      <h3 className="text-2xl font-semibold">فیلترها</h3>
+    <div className="rounded-xl border border-white/5 bg-neutral-900 shadow-lg shadow-black/20">
+      {/* هدر */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4 text-neutral-400" />
+          <h3 className="text-base font-semibold text-white">فیلترها</h3>
+          {selectedCount > 0 && (
+            <span
+              className="inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-medium text-white"
+              style={{ backgroundColor: BRAND }}
+            >
+              {selectedCount}
+            </span>
+          )}
+        </div>
 
-      {/* محدوده قیمت */}
-      <div>
-        <Button
-          onClick={() => setIsPriceOpen(p => !p)}
-          className="w-full flex justify-between items-center"
-          variant="outline"
-        >
-          <span>محدوده قیمت</span>
-          <span>
-            {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} تومان
-          </span>
-        </Button>
-        {isPriceOpen && (
-          <div className="mt-3 px-2">
-            <Slider
-              range
-              min={PRICE_MIN}
-              max={PRICE_MAX}
-              step={1000}
-              value={priceRange}
-              onChange={value => {
-                if (Array.isArray(value)) setPriceRange(value); // ❗ فقط state
-              }}
-              // دیگه اینجا emit نمی‌کنیم
-              styles={{
-                track: { backgroundColor: '#8a041a', height: 6 },
-                handle: {
-                  borderColor: '#3b82f6',
-                  backgroundColor: '#fff',
-                  width: 18,
-                  height: 18,
-                  marginTop: -7,
-                  boxShadow: '0 0 0 4px rgba(59,130,246,0.3)',
-                },
-                rail: { backgroundColor: '#e5e7eb', height: 6 },
-              }}
-            />
+        {(selectedCount > 0 || priceChanged) && (
+          <button
+            type="button"
+            onClick={clearAll}
+            className="flex items-center gap-1 text-xs text-neutral-400 transition-colors hover:text-white"
+          >
+            <X className="h-3.5 w-3.5" />
+            پاک کردن
+          </button>
+        )}
+      </div>
+
+      <div className="divide-y divide-white/5">
+        {/* محدوده قیمت */}
+        <div className="px-5 py-4">
+          <button
+            type="button"
+            onClick={() => setIsPriceOpen(p => !p)}
+            className="flex w-full items-center justify-between text-sm"
+          >
+            <span className="font-medium text-white">محدوده قیمت</span>
+            <span className="flex items-center gap-2 text-xs text-neutral-400">
+              {priceRange[0].toLocaleString('fa-IR')} تا {priceRange[1].toLocaleString('fa-IR')}{' '}
+              تومان
+              <ChevronDown
+                className={`h-4 w-4 transition-transform duration-200 ${
+                  isPriceOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </span>
+          </button>
+
+          <div
+            className="grid transition-[grid-template-rows] duration-200 ease-out"
+            style={{ gridTemplateRows: isPriceOpen ? '1fr' : '0fr' }}
+          >
+            <div className="overflow-hidden">
+              <div className="px-1 pt-5">
+                <Slider
+                  range
+                  min={PRICE_MIN}
+                  max={PRICE_MAX}
+                  step={1000}
+                  value={priceRange}
+                  onChange={value => {
+                    if (Array.isArray(value)) setPriceRange(value);
+                  }}
+                  styles={{
+                    track: { backgroundColor: BRAND, height: 4 },
+                    handle: {
+                      borderColor: BRAND,
+                      backgroundColor: '#171717',
+                      opacity: 1,
+                      width: 16,
+                      height: 16,
+                      marginTop: -6,
+                      boxShadow: `0 0 0 4px ${BRAND}33`,
+                    },
+                    rail: { backgroundColor: '#262626', height: 4 },
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* لودینگ */}
+        {filtersLoading && (
+          <div className="px-5 py-4 text-sm text-neutral-400">در حال بارگذاری فیلترها...</div>
+        )}
+
+        {/* فیلترهای پویا (مشخصات فنی) */}
+        {specFilters &&
+          Object.entries(specFilters).map(([key, values]) => {
+            const isOpen = openGroups.has(key);
+            const activeValue = selectedSpecs[key];
+
+            return (
+              <div key={key} className="px-3 py-2">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(key)}
+                  className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm transition-colors hover:bg-white/5"
+                >
+                  <span className="flex items-center gap-2 font-medium text-white">
+                    {key}
+                    {activeValue && (
+                      <span
+                        className="rounded-full px-2 py-0.5 text-[11px] font-normal"
+                        style={{ backgroundColor: `${BRAND}1A`, color: BRAND }}
+                      >
+                        {activeValue}
+                      </span>
+                    )}
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-neutral-500 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className="grid transition-[grid-template-rows] duration-200 ease-out"
+                  style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+                >
+                  <div className="overflow-hidden">
+                    <div className="space-y-0.5 px-2 pb-1 pt-2">
+                      {values.map(v => {
+                        const checked = selectedSpecs[key] === v;
+                        const id = `${key}-${v}`;
+
+                        return (
+                          <label
+                            key={v}
+                            htmlFor={id}
+                            className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-neutral-300 transition-colors hover:bg-white/5"
+                          >
+                            <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+                              <input
+                                id={id}
+                                type="checkbox"
+                                checked={checked}
+                                onChange={() => handleSpecChange(key, v)}
+                                className="peer sr-only"
+                              />
+                              <span
+                                className="h-4 w-4 rounded border transition-colors"
+                                style={{
+                                  borderColor: checked ? BRAND : '#404040',
+                                  backgroundColor: checked ? BRAND : 'transparent',
+                                }}
+                              />
+                              <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                className={`pointer-events-none absolute h-3 w-3 text-white transition-opacity ${
+                                  checked ? 'opacity-100' : 'opacity-0'
+                                }`}
+                              >
+                                <path
+                                  d="M5 13l4 4L19 7"
+                                  stroke="currentColor"
+                                  strokeWidth={3}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </span>
+                            {v}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+        {!filtersLoading && !specFilters && initialCategorySlug && (
+          <div className="px-5 py-4 text-sm text-neutral-400">
+            هیچ فیلتری برای این دسته موجود نیست
           </div>
         )}
       </div>
 
-      {/* فیلترهای پویا (مشخصات فنی) */}
-      {filtersLoading && <div className="text-sm text-gray-500">در حال بارگذاری فیلترها...</div>}
-
-      {specFilters && Object.keys(specFilters).length > 0 && (
-        <div className="space-y-4 ">
-          {Object.entries(specFilters).map(([key, values]) => (
-            <div key={key}>
-              <h4 className="font-medium mb-2 text-sm">{key}</h4>
-              <div className="space-y-1">
-                {values.map(v => (
-                  <label key={v} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={selectedSpecs[key] === v}
-                      onChange={() => handleSpecChange(key, v)}
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    {v}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {!filtersLoading && !specFilters && initialCategorySlug && (
-        <div className="text-sm text-gray-500">هیچ فیلتری برای این دسته موجود نیست</div>
-      )}
-
       {/* دکمهٔ اعمال فیلترها */}
-      <div className=" flex justify-end">
-        <Button type="button" variant="ghost" onClick={emit} className="mt-2">
+      <div className="px-5 py-4">
+        <button
+          type="button"
+          onClick={emit}
+          className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-colors active:scale-[0.98]"
+          style={{ backgroundColor: BRAND }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = BRAND_HOVER)}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = BRAND)}
+        >
           اعمال فیلترها
-        </Button>
+        </button>
       </div>
     </div>
   );

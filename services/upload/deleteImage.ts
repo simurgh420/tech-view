@@ -34,13 +34,12 @@ export async function deleteImage(imagePath: string): Promise<boolean> {
       return false;
     }
 
-    // 4. ساخت مسیر کامل امن
-    const publicDir = path.join(process.cwd(), 'public');
-    const fullPath = path.resolve(publicDir, safePath);
+    // 4. محدود به public/uploads (نه کل public) — جلوگیری از حذف فایل‌های استاتیک حیاتی سایت
+    const uploadsRoot = path.resolve(process.cwd(), 'public', 'uploads');
+    const fullPath = path.resolve(process.cwd(), 'public', safePath);
 
-    // 5. اطمینان از اینکه مسیر نهایی داخل public است
-    if (!fullPath.startsWith(publicDir + path.sep)) {
-      logger.error('deleteImage: resolved path outside public directory', {
+    if (!fullPath.startsWith(uploadsRoot + path.sep)) {
+      logger.error('deleteImage: resolved path outside uploads directory', {
         imagePath,
         fullPath,
         duration: Date.now() - startTime,
@@ -48,7 +47,7 @@ export async function deleteImage(imagePath: string): Promise<boolean> {
       return false;
     }
 
-    // 6. حذف فایل
+    // 5. حذف فایل
     await rm(fullPath, { force: true });
     logger.info('deleteImage success', {
       imagePath,
