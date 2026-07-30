@@ -10,15 +10,16 @@ import { useProductFilters } from '@/hooks/useProducts';
 type Props = {
   onChange: (filters: Partial<FiltersProduct>) => void;
   initialCategorySlug?: string;
+  onClose?: () => void;
 };
 
 // رنگ برند سایت (همون قرمزی که تو دکمه‌ی «افزودن به سبد» و بج‌های تخفیف استفاده می‌شه)
 const BRAND = '#F3043B';
 const BRAND_HOVER = '#D1032F';
 
-export default function ProductFilters({ onChange, initialCategorySlug }: Props) {
+export default function ProductFilters({ onChange, initialCategorySlug, onClose }: Props) {
   const PRICE_MIN = 0;
-  const PRICE_MAX = 50_000_000;
+  const PRICE_MAX = 500_000_000;
 
   const [priceRange, setPriceRange] = useState<number[]>([PRICE_MIN, PRICE_MAX]);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
@@ -34,8 +35,7 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
 
   function emit() {
     onChange({
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
+      ...(priceChanged && { minPrice: priceRange[0], maxPrice: priceRange[1] }),
       ...(selectedCount > 0 && { specs: selectedSpecs }),
     });
   }
@@ -61,13 +61,13 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
   function clearAll() {
     setPriceRange([PRICE_MIN, PRICE_MAX]);
     setSelectedSpecs({});
-    onChange({ minPrice: PRICE_MIN, maxPrice: PRICE_MAX });
+    onChange({ minPrice: undefined, maxPrice: undefined, specs: undefined });
   }
 
   return (
     <div className="rounded-xl border border-white/5 bg-neutral-900 shadow-lg shadow-black/20">
       {/* هدر */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+      <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-neutral-400" />
           <h3 className="text-base font-semibold text-white">فیلترها</h3>
@@ -81,16 +81,28 @@ export default function ProductFilters({ onChange, initialCategorySlug }: Props)
           )}
         </div>
 
-        {(selectedCount > 0 || priceChanged) && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="flex items-center gap-1 text-xs text-neutral-400 transition-colors hover:text-white"
-          >
-            <X className="h-3.5 w-3.5" />
-            پاک کردن
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {(selectedCount > 0 || priceChanged) && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className="flex items-center gap-1 text-xs text-neutral-400 transition-colors hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" />
+              پاک کردن
+            </button>
+          )}
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="بستن فیلترها"
+              className="rounded-md p-1 text-neutral-400 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="divide-y divide-white/5">
