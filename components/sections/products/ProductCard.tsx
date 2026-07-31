@@ -1,6 +1,7 @@
 // components/product/ProductCard.tsx
 'use client';
 
+import { useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Zap } from 'lucide-react';
@@ -27,6 +28,27 @@ export default function ProductCard({
   const add = useAddToCart();
   const notify = useNotify();
 
+  const titleContainerRef = useRef<HTMLHeadingElement>(null);
+  const titleTextRef = useRef<HTMLSpanElement>(null);
+  const [overflowPx, setOverflowPx] = useState(0);
+
+  useLayoutEffect(() => {
+    function measure() {
+      if (!titleContainerRef.current || !titleTextRef.current) return;
+      const diff = titleTextRef.current.scrollWidth - titleContainerRef.current.clientWidth;
+      setOverflowPx(diff > 0 ? diff : 0);
+    }
+
+    measure();
+
+    // ResizeObserver فقط وقتی خودِ این کارت اندازه‌ش عوض بشه فایر می‌شه،
+    // نه با هر resize پنجره (دقیق‌تر و کم‌هزینه‌تر از window resize listener)
+    if (!titleContainerRef.current) return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(titleContainerRef.current);
+    return () => observer.disconnect();
+  }, [product.title]);
+
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -43,6 +65,7 @@ export default function ProductCard({
   };
 
   const rating = Number(product.rating) || 0;
+  const isOverflowing = overflowPx > 0;
 
   return (
     <Link
@@ -114,23 +137,32 @@ export default function ProductCard({
           p-3
         "
       >
-        {/* عنوان */}
-        <h2
-          className="
-           line-clamp-1
-            min-h-0
-            text-[14px]
-            font-medium
-            leading-5
-            text-neutral-800
-            transition-colors
-            group-hover:text-red-600
-            dark:text-neutral-100
-            dark:group-hover:text-red-400
-          "
-        >
-          {product.title}
+        {/* عنوان — با هاور روی کارت، اگه متن سرریز داشته باشه به‌صورت قطاری کامل نمایش داده می‌شه */}
+        <h2 ref={titleContainerRef} className="relative h-5 overflow-hidden whitespace-nowrap">
+          <span
+            ref={titleTextRef}
+            className={`
+              inline-block
+              text-[14px]
+              font-medium
+              leading-5
+              text-neutral-800
+              transition-colors
+              group-hover:text-red-600
+              dark:text-neutral-100
+              dark:group-hover:text-red-400
+              ${isOverflowing ? 'group-hover:[animation:marquee_3.5s_linear_infinite]' : ''}
+            `}
+            style={
+              isOverflowing
+                ? ({ '--marquee-distance': `-${overflowPx}px` } as React.CSSProperties)
+                : undefined
+            }
+          >
+            {product.title}
+          </span>
         </h2>
+
         {/* امتیاز و ارسال */}
         <div className="flex items-center justify-between">
           <StarRatingDisplay value={rating} size={9} />

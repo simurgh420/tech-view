@@ -63,7 +63,7 @@ export function UserActions({ session }: UserActionsProps) {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="group flex cursor-pointer items-center gap-3">
+              <button  className="group flex cursor-pointer items-center gap-3">
                 <Avatar
                   className={cn(
                     'size-9 transition-all',

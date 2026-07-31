@@ -16,9 +16,6 @@ const SORT_OPTIONS: { value: SortValue; label: string }[] = [
   { value: 'price-desc', label: 'گران‌ترین' },
 ];
 
-// رنگ برند سایت (همون قرمزی که تو دکمه‌ی «افزودن به سبد» استفاده می‌شه)
-const BRAND = '#F3043B';
-
 export default function SortMenu({ value, onChange }: Props) {
   return (
     <section
@@ -42,10 +39,7 @@ export default function SortMenu({ value, onChange }: Props) {
                 {option.label}
 
                 {isActive && (
-                  <span
-                    className="absolute inset-x-0 bottom-0 h-0.5 rounded-full"
-                    style={{ backgroundColor: BRAND }}
-                  />
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-primary" />
                 )}
               </button>
             </li>

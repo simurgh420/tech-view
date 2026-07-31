@@ -13,10 +13,6 @@ type Props = {
   onClose?: () => void;
 };
 
-// رنگ برند سایت (همون قرمزی که تو دکمه‌ی «افزودن به سبد» و بج‌های تخفیف استفاده می‌شه)
-const BRAND = '#F3043B';
-const BRAND_HOVER = '#D1032F';
-
 export default function ProductFilters({ onChange, initialCategorySlug, onClose }: Props) {
   const PRICE_MIN = 0;
   const PRICE_MAX = 500_000_000;
@@ -73,8 +69,8 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
           <h3 className="text-base font-semibold text-white">فیلترها</h3>
           {selectedCount > 0 && (
             <span
-              className="inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-medium text-white"
-              style={{ backgroundColor: BRAND }}
+              className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px]
+            font-medium text-primary-foreground"
             >
               {selectedCount}
             </span>
@@ -141,15 +137,15 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
                     if (Array.isArray(value)) setPriceRange(value);
                   }}
                   styles={{
-                    track: { backgroundColor: BRAND, height: 4 },
+                    track: { backgroundColor: 'var(--primary)', height: 4 },
                     handle: {
-                      borderColor: BRAND,
+                      borderColor: 'var(--primary)',
                       backgroundColor: '#171717',
                       opacity: 1,
                       width: 16,
                       height: 16,
                       marginTop: -6,
-                      boxShadow: `0 0 0 4px ${BRAND}33`,
+                      boxShadow: '0 0 0 4px color-mix(in oklch, var(--primary) 20%, transparent)',
                     },
                     rail: { backgroundColor: '#262626', height: 4 },
                   }}
@@ -180,10 +176,8 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
                   <span className="flex items-center gap-2 font-medium text-white">
                     {key}
                     {activeValue && (
-                      <span
-                        className="rounded-full px-2 py-0.5 text-[11px] font-normal"
-                        style={{ backgroundColor: `${BRAND}1A`, color: BRAND }}
-                      >
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-normal text-primary">
+                        {' '}
                         {activeValue}
                       </span>
                     )}
@@ -222,8 +216,8 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
                               <span
                                 className="h-4 w-4 rounded border transition-colors"
                                 style={{
-                                  borderColor: checked ? BRAND : '#404040',
-                                  backgroundColor: checked ? BRAND : 'transparent',
+                                  borderColor: checked ? 'var(--primary)' : '#404040',
+                                  backgroundColor: checked ? 'var(--primary)' : 'transparent',
                                 }}
                               />
                               <svg
@@ -265,10 +259,7 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
         <button
           type="button"
           onClick={emit}
-          className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-colors active:scale-[0.98]"
-          style={{ backgroundColor: BRAND }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = BRAND_HOVER)}
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = BRAND)}
+          className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 active:scale-[0.98]"
         >
           اعمال فیلترها
         </button>
