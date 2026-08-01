@@ -181,6 +181,7 @@ export async function getAdminBlogPosts() {
           select: {
             id: true,
             name: true,
+            image: true,
           },
         },
       },

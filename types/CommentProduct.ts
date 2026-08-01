@@ -24,3 +24,22 @@ export interface CommentNode {
 export type ProductCommentWithAuthor = Prisma.ProductCommentGetPayload<{
   include: typeof commentInclude;
 }>;
+
+export type AdminProductCommentItem = {
+  id: string;
+  content: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  depth: number;
+  parentId: string | null;
+  createdAt: string;
+  author: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  } | null;
+  product: {
+    id: string;
+    slug: string;
+    title: string;
+  } | null;
+};

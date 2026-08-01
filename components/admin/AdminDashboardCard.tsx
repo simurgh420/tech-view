@@ -21,7 +21,9 @@ export function AdminDashboardCard({
       href={href}
       className="flex items-center gap-4 rounded-2xl border bg-background p-6 shadow-md transition-all hover:shadow-lg"
     >
-      <div className="rounded-xl p-3 transition-colors">
+      <div
+        className={`rounded-xl bg-muted p-3 transition-colors ${iconClassName ? 'bg-opacity-10' : ''}`}
+      >
         <Icon className={`size-6 ${iconClassName ?? ''}`} aria-hidden="true" />
       </div>
       <div>

@@ -1,6 +1,6 @@
 // hooks/useProducts.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FiltersProduct, PaginatedResponse, Product } from '@/types/product';
+import { AdminProductItem, FiltersProduct, PaginatedResponse, Product } from '@/types/product';
 
 import {
   createProductApi,
@@ -16,6 +16,7 @@ import {
   fetchProductsByCategoryApi,
   fetchFilteredProductsApi,
   fetchProductFiltersApi,
+  fetchAdminProductsApi,
 } from '@/services/products/api/queries';
 import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/product';
 
@@ -62,7 +63,13 @@ export function useGetProduct(slug: string) {
     enabled: !!slug,
   });
 }
-
+// محصولات برای صفحه داشوبد
+export function useGetAdminProducts() {
+  return useQuery<AdminProductItem[]>({
+    queryKey: adminProductKeys.all,
+    queryFn: fetchAdminProductsApi,
+  });
+}
 /** محصولات یک دسته‌بندی */
 export function useGetProductsByCategory(slug: string) {
   return useQuery<Product[]>({

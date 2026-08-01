@@ -6,8 +6,8 @@ import {
   deleteReviewApi,
   updateReviewApi,
 } from '@/services/reviews/api/mutations';
-import { fetchReviewsByProductApi } from '@/services/reviews/api/queries';
-import { ReviewWithAuthor } from '@/types/review';
+import { fetchAdminReviewsApi, fetchReviewsByProductApi } from '@/services/reviews/api/queries';
+import { AdminReviewItem, ReviewWithAuthor } from '@/types/review';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -69,5 +69,12 @@ export function useDeleteReview(slug: string) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: reviewKeys.byProduct(slug) });
     },
+  });
+}
+// بخش رویو ها برای  صفحه محصولات
+export function useGetAdminReviews() {
+  return useQuery<AdminReviewItem[]>({
+    queryKey: adminReviewKeys.all,
+    queryFn: fetchAdminReviewsApi,
   });
 }
