@@ -16,27 +16,18 @@ export default async function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row">
+    <div className="flex min-h-screen w-full flex-col md:flex-row" dir="rtl">
       <div className="md:basis-3/4">
         <AuthVisual />
       </div>
 
-      <div className="w-full md:basis-1/4 flex items-center justify-center p-6">
-        <div
-          className="
-    w-full
-    rounded-3xl
-    p-8
-    animate-[fadeIn_0.5s_ease-out]
-    backdrop-blur-xl
-    border 
-    shadow-[0_8px_32px_rgba(0,0,0,0.35)]
-  "
-        >
-          <h1 className="text-3xl font-semibold mb-6 text-center ">ثبت نام</h1>
+      <div className="flex w-full items-center justify-center p-6 md:basis-1/4">
+        <div className="w-full animate-[fadeIn_0.5s_ease-out] rounded-3xl border p-8 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+          <h1 className="mb-6 text-center text-3xl font-semibold">ثبت نام</h1>
+
           <RegisterForm />
 
-          <div className="mt-6 flex flex-col gap-3 items-center">
+          <div className="mt-6 flex flex-col items-center gap-3">
             <div className="w-full max-w-sm">
               <SignInOauthButton provider="google" signUp />
             </div>
@@ -45,11 +36,12 @@ export default async function RegisterPage() {
               <SignInOauthButton provider="github" signUp />
             </div>
           </div>
-          <p className="mt-6 text-sm text-center  flex flex-row-reverse justify-center gap-2">
+
+          <p className="mt-6 flex flex-row-reverse justify-center gap-2 text-center text-sm">
             <span>حساب داری؟</span>
             <Link
               href="/login"
-              className="font-medium  dark:text-blue-400 dark:hover:text-blue-900 transition-colors"
+              className="font-medium text-primary transition-colors hover:text-primary/80"
             >
               ورود
             </Link>
