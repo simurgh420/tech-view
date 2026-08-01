@@ -162,3 +162,41 @@ export async function getTagsByPostId(postId: string) {
     throw error;
   }
 }
+
+export async function getAdminBlogPosts() {
+  const startTime = Date.now();
+  try {
+    const posts = await prisma.blogPost.findMany({
+      orderBy: { updatedAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        coverImageUrl: true,
+        status: true,
+        publishedAt: true,
+        updatedAt: true,
+        authorId: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    logger.info('getAdminBlogPosts success', {
+      count: posts.length,
+      duration: Date.now() - startTime,
+    });
+
+    return posts;
+  } catch (error) {
+    logger.error('getAdminBlogPosts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
+}

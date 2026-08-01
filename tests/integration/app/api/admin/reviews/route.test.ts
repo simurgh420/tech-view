@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GET } from '@/app/api/admin/reviews/route';
+import { GET } from '@/app/api/reviews/admin/route';
 import { auth } from '@/lib/auth';
 import { getAllReviewsAdmin } from '@/services/reviews/db/queries';
 

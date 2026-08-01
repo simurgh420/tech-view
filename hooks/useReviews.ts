@@ -15,6 +15,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 export const reviewKeys = {
   byProduct: (slug: string) => ['reviews', slug] as const,
 };
+export const adminReviewKeys = {
+  all: ['admin-reviews'] as const,
+};
 
 // ─────────────────────────────────────────────
 // Queries

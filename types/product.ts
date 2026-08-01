@@ -40,6 +40,18 @@ export type ProductPayload = {
   publishedAt?: string | null;
   status?: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
 };
+export type AdminProductItem = {
+  id: string;
+  title: string;
+  slug: string;
+  thumbnail: string | null;
+  price: string | number;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  createdAt: string;
+  category: { title: string } | null;
+  brand: { name: string } | null;
+};
+
 export type Product = {
   id: string;
   title: string;

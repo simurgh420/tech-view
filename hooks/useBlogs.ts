@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { BlogListResponse, BlogPost } from '@/types/blog';
 
-import { fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
+import { fetchAdminBlogsApi, fetchBlogBySlugApi, fetchBlogsApi } from '@/services/blog/api/queries';
 import { createBlogApi, deleteBlogApi, updateBlogApi } from '@/services/blog/api/mutations';
 import { CreateBlogPayload, UpdateBlogInput } from '@/lib/validation/blog';
 
@@ -14,6 +14,7 @@ export const blogKeys = {
   all: ['blogs'] as const,
   list: (page: number, pageSize: number) => ['blogs', page, pageSize] as const,
   detail: (slug: string) => ['blog', slug] as const,
+  admin: ['admin', 'blogs'] as const,
 };
 
 // ─────────────────────────────────────────────
@@ -50,6 +51,13 @@ export function useCreateBlog() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: blogKeys.all });
     },
+  });
+  
+} /** لیست پست‌ها برای پنل ادمین (شامل draft ها هم می‌شه) */
+export function useGetAdminBlogs() {
+  return useQuery({
+    queryKey: blogKeys.admin,
+    queryFn: fetchAdminBlogsApi,
   });
 }
 

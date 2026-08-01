@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { GET, DELETE } from '@/app/api/admin/reviews/[id]/route';
+import { GET, DELETE } from '@/app/api/reviews/admin/[id]/route';
 import { auth } from '@/lib/auth';
 import { getReviewByIdAdmin } from '@/services/reviews/db/queries';
 import { deleteReview } from '@/services/reviews/db/mutations';

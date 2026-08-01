@@ -1,5 +1,7 @@
 // types/blog.ts
 
+import { getAdminBlogPosts } from '@/services/blog/db/queries';
+
 export type BlogPost = {
   id: string;
   title: string;
@@ -43,3 +45,4 @@ export type BlogListResponse = {
   pageSize: number;
   pages: number;
 };
+export type AdminBlogPostItem = Awaited<ReturnType<typeof getAdminBlogPosts>>[number];

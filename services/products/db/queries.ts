@@ -118,6 +118,39 @@ export async function getFeaturedProducts() {
   }
 }
 
+export async function getAdminProducts() {
+  const startTime = Date.now();
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        thumbnail: true,
+        price: true,
+        status: true,
+        createdAt: true,
+        category: { select: { title: true } },
+        brand: { select: { name: true } },
+      },
+    });
+
+    logger.info('getAdminProducts success', {
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+
+    return products;
+  } catch (error) {
+    logger.error('getAdminProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
+}
+
 export async function getFilteredProducts(filters: {
   brandSlug?: string;
   categorySlug?: string;

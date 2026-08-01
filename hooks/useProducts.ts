@@ -19,7 +19,6 @@ import {
 } from '@/services/products/api/queries';
 import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/product';
 
-
 export const productKeys = {
   all: ['products'] as const,
   lists: () => [...productKeys.all, 'list'] as const,
@@ -29,6 +28,9 @@ export const productKeys = {
   byBrand: (slug: string) => [...productKeys.all, 'brand', slug] as const,
   featured: () => [...productKeys.all, 'featured'] as const,
   filtersOf: (categorySlug: string) => ['product-filters', categorySlug] as const,
+};
+export const adminProductKeys = {
+  all: ['admin-products'] as const,
 };
 
 // ─────────────────────────────────────────────
@@ -109,6 +111,7 @@ export function useCreateProduct() {
     mutationFn: createProductApi,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: adminProductKeys.all });
     },
   });
 }
@@ -121,6 +124,7 @@ export function useUpdateProduct() {
     mutationFn: ({ slug, data }) => updateProductApi(slug, data),
     onSuccess: (_res, vars) => {
       qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: adminProductKeys.all });
       qc.invalidateQueries({ queryKey: productKeys.detail(vars.slug) });
     },
   });
@@ -134,6 +138,7 @@ export function useDeleteProduct() {
     mutationFn: deleteProductApi,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: adminProductKeys.all });
     },
   });
 }
