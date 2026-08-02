@@ -116,16 +116,50 @@ describe('Blog Queries', () => {
 
   describe('getRecentPosts', () => {
     it('should return limited posts sorted by publishedAt desc', async () => {
-      const mockPosts = [{ id: '1' }, { id: '2' }];
-      (prisma.blogPost.findMany as any).mockResolvedValue(mockPosts);
+      // ۱. دیتای خام فرضی که شبیه خروجی واقعی Prisma باشه
+      const rawPosts = [
+        {
+          id: '1',
+          title: 'Post 1',
+          slug: 'post-1',
+          excerpt: 'Excerpt 1',
+          coverImageUrl: null,
+          readingMinutes: 5,
+          publishedAt: new Date('2026-01-01'),
+          author: { name: 'Ali', id: 'a1', image: null, role: 'ADMIN' },
+          tags: [{ tag: { id: 't1', name: 'React', slug: 'react' } }],
+        },
+      ];
+
+      vi.mocked(prisma.blogPost.findMany).mockResolvedValue(rawPosts as any);
+
       const result = await getRecentPosts(2);
-      expect(prisma.blogPost.findMany).toHaveBeenCalledWith({
-        where: { status: 'PUBLISHED' },
-        orderBy: { publishedAt: 'desc' },
-        take: 2,
-        include: expect.any(Object),
-      });
-      expect(result).toEqual(mockPosts);
+
+      // ۲. بررسی فراخوانی درست دیتابیس
+      expect(prisma.blogPost.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { status: 'PUBLISHED' },
+          orderBy: { publishedAt: 'desc' },
+          take: 2,
+          include: expect.any(Object),
+        })
+      );
+
+      // ۳. بررسی اینکه خروجی دقیقاً از فیلتر formatBlogPost رد شده یا نه
+      expect(result).toEqual([
+        {
+          id: '1',
+          title: 'Post 1',
+          slug: 'post-1',
+          excerpt: 'Excerpt 1',
+          coverImageUrl: null,
+          readingMinutes: 5,
+          publishedAt: rawPosts[0].publishedAt,
+          authorName: 'Ali',
+          tags: ['React'], // تگ‌ها تبدیل به آرایه رشته‌ای شدن
+        },
+      ]);
+
       expect(logger.info).toHaveBeenCalled();
     });
     it('should default limit to 3', async () => {

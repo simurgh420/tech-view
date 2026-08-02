@@ -1,6 +1,6 @@
 // hooks/useProducts.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FiltersProduct, PaginatedResponse, Product } from '@/types/product';
+import { AdminProductItem, FiltersProduct, PaginatedResponse, Product } from '@/types/product';
 
 import {
   createProductApi,
@@ -16,9 +16,9 @@ import {
   fetchProductsByCategoryApi,
   fetchFilteredProductsApi,
   fetchProductFiltersApi,
+  fetchAdminProductsApi,
 } from '@/services/products/api/queries';
 import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/product';
-
 
 export const productKeys = {
   all: ['products'] as const,
@@ -29,6 +29,9 @@ export const productKeys = {
   byBrand: (slug: string) => [...productKeys.all, 'brand', slug] as const,
   featured: () => [...productKeys.all, 'featured'] as const,
   filtersOf: (categorySlug: string) => ['product-filters', categorySlug] as const,
+};
+export const adminProductKeys = {
+  all: ['admin-products'] as const,
 };
 
 // ─────────────────────────────────────────────
@@ -60,7 +63,13 @@ export function useGetProduct(slug: string) {
     enabled: !!slug,
   });
 }
-
+// محصولات برای صفحه داشوبد
+export function useGetAdminProducts() {
+  return useQuery<AdminProductItem[]>({
+    queryKey: adminProductKeys.all,
+    queryFn: fetchAdminProductsApi,
+  });
+}
 /** محصولات یک دسته‌بندی */
 export function useGetProductsByCategory(slug: string) {
   return useQuery<Product[]>({
@@ -109,6 +118,7 @@ export function useCreateProduct() {
     mutationFn: createProductApi,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: adminProductKeys.all });
     },
   });
 }
@@ -121,6 +131,7 @@ export function useUpdateProduct() {
     mutationFn: ({ slug, data }) => updateProductApi(slug, data),
     onSuccess: (_res, vars) => {
       qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: adminProductKeys.all });
       qc.invalidateQueries({ queryKey: productKeys.detail(vars.slug) });
     },
   });
@@ -134,6 +145,7 @@ export function useDeleteProduct() {
     mutationFn: deleteProductApi,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: productKeys.all });
+      qc.invalidateQueries({ queryKey: adminProductKeys.all });
     },
   });
 }

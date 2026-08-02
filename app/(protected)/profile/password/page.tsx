@@ -2,6 +2,8 @@ import { ChangePasswordForm } from '@/components/sections/auth/change-password-f
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { KeyRound } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default async function PasswordSettingsPage() {
   const session = await auth.api.getSession({
@@ -12,27 +14,33 @@ export default async function PasswordSettingsPage() {
     redirect('/unauthorized');
   }
 
-  if (!session?.user) {
-    return <div className="text-center text-red-500">شما وارد سیستم نشده‌اید</div>;
+  if (!session.user) {
+    return (
+      <div
+        className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground"
+        dir="rtl"
+      >
+        شما وارد سیستم نشده‌اید
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-6" dir="rtl">
-      <div
-        className="
-          w-full max-w-md 
-          border  
-          shadow-md 
-          rounded-2xl 
-          p-8 
-          animate-[fadeIn_0.5s_ease-out]
-          space-y-6
-        "
-      >
-        <h1 className="text-2xl font-semibold text-center  ">تغییر رمز عبور</h1>
-        <p className="text-sm text-center  ">رمز عبور حساب خود را بروزرسانی کنید.</p>
-        <ChangePasswordForm />
-      </div>
+    <div className="flex min-h-screen w-full items-center justify-center p-6" dir="rtl">
+      <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-md">
+        <CardHeader className="items-center space-y-2 text-center">
+          <div className="flex items-center gap-3">
+            <span className="rounded-xl bg-primary/10 p-2 text-primary">
+              <KeyRound className="size-5" />
+            </span>
+            <CardTitle className="text-2xl font-semibold">تغییر رمز عبور</CardTitle>
+          </div>
+          <p className="text-sm text-muted-foreground">رمز عبور حساب خود را بروزرسانی کنید.</p>
+        </CardHeader>
+        <CardContent>
+          <ChangePasswordForm />
+        </CardContent>
+      </Card>
     </div>
   );
 }

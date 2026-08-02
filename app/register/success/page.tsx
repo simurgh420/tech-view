@@ -1,18 +1,27 @@
+// app/register/success/page.tsx (یا هر مسیری که هست)
+import { CheckCircle2 } from 'lucide-react';
 import { ReturnButton } from '@/components/button/return-button';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function Page() {
   return (
-    <div className="px-8 py-16 container mx-auto max-w-5xl space-y-8">
-      <div className="space-y-4">
-        <ReturnButton href="/login" label="Login" />
+    <div className="container mx-auto max-w-lg space-y-8 px-8 py-16" dir="rtl">
+      <ReturnButton href="/login" label="ورود" />
 
-        <h1 className="text-3xl font-bold">Success</h1>
+      <Card className="border-border/60 bg-card/80 shadow-sm">
+        <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
+          <span className="rounded-full bg-emerald-500/10 p-3 text-emerald-600">
+            <CheckCircle2 className="size-8" />
+          </span>
 
-        <p className="text-muted-foreground">
-          Congratulations! You have successfully registered. Please check your email for the
-          verification link.
-        </p>
-      </div>
+          <h1 className="text-2xl font-bold">ثبت‌نام موفق</h1>
+
+          <p className="text-sm leading-7 text-muted-foreground">
+            تبریک می‌گوییم! ثبت‌نام شما با موفقیت انجام شد. لطفاً ایمیل خود را بررسی کنید و روی لینک
+            تأیید کلیک کنید.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

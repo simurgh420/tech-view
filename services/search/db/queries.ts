@@ -6,7 +6,6 @@ export async function dbSearch(query: string) {
       blogs: [],
       products: [],
       categories: [],
-      tags: [],
     };
   }
 
@@ -167,31 +166,15 @@ export async function dbSearch(query: string) {
     },
   });
 
-  const tagsPromise = prisma.tag.findMany({
-    where: {
-      OR: [
-        { name: { contains: q, mode: 'insensitive' } },
-        { slug: { contains: q, mode: 'insensitive' } },
-      ],
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
-  });
-
-  const [blogs, products, categories, tags] = await Promise.all([
+  const [blogs, products, categories] = await Promise.all([
     blogsPromise,
     productsPromise,
     categoriesPromise,
-    tagsPromise,
   ]);
 
   return {
     blogs,
     products,
     categories,
-    tags,
   };
 }

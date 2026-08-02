@@ -18,9 +18,8 @@ vi.mock('@/services/db/client', () => ({
       findUnique: vi.fn(),
     },
     cartItem: {
-      findFirst: vi.fn(),
       findUnique: vi.fn(),
-      create: vi.fn(),
+      upsert: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
       deleteMany: vi.fn(),
@@ -46,9 +45,8 @@ const mockTx = (overrides: any = {}) => ({
     ...overrides.cart,
   },
   cartItem: {
-    findFirst: vi.fn(),
     findUnique: vi.fn(),
-    create: vi.fn(),
+    upsert: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
     deleteMany: vi.fn(),
@@ -77,10 +75,10 @@ describe('Cart DB Mutations', () => {
       const tx = mockTx();
       (tx.product.findUnique as any).mockResolvedValue(mockProduct);
       (tx.cart.upsert as any).mockResolvedValue(mockCart);
-      (tx.cartItem.findFirst as any).mockResolvedValue(null);
-      (tx.cartItem.create as any).mockResolvedValue(mockCartItem);
-      (prisma.$transaction as any).mockImplementationOnce(
-        async (fn: (arg0: { cart: any; cartItem: any; product: any }) => any) => fn(tx)
+      (tx.cartItem.findUnique as any).mockResolvedValue(null); // no existing item
+      (tx.cartItem.upsert as any).mockResolvedValue(mockCartItem);
+      (prisma.$transaction as any).mockImplementationOnce(async (fn: (arg0: typeof tx) => any) =>
+        fn(tx)
       );
 
       const result = await addCartItem(userId, productId, quantity);
@@ -95,11 +93,13 @@ describe('Cart DB Mutations', () => {
         update: {},
         create: { userId },
       });
-      expect(tx.cartItem.findFirst).toHaveBeenCalledWith({
-        where: { cartId: mockCart.id, productId },
+      expect(tx.cartItem.findUnique).toHaveBeenCalledWith({
+        where: { cartId_productId: { cartId: mockCart.id, productId } },
       });
-      expect(tx.cartItem.create).toHaveBeenCalledWith({
-        data: {
+      expect(tx.cartItem.upsert).toHaveBeenCalledWith({
+        where: { cartId_productId: { cartId: mockCart.id, productId } },
+        update: { quantity: quantity }, // چون قبلاً وجود نداشت، newQuantity = 0 + 2
+        create: {
           cartId: mockCart.id,
           productId,
           quantity,
@@ -117,18 +117,19 @@ describe('Cart DB Mutations', () => {
       const tx = mockTx();
       (tx.product.findUnique as any).mockResolvedValue(mockProduct);
       (tx.cart.upsert as any).mockResolvedValue(mockCart);
-      (tx.cartItem.findFirst as any).mockResolvedValue(existingItem);
-      (tx.cartItem.update as any).mockResolvedValue(updatedItem);
-      (prisma.$transaction as any).mockImplementationOnce(
-        async (fn: (arg0: { cart: any; cartItem: any; product: any }) => any) => fn(tx)
+      (tx.cartItem.findUnique as any).mockResolvedValue(existingItem);
+      (tx.cartItem.upsert as any).mockResolvedValue(updatedItem);
+      (prisma.$transaction as any).mockImplementationOnce(async (fn: (arg0: typeof tx) => any) =>
+        fn(tx)
       );
 
       const result = await addCartItem(userId, productId, quantity);
 
       expect(result).toEqual(updatedItem);
-      expect(tx.cartItem.update).toHaveBeenCalledWith({
-        where: { id: existingItem.id },
-        data: { quantity: newQuantity },
+      expect(tx.cartItem.upsert).toHaveBeenCalledWith({
+        where: { cartId_productId: { cartId: mockCart.id, productId } },
+        update: { quantity: newQuantity },
+        create: expect.any(Object),
         include: { product: { select: expect.any(Object) } },
       });
     });
@@ -136,8 +137,8 @@ describe('Cart DB Mutations', () => {
     it('should throw error if product not found', async () => {
       const tx = mockTx();
       (tx.product.findUnique as any).mockResolvedValue(null);
-      (prisma.$transaction as any).mockImplementationOnce(
-        async (fn: (arg0: { cart: any; cartItem: any; product: any }) => any) => fn(tx)
+      (prisma.$transaction as any).mockImplementationOnce(async (fn: (arg0: typeof tx) => any) =>
+        fn(tx)
       );
 
       await expect(addCartItem(userId, productId, quantity)).rejects.toThrow(
@@ -148,9 +149,14 @@ describe('Cart DB Mutations', () => {
 
     it('should throw error if insufficient stock for new item', async () => {
       const tx = mockTx();
+      // محصول با stock کم
       (tx.product.findUnique as any).mockResolvedValue({ ...mockProduct, stockQuantity: 1 });
-      (prisma.$transaction as any).mockImplementationOnce(
-        async (fn: (arg0: { cart: any; cartItem: any; product: any }) => any) => fn(tx)
+      // سبد را برمی‌گردانیم (ضروری برای عبور از ensureCart)
+      (tx.cart.upsert as any).mockResolvedValue(mockCart);
+      // هیچ آیتمی در سبد نیست
+      (tx.cartItem.findUnique as any).mockResolvedValue(null);
+      (prisma.$transaction as any).mockImplementationOnce(async (fn: (arg0: typeof tx) => any) =>
+        fn(tx)
       );
 
       await expect(addCartItem(userId, productId, quantity)).rejects.toThrow(
@@ -163,9 +169,9 @@ describe('Cart DB Mutations', () => {
       const tx = mockTx();
       (tx.product.findUnique as any).mockResolvedValue({ ...mockProduct, stockQuantity: 10 });
       (tx.cart.upsert as any).mockResolvedValue(mockCart);
-      (tx.cartItem.findFirst as any).mockResolvedValue(existingItem);
-      (prisma.$transaction as any).mockImplementationOnce(
-        async (fn: (arg0: { cart: any; cartItem: any; product: any }) => any) => fn(tx)
+      (tx.cartItem.findUnique as any).mockResolvedValue(existingItem);
+      (prisma.$transaction as any).mockImplementationOnce(async (fn: (arg0: typeof tx) => any) =>
+        fn(tx)
       );
 
       await expect(addCartItem(userId, productId, 2)).rejects.toThrow(

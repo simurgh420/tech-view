@@ -1,6 +1,7 @@
 import prisma from '@/services/db/client';
 import { CommentSafe } from '@/types/comment';
 import { logger } from '@/lib/logger';
+import { authorSelect } from '../constants';
 
 export async function getCommentsByPostId(postId: string): Promise<CommentSafe[]> {
   const startTime = Date.now();
@@ -8,9 +9,7 @@ export async function getCommentsByPostId(postId: string): Promise<CommentSafe[]
     const comments = await prisma.comment.findMany({
       where: { postId },
       orderBy: { createdAt: 'desc' },
-      include: {
-        author: { select: { name: true, image: true } },
-      },
+      include: { author: { select: authorSelect } },
     });
     const result: CommentSafe[] = comments.map(c => ({
       id: c.id,
@@ -42,7 +41,7 @@ export async function getAllCommentsWithPost() {
     const comments = await prisma.comment.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        author: { select: { name: true, image: true } },
+        author: { select: authorSelect },
         post: {
           select: {
             id: true,

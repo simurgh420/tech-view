@@ -21,24 +21,25 @@ export async function createReview(data: {
       throw new Error('Product not found');
     }
 
-    const review = await prisma.$transaction(async tx => {
-      const created = await tx.review.create({
-        data: {
-          productId: product.id,
-          authorId: data.authorId,
-          rating: data.rating,
-          title: data.title ?? null,
-          content: data.content,
-        },
-        include: {
-          user: { select: userSelect },
-        },
-      });
+    const review = await prisma.$transaction(
+      async tx => {
+        const created = await tx.review.create({
+          data: {
+            productId: product.id,
+            authorId: data.authorId,
+            rating: data.rating,
+            title: data.title ?? null,
+            content: data.content,
+          },
+          include: { user: { select: userSelect } },
+        });
 
-      await recalculateProductRating(tx, product.id);
+        await recalculateProductRating(tx, product.id);
 
-      return created;
-    });
+        return created;
+      },
+      { timeout: 15000 } // ✅
+    );
 
     logger.info('createReview success', {
       reviewId: review.id,
@@ -54,7 +55,6 @@ export async function createReview(data: {
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
-    // ✅ خطای یکتایی (کاربر قبلاً ریویو داده) رو خوانا می‌کنیم
     if (error.code === 'P2002') {
       throw new Error('شما قبلاً برای این محصول نظر ثبت کرده‌اید');
     }
@@ -68,20 +68,22 @@ export async function updateReview(
 ) {
   const startTime = Date.now();
   try {
-    const review = await prisma.$transaction(async tx => {
-      const updated = await tx.review.update({
-        where: { id },
-        data,
-        include: { user: { select: userSelect } },
-      });
+    const review = await prisma.$transaction(
+      async tx => {
+        const updated = await tx.review.update({
+          where: { id },
+          data,
+          include: { user: { select: userSelect } },
+        });
 
-      // فقط اگه rating تغییر کرده لازم به بازمحاسبه هست، ولی برای سادگی و درستی همیشه صدا می‌زنیم
-      if (data.rating !== undefined) {
-        await recalculateProductRating(tx, updated.productId);
-      }
+        if (data.rating !== undefined) {
+          await recalculateProductRating(tx, updated.productId);
+        }
 
-      return updated;
-    });
+        return updated;
+      },
+      { timeout: 15000 } // ✅
+    );
 
     logger.info('updateReview success', {
       reviewId: id,
@@ -89,12 +91,16 @@ export async function updateReview(
       duration: Date.now() - startTime,
     });
     return review;
-  } catch (error) {
+  } catch (error: any) {
     logger.error('updateReview failed', {
       reviewId: id,
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
+    // ✅ اگه id نامعتبر باشه یا قبلاً حذف شده باشه
+    if (error.code === 'P2025') {
+      throw new Error('نظر مورد نظر پیدا نشد');
+    }
     throw error;
   }
 }
@@ -102,22 +108,28 @@ export async function updateReview(
 export async function deleteReview(id: string) {
   const startTime = Date.now();
   try {
-    await prisma.$transaction(async tx => {
-      const review = await tx.review.delete({ where: { id } });
-      await recalculateProductRating(tx, review.productId);
-    });
+    await prisma.$transaction(
+      async tx => {
+        const review = await tx.review.delete({ where: { id } });
+        await recalculateProductRating(tx, review.productId);
+      },
+      { timeout: 15000 } // ✅
+    );
 
     logger.info('deleteReview success', {
       reviewId: id,
       duration: Date.now() - startTime,
     });
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     logger.error('deleteReview failed', {
       reviewId: id,
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
+    if (error.code === 'P2025') {
+      throw new Error('نظر مورد نظر پیدا نشد');
+    }
     throw error;
   }
 }

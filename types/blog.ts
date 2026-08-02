@@ -1,5 +1,7 @@
 // types/blog.ts
 
+import { getAdminBlogPosts } from '@/services/blog/db/queries';
+
 export type BlogPost = {
   id: string;
   title: string;
@@ -36,15 +38,6 @@ export type BlogPostSafe = {
   tags: string[];
 };
 
-export type BlogPostRecent = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  publishedAt: Date | null;
-  coverImageUrl: string | null;
-};
-
 export type BlogListResponse = {
   items: BlogPostSafe[];
   total: number;
@@ -52,3 +45,4 @@ export type BlogListResponse = {
   pageSize: number;
   pages: number;
 };
+export type AdminBlogPostItem = Awaited<ReturnType<typeof getAdminBlogPosts>>[number];

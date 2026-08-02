@@ -6,8 +6,9 @@ import { getQueryClient } from '@/lib/query/query-client';
 import { getPostBySlug } from '@/services/blog/db/queries';
 import { getCommentsByPostId } from '@/services/comments/db/queries';
 import { dehydrate } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -32,7 +33,7 @@ export default async function PostPage({ params }: Props) {
   const deCodeSlug = decodeURIComponent(slug);
   const post = await getPostBySlug(deCodeSlug);
   if (!post) {
-    return <div>Not found</div>;
+    notFound();
   }
   const qc = getQueryClient();
   await qc.prefetchQuery({

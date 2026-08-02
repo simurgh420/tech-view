@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { DELETE } from '@/app/api/admin/wishlist/[id]/route';
+import { DELETE } from '@/app/api/wishlist/admin/[id]/route';
 import { auth } from '@/lib/auth';
 import { getWishlistItemById } from '@/services/wishlist/db/queries';
 import { removeFromWishlist } from '@/services/wishlist/db/mutations';

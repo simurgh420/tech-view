@@ -95,3 +95,20 @@ export const sanitizeUrl = (value: string | null | undefined): string | null => 
   if (!value || value.trim().length === 0) return null;
   return value;
 };
+
+export function normalizeSpecText(text: string): string {
+  // ۱. جلوگیری از کرش کردن برنامه اگر دیتا خالی بود
+  if (!text) return '';
+
+  return (
+    text
+      .toString()
+      .trim()
+      .replace(/ي/g, 'ی') // تبدیل 'ی' عربی به فارسی
+      .replace(/ك/g, 'ک') // تبدیل 'ک' عربی به فارسی
+      .replace(/[ \t]+/g, ' ') // تبدیل چند فاصله متوالی به یک فاصله
+      // ۲. تبدیل اعداد فارسی/عربی به انگلیسی (اختیاری - برای یکسان‌سازی ظرفیت‌ها، ابعاد و...)
+      .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString())
+      .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d).toString())
+  );
+}

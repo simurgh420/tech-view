@@ -78,12 +78,10 @@ describe('Products DB Queries', () => {
 
       const result = await getProducts();
 
-      // بررسی تبدیل formatProduct
       expect(result[0].id).toBe('p1');
       expect(result[0].price).toBe('150000');
       expect(result[0].createdAt).toBe('2024-01-01T00:00:00.000Z');
 
-      // بررسی include دقیقاً مطابق productIncludes
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         orderBy: { createdAt: 'desc' },
         include: productIncludes,
@@ -110,12 +108,10 @@ describe('Products DB Queries', () => {
 
       const result = await getProductBySlug('test');
 
-      // بررسی تبدیل formatProduct
       expect(result?.id).toBe('p1');
       expect(result?.price).toBe('150000');
       expect(result?.createdAt).toBe('2024-01-01T00:00:00.000Z');
 
-      // بررسی include دقیقاً مطابق productWithReviews
       expect(prisma.product.findUnique).toHaveBeenCalledWith({
         where: { slug: 'test' },
         include: productWithReviews,
@@ -149,7 +145,7 @@ describe('Products DB Queries', () => {
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { brand: { slug: 'nike' } },
         orderBy: { createdAt: 'desc' },
-        include: { brand: true, specifications: true },
+        include: productIncludes, // اصلاح: استفاده از productIncludes به‌جای شئ ساده
       });
     });
   });
@@ -169,7 +165,7 @@ describe('Products DB Queries', () => {
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { category: { slug: 'shoes' } },
         orderBy: { createdAt: 'desc' },
-        include: { category: true, specifications: true },
+        include: productIncludes, // اصلاح: استفاده از productIncludes
       });
     });
   });
@@ -186,7 +182,6 @@ describe('Products DB Queries', () => {
 
       expect(result[0].isFeatured).toBe(true);
 
-      // بررسی include دقیقاً مطابق productIncludes
       expect(prisma.product.findMany).toHaveBeenCalledWith({
         where: { isFeatured: true, status: 'PUBLISHED' },
         orderBy: { createdAt: 'desc' },

@@ -43,7 +43,7 @@ export async function deleteContact(id: string) {
     }
     await prisma.contactMessage.delete({ where: { id } });
     logger.info('deleteContact success', { id, duration: Date.now() - startTime });
-    return contact; // or true – we return the deleted contact for potential use
+    return contact;
   } catch (error) {
     logger.error('deleteContact failed', {
       id,

@@ -1,6 +1,5 @@
 import { auth } from '@/lib/auth';
 import { Logo } from './Logo';
-import { MegaMenu } from './MegaMenu';
 import { NavLinks } from './NavLinks';
 import { UserActions } from './UserActions';
 import { headers } from 'next/headers';
@@ -11,14 +10,17 @@ export async function Header() {
   });
 
   return (
-    <header className="relative w-full border-b bg-background">
-      <div className="container grid grid-cols-[auto_1fr_auto] items-center py-4 gap-4">
-        <Logo />
-        <div className="flex justify-center">
-          <NavLinks />
-          <MegaMenu />
-        </div>
+    <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md">
+      {/* تغییر ساختار از Grid به Flex */}
+      <div className="container flex items-center justify-between gap-4 py-4">
+        {/* سمت راست: دکمه‌های کاربری */}
         <UserActions session={session} />
+
+        {/* سمت چپ: منو و لوگو با هم گروه شدند */}
+        <div className="flex items-center gap-6 lg:gap-10">
+          <NavLinks />
+          <Logo />
+        </div>
       </div>
     </header>
   );

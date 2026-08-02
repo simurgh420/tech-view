@@ -1,5 +1,5 @@
 // services/blog/api/queries.ts
-import { BlogListResponse, BlogPost } from '@/types/blog';
+import { AdminBlogPostItem, BlogListResponse, BlogPost } from '@/types/blog';
 import axios from 'axios';
 
 export async function fetchBlogsApi(page = 1, pageSize = 10): Promise<BlogListResponse> {
@@ -9,5 +9,9 @@ export async function fetchBlogsApi(page = 1, pageSize = 10): Promise<BlogListRe
 
 export async function fetchBlogBySlugApi(slug: string): Promise<BlogPost> {
   const { data } = await axios.get(`/api/blog/${slug}`);
+  return data;
+}
+export async function fetchAdminBlogsApi(): Promise<AdminBlogPostItem[]> {
+  const { data } = await axios.get('/api/blog/admin');
   return data;
 }

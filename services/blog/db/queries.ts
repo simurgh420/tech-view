@@ -2,6 +2,7 @@ import prisma from '@/services/db/client';
 import { BlogPostSafe } from '@/types/blog';
 import { authorSelect } from '../authorSelect';
 import { logger } from '@/lib/logger';
+import { BlogPostWithRelations, formatBlogPost } from '../utils/formatBlogPost';
 
 export async function getPublishedPosts(params: { page?: number; pageSize?: number }) {
   const startTime = Date.now();
@@ -24,17 +25,7 @@ export async function getPublishedPosts(params: { page?: number; pageSize?: numb
       prisma.blogPost.count({ where: { status: 'PUBLISHED' } }),
     ]);
 
-    const safeItems: BlogPostSafe[] = items.map(post => ({
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      excerpt: post.excerpt,
-      coverImageUrl: post.coverImageUrl,
-      readingMinutes: post.readingMinutes,
-      publishedAt: post.publishedAt,
-      authorName: post.author?.name ?? null,
-      tags: post.tags.map(t => t.tag.name),
-    }));
+    const safeItems: BlogPostSafe[] = items.map(formatBlogPost);
 
     logger.info('getPublishedPosts success', {
       page,
@@ -59,7 +50,7 @@ export async function getPublishedPosts(params: { page?: number; pageSize?: numb
   }
 }
 
-export async function getPostBySlug(slug: string) {
+export async function getPostBySlug(slug: string): Promise<BlogPostWithRelations | null> {
   const startTime = Date.now();
   try {
     const post = await prisma.blogPost.findUnique({
@@ -85,7 +76,7 @@ export async function getPostBySlug(slug: string) {
   }
 }
 
-export async function getRecentPosts(limit = 3) {
+export async function getRecentPosts(limit = 3): Promise<BlogPostSafe[]> {
   const startTime = Date.now();
   try {
     const posts = await prisma.blogPost.findMany({
@@ -97,12 +88,14 @@ export async function getRecentPosts(limit = 3) {
         tags: { include: { tag: true } },
       },
     });
+    const safePosts = posts.map(formatBlogPost);
+
     logger.info('getRecentPosts success', {
       limit,
-      count: posts.length,
+      count: safePosts.length,
       duration: Date.now() - startTime,
     });
-    return posts;
+    return safePosts;
   } catch (error) {
     logger.error('getRecentPosts failed', {
       limit,
@@ -163,6 +156,45 @@ export async function getTagsByPostId(postId: string) {
   } catch (error) {
     logger.error('getTagsByPostId failed', {
       postId,
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+    throw error;
+  }
+}
+
+export async function getAdminBlogPosts() {
+  const startTime = Date.now();
+  try {
+    const posts = await prisma.blogPost.findMany({
+      orderBy: { updatedAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        coverImageUrl: true,
+        status: true,
+        publishedAt: true,
+        updatedAt: true,
+        authorId: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+
+    logger.info('getAdminBlogPosts success', {
+      count: posts.length,
+      duration: Date.now() - startTime,
+    });
+
+    return posts;
+  } catch (error) {
+    logger.error('getAdminBlogPosts failed', {
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });

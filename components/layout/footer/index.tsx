@@ -3,11 +3,14 @@ import { FooterColumns } from './FooterColumns';
 
 export function Footer() {
   return (
-    <footer className="py-0.5 bg-[oklch(15%_0.01_270)] bg-linear-to-b from-[oklch(18%_0.015_270)] to-[oklch(12%_0.01_270)] border-t border-white/5 text-gray-200">
-      <div className="mx-auto flex max-w-6xl flex-col gap-5 px-2 py-2 lg:flex-row">
+    <footer
+      dir="rtl"
+      className="border-t border-white/5 bg-[oklch(15%_0.01_270)] bg-linear-to-b from-[oklch(18%_0.015_270)] to-[oklch(12%_0.01_270)] text-gray-200"
+    >
+      <div className="container mx-auto flex flex-col gap-8 px-4 py-10">
         <FooterColumns />
       </div>
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 ">
+      <div className="container mx-auto">
         <FooterBottom />
       </div>
     </footer>

@@ -1,71 +1,105 @@
 'use client';
 
+import { useState } from 'react';
+import Link from 'next/link';
+import { Mail, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { SocialIcons } from './SocialIcons';
-import { LiaUserSolid, LiaArrowRightSolid } from 'react-icons/lia';
+
+const COLUMNS = [
+  {
+    title: 'درباره‌ی ما',
+    links: [
+      { label: 'درباره‌ی ما', href: '/about' },
+      { label: 'بلاگ', href: '/blog' },
+      { label: 'بازگشت کالا', href: '/returns' },
+      { label: 'وضعیت سفارش', href: '/orders' },
+    ],
+  },
+  {
+    title: 'اطلاعات',
+    links: [
+      { label: 'روش خرید', href: '/how-it-works' },
+      { label: 'تعهدات ما', href: '/promises' },
+      { label: 'سوالات متداول', href: '/faq' },
+    ],
+  },
+] as const;
 
 export function FooterColumns() {
+  const [email, setEmail] = useState('');
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // TODO: اتصال به API خبرنامه — فعلاً فقط جلوی رفرش صفحه گرفته می‌شه
+    if (!email.trim()) return;
+    console.log('newsletter signup:', email);
+    setEmail('');
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-sm">
-      {/* ستون 1 */}
-      <div className="px-10">
-        <h4 className="font-semibold mb-3">Company</h4>
-        <ul className="space-y-2">
-          <li>About Us</li>
-          <li>Blog</li>
-          <li>Returns</li>
-          <li>Order Status</li>
+    <div className="grid grid-cols-1 gap-8 text-sm sm:grid-cols-2 md:grid-cols-4">
+      {COLUMNS.map(column => (
+        <div key={column.title} className="px-4 sm:px-6">
+          <h4 className="mb-3 font-semibold text-white">{column.title}</h4>
+          <ul className="space-y-2">
+            {column.links.map(link => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="text-neutral-400 transition-colors hover:text-white"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      {/* ستون تماس با ما */}
+      <div className="px-4 sm:px-6">
+        <h4 className="mb-3 font-semibold text-white">تماس با ما</h4>
+        <ul className="space-y-2 text-neutral-400">
+          {/* TODO: آدرس واقعی رو جایگزین کن */}
+          <li>تهران، خیابان مثال</li>
+          <li dir="ltr" className="text-right">
+            +98 936 876 6577
+          </li>
+          <li dir="ltr" className="text-right">
+            mohamadrezah420@gmail.com
+          </li>
         </ul>
       </div>
 
-      {/* ستون 2 */}
-      <div className="px-10">
-        <h4 className="font-semibold mb-3">Info</h4>
-        <ul className="space-y-2">
-          <li>How it works?</li>
-          <li>Our promises</li>
-          <li>FAQ</li>
-        </ul>
-      </div>
+      {/* ستون عضویت در خبرنامه */}
+      <div className="px-4 sm:px-6">
+        <h4 className="mb-3 font-semibold text-white">عضویت در خبرنامه</h4>
 
-      {/* ستون 3 */}
-      <div className="px-10">
-        <h4 className="font-semibold mb-3">Contact Us</h4>
-        <ul className="space-y-2">
-          <li> 011 Main Street</li>
-          <li>+98 936 876 6577</li>
-          <li>mohamadrezah420@gmail.com</li>
-        </ul>
-      </div>
-
-      {/* ستون 4 */}
-      <div className="px-10">
-        <h4 className="font-semibold mb-3">Sign up for News</h4>
-
-        {/* ورودی ایمیل  */}
-        <div className="relative mt-2">
-          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <LiaUserSolid className="size-5" />
+        <form onSubmit={handleSubmit} className="relative mt-2">
+          <span className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-neutral-500">
+            <Mail className="size-4" />
           </span>
           <input
             type="email"
-            placeholder="E-mail Address"
-            className="w-full rounded-md border 
-                       pl-10 pr-12 py-2.5 focus:outline-none focus:ring-2  focus:border-transparent
-                       shadow-sm"
-            aria-label="Email address"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="آدرس ایمیل"
+            required
+            suppressHydrationWarning
+            className="w-full rounded-md border border-white/10 bg-neutral-800/60 py-2.5 ps-10 pe-12
+             text-sm text-white placeholder:text-neutral-500 shadow-sm transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-label="آدرس ایمیل"
           />
           <Button
-            type="button"
-            aria-label="Submit email"
-            variant={'link'}
-            className="absolute inset-y-0 right-1 top-0.5 flex items-center justify-center rounded-md
-                        bg-transparent 
-                       transition-colors px-2"
+            type="submit"
+            aria-label="ثبت ایمیل"
+            variant="link"
+            className="absolute inset-y-0 end-1 top-0.5 flex items-center justify-center rounded-md bg-transparent px-2 text-primary transition-colors hover:opacity-70"
           >
-            <LiaArrowRightSolid className="size-3.5" />
+            <ArrowLeft className="size-4" />
           </Button>
-        </div>
+        </form>
 
         {/* آیکن‌های شبکه اجتماعی */}
         <div className="mt-4">

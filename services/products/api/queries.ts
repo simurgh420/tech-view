@@ -1,9 +1,14 @@
 // services/products/api/queries.ts
-import { FiltersProduct, PaginatedResponse, Product } from '@/types/product';
+import { AdminProductItem, FiltersProduct, PaginatedResponse, Product } from '@/types/product';
 import axios from 'axios';
 
 export async function fetchProductsApi(): Promise<Product[]> {
   const res = await axios.get<Product[]>('/api/products');
+  return res.data;
+}
+
+export async function fetchAdminProductsApi(): Promise<AdminProductItem[]> {
+  const res = await axios.get('/api/products/admin');
   return res.data;
 }
 

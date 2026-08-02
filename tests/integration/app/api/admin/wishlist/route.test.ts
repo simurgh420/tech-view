@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GET } from '@/app/api/admin/wishlist/route';
+import { GET } from '@/app/api/wishlist/admin/route';
 import { auth } from '@/lib/auth';
 import { getAllWishlistItems } from '@/services/wishlist/db/queries';
 

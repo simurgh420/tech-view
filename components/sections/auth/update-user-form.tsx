@@ -106,7 +106,6 @@ export const UpdateUserForm = ({ name, image, phone }: UpdateUserFormProps) => {
     }
     setIsPending(false);
   }
-
   return (
     <Form {...form}>
       <form
