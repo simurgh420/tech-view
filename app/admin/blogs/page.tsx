@@ -5,8 +5,8 @@ import { getAdminBlogPosts } from '@/services/blog/db/queries';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient } from '@/lib/query/query-client';
 import { AdminBlogTable } from '@/components/admin/AdminBlogTable';
-import { blogKeys } from '@/hooks/useBlogs';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import { blogKeys } from '@/hooks/useBlogs';
 
 export default async function AdminBlogsPage() {
   const session = await auth.api.getSession({ headers: await headers() });

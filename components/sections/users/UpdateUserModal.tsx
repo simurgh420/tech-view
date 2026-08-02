@@ -9,10 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogOverlay,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-
 import { UserWithRole } from 'better-auth/plugins';
 import { updateAdminUserAction } from '@/services/action/user/updateAdminUserAction';
 import { useRouter } from 'next/navigation';
@@ -21,7 +19,11 @@ import { useNotify } from '@/hooks/useNotify';
 export function UpdateUserModal({ user }: { user: UserWithRole }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { register, handleSubmit } = useForm<{ name: string; email: string }>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<{ name: string; email: string }>({
     defaultValues: { name: user.name, email: user.email },
   });
   const notify = useNotify();
@@ -43,9 +45,7 @@ export function UpdateUserModal({ user }: { user: UserWithRole }) {
         ویرایش
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" />
-
-        <DialogContent>
+        <DialogContent dir="rtl">
           <DialogHeader>
             <DialogTitle>ویرایش کاربر</DialogTitle>
           </DialogHeader>
@@ -53,7 +53,12 @@ export function UpdateUserModal({ user }: { user: UserWithRole }) {
             <Input {...register('name')} placeholder="نام" />
             <Input {...register('email')} placeholder="ایمیل" />
             <DialogFooter>
-              <Button type="submit">ذخیره تغییرات</Button>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                انصراف
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

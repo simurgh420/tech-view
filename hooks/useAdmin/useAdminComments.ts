@@ -1,5 +1,4 @@
 // hooks/useAdminComments.ts
-'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAllCommentsAdminApi } from '@/services/comments/api/queries';

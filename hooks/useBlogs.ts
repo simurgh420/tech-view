@@ -1,6 +1,4 @@
 // hooks/useBlogs.ts
-'use client';
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { BlogListResponse, BlogPost } from '@/types/blog';
@@ -52,7 +50,6 @@ export function useCreateBlog() {
       qc.invalidateQueries({ queryKey: blogKeys.all });
     },
   });
-  
 } /** لیست پست‌ها برای پنل ادمین (شامل draft ها هم می‌شه) */
 export function useGetAdminBlogs() {
   return useQuery({

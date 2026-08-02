@@ -50,15 +50,19 @@ describe('useBlogs hooks', () => {
   describe('useGetBlogs', () => {
     it('should fetch blogs with pagination', async () => {
       const mockResponse: BlogListResponse = {
-        items: [{
-          id: '1', slug: 'test', title: 'Test',
-          excerpt: '',
-          coverImageUrl: null,
-          readingMinutes: 0,
-          publishedAt: null,
-          authorName: null,
-          tags: []
-        }],
+        items: [
+          {
+            id: '1',
+            slug: 'test',
+            title: 'Test',
+            excerpt: '',
+            coverImageUrl: null,
+            readingMinutes: 0,
+            publishedAt: null,
+            authorName: null,
+            tags: [],
+          },
+        ],
         total: 1,
         page: 1,
         pageSize: 10,

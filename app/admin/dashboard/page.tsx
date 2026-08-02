@@ -2,7 +2,7 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Users, User, FileText, Package } from 'lucide-react';
+import { Users, User, Tag, FolderTree, FileText, Package } from 'lucide-react';
 import { AdminDashboardCard } from '@/components/admin/AdminDashboardCard';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
@@ -18,9 +18,9 @@ export default async function AdminDashboard() {
     <div className="container mx-auto max-w-6xl px-8 py-16 space-y-12" dir="rtl">
       {/* Header */}
       <div className="space-y-6">
-              <div className="mb-2">
-                <Breadcrumb />
-              </div>
+        <div className="mb-2">
+          <Breadcrumb />
+        </div>
         <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3">
           <span className="text-green-600">🛡️</span>
           <span>داشبورد مدیریت</span>
@@ -62,6 +62,20 @@ export default async function AdminDashboard() {
           description="ویرایش اطلاعات شخصی و تغییر رمز عبور"
           icon={User}
           iconClassName="text-purple-600"
+        />
+        <AdminDashboardCard
+          href="/admin/categories"
+          title="دسته‌بندی‌ها"
+          description="ساخت و مدیریت دسته‌بندی‌های محصولات"
+          icon={FolderTree}
+          iconClassName="text-cyan-600"
+        />
+        <AdminDashboardCard
+          href="/admin/brands"
+          title="برندها"
+          description="ساخت و مدیریت برندهای محصولات"
+          icon={Tag}
+          iconClassName="text-violet-600"
         />
       </div>
     </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogOverlay,
 } from '@/components/ui/dialog';
 import { deleteUserAction } from '@/services/action/user/deleteUserAction';
 import { useRouter } from 'next/navigation';
@@ -18,11 +16,14 @@ import { useNotify } from '@/hooks/useNotify';
 export function DeleteUserModal({ userId }: { userId: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { handleSubmit } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const notify = useNotify();
 
-  async function onSubmit() {
+  async function handleDelete() {
+    setIsSubmitting(true);
     const res = await deleteUserAction(userId);
+    setIsSubmitting(false);
+
     if (res.success) {
       router.refresh();
       notify.success('کاربر حذف شد');
@@ -38,21 +39,19 @@ export function DeleteUserModal({ userId }: { userId: string }) {
         حذف
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" />
-
-        <DialogContent>
+        <DialogContent dir="rtl">
           <DialogHeader>
             <DialogTitle>حذف کاربر</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-600">
-            آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟
+          <p className="text-sm text-muted-foreground">
+            آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟ این عملیات قابل بازگشت نیست.
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
               انصراف
             </Button>
-            <Button variant="destructive" onClick={handleSubmit(onSubmit)}>
-              تایید
+            <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
+              {isSubmitting ? 'در حال حذف...' : 'تایید'}
             </Button>
           </DialogFooter>
         </DialogContent>
