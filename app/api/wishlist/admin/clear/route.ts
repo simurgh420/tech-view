@@ -16,6 +16,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // بررسی مجوز حذف (ادمین) – role ADMIN دارای wishlist: ['delete'] است
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
       body: {

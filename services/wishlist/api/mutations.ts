@@ -2,12 +2,12 @@
 
 import axios from 'axios';
 import { WishlistItemInput } from '@/lib/validation/wishlist';
-import { WishlistItem } from '@/app/generated/prisma/client';
+import { WishlistItemWithProduct } from '@/types/wishlist';
 
 // اضافه کردن به لیست علاقه‌مندی‌ها
-export async function addWishlistItemApi(payload: WishlistItemInput): Promise<WishlistItem> {
-  const res = await axios.post('/api/wishlist', payload);
-  return res.data;
+export async function addWishlistItemApi(payload: WishlistItemInput): Promise<WishlistItemWithProduct> {
+  const { data } = await axios.post('/api/wishlist', payload);
+  return data;
 }
 
 // حذف بر اساس wishlistItem.id

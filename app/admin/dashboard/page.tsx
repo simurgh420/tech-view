@@ -2,7 +2,7 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Users, User, Tag, FolderTree, FileText, Package } from 'lucide-react';
+import { Users, User, Tag, FolderTree, FileText, Package, Heart } from 'lucide-react';
 import { AdminDashboardCard } from '@/components/admin/AdminDashboardCard';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
@@ -76,6 +76,13 @@ export default async function AdminDashboard() {
           description="ساخت و مدیریت برندهای محصولات"
           icon={Tag}
           iconClassName="text-violet-600"
+        />
+        <AdminDashboardCard
+          href="/admin/wishlist"
+          title="علاقه‌مندی‌ها"
+          description="مدیریت آیتم‌های ذخیره‌شده کاربران"
+          icon={Heart}
+          iconClassName="text-pink-600"
         />
       </div>
     </div>

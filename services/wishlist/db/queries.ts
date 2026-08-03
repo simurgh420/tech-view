@@ -1,6 +1,7 @@
 // services/wishlist/db/queries.ts
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
+import { wishlistAdminProductSelect, wishlistProductSelect, wishlistUserSelect } from './selects';
 
 export async function getWishlist(userId: string) {
   const startTime = Date.now();
@@ -10,17 +11,7 @@ export async function getWishlist(userId: string) {
       orderBy: { createdAt: 'desc' },
       include: {
         product: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            thumbnail: true,
-            price: true,
-            discountPrice: true,
-            isDiscounted: true,
-            rating: true,
-            reviewCount: true,
-          },
+          select: wishlistProductSelect,
         },
       },
     });
@@ -94,8 +85,8 @@ export async function getAllWishlistItems() {
     const items = await prisma.wishlistItem.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, email: true } },
-        product: { select: { id: true, title: true, slug: true } },
+        user: { select: wishlistUserSelect },
+        product: { select: wishlistAdminProductSelect },
       },
     });
     logger.info('getAllWishlistItems success', {

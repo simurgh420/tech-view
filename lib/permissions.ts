@@ -10,7 +10,7 @@ const statements = {
   contacts: ['read', 'delete'],
   products: ['create', 'read', 'update', 'delete'],
   reviews: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
-  wishlist: ['create', 'read', 'delete'],
+  wishlist: ['create', 'read', 'delete:own', 'delete'],
   productComments: ['create', 'read', 'update', 'update:own', 'delete', 'delete:own', 'moderate'],
 } as const;
 
@@ -22,7 +22,7 @@ export const roles = {
     comments: ['create', 'update:own', 'delete:own'],
     products: ['read'],
     reviews: ['create', 'update:own', 'delete:own'],
-    wishlist: ['create'],
+    wishlist: ['create', 'read', 'delete:own'],
     productComments: ['create', 'read', 'update:own', 'delete:own'],
   }),
 
@@ -34,7 +34,7 @@ export const roles = {
     products: ['create', 'read', 'update', 'delete'],
     contacts: ['read', 'delete'],
     reviews: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
-    wishlist: ['create', 'read', 'delete'],
+    wishlist: ['create', 'read', 'delete', 'delete:own'],
     productComments: ['create', 'read', 'update', 'update:own', 'delete', 'delete:own', 'moderate'],
     ...adminAc.statements,
   }),

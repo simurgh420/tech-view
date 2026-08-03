@@ -1,9 +1,9 @@
 // services/wishlist/api/queries.ts
 
-import { WishlistItem } from '@/app/generated/prisma/client';
+import { WishlistItemWithProduct } from '@/types/wishlist';
 import axios from 'axios';
 
-export async function fetchWishlistApi(): Promise<WishlistItem[]> {
+export async function fetchWishlistApi(): Promise<WishlistItemWithProduct[]> {
   const res = await axios.get('/api/wishlist');
   return res.data;
 }

@@ -11,6 +11,7 @@ import { useNotify } from '@/hooks/useNotify';
 import { StarRatingDisplay } from '@/components/ui/star-rating-input';
 import { formatPrice } from '@/lib/formatPrice';
 import { useAddToCart } from '@/hooks/useCart';
+import { WishlistButton } from '../wishlist/WishlistButton';
 
 type ProductCardProps = {
   product: Product;
@@ -124,7 +125,15 @@ export default function ProductCard({
           >
             %{formatPrice(product.discountPercentage)}
           </span>
+
         )}
+
+        <div className="absolute end-2 top-2 z-10">
+          <WishlistButton
+            productId={product.id}
+            className="bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm dark:bg-neutral-900/80 dark:hover:bg-neutral-900"
+          />
+        </div>
       </div>
 
       {/* محتوا */}
@@ -151,7 +160,7 @@ export default function ProductCard({
               group-hover:text-red-600
               dark:text-neutral-100
               dark:group-hover:text-red-400
-              ${isOverflowing ? 'group-hover:[animation:marquee_3.5s_linear_infinite]' : ''}
+              ${isOverflowing ? 'group-hover:animate-[marquee_3.5s_linear_infinite]' : ''}
             `}
             style={
               isOverflowing

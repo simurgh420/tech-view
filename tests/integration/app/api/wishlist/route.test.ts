@@ -65,6 +65,7 @@ describe('API /api/wishlist', () => {
     it('should return wishlist items on success', async () => {
       const mockItems = [{ id: 'w1', productId: 'p1' }];
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: true });
       (getWishlist as any).mockResolvedValue(mockItems);
       const res = await GET();
       expect(res.status).toBe(200);
@@ -75,6 +76,7 @@ describe('API /api/wishlist', () => {
 
     it('should return 500 on error', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: true });
       (getWishlist as any).mockRejectedValue(new Error('DB error'));
       const res = await GET();
       expect(res.status).toBe(500);
@@ -141,16 +143,28 @@ describe('API /api/wishlist', () => {
       expect(res.status).toBe(401);
     });
 
+    it('should return 403 if no permission', async () => {
+      (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: false });
+      const req = createNextRequest('DELETE', validPayload);
+      const res = await DELETE(req);
+      expect(res.status).toBe(403);
+    });
+
     it('should return 400 on validation error', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: true });
       const invalidPayload = { productId: '' };
       const req = createNextRequest('DELETE', invalidPayload);
       const res = await DELETE(req);
       expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe('Validation failed');
     });
 
     it('should return 200 and success on deletion', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: true });
       (deleteWishlistItemByUserAndProduct as any).mockResolvedValue(undefined);
       const req = createNextRequest('DELETE', validPayload);
       const res = await DELETE(req);
@@ -162,6 +176,7 @@ describe('API /api/wishlist', () => {
 
     it('should return 500 on error', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: true });
       (deleteWishlistItemByUserAndProduct as any).mockRejectedValue(new Error('DB error'));
       const req = createNextRequest('DELETE', validPayload);
       const res = await DELETE(req);

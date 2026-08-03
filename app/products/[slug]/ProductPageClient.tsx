@@ -79,7 +79,7 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
   "
         >
           <div className="lg:col-span-5">
-            <ProductGallery images={images} thumbnail={thumbnail} />
+            <ProductGallery images={images} thumbnail={thumbnail} productId={product.id} />
           </div>
 
           <div className="lg:col-span-4">

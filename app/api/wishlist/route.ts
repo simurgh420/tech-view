@@ -19,6 +19,22 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // بررسی مجوز خواندن لیست خود
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permissions: { wishlist: ['read'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      logger.warn('GET /api/wishlist - Forbidden', {
+        userId: session.user.id,
+        duration: Date.now() - startTime,
+      });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const items = await getWishlist(session.user.id);
     logger.info('GET /api/wishlist succeeded', {
       userId: session.user.id,
@@ -44,6 +60,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // بررسی مجوز ایجاد
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
       body: { userId: session.user.id, permissions: { wishlist: ['create'] } },
@@ -96,6 +113,22 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // بررسی مجوز حذف آیتم‌های خود
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permissions: { wishlist: ['delete:own'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      logger.warn('DELETE /api/wishlist - Forbidden', {
+        userId: session.user.id,
+        duration: Date.now() - startTime,
+      });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await req.json();
     const parsed = wishlistItemSchema.safeParse(body);
     if (!parsed.success) {
@@ -110,6 +143,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Validation failed', details }, { status: 400 });
     }
 
+    // این تابع فقط آیتم متعلق به userId را حذف می‌کند، مالکیت ضمنی تضمین شده است
     await deleteWishlistItemByUserAndProduct(session.user.id, parsed.data.productId);
     logger.info('DELETE /api/wishlist - Item removed', {
       userId: session.user.id,

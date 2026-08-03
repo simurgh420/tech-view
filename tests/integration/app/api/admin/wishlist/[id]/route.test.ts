@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { DELETE } from '@/app/api/wishlist/admin/[id]/route';
 import { auth } from '@/lib/auth';
+import { DELETE } from '@/app/api/wishlist/[id]/route';
+
 import { getWishlistItemById } from '@/services/wishlist/db/queries';
 import { removeFromWishlist } from '@/services/wishlist/db/mutations';
 
@@ -35,12 +36,12 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 function createNextRequest(method: string): NextRequest {
-  const url = 'http://localhost/api/admin/wishlist/123';
+  const url = 'http://localhost/api/wishlist/123';
   const init: RequestInit = { method };
   return new NextRequest(url, init as any);
 }
 
-describe('API /api/admin/wishlist/[id] (DELETE)', () => {
+describe('API /api/wishlist/[id] (DELETE)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -59,6 +60,7 @@ describe('API /api/admin/wishlist/[id] (DELETE)', () => {
   it('should return 403 if authenticated but no permission', async () => {
     (auth.api.getSession as any).mockResolvedValue({ user: { id: 'admin' } });
     (auth.api.userHasPermission as any).mockResolvedValue({ success: false });
+    (getWishlistItemById as any).mockResolvedValue(mockItem); // ← این خط اضافه شد
     const req = createNextRequest('DELETE');
     const res = await DELETE(req, { params: Promise.resolve({ id: '123' }) });
     expect(res.status).toBe(403);

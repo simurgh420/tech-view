@@ -1,3 +1,4 @@
+// tests/unit/services/wishlist/db/queries.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getWishlist,
@@ -7,6 +8,8 @@ import {
 } from '@/services/wishlist/db/queries';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
+// اضافه کردن import برای selectها
+import { wishlistUserSelect, wishlistAdminProductSelect } from '@/services/wishlist/db/selects';
 
 vi.mock('@/services/db/client', () => ({
   default: {
@@ -39,7 +42,7 @@ describe('Wishlist DB Queries', () => {
       expect(prisma.wishlistItem.findMany).toHaveBeenCalledWith({
         where: { userId },
         orderBy: { createdAt: 'desc' },
-        include: { product: { select: expect.any(Object) } },
+        include: { product: { select: expect.any(Object) } }, // استفاده از expect.any برای product select
       });
       expect(result).toEqual(mockItems);
       expect(logger.info).toHaveBeenCalledWith(
@@ -106,18 +109,17 @@ describe('Wishlist DB Queries', () => {
   });
 
   describe('getAllWishlistItems', () => {
-    const mockItems = [
-      { id: 'w1', user: { name: 'John' }, product: { title: 'P1' } },
-    ];
+    const mockItems = [{ id: 'w1', user: { name: 'John' }, product: { title: 'P1' } }];
 
     it('should return all items with user and product selects', async () => {
       (prisma.wishlistItem.findMany as any).mockResolvedValue(mockItems);
       const result = await getAllWishlistItems();
+      // استفاده از selectهای واقعی برای تطابق دقیق
       expect(prisma.wishlistItem.findMany).toHaveBeenCalledWith({
         orderBy: { createdAt: 'desc' },
         include: {
-          user: { select: { id: true, name: true, email: true } },
-          product: { select: { id: true, title: true, slug: true } },
+          user: { select: wishlistUserSelect },
+          product: { select: wishlistAdminProductSelect },
         },
       });
       expect(result).toEqual(mockItems);

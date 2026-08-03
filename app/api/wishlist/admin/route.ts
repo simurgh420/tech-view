@@ -14,6 +14,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // بررسی مجوز مدیریت (خواندن همه آیتم‌ها)
     const permission = await auth.api.userHasPermission({
       headers: await headers(),
       body: {

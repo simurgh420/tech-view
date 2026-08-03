@@ -14,6 +14,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // بررسی مجوز خواندن وضعیت wishlist
+    const permission = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: {
+        userId: session.user.id,
+        permissions: { wishlist: ['read'] },
+      },
+    });
+    if (permission.error || !permission.success) {
+      logger.warn('GET /api/wishlist/check - Forbidden', {
+        userId: session.user.id,
+        duration: Date.now() - startTime,
+      });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const url = new URL(req.url);
     const productId = url.searchParams.get('productId');
     if (!productId) {
