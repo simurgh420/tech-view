@@ -52,9 +52,9 @@ export function ProductEmptyState({ variant = 'empty' }: EmptyStateProps) {
           {/* دکمه‌ها */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button size="sm" variant="outline" asChild>
-              <Link href="/">
+              <Link href="/products">
                 <ArrowLeft className="ml-2 h-4 w-4" />
-                برو به خانه
+                صفحه محصولات
               </Link>
             </Button>
           </div>

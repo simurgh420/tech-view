@@ -8,51 +8,47 @@ type Props = {
 };
 
 export function RecentPosts({ items = [] }: Props) {
-  // جلوگیری از رندر شدن بخش خالی
   if (!items.length) return null;
 
   return (
-    <section className="mt-10" dir="rtl">
-      <h2 className="mb-5 text-xl font-bold text-gray-900 dark:text-gray-100">پست‌های اخیر</h2>
+    <section
+      dir="rtl"
+      className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 lg:sticky lg:top-4"
+    >
+      <h2 className="mb-3 text-base font-bold text-neutral-900 dark:text-neutral-100">
+        پست‌های اخیر
+      </h2>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="flex flex-col divide-y divide-neutral-100 dark:divide-neutral-800">
         {items.map(post => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="
-              group flex gap-4 rounded-xl border border-gray-200/80 p-3
-              shadow-sm transition-all duration-300
-              hover:-translate-y-1 hover:border-gray-300 hover:shadow-md
-              dark:border-gray-800 dark:hover:border-gray-700
-            "
             aria-label={post.title}
+            className="group flex gap-3 py-3 first:pt-0 last:pb-0"
           >
-            {/* تصویر کاور با افکت زوم نرم */}
-            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+            <div className="relative aspect-square h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-neutral-50 dark:bg-neutral-950">
               <Image
                 src={post.coverImageUrl || '/Image-not-found.png'}
                 alt={post.title || 'تصویر مقاله'}
                 fill
-                sizes="96px"
+                sizes="56px"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
             </div>
 
-            {/* محتوای متنی */}
-            <div className="flex flex-1 flex-col justify-center py-1 text-start">
-              <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-red-600 dark:text-gray-100 dark:group-hover:text-red-400">
+            <div className="flex min-w-0 flex-1 flex-col justify-center">
+              <h3 className="line-clamp-2 text-xs font-medium leading-5 text-neutral-800 transition-colors group-hover:text-red-600 dark:text-neutral-100 dark:group-hover:text-red-400">
                 {post.title}
               </h3>
 
-              {/* متادیتا (تاریخ) */}
               {post.publishedAt && (
                 <time
                   dateTime={new Date(post.publishedAt).toISOString()}
-                  className="mt-auto flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400"
+                  className="mt-1.5 flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400"
                 >
-                  <CalendarDays size={12} />
+                  <CalendarDays size={11} />
                   {new Date(post.publishedAt).toLocaleDateString('fa-IR-u-nu-latn', {
                     year: 'numeric',
                     month: 'long',

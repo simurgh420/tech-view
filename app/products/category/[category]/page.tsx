@@ -1,23 +1,55 @@
-// app/product/category/page.tsx
+// app/product/category/[category]/page.tsx
 
 import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
-import { getProductsByCategory } from '@/services/products/db/queries';
+import { getFilteredProducts } from '@/services/products/db/queries';
 import { SkeletonCard } from '@/components/ui/skeleton';
 import CategoryProductsClientPage from './categoryPageClient';
 import CategoryError from './CategoryError';
 import { getQueryClient } from '@/lib/query/query-client';
+import { productKeys } from '@/hooks/useProducts';
+import { parseSpecsFromURL } from '@/lib/url-helpers';
+import { FiltersProduct } from '@/types/product';
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+type PageProps = {
+  params: Promise<{ category: string }>;
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
 
+  const sp = await searchParams;
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ['category-products', decodedCategory],
-    queryFn: () => getProductsByCategory(decodedCategory),
+  const urlSearchParams = new URLSearchParams();
+  Object.entries(sp).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach(v => urlSearchParams.append(key, v));
+    } else if (value !== undefined) {
+      urlSearchParams.set(key, value);
+    }
+  });
+
+  const filters: Omit<FiltersProduct, 'page'> = {
+    categorySlug: decodedCategory,
+    brandSlug: typeof sp.brandSlug === 'string' ? sp.brandSlug : undefined,
+    minPrice: typeof sp.minPrice === 'string' ? Number(sp.minPrice) : undefined,
+    maxPrice: typeof sp.maxPrice === 'string' ? Number(sp.maxPrice) : undefined,
+    sort: typeof sp.sort === 'string' ? (sp.sort as FiltersProduct['sort']) : 'new',
+    q: typeof sp.q === 'string' ? sp.q : undefined,
+    perPage: 20,
+    specs: parseSpecsFromURL(urlSearchParams),
+  };
+
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: productKeys.infinite(filters),
+    queryFn: ({ pageParam }) => getFilteredProducts({ ...filters, page: pageParam as number }),
+    initialPageParam: 1,
   });
 
   return (
