@@ -10,7 +10,7 @@ export type CategoryItem = {
 };
 
 type SidebarCategoriesProps = {
-  categories: (string | CategoryItem)[];
+  categories: ReadonlyArray<string | CategoryItem>;
 };
 
 export function SidebarCategories({ categories }: SidebarCategoriesProps) {

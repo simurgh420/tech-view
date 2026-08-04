@@ -1,7 +1,6 @@
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
 import { CalendarDays, Clock, PenLine, UserRoundCog } from 'lucide-react';
-import { Breadcrumb } from '@/components/layout/breadcrumb';
 import RichContentViewer from '@/components/shared/RichContentViewer';
 
 type Props = {
