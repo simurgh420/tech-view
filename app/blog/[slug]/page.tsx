@@ -8,6 +8,7 @@ import { CommentsSection } from '@/components/sections/comments/CommentsSection'
 import { getQueryClient } from '@/lib/query/query-client';
 import { getPostBySlug } from '@/services/blog/db/queries';
 import { getCommentsByPostId } from '@/services/comments/db/queries';
+import { Breadcrumb } from '@/components/layout/breadcrumb';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -65,18 +66,18 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <div dir="rtl" className="container mx-auto max-w-7xl px-4 py-10">
-      {/* گرید ۱۲ ستونه استاندارد با items-start برای عملکرد صحیح Sticky */}
+      <div className="mb-8">
+        <Breadcrumb />
+      </div>
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12 items-start">
-        {/* ستون راست: محتوای مقاله + کامنت‌ها (۸ ستون در دسکتاپ، ۹ ستون در مانیتورهای بزرگ) */}
         <main className="space-y-12 min-w-0 lg:col-span-8 xl:col-span-9">
           <PostContent post={post} />
-
           <Hydrate state={dehydratedState}>
             <CommentsSection postId={post.id} />
           </Hydrate>
         </main>
 
-        {/* ستون چپ: سایدبار (۴ ستون در دسکتاپ، ۳ ستون در مانیتورهای بزرگ) */}
         <aside className="w-full lg:col-span-4 xl:col-span-3">
           <Sidebar postId={post.id} />
         </aside>

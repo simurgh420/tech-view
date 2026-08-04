@@ -22,21 +22,11 @@ export function PostContent({ post }: Props) {
   } = post;
 
   return (
-    <main
+    <div
       dir="rtl"
-      className="
-        container
-        mx-auto
-        max-w-4xl
-        px-4
-        py-10
-        text-right
+      className="text-right
       "
     >
-      <div className="mb-8">
-        <Breadcrumb />
-      </div>
-
       <h1
         className="
           mb-6
@@ -287,6 +277,6 @@ export function PostContent({ post }: Props) {
           </div>
         </section>
       )}
-    </main>
+    </div>
   );
 }

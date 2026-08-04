@@ -2,16 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CalendarDays, FolderOpen, Tag, Clock } from 'lucide-react';
 import { getRecentPosts, getTagsByPostId } from '@/services/blog/db/queries';
+import { blogCategories } from './sidebar/blagCategories';
 
 type Props = {
   postId: string;
 };
-
-const staticCategories = [
-  { name: 'تکنولوژی و گجت‌ها', slug: 'technology' },
-  { name: 'سخت‌افزار و گیمینگ', slug: 'gaming' },
-  { name: 'امنیت و حریم خصوصی', slug: 'security' },
-];
 
 export async function Sidebar({ postId }: Props) {
   // اجرای همزمان کوئری‌ها جهت افزایش سرعت رندر
@@ -24,10 +19,7 @@ export async function Sidebar({ postId }: Props) {
   const tags = tagsResult || [];
 
   return (
-    <aside
-      className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-24 lg:w-85"
-      dir="rtl"
-    >
+    <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-24 lg:w-85" dir="rtl">
       {/* دسته‌بندی‌ها */}
       <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
         <h4 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
@@ -35,7 +27,7 @@ export async function Sidebar({ postId }: Props) {
           دسته‌بندی‌ها
         </h4>
         <ul className="space-y-2.5 text-sm text-muted-foreground">
-          {staticCategories.map(cat => (
+          {blogCategories.map(cat => (
             <li key={cat.slug}>
               <Link
                 href={`/blog/category/${cat.slug}`}

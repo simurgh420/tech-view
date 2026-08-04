@@ -27,7 +27,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
   const { page: pageParam } = await searchParams;
   const currentPage = Math.max(1, Number(pageParam) || 1);
 
-  const { items, pages, page } = await getPublishedPosts({
+  const { items, pages, page, total } = await getPublishedPosts({
     page: currentPage,
     pageSize: 5,
   });
@@ -52,8 +52,9 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
               <h2 className="mt-1 text-3xl font-black text-foreground">آخرین مقالات</h2>
             </div>
-
-            <span className="text-sm text-muted-foreground">{items.length} مقاله</span>
+            <span className="text-sm text-muted-foreground">
+              {total.toLocaleString('fa-IR')} مقاله
+            </span>{' '}
           </div>
 
           <BlogGrid posts={gridPosts} />
