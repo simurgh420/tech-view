@@ -54,9 +54,9 @@ export function BlogHero() {
             </Button>
 
             <Button asChild variant="outline" size="lg">
-              <Link href="/blog/archive">
+              <Link href="/blog">
                 <BookOpen className="me-2 h-4 w-4" />
-                آرشیو مقالات
+                مقالات
               </Link>
             </Button>
           </div>

@@ -1,6 +1,6 @@
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
-import { CalendarDays, Clock, PenLine } from 'lucide-react';
+import { CalendarDays, Clock, PenLine, UserRoundCog } from 'lucide-react';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 import RichContentViewer from '@/components/shared/RichContentViewer';
 
@@ -71,27 +71,92 @@ export function PostContent({ post }: Props) {
           <div className="flex items-center gap-2">
             <div
               className="
-                flex
-                h-9
-                w-9
-                items-center
-                justify-center
-                rounded-full
-                bg-muted
-                text-primary
-              "
+        relative
+        h-9
+        w-9
+        overflow-hidden
+        rounded-full
+        bg-muted
+      "
             >
-              <PenLine size={16} />
+              {author.image ? (
+                <Image
+                  src={author.image}
+                  alt={author.name ?? 'نویسنده'}
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+                />
+              ) : (
+                <div
+                  className="
+            flex
+            h-full
+            w-full
+            items-center
+            justify-center
+            text-primary
+          "
+                >
+                  <PenLine size={16} />
+                </div>
+              )}
             </div>
 
-            <span
-              className="
-                font-medium
-                text-foreground
-              "
-            >
-              {author.name}
-            </span>
+            <div className="group relative">
+              <span
+                className={`
+          cursor-default
+          font-medium
+          transition-colors
+          duration-200
+
+          ${
+            author.role === 'ADMIN'
+              ? 'text-emerald-500 hover:text-emerald-400'
+              : author.role === 'USER'
+                ? 'text-orange-500 hover:text-orange-400'
+                : 'text-foreground hover:text-primary'
+          }
+        `}
+              >
+                {author.name}
+              </span>
+
+              {author.role && (
+                <div
+                  className="
+            pointer-events-none
+            absolute
+            bottom-full
+            right-0
+            mb-2
+            translate-y-2
+            rounded-lg
+            border
+            border-border
+            bg-popover
+            px-3
+            py-2
+            text-xs
+            text-popover-foreground
+            opacity-0
+            shadow-md
+            transition-all
+            duration-200
+
+            group-hover:translate-y-0
+            group-hover:opacity-100
+          "
+                >
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <UserRoundCog size={13} />
+
+                    {author.role === 'ADMIN' ? 'مدیر سایت' : 'نویسنده'}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
