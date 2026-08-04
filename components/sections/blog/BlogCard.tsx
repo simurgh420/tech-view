@@ -1,7 +1,9 @@
-import { BlogPostSafe } from '@/types/blog';
+// src/components/sections/blog/BlogCard.tsx
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { PenLine } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock3 } from 'lucide-react';
+import type { BlogPostSafe } from '@/types/blog';
 
 type Props = {
   post: BlogPostSafe;
@@ -11,54 +13,55 @@ export function BlogCard({ post }: Props) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      aria-label={post.title}
-      className="
-        group flex flex-col overflow-hidden rounded-xl border border-neutral-200
-        bg-white shadow-sm transition-all duration-300
-        hover:-translate-y-1 hover:border-neutral-300 hover:shadow-lg
-        dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700
-      "
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl"
     >
-      {/* تصویر با نسبت ثابت و گرادیانت */}
-      <div className="relative aspect-4/3 w-full overflow-hidden bg-neutral-50 dark:bg-neutral-950">
+      {/* Cover */}
+      <div className="relative aspect-video overflow-hidden">
         <Image
           src={post.coverImageUrl || '/Image-not-found.png'}
           alt={post.title}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
+          className="object-cover transition duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
-        <div className="absolute top-2 start-2 rounded-md bg-red-600 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
-          بلاگ
+
+        <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
+
+        <div className="absolute right-4 top-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[11px] font-semibold tracking-wide text-white backdrop-blur">
+          TECH
         </div>
       </div>
 
-      {/* محتوا */}
-      <div className="flex flex-1 flex-col gap-2 p-4 text-start">
-        <h3 className="line-clamp-2 text-sm font-semibold text-neutral-800 transition-colors group-hover:text-red-600 dark:text-neutral-100 dark:group-hover:text-red-400">
+      {/* Content */}
+      <div className="flex flex-1 flex-col p-6">
+        <span className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+          Magazine
+        </span>
+
+        <h3 className="mt-3 line-clamp-2 text-xl font-bold leading-tight transition-colors duration-300 group-hover:text-primary">
           {post.title}
         </h3>
 
-        <p className="line-clamp-2 text-xs text-neutral-500 dark:text-neutral-400">
-          {post.excerpt}
-        </p>
+        <p className="mt-4 line-clamp-3 flex-1 leading-7 text-muted-foreground">{post.excerpt}</p>
 
-        <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
-          {post.authorName && (
-            <div className="flex items-center gap-1.5">
-              <PenLine size={12} />
-              <span>{post.authorName}</span>
-            </div>
+        <div className="mt-6 flex items-center gap-5 text-sm text-muted-foreground">
+          {post.readingMinutes && (
+            <span className="flex items-center gap-1.5">
+              <Clock3 size={15} />
+              {post.readingMinutes} دقیقه
+            </span>
           )}
 
           {post.publishedAt && (
-            <time dateTime={post.publishedAt.toISOString()}>
-              {new Date(post.publishedAt).toLocaleDateString('fa-IR-u-nu-latn')} •{' '}
-              {post.readingMinutes} دقیقه
-            </time>
+            <span className="flex items-center gap-1.5">
+              <CalendarDays size={15} />
+              {new Date(post.publishedAt).toLocaleDateString('fa-IR-u-nu-latn')}
+            </span>
           )}
+        </div>
+
+        <div className="mt-8 flex items-center gap-2 font-medium text-primary">
+          مطالعه مقاله
+          <ArrowLeft className="h-4 w-4 transition duration-300 group-hover:-translate-x-1" />
         </div>
       </div>
     </Link>

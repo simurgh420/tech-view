@@ -1,7 +1,6 @@
 import { BlogPost } from '@/types/blog';
 import Image from 'next/image';
 import { CalendarDays, Clock, PenLine } from 'lucide-react';
-import { PostActions } from './PostActions';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 import RichContentViewer from '@/components/shared/RichContentViewer';
 
@@ -24,24 +23,74 @@ export function PostContent({ post }: Props) {
   } = post;
 
   return (
-    <main dir="rtl" className="container mx-auto max-w-3xl px-4 py-10 text-right">
+    <main
+      dir="rtl"
+      className="
+        container
+        mx-auto
+        max-w-4xl
+        px-4
+        py-10
+        text-right
+      "
+    >
       <div className="mb-8">
         <Breadcrumb />
       </div>
 
-      {/* عنوان اصلی */}
-      <h1 className="mb-6 text-3xl font-extrabold leading-tight tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl md:text-5xl md:leading-tight">
+      <h1
+        className="
+          mb-6
+          text-3xl
+          font-extrabold
+          leading-tight
+          tracking-tight
+          text-foreground
+          sm:text-4xl
+          md:text-5xl
+        "
+      >
         {title}
       </h1>
 
-      {/* متادیتا */}
-      <div className="mb-10 flex flex-wrap items-center gap-x-6 gap-y-4 border-b border-neutral-200 pb-6 text-sm text-neutral-600 dark:border-neutral-800 dark:text-neutral-400">
+      <div
+        className="
+          mb-10
+          flex
+          flex-wrap
+          items-center
+          gap-x-6
+          gap-y-4
+          border-b
+          border-border
+          pb-6
+          text-sm
+          text-muted-foreground
+        "
+      >
         {author?.name && (
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
-              <PenLine size={16} className="text-neutral-700 dark:text-neutral-300" />
+            <div
+              className="
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-full
+                bg-muted
+                text-primary
+              "
+            >
+              <PenLine size={16} />
             </div>
-            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+
+            <span
+              className="
+                font-medium
+                text-foreground
+              "
+            >
               {author.name}
             </span>
           </div>
@@ -51,58 +100,121 @@ export function PostContent({ post }: Props) {
           {publishedAt && (
             <time
               dateTime={new Date(publishedAt).toISOString()}
-              className="flex items-center gap-1.5"
+              className="
+                flex
+                items-center
+                gap-1.5
+              "
             >
               <CalendarDays size={16} />
+
               {new Date(publishedAt).toLocaleDateString('fa-IR-u-nu-latn')}
             </time>
           )}
 
           {readingMinutes && (
-            <span className="flex items-center gap-1.5">
+            <span
+              className="
+                flex
+                items-center
+                gap-1.5
+              "
+            >
               <Clock size={16} />
               {readingMinutes} دقیقه مطالعه
             </span>
           )}
         </div>
       </div>
-
-      <div className="mb-8">
-        <PostActions slug={slug} />
-      </div>
-
-      {/* تصویر کاور */}
-      <div className="relative mb-12 aspect-video w-full overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/50">
+      <div
+        className="
+          relative
+          mb-12
+          aspect-video
+          w-full
+          overflow-hidden
+          rounded-3xl
+          border
+          border-border
+          bg-muted
+          shadow-sm
+        "
+      >
         <Image
           src={coverImageUrl || '/Image-not-found.png'}
           alt={title || 'تصویر کاور مقاله'}
           fill
-          sizes="(max-width: 768px) 100vw, 768px"
+          sizes="
+            (max-width:768px) 100vw,
+            896px
+          "
           className="object-cover"
           priority
         />
       </div>
 
-      {/* رندر محتوای متن */}
-      <div className="prose prose-lg prose-neutral max-w-none dark:prose-invert">
+      <div
+        className="
+          prose
+          prose-lg
+          max-w-none
+          dark:prose-invert
+        "
+      >
         <RichContentViewer html={content} />
       </div>
 
-      {/* برچسب‌ها */}
       {tags.length > 0 && (
-        <section className="mt-16 border-t border-neutral-200 pt-8 dark:border-neutral-800">
-          <h4 className="mb-4 text-sm font-bold text-neutral-900 dark:text-neutral-100">
+        <section
+          className="
+            mt-16
+            border-t
+            border-border
+            pt-8
+          "
+        >
+          <h4
+            className="
+              mb-4
+              text-sm
+              font-bold
+              text-foreground
+            "
+          >
             برچسب‌های این مقاله
           </h4>
-          <div className="flex flex-wrap gap-2">
+
+          <div
+            className="
+              flex
+              flex-wrap
+              gap-2
+            "
+          >
             {tags.map(item => {
               const tag = item?.tag;
+
               if (!tag) return null;
 
               return (
                 <span
                   key={tag.id}
-                  className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-sm font-medium text-neutral-700 transition-colors hover:border-red-300 hover:text-red-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-red-800 dark:hover:text-red-400"
+                  className="
+                    rounded-full
+                    border
+                    border-border
+                    bg-muted/30
+                    px-3
+                    py-1.5
+                    text-sm
+                    font-medium
+                    text-foreground
+                    transition-all
+                    duration-300
+                    hover:border-primary/30
+                    hover:bg-primary
+                    hover:text-primary-foreground
+                  "
                 >
                   #{tag.name}
                 </span>

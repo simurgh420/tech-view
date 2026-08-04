@@ -201,3 +201,43 @@ export async function getAdminBlogPosts() {
     throw error;
   }
 }
+// برای اسلایدر
+export async function getSidebarTags() {
+  const startTime = Date.now();
+
+  try {
+    const tags = await prisma.tag.findMany({
+      where: {
+        posts: {
+          some: {
+            post: {
+              status: 'PUBLISHED',
+            },
+          },
+        },
+      },
+      select: {
+        name: true,
+        slug: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+      take: 15,
+    });
+
+    logger.info('getSidebarTags success', {
+      count: tags.length,
+      duration: Date.now() - startTime,
+    });
+
+    return tags;
+  } catch (error) {
+    logger.error('getSidebarTags failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+
+    throw error;
+  }
+}

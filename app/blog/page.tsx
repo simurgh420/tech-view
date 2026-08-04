@@ -1,54 +1,71 @@
 // app/blog/page.tsx
+
 import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import { BlogHero } from '@/components/sections/blog/BlogHero';
 import { BlogGrid } from '@/components/sections/blog/BlogGrid';
-import { RecentPosts } from '@/components/sections/blog/RecentPosts';
+import { FeaturedPost } from '@/components/sections/blog/FeaturedPost';
 import { Pagination } from '@/components/ui/pagination';
-import { getPublishedPosts, getRecentPosts } from '@/services/blog/db/queries';
+import { getPublishedPosts } from '@/services/blog/db/queries';
+import { BlogSidebar } from '@/components/sections/blog/sidebar/BlogSidebar';
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Tech Heim Blog • News, Guides, and Reviews',
+  title: 'TechView Magazine • اخبار، آموزش و بررسی تکنولوژی',
   description:
-    'Latest tech articles, videos, and insights on phones, laptops, audio, gaming, and more.',
-  openGraph: {
-    title: 'Tech Heim Blog',
-    description: 'Tech news, how-tos, and product reviews.',
-    type: 'website',
-    images: [{ url: '/og/blog.jpg', width: 1200, height: 630 }],
-  },
+    'جدیدترین مقالات تخصصی، اخبار و بررسی‌های سخت‌افزار، گیمینگ و برنامه‌نویسی در مجله TechView.',
 };
 
 type PageProps = {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{
+    page?: string;
+  }>;
 };
 
 export default async function BlogPage({ searchParams }: PageProps) {
   const { page: pageParam } = await searchParams;
   const currentPage = Math.max(1, Number(pageParam) || 1);
 
-  const [{ items, pages, page }, recent] = await Promise.all([
-    getPublishedPosts({ page: currentPage, pageSize: 12 }),
-    getRecentPosts(5),
-  ]);
+  const { items, pages, page } = await getPublishedPosts({
+    page: currentPage,
+    pageSize: 12,
+  });
+
+  const featured = items[0];
+  const gridPosts = items.slice(1);
 
   return (
-    <main className="container mx-auto max-w-306 px-4 py-8" dir="rtl">
-      <div className="mb-2">
-        <Breadcrumb />
-      </div>
+    <main dir="rtl" className="container mx-auto max-w-7xl space-y-12 px-4 py-8">
+      <Breadcrumb />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* محتوای اصلی: گرید بلاگ + صفحه‌بندی */}
-        <section className="col-span-12 lg:col-span-8 xl:col-span-9">
-          <BlogGrid posts={items} />
-          <Pagination currentPage={page} totalPages={pages} basePath="/blog" />
+      <BlogHero />
+
+      {featured && <FeaturedPost post={featured} />}
+
+      <div className="grid gap-8 lg:grid-cols-12">
+        {/* Main Content */}
+        <section className="lg:col-span-8 xl:col-span-9">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <span className="text-sm font-medium text-primary">TECHVIEW MAGAZINE</span>
+
+              <h2 className="mt-1 text-3xl font-black text-foreground">آخرین مقالات</h2>
+            </div>
+
+            <span className="text-sm text-muted-foreground">{items.length} مقاله</span>
+          </div>
+
+          <BlogGrid posts={gridPosts} />
+
+          <div className="mt-10">
+            <Pagination currentPage={page} totalPages={pages} basePath="/blog" />
+          </div>
         </section>
 
-        {/* سایدبار: پست‌های اخیر — تو دسکتاپ کنار محتوا، تو موبایل زیرش */}
-        <aside className="col-span-12 lg:col-span-4 xl:col-span-3">
-          <RecentPosts items={recent} />
+        {/* Sidebar */}
+        <aside className="lg:col-span-4 xl:col-span-3">
+          <BlogSidebar />
         </aside>
       </div>
     </main>
