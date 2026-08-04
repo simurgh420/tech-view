@@ -16,12 +16,8 @@ export async function BlogSection() {
         {/* هدر */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <span className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">
-              TECHVIEW MAGAZINE
-            </span>
             <h2 className="mt-1 text-2xl font-black text-foreground">آخرین مطالب بلاگ</h2>
           </div>
-
           <Link
             href="/blog"
             className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
