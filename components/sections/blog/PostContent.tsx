@@ -19,7 +19,6 @@ export function PostContent({ post }: Props) {
     coverImageUrl,
     content = '',
     tags = [],
-    slug,
   } = post;
 
   return (

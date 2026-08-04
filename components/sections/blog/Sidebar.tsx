@@ -25,7 +25,7 @@ export async function Sidebar({ postId }: Props) {
 
   return (
     <aside
-      className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-24 lg:w-[340px]"
+      className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-24 lg:w-85"
       dir="rtl"
     >
       {/* دسته‌بندی‌ها */}
