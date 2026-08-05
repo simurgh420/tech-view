@@ -112,9 +112,6 @@ export const UpdateUserForm = ({ name, image, phone }: UpdateUserFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold ">ویرایش پروفایل</h2>
-        <p className="text-sm ">نام یا تصویر پروفایل خود را تغییر دهید.</p>
-
         {/* Preview Image + Delete Button */}
         {preview && (
           <div className="flex flex-col items-center gap-2">

@@ -58,8 +58,8 @@ export function AdminBlogTable() {
   };
 
   return (
-    <Card className="overflow-hidden border-border/60 bg-card/80 shadow-sm" dir="rtl">
-      <CardHeader className="border-b border-border/60 bg-muted/40 px-6 py-5">
+    <Card className="overflow-hidden border-border/60  shadow-sm" dir="rtl">
+      <CardHeader className="border-b border-border/60  px-6 py-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="rounded-xl bg-primary/10 p-2 text-primary">

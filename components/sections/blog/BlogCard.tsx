@@ -13,7 +13,7 @@ export function BlogCard({ post }: Props) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl"
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border transition-all duration-500 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl"
     >
       {/* Cover */}
       <div className="relative aspect-video overflow-hidden">

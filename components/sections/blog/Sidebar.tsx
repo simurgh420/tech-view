@@ -21,7 +21,7 @@ export async function Sidebar({ postId }: Props) {
   return (
     <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-24 lg:w-85" dir="rtl">
       {/* دسته‌بندی‌ها */}
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <div className="rounded-2xl border border-border p-5 shadow-sm">
         <h4 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
           <FolderOpen size={16} className="text-primary" />
           دسته‌بندی‌ها
@@ -42,7 +42,7 @@ export async function Sidebar({ postId }: Props) {
 
       {/* پست‌های اخیر */}
       {recentPosts.length > 0 && (
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border border-border p-5 shadow-sm">
           <h4 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
             <Clock size={16} className="text-primary" />
             پست‌های اخیر
@@ -89,7 +89,7 @@ export async function Sidebar({ postId }: Props) {
 
       {/* تگ‌ها */}
       {tags.length > 0 && (
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border border-border p-5 shadow-sm">
           <h4 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
             <Tag size={16} className="text-primary" />
             تگ‌های مقاله

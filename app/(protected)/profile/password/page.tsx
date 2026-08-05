@@ -27,15 +27,17 @@ export default async function PasswordSettingsPage() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-6" dir="rtl">
-      <Card className="w-full max-w-md border-border/60 bg-card/80 shadow-md">
+      <Card className="w-full max-w-md border-border/60 shadow-md">
         <CardHeader className="items-center space-y-2 text-center">
           <div className="flex items-center gap-3">
             <span className="rounded-xl bg-primary/10 p-2 text-primary">
               <KeyRound className="size-5" />
             </span>
-            <CardTitle className="text-2xl font-semibold">تغییر رمز عبور</CardTitle>
+            <CardTitle className="text-xl font-semibold">تغییر رمز عبور</CardTitle>
           </div>
-          <p className="text-sm text-muted-foreground">رمز عبور حساب خود را بروزرسانی کنید.</p>
+          <p className="text-sm ">
+            لطفاً رمز عبور فعلی و رمز جدید خود را وارد کنید. رمز جدید باید قوی و امن باشد.
+          </p>
         </CardHeader>
         <CardContent>
           <ChangePasswordForm />

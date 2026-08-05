@@ -14,7 +14,7 @@ export function FeaturedPost({ post }: Props) {
     <section className="group">
       <Link
         href={`/blog/${post.slug}`}
-        className="grid overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:border-primary/30 hover:shadow-2xl lg:grid-cols-2"
+        className="grid overflow-hidden rounded-3xl border border-border transition-all duration-500 hover:border-primary/30 hover:shadow-2xl lg:grid-cols-2"
       >
         {/* Image */}
         <div className="relative aspect-16/10 overflow-hidden">

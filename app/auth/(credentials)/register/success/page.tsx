@@ -8,7 +8,7 @@ export default function Page() {
     <div className="container mx-auto max-w-lg space-y-8 px-8 py-16" dir="rtl">
       <ReturnButton href="/auth/login" label="ورود" />
 
-      <Card className="border-border/60 bg-card/80 shadow-sm">
+      <Card className="border-border/60 shadow-sm">
         <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
           <span className="rounded-full bg-emerald-500/10 p-3 text-emerald-600">
             <CheckCircle2 className="size-8" />

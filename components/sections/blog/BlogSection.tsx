@@ -12,7 +12,7 @@ export async function BlogSection() {
 
   return (
     <section dir="rtl">
-      <div className="rounded-3xl border border-border bg-card px-6 py-10 shadow-sm md:px-10">
+      <div className="rounded-3xl border border-border px-6 py-10 shadow-sm md:px-10">
         {/* هدر */}
         <div className="mb-8 flex items-center justify-between">
           <div>

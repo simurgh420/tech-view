@@ -83,11 +83,6 @@ export const ChangePasswordForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-sm w-full space-y-6  p-6 rounded-xl shadow-sm border"
       >
-        <h2 className="text-xl font-semibold ">تغییر رمز عبور</h2>
-        <p className="text-sm ">
-          لطفاً رمز عبور فعلی و رمز جدید خود را وارد کنید. رمز جدید باید قوی و امن باشد.
-        </p>
-
         {/* رمز عبور فعلی */}
         <FormField
           control={form.control}
