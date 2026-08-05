@@ -17,7 +17,7 @@ export default function UnauthorizedClient() {
       >
         <div
           className="relative overflow-hidden rounded-3xl border border-border
-                     bg-card/70 backdrop-blur-xl shadow-2xl
+                     backdrop-blur-xl shadow-2xl
                      before:absolute before:inset-0 before:-z-10 before:bg-linear-to-br
                      before:from-orange-50 before:to-red-50 dark:before:from-orange-950/40 dark:before:to-red-950/30"
         >

@@ -41,7 +41,7 @@ export default async function ProfilePage() {
         </p>
       </div>
 
-      <Card className="border-border/60 bg-card/80 shadow-sm">
+      <Card className="border-border/60 shadow-sm">
         <CardContent className="p-6">
           <UpdateUserForm name={name ?? ''} image={image ?? ''} phone={phone ?? ''} />
         </CardContent>

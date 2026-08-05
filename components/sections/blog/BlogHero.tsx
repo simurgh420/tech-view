@@ -62,19 +62,19 @@ export function BlogHero() {
           </div>
 
           <div className="grid grid-cols-3 gap-4 pt-4">
-            <div className="rounded-2xl border border-border bg-card/70 p-4 backdrop-blur">
+            <div className="rounded-2xl border border-border  p-4 backdrop-blur">
               <div className="text-2xl font-black text-primary">120+</div>
 
               <div className="mt-1 text-sm text-muted-foreground">مقاله تخصصی</div>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card/70 p-4 backdrop-blur">
+            <div className="rounded-2xl border border-border p-4 backdrop-blur">
               <div className="text-2xl font-black text-primary">15</div>
 
               <div className="mt-1 text-sm text-muted-foreground">دسته‌بندی</div>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card/70 p-4 backdrop-blur">
+            <div className="rounded-2xl border border-border p-4 backdrop-blur">
               <div className="text-2xl font-black text-primary">Weekly</div>
 
               <div className="mt-1 text-sm text-muted-foreground">بروزرسانی</div>
@@ -86,7 +86,7 @@ export function BlogHero() {
         <div className="relative hidden lg:block">
           <div className="absolute inset-0 rounded-4xl bg-primary/10 blur-3xl" />
 
-          <div className="relative overflow-hidden rounded-4xl border border-border bg-card shadow-2xl">
+          <div className="relative overflow-hidden rounded-4xl border border-border shadow-2xl">
             <Image
               src="/img/blogs/blog-hero.png"
               alt="TechView Magazine"

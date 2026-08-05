@@ -14,7 +14,7 @@ export function SidebarCard({ title, icon, children, className }: SidebarCardPro
   return (
     <section
       className={cn(
-        'rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:shadow-lg',
+        'rounded-3xl border border-border shadow-sm transition-all duration-300 hover:shadow-lg',
         className
       )}
     >
