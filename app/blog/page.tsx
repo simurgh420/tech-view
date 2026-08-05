@@ -29,7 +29,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
   const { items, pages, page, total } = await getPublishedPosts({
     page: currentPage,
-    pageSize: 5,
+    pageSize: 7,
   });
 
   const featured = items[0];
