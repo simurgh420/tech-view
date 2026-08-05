@@ -68,7 +68,7 @@ export function RegisterForm() {
                   <Input
                     placeholder="نام شما"
                     {...field}
-                    className="h-11 border-white/10 bg-white/[0.03] text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -88,7 +88,7 @@ export function RegisterForm() {
                     placeholder="example@gmail.com"
                     dir="ltr"
                     {...field}
-                    className="h-11 border-white/10 bg-white/[0.03] text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -107,7 +107,7 @@ export function RegisterForm() {
                     placeholder="09123456789"
                     dir="ltr"
                     {...field}
-                    className="h-11 border-white/10 bg-white/[0.03] text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -127,7 +127,7 @@ export function RegisterForm() {
                     placeholder="********"
                     dir="ltr"
                     {...field}
-                    className="h-11 border-white/10 bg-white/[0.03] text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
