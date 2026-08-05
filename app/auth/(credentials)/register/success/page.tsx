@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 export default function Page() {
   return (
     <div className="container mx-auto max-w-lg space-y-8 px-8 py-16" dir="rtl">
-      <ReturnButton href="/login" label="ورود" />
+      <ReturnButton href="/auth/login" label="ورود" />
 
       <Card className="border-border/60 bg-card/80 shadow-sm">
         <CardContent className="flex flex-col items-center gap-4 p-8 text-center">

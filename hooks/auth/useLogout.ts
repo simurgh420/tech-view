@@ -10,7 +10,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: logoutService,
     onSuccess: () => {
-      router.push('/login');
+      router.push('/auth/login');
     },
   });
 }

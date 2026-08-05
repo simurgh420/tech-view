@@ -7,10 +7,11 @@ import { SkeletonCard } from '@/components/ui/skeleton';
 import ProductsPageClient from './ProductsPageClient';
 import ProductsError from './ProductsError';
 
-import { fetchFilteredProductsApi } from '@/services/products/api/queries';
+import { getFilteredProducts } from '@/services/products/db/queries';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
 import { FiltersProduct } from '@/types/product';
 import { getQueryClient } from '@/lib/query/query-client';
+import { productKeys } from '@/hooks/useProducts';
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -23,7 +24,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const queryClient = getQueryClient();
 
   const urlSearchParams = new URLSearchParams();
-
   Object.entries(params).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach(v => urlSearchParams.append(key, v));
@@ -32,29 +32,22 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     }
   });
 
-  const filters: FiltersProduct = {
+  // ⚠️ بدون page — چون infinite query خودش pageParam رو مدیریت می‌کنه
+  const filters: Omit<FiltersProduct, 'page'> = {
     brandSlug: typeof params.brandSlug === 'string' ? params.brandSlug : undefined,
-
     categorySlug: typeof params.categorySlug === 'string' ? params.categorySlug : undefined,
-
     minPrice: typeof params.minPrice === 'string' ? Number(params.minPrice) : undefined,
-
     maxPrice: typeof params.maxPrice === 'string' ? Number(params.maxPrice) : undefined,
-
     sort: typeof params.sort === 'string' ? (params.sort as FiltersProduct['sort']) : 'new',
-
     q: typeof params.q === 'string' ? params.q : undefined,
-
-    page: typeof params.page === 'string' ? Number(params.page) : 1,
-
     perPage: 20,
-
     specs: parseSpecsFromURL(urlSearchParams),
   };
 
-  await queryClient.prefetchQuery({
-    queryKey: ['products', filters],
-    queryFn: () => fetchFilteredProductsApi(filters),
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: productKeys.infinite(filters),
+    queryFn: ({ pageParam }) => getFilteredProducts({ ...filters, page: pageParam as number }),
+    initialPageParam: 1,
   });
 
   return (

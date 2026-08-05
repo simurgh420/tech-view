@@ -12,6 +12,7 @@ vi.mock('@/lib/auth', () => ({
   auth: {
     api: {
       getSession: vi.fn(),
+      userHasPermission: vi.fn(), // اضافه شد
     },
   },
 }));
@@ -48,6 +49,7 @@ describe('API /api/wishlist/check', () => {
 
   it('should return 400 if productId is missing', async () => {
     (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+    (auth.api.userHasPermission as any).mockResolvedValue({ success: true }); // اضافه شد
     const req = createNextRequest('http://localhost/api/wishlist/check');
     const res = await GET(req);
     expect(res.status).toBe(400);
@@ -57,6 +59,7 @@ describe('API /api/wishlist/check', () => {
 
   it('should return { inWishlist: true } if product is in wishlist', async () => {
     (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+    (auth.api.userHasPermission as any).mockResolvedValue({ success: true }); // اضافه شد
     (isProductInWishlist as any).mockResolvedValue(true);
     const req = createNextRequest('http://localhost/api/wishlist/check?productId=prod-123');
     const res = await GET(req);
@@ -68,6 +71,7 @@ describe('API /api/wishlist/check', () => {
 
   it('should return { inWishlist: false } if product is not in wishlist', async () => {
     (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+    (auth.api.userHasPermission as any).mockResolvedValue({ success: true }); // اضافه شد
     (isProductInWishlist as any).mockResolvedValue(false);
     const req = createNextRequest('http://localhost/api/wishlist/check?productId=prod-123');
     const res = await GET(req);
@@ -78,6 +82,7 @@ describe('API /api/wishlist/check', () => {
 
   it('should return 500 on error', async () => {
     (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
+    (auth.api.userHasPermission as any).mockResolvedValue({ success: true }); // اضافه شد
     (isProductInWishlist as any).mockRejectedValue(new Error('DB error'));
     const req = createNextRequest('http://localhost/api/wishlist/check?productId=123');
     const res = await GET(req);

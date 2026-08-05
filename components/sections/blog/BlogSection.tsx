@@ -1,6 +1,9 @@
+// components/sections/blog/BlogSection.tsx
+
 import { ChevronLeft } from 'lucide-react';
-import { getRecentPosts } from '@/services/blog/db/queries';
 import Link from 'next/link';
+
+import { getRecentPosts } from '@/services/blog/db/queries';
 import { BlogCard } from './BlogCard';
 
 export async function BlogSection() {
@@ -8,24 +11,27 @@ export async function BlogSection() {
   if (!recent?.length) return null;
 
   return (
-    <section className="mt-10" dir="rtl">
-      <div className="space-y-8 rounded-2xl border border-gray-200 px-6 py-10 shadow-sm dark:border-gray-800 ">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">آخرین مطالب بلاگ</h2>
-
+    <section dir="rtl">
+      <div className="rounded-3xl border border-border bg-card px-6 py-10 shadow-sm md:px-10">
+        {/* هدر */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h2 className="mt-1 text-2xl font-black text-foreground">آخرین مطالب بلاگ</h2>
+          </div>
           <Link
             href="/blog"
-            className="flex items-center gap-1 rounded text-sm text-gray-600 transition hover:text-red-600 hover:underline underline-offset-4 dark:text-gray-300 dark:hover:text-red-400"
+            className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             مشاهده همه
-            <ChevronLeft size={15} />
+            <ChevronLeft
+              size={16}
+              className="transition-transform duration-300 group-hover:-translate-x-1"
+            />
           </Link>
         </div>
 
-        {/* Cards — از همان BlogCard مشترک استفاده می‌شود تا استایل/رفتار
-            کارت بلاگ فقط یک‌جا نگه‌داری شود، نه سه نسخهٔ جدا */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* کارت‌ها — از همان BlogCard مشترک استفاده می‌شود */}
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {recent.map(post => (
             <BlogCard key={post.id} post={post} />
           ))}

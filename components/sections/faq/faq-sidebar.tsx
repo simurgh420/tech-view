@@ -29,7 +29,7 @@ export function FaqSidebar({ categories }: { categories: FAQCategory[] }) {
 
   return (
     <aside className="sticky top-24 text-right">
-      <h3 className="text-base font-semibold  mb-4">فهرست مطالب</h3>
+      <h3 className="mb-4 text-base font-semibold text-foreground">فهرست مطالب</h3>
 
       <nav className="flex flex-col gap-2">
         {categories.map(category => (
@@ -37,15 +37,11 @@ export function FaqSidebar({ categories }: { categories: FAQCategory[] }) {
             key={category.id}
             href={`#${category.id}`}
             className={`
-              text-sm
-              pr-3
-              transition-colors
-              border-r-2
-              rounded-sm
+              rounded-sm border-r-2 pr-3 text-sm transition-colors
               ${
                 activeId === category.id
-                  ? 'border-gray-400'
-                  : 'text-gray-400 border-transparent hover:text-black dark:hover:text-white hover:border-gray-500'
+                  ? 'border-primary text-primary font-medium'
+                  : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'
               }
             `}
           >

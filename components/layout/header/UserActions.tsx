@@ -42,13 +42,12 @@ export function UserActions({ session }: UserActionsProps) {
         <HeaderIconButton aria-label="جستجو" onClick={() => setOpenSearch(true)}>
           <Search className="size-5 text-gray-700 dark:text-gray-200" />
         </HeaderIconButton>
-
         {/* Cart */}
         <CartButton />
 
         {/* Not logged in */}
         {!user && (
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button
               size="sm"
               variant="ghost"
@@ -63,7 +62,7 @@ export function UserActions({ session }: UserActionsProps) {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button  className="group flex cursor-pointer items-center gap-3">
+              <button className="group flex cursor-pointer items-center gap-3">
                 <Avatar
                   className={cn(
                     'size-9 transition-all',
@@ -97,9 +96,11 @@ export function UserActions({ session }: UserActionsProps) {
                   <Link href="/admin/dashboard">داشبورد</Link>
                 </DropdownMenuItem>
               )}
-
               <DropdownMenuItem asChild>
-                <Link href="/profile">ویرایش پروفایل</Link>
+                <Link href="/wishlist">علاقه‌مندی‌ها</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/profile"> پروفایل</Link>
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>

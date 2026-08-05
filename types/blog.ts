@@ -12,11 +12,14 @@ export type BlogPost = {
   readingMinutes: number;
   publishedAt: Date | null;
   authorId: string | null;
+
   author: {
     id: string;
     name: string;
     image: string | null;
+    role: 'ADMIN' | 'USER' | null;
   } | null;
+
   tags: {
     tag: {
       id: string;

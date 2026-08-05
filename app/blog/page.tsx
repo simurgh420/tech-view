@@ -1,37 +1,74 @@
 // app/blog/page.tsx
+
 import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import { BlogHero } from '@/components/sections/blog/BlogHero';
 import { BlogGrid } from '@/components/sections/blog/BlogGrid';
-import { RecentPosts } from '@/components/sections/blog/RecentPosts';
-import { getPublishedPosts, getRecentPosts } from '@/services/blog/db/queries';
-export const revalidate = 3600; // صفحه هر 1 ساعت یکبار regenerate
+import { FeaturedPost } from '@/components/sections/blog/FeaturedPost';
+import { Pagination } from '@/components/ui/pagination';
+import { getPublishedPosts } from '@/services/blog/db/queries';
+import { BlogSidebar } from '@/components/sections/blog/sidebar/BlogSidebar';
+
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
-  title: 'Tech Heim Blog • News, Guides, and Reviews',
+  title: 'TechView Magazine • اخبار، آموزش و بررسی تکنولوژی',
   description:
-    'Latest tech articles, videos, and insights on phones, laptops, audio, gaming, and more.',
-  openGraph: {
-    title: 'Tech Heim Blog',
-    description: 'Tech news, how-tos, and product reviews.',
-    type: 'website',
-    // url: 'https://yourdomain.com/blog', // اینجا باید ادرس درست وارد شود
-    images: [{ url: '/og/blog.jpg', width: 1200, height: 630 }],
-  },
+    'جدیدترین مقالات تخصصی، اخبار و بررسی‌های سخت‌افزار، گیمینگ و برنامه‌نویسی در مجله TechView.',
 };
-export default async function BlogPage() {
-  const { items } = await getPublishedPosts({
-    page: 1,
-    pageSize: 12,
+
+type PageProps = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function BlogPage({ searchParams }: PageProps) {
+  const { page: pageParam } = await searchParams;
+  const currentPage = Math.max(1, Number(pageParam) || 1);
+
+  const { items, pages, page, total } = await getPublishedPosts({
+    page: currentPage,
+    pageSize: 7,
   });
-  const recent = await getRecentPosts(3);
+
+  const featured = items[0];
+  const gridPosts = items.slice(1);
 
   return (
-    <main className="container mx-auto max-w-306 px-4 py-8" dir="rtl">
-      <div className="mb-2">
-        <Breadcrumb />
-      </div>
+    <main dir="rtl" className="container mx-auto max-w-7xl space-y-12 px-4 py-8">
+      <Breadcrumb />
 
-      <BlogGrid posts={items} />
-      <RecentPosts items={recent} />
+      <BlogHero />
+
+      {featured && <FeaturedPost post={featured} />}
+
+      <div className="grid gap-8 lg:grid-cols-12">
+        {/* Main Content */}
+        <section className="lg:col-span-8 xl:col-span-9">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <span className="text-sm font-medium text-primary">TECHVIEW MAGAZINE</span>
+
+              <h2 className="mt-1 text-3xl font-black text-foreground">آخرین مقالات</h2>
+            </div>
+            <span className="text-sm text-muted-foreground">
+              {total.toLocaleString('fa-IR')} مقاله
+            </span>{' '}
+          </div>
+
+          <BlogGrid posts={gridPosts} />
+
+          <div className="mt-10">
+            <Pagination currentPage={page} totalPages={pages} basePath="/blog" />
+          </div>
+        </section>
+
+        {/* Sidebar */}
+        <aside className="lg:col-span-4 xl:col-span-3">
+          <BlogSidebar />
+        </aside>
+      </div>
     </main>
   );
 }

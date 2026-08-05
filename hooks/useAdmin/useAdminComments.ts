@@ -9,7 +9,6 @@ import { AdminComment } from '@/types/comment';
 export const adminCommentKeys = {
   all: ['admin-comments'] as const,
 };
-
 // ─────────────────────────────────────────────
 // Queries
 // ─────────────────────────────────────────────

@@ -30,7 +30,7 @@ export function RegisterForm() {
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
-    defaultValues: { name: '', email: '',phone: '', password: '' },
+    defaultValues: { name: '', email: '', phone: '', password: '' },
     mode: 'onSubmit',
   });
 
@@ -43,38 +43,33 @@ export function RegisterForm() {
       notify.error('خطا در ثبت‌نام', error);
     } else {
       notify.success('ثبت‌نام با موفقیت انجام شد', 'لطفاً ایمیل خود را تأیید کنید');
-      router.push('/register/success');
+      router.push('/auth/register/success');
     }
     setLoading(false);
   }
 
   return (
-    <div
-      className="
-        w-full max-w-md mx-auto p-8 
-        rounded-2xl shadow-xl 
-        backdrop-blur-xl 
-        transition-all
-      "
-      dir="rtl"
-    >
-      {/* Global Error */}
+    <div dir="rtl">
       {globalError && (
-        <div className="mb-6 text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
+        <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
           {globalError}
         </div>
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white ">*نام</FormLabel>
+                <FormLabel className="text-sm text-white/70">نام *</FormLabel>
                 <FormControl>
-                  <Input placeholder="نام شما" {...field} className=" h-11 text-base" />
+                  <Input
+                    placeholder="نام شما"
+                    {...field}
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,54 +81,63 @@ export function RegisterForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">*ایمیل</FormLabel>
+                <FormLabel className="text-sm text-white/70">ایمیل *</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="example@gmail.com"
+                    dir="ltr"
                     {...field}
-                    className=" h-11 text-base"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">شماره موبایل</FormLabel>
-                <FormControl>
-                  <Input placeholder="مثال: 09123456789" {...field} className="h-11 text-base" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">*رمز عبور</FormLabel>
+                <FormLabel className="text-sm text-white/70">شماره موبایل</FormLabel>
                 <FormControl>
                   <Input
-                    type="password"
-                    placeholder="********"
+                    placeholder="09123456789"
+                    dir="ltr"
                     {...field}
-                    className=" h-11 text-base"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm text-white/70">رمز عبور *</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="********"
+                    dir="ltr"
+                    {...field}
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             type="submit"
-            variant={'outline'}
-            className="w-full h-11 text-base font-medium"
+            className="h-11 w-full bg-cyan-500 text-base font-semibold text-black shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all hover:bg-cyan-400 hover:shadow-[0_0_25px_rgba(34,211,238,0.5)]"
             disabled={loading}
           >
             {loading ? 'در حال ثبت‌نام...' : 'ثبت نام'}

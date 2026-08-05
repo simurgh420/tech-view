@@ -13,6 +13,7 @@ vi.mock('@/lib/auth', () => ({
   auth: {
     api: {
       getSession: vi.fn(),
+      userHasPermission: vi.fn(), // اضافه شد
     },
   },
 }));
@@ -69,6 +70,7 @@ describe('API /api/wishlist/[id]', () => {
     it('should return 403 if user does not own the item', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'other-user' } });
       (getWishlistItemById as any).mockResolvedValue(mockItem);
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: false }); // مجوز ندارد
       const req = createNextRequest('DELETE');
       const res = await DELETE(req, { params: Promise.resolve({ id: '123' }) });
       expect(res.status).toBe(403);
@@ -79,6 +81,7 @@ describe('API /api/wishlist/[id]', () => {
     it('should return 200 and success on deletion', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
       (getWishlistItemById as any).mockResolvedValue(mockItem);
+      (auth.api.userHasPermission as any).mockResolvedValue({ success: true });
       (removeFromWishlist as any).mockResolvedValue(undefined);
       const req = createNextRequest('DELETE');
       const res = await DELETE(req, { params: Promise.resolve({ id: '123' }) });
@@ -91,6 +94,7 @@ describe('API /api/wishlist/[id]', () => {
     it('should return 500 on error', async () => {
       (auth.api.getSession as any).mockResolvedValue({ user: { id: 'u1' } });
       (getWishlistItemById as any).mockRejectedValue(new Error('DB error'));
+      // در این تست نیازی به تنظیم userHasPermission نیست چون خطا قبل از آن رخ می‌دهد
       const req = createNextRequest('DELETE');
       const res = await DELETE(req, { params: Promise.resolve({ id: '123' }) });
       expect(res.status).toBe(500);

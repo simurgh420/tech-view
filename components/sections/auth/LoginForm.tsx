@@ -50,25 +50,28 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-8 rounded-2xl shadow-lg backdrop-blur-md" dir="rtl">
+    <div dir="rtl">
       {globalError && (
-        <div className="mb-6 text-red-600 text-sm  border  p-3 rounded-lg">{globalError}</div>
+        <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+          {globalError}
+        </div>
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ایمیل</FormLabel>
+                <FormLabel className="text-sm text-white/70">ایمیل</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="example@gmail.com"
+                    dir="ltr"
                     {...field}
-                    className="h-11 text-base"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -81,9 +84,13 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div className="flex justify-between items-center">
-                  <FormLabel>رمز عبور</FormLabel>
-                  <Link href="/auth/forgot-password" tabIndex={-1} className="text-sm italic ">
+                <div className="flex items-center justify-between">
+                  <FormLabel className="text-sm text-white/70">رمز عبور</FormLabel>
+                  <Link
+                    href="/auth/forgot-password"
+                    tabIndex={-1}
+                    className="text-xs text-cyan-400/80 transition-colors hover:text-cyan-300"
+                  >
                     فراموش کردید؟
                   </Link>
                 </div>
@@ -91,8 +98,9 @@ export function LoginForm() {
                   <Input
                     type="password"
                     placeholder="********"
+                    dir="ltr"
                     {...field}
-                    className="h-11 text-base"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -102,8 +110,7 @@ export function LoginForm() {
 
           <Button
             type="submit"
-            variant={'outline'}
-            className="w-full h-11 text-base font-medium"
+            className="h-11 w-full bg-cyan-500 text-base font-semibold text-black shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all hover:bg-cyan-400 hover:shadow-[0_0_25px_rgba(34,211,238,0.5)]"
             disabled={loading}
           >
             {loading ? 'در حال ورود...' : 'ورود'}

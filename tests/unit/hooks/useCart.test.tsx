@@ -16,6 +16,11 @@ import {
 import * as cartQueries from '@/services/cart/api/queries';
 import * as cartMutations from '@/services/cart/api/mutations';
 
+// ─── اضافه کردن mock برای useSession ──────────────────────
+vi.mock('@/lib/auth-client', () => ({
+  useSession: vi.fn(),
+}));
+
 // ─── Mock API ها ──────────────────────────────────────────
 vi.mock('@/services/cart/api/queries', () => ({
   fetchCartApi: vi.fn(),
@@ -54,6 +59,10 @@ describe('useCart hooks', () => {
       ];
       (cartQueries.fetchCartApi as any).mockResolvedValue(mockItems);
 
+      // mock useSession برای فعال کردن کوئری
+      const { useSession } = await import('@/lib/auth-client');
+      (useSession as any).mockReturnValue({ data: { user: { id: 'test-user' } } });
+
       const { result } = renderHook(() => useGetCartItems(), {
         wrapper: createWrapper(),
       });
@@ -66,6 +75,9 @@ describe('useCart hooks', () => {
     it('should handle error when fetch fails', async () => {
       const error = new Error('Network error');
       (cartQueries.fetchCartApi as any).mockRejectedValue(error);
+
+      const { useSession } = await import('@/lib/auth-client');
+      (useSession as any).mockReturnValue({ data: { user: { id: 'test-user' } } });
 
       const { result } = renderHook(() => useGetCartItems(), {
         wrapper: createWrapper(),
@@ -140,7 +152,6 @@ describe('useCart hooks', () => {
       result.current.mutate(params);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-      // removeCartItemApi از داخل wrapper صدا زده می‌شود، فقط با id
       expect(cartMutations.removeCartItemApi).toHaveBeenCalledWith(params.id);
       expect(cartMutations.updateCartItemQuantityApi).not.toHaveBeenCalled();
       expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
@@ -164,7 +175,6 @@ describe('useCart hooks', () => {
       result.current.mutate(itemId);
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-      // removeCartItemApi مستقیماً به‌عنوان mutationFn استفاده شده، پس با context صدا زده می‌شود
       expect(cartMutations.removeCartItemApi).toHaveBeenCalledWith(itemId, expect.anything());
       expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: cartKeys.all });
     });

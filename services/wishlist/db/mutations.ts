@@ -1,6 +1,7 @@
 // services/wishlist/db/mutations.ts
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
+import { wishlistProductSelect } from './selects';
 
 export async function addToWishlist(userId: string, productId: string) {
   const startTime = Date.now();
@@ -11,15 +12,7 @@ export async function addToWishlist(userId: string, productId: string) {
       create: { userId, productId },
       include: {
         product: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            thumbnail: true,
-            price: true,
-            discountPrice: true,
-            isDiscounted: true,
-          },
+          select: wishlistProductSelect,
         },
       },
     });

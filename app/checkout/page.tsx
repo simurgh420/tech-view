@@ -11,7 +11,7 @@ export default async function CheckoutPage() {
   });
 
   if (!session?.user) {
-    redirect('/login?callbackUrl=/checkout');
+    redirect('/auth/login?callbackUrl=/checkout');
   }
 
   const cart = await getCartForCheckout(session.user.id);

@@ -1,5 +1,5 @@
 // hooks/useProducts.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { AdminProductItem, FiltersProduct, PaginatedResponse, Product } from '@/types/product';
 
 import {
@@ -24,6 +24,8 @@ export const productKeys = {
   all: ['products'] as const,
   lists: () => [...productKeys.all, 'list'] as const,
   filtered: (filters: FiltersProduct) => [...productKeys.all, 'filtered', filters] as const,
+  infinite: (filters: Omit<FiltersProduct, 'page'>) =>
+    [...productKeys.all, 'infinite', filters] as const,
   detail: (slug: string) => [...productKeys.all, 'detail', slug] as const,
   byCategory: (slug: string) => [...productKeys.all, 'category', slug] as const,
   byBrand: (slug: string) => [...productKeys.all, 'brand', slug] as const,
@@ -103,6 +105,17 @@ export function useProductFilters(categorySlug: string) {
     queryFn: () => fetchProductFiltersApi(categorySlug),
     enabled: !!categorySlug,
     staleTime: 1000 * 60 * 30,
+  });
+}
+
+/** محصولات با اسکرول بی‌نهایت */
+export function useGetInfiniteProducts(filters: Omit<FiltersProduct, 'page'>) {
+  return useInfiniteQuery<PaginatedResponse<Product>>({
+    queryKey: productKeys.infinite(filters),
+    queryFn: ({ pageParam }) => fetchFilteredProductsApi({ ...filters, page: pageParam as number }),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => (lastPage.page < lastPage.pages ? lastPage.page + 1 : undefined),
+    staleTime: 1000 * 60 * 2,
   });
 }
 
