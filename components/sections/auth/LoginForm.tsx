@@ -71,7 +71,7 @@ export function LoginForm() {
                     placeholder="example@gmail.com"
                     dir="ltr"
                     {...field}
-                    className="h-11 border-white/10 bg-white/[0.03] text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -100,7 +100,7 @@ export function LoginForm() {
                     placeholder="********"
                     dir="ltr"
                     {...field}
-                    className="h-11 border-white/10 bg-white/[0.03] text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+                    className="h-11 border-white/10 bg-white/3 text-base text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
                   />
                 </FormControl>
                 <FormMessage />
