@@ -11,7 +11,7 @@ export async function BlogSection() {
   if (!recent?.length) return null;
 
   return (
-    <section className="mt-10" dir="rtl">
+    <section dir="rtl">
       <div className="rounded-3xl border border-border bg-card px-6 py-10 shadow-sm md:px-10">
         {/* هدر */}
         <div className="mb-8 flex items-center justify-between">

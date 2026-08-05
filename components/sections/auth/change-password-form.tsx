@@ -71,7 +71,7 @@ export const ChangePasswordForm = () => {
     } else {
       notify.success('رمز عبور با موفقیت تغییر کرد');
       form.reset();
-      router.push('/login');
+      router.push('/auth/login');
     }
 
     setIsPending(false);

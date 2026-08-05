@@ -555,3 +555,11 @@ html {
 ::-webkit-scrollbar-corner {
   background: var(--muted);
 }
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}

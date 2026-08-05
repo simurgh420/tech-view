@@ -1,5 +1,6 @@
 // hooks/useCart.ts
 import { CartItem } from '@/app/generated/prisma/client';
+import { useSession } from '@/lib/auth-client';
 import { AddCartItemInput } from '@/lib/validation/cart';
 import {
   addCartItemApi,
@@ -22,9 +23,11 @@ export const cartKeys = {
 
 /** آیتم‌های سبد خرید */
 export function useGetCartItems() {
+  const { data: session } = useSession();
   return useQuery<CartItemWithProduct[]>({
     queryKey: cartKeys.all,
     queryFn: fetchCartApi,
+    enabled: !!session?.user,
   });
 }
 

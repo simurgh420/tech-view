@@ -47,7 +47,7 @@ export function UserActions({ session }: UserActionsProps) {
 
         {/* Not logged in */}
         {!user && (
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button
               size="sm"
               variant="ghost"
