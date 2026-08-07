@@ -1,17 +1,34 @@
-import { FooterBottom } from './FooterBottom';
+import { FooterBrand } from './FooterBrand';
 import { FooterColumns } from './FooterColumns';
+import { FooterNewsletter } from './FooterNewsletter';
+import { FooterBottom } from './FooterBottom';
 
 export function Footer() {
   return (
-    <footer
-      dir="rtl"
-      className="border-t border-white/5 bg-[oklch(15%_0.01_270)] bg-linear-to-b from-[oklch(18%_0.015_270)] to-[oklch(12%_0.01_270)] text-gray-200"
-    >
-      <div className="container mx-auto flex flex-col gap-8 px-4 py-10">
-        <FooterColumns />
+    <footer dir="rtl" className="border-t border-border bg-background">
+      <div className="container mx-auto max-w-7xl px-4 py-10">
+        <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-0">
+          {/* برند + تماس + شبکه‌های اجتماعی */}
+          <div className="lg:col-span-4 lg:border-e lg:border-border lg:pe-8">
+            <FooterBrand />
+          </div>
+
+          {/* ستون‌های لینک */}
+          <div className="lg:col-span-5 lg:border-e lg:border-border lg:px-8">
+            <FooterColumns />
+          </div>
+
+          {/* خبرنامه */}
+          <div className="lg:col-span-3 lg:ps-8">
+            <FooterNewsletter />
+          </div>
+        </div>
       </div>
-      <div className="container mx-auto">
-        <FooterBottom />
+
+      <div className="border-t border-border">
+        <div className="container mx-auto max-w-7xl px-4">
+          <FooterBottom />
+        </div>
       </div>
     </footer>
   );

@@ -1,30 +1,30 @@
-import {
-  LiaFacebookSquare,
-  LiaTwitterSquare,
-  LiaInstagram,
-  LiaYoutubeSquare,
-} from 'react-icons/lia';
+import { SiFacebook, SiInstagram, SiYoutube, SiX } from 'react-icons/si';
 
 const SOCIALS = [
-  { label: 'فیسبوک', href: '#', Icon: LiaFacebookSquare, hover: 'hover:text-blue-500' },
-  { label: 'توییتر', href: '#', Icon: LiaTwitterSquare, hover: 'hover:text-sky-500' },
-  { label: 'اینستاگرام', href: '#', Icon: LiaInstagram, hover: 'hover:text-pink-500' },
-  { label: 'یوتیوب', href: '#', Icon: LiaYoutubeSquare, hover: 'hover:text-red-500' },
+  { label: 'فیسبوک', href: '#', Icon: SiFacebook },
+  { label: 'توییتر', href: '#', Icon: SiX },
+  { label: 'اینستاگرام', href: '#', Icon: SiInstagram },
+  { label: 'یوتیوب', href: '#', Icon: SiYoutube },
 ] as const;
 
 export function SocialIcons() {
   return (
-    <div className="flex gap-4">
-      {SOCIALS.map(({ label, href, Icon, hover }) => (
+    <div className="flex items-center gap-2">
+      {SOCIALS.map(({ label, href, Icon }) => (
         <a
           key={label}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className={`text-neutral-500 transition-colors ${hover}`}
+          className="
+            flex h-9 w-9 items-center justify-center rounded-full
+            border border-border text-muted-foreground
+            transition-all duration-300
+            hover:border-primary/40 hover:bg-primary/10 hover:text-primary
+          "
         >
-          <Icon className="size-5" />
+          <Icon size={16} />
         </a>
       ))}
     </div>
