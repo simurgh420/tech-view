@@ -1,7 +1,6 @@
 // app/products/[slug]/ProductPageClient.tsx
 'use client';
 
-import { ProductActions } from '@/components/sections/products/actions/ProductActions';
 import ProductBreadcrumb from '@/components/sections/products/breadcrumb/ProductBreadcrumb';
 import ProductGallery from '@/components/sections/products/gallery/ProductGallery';
 import ProductInfo from '@/components/sections/products/info/ProductInfo';
@@ -52,9 +51,6 @@ export default function ProductPageClient({ slug }: ProductPageClientProps) {
           { label: product.title },
         ]}
       />
-      <div className="mb-8">
-        <ProductActions slug={slug} />
-      </div>
       <div
         className="
     rounded-3xl

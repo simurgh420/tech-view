@@ -3,11 +3,10 @@ import Link from 'next/link';
 type Props = {
   title: string;
   brand: string;
-  brandSlug?: string; // این پراپ رو برای لینک‌دهی اصولی اضافه کردیم
+  brandSlug?: string;
 };
 
 export default function ProductTitle({ title, brand, brandSlug }: Props) {
-  // اگر اسلاگ پاس داده نشده بود، به عنوان فال‌بک از خود نام برند استفاده می‌کنیم
   const brandUrl = brandSlug ? `products/brand/${brandSlug}` : `products/brand/${brand}`;
 
   return (

@@ -67,16 +67,25 @@ export function UserActions({ session }: UserActionsProps) {
               <button className="group flex cursor-pointer items-center gap-3">
                 <Avatar
                   className={cn(
-                    'size-9 transition-all',
+                    'size-9 transition-all duration-200',
                     isSuperAdmin
-                      ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-background group-hover:ring-yellow-400'
+                      ? 'ring-2 ring-primary ring-offset-2 ring-offset-background group-hover:ring-primary/80'
                       : isAdmin
                         ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-background group-hover:ring-emerald-400'
                         : 'ring-1 ring-gray-200 group-hover:ring-gray-300 dark:ring-gray-700 dark:group-hover:ring-gray-600'
                   )}
                 >
                   <AvatarImage src={user.image ?? ''} alt={user.name} />
-                  <AvatarFallback className="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                  <AvatarFallback
+                    className={cn(
+                      'font-medium',
+                      isSuperAdmin
+                        ? 'bg-primary/10 text-primary'
+                        : isAdmin
+                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-200'
+                    )}
+                  >
                     {user.name?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>

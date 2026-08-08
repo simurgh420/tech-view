@@ -17,14 +17,14 @@ export async function updateAdminUserAction(
     logger.warn('Unauthorized update attempt');
     return { success: false, error: 'Unauthorized: لطفاً وارد شوید' };
   }
-  logger.info('Checking set-role permission for admin update', {
+  logger.info('Checking update permission for admin update', {
     adminId: session.user.id,
   });
   const permissionCheck = await auth.api.userHasPermission({
     headers: headersList,
     body: {
       userId: session.user.id,
-      permissions: { user: ['set-role'] },
+      permissions: { user: ['update', 'set-email'] },
     },
   });
 
@@ -58,7 +58,6 @@ export async function updateAdminUserAction(
         status: err.status,
         message: err.message,
       });
-      // مدیریت خطاهای خاص Better Auth
       if (err.status === 404) {
         return { success: false, error: 'کاربر مورد نظر یافت نشد' };
       }
