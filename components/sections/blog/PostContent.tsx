@@ -101,11 +101,13 @@ export function PostContent({ post }: Props) {
           duration-200
 
           ${
-            author.role === 'ADMIN'
-              ? 'text-emerald-500 hover:text-emerald-400'
-              : author.role === 'USER'
-                ? 'text-orange-500 hover:text-orange-400'
-                : 'text-foreground hover:text-primary'
+            author.role === 'SUPER_ADMIN'
+              ? 'text-yellow-500 hover:text-yellow-400'
+              : author.role === 'ADMIN'
+                ? 'text-emerald-500 hover:text-emerald-400'
+                : author.role === 'USER'
+                  ? 'text-orange-500 hover:text-orange-400'
+                  : 'text-foreground hover:text-primary'
           }
         `}
               >
@@ -140,8 +142,11 @@ export function PostContent({ post }: Props) {
                 >
                   <div className="flex items-center gap-1.5 whitespace-nowrap">
                     <UserRoundCog size={13} />
-
-                    {author.role === 'ADMIN' ? 'مدیر سایت' : 'نویسنده'}
+                    {author.role === 'SUPER_ADMIN'
+                      ? 'مدیر ارشد'
+                      : author.role === 'ADMIN'
+                        ? 'مدیر سایت'
+                        : 'نویسنده'}
                   </div>
                 </div>
               )}

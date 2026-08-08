@@ -11,7 +11,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (session.user.role !== 'ADMIN') {
+    if (!['ADMIN', 'SUPER_ADMIN'].includes(session.user.role)) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }

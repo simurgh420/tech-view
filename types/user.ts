@@ -1,6 +1,6 @@
 // types/user.ts
 
-export type UserRole = 'ADMIN' | 'USER';
+export type UserRole = 'ADMIN' | 'USER' | 'SUPER_ADMIN';
 
 export interface UserPayload {
   name: string;
@@ -17,7 +17,7 @@ export type AppUser = {
   password: string | null;
   avatar: string | null;
   image: string | null;
-  role: 'USER' | 'ADMIN';
+  role: UserRole;
   emailVerified: Date | null;
   createdAt: Date;
   updatedAt: Date;

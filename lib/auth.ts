@@ -10,6 +10,15 @@ import prisma from '@/services/db/client';
 import { sendEmailAction } from '@/services/action/user/sendEmailAction';
 import { hashPassword, verifyPassword } from './auth/hash';
 import { isValidEmailDomain } from '@/services/action/validation/isValidEmailDomain';
+import { canManageUser } from './role-rank';
+
+const ADMIN_USER_TARGET_PATHS = new Set([
+  '/admin/set-role',
+  '/admin/ban-user',
+  '/admin/unban-user',
+  '/admin/remove-user',
+  '/admin/update-user',
+]);
 
 const options = {
   database: prismaAdapter(prisma, {
@@ -22,7 +31,6 @@ const options = {
     sendVerificationEmail: async ({ user, url }) => {
       const link = new URL(url);
       link.searchParams.set('callbackURL', '/auth/verify');
-
       const result = await sendEmailAction({
         to: user.email,
         subject: 'Verify your email address',
@@ -63,36 +71,101 @@ const options = {
     before: createAuthMiddleware(async ctx => {
       if (ctx.path === '/sign-up/email') {
         const email = String(ctx.body.email);
-
         const isReal = await isValidEmailDomain(email);
         if (!isReal) {
-          throw new APIError('BAD_REQUEST', { message: 'Invalid email domain.' });
+          throw new APIError('BAD_REQUEST', {
+            message: 'Invalid email domain.',
+          });
         }
-
         const name = normalizeName(ctx.body.name);
-
         return {
-          context: { ...ctx, body: { ...ctx.body, name } },
+          context: {
+            ...ctx,
+            body: { ...ctx.body, name },
+          },
         };
       }
 
       if (ctx.path === '/update-user') {
         const name = normalizeName(ctx.body.name);
-
         return {
-          context: { ...ctx, body: { ...ctx.body, name } },
+          context: {
+            ...ctx,
+            body: { ...ctx.body, name },
+          },
         };
+      }
+
+      // ───────────────────────────────────────
+      // Admin user-management protection
+      // ───────────────────────────────────────
+      if (ADMIN_USER_TARGET_PATHS.has(ctx.path)) {
+        const actingUser = ctx.context.session?.user;
+        const targetUserId = ctx.body?.userId as string | undefined;
+
+        if (!actingUser || !targetUserId) return;
+
+        // جلوگیری از عملیات روی خود
+        if (targetUserId === actingUser.id) {
+          throw new APIError('FORBIDDEN', {
+            message: 'نمی‌توانید این عملیات را روی حساب خودتان انجام دهید.',
+          });
+        }
+
+        const targetUser = await prisma.user.findUnique({
+          where: { id: targetUserId },
+          select: { role: true },
+        });
+
+        if (!targetUser) return;
+
+        // بررسی توانایی مدیریت نقش فعلی کاربر هدف
+        if (!canManageUser(String(actingUser.role), String(targetUser.role))) {
+          throw new APIError('FORBIDDEN', {
+            message: 'شما اجازه مدیریت این حساب را ندارید.',
+          });
+        }
+
+        // بررسی نقش جدید در set-role
+        if (ctx.path === '/admin/set-role') {
+          const requestedRole = ctx.body?.role;
+          if (typeof requestedRole !== 'string') {
+            throw new APIError('BAD_REQUEST', {
+              message: 'نقش جدید نامعتبر است.',
+            });
+          }
+          if (!canManageUser(String(actingUser.role), requestedRole)) {
+            throw new APIError('FORBIDDEN', {
+              message: 'شما اجازه اختصاص این نقش را ندارید.',
+            });
+          }
+        }
+
+        // بررسی نقش جدید در update-user
+        if (ctx.path === '/admin/update-user') {
+          const data = ctx.body?.data;
+          if (data && typeof data === 'object' && 'role' in data) {
+            const requestedRole = data.role;
+            if (typeof requestedRole !== 'string') {
+              throw new APIError('BAD_REQUEST', {
+                message: 'نقش جدید نامعتبر است.',
+              });
+            }
+            if (!canManageUser(String(actingUser.role), requestedRole)) {
+              throw new APIError('FORBIDDEN', {
+                message: 'شما اجازه اختصاص این نقش را ندارید.',
+              });
+            }
+          }
+        }
       }
     }),
   },
-
   user: {
-    deleteUser: {
-      enabled: true,
-    },
+    deleteUser: { enabled: true },
     additionalFields: {
       role: {
-        type: ['USER', 'ADMIN'],
+        type: ['USER', 'ADMIN', 'SUPER_ADMIN'],
         input: false,
       },
       banReason: { type: 'string', input: false },
@@ -112,14 +185,10 @@ const options = {
     },
   },
   account: {
-    accountLinking: {
-      enabled: false,
-    },
+    accountLinking: { enabled: false },
   },
   advanced: {
-    database: {
-      generateId: false,
-    },
+    database: { generateId: false },
   },
   socialProviders: {
     google: {
@@ -134,7 +203,7 @@ const options = {
   plugins: [
     admin({
       defaultRole: 'USER',
-      adminRoles: ['ADMIN'],
+      adminRoles: ['ADMIN', 'SUPER_ADMIN'],
       ac,
       roles,
     }),

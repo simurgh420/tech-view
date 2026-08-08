@@ -17,7 +17,7 @@ export type BlogPost = {
     id: string;
     name: string;
     image: string | null;
-    role: 'ADMIN' | 'USER' | null;
+    role: 'ADMIN' | 'USER' | 'SUPER_ADMIN' | null;
   } | null;
 
   tags: {

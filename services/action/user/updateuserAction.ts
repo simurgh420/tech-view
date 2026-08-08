@@ -16,7 +16,8 @@ export async function updateUserAction(formData: FormData) {
     logger.warn('Unauthorized update attempt');
     return { success: false, error: 'Unauthorized: لطفاً وارد شوید' };
   }
-  const isAdmin = session.user.role === 'ADMIN';
+  const isAdmin = session.user.role === 'ADMIN' || session.user.role === 'SUPER_ADMIN';
+
   // 1. استخراج و اعتبارسنجی اولیه داده‌ها
   const name = String(formData.get('name') ?? '');
   const file = formData.get('file') as File | null;
