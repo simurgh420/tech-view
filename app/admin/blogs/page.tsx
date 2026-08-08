@@ -15,7 +15,7 @@ export default async function AdminBlogsPage() {
     redirect('/unauthorized');
   }
 
-  if (session.user.role !== 'ADMIN') {
+  if (!['ADMIN', 'SUPER_ADMIN'].includes(session.user.role)) {
     redirect('/unauthorized');
   }
 

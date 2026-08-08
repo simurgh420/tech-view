@@ -38,7 +38,8 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
 
   // ۳. کنترل دسترسی
   const isAuthor = blog.authorId === session.user.id;
-  const isAdmin = session.user.role === 'ADMIN';
+  const isAdmin = session.user.role === 'ADMIN' || session.user.role === 'SUPER_ADMIN';
+
   if (!isAuthor && !isAdmin) {
     return (
       <div className="text-center py-10">

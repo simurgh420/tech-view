@@ -410,6 +410,7 @@ enum PriceType {
 enum UserRole {
   ADMIN
   USER
+  SUPER_ADMIN
 }
 enum CommentStatus {
   PENDING

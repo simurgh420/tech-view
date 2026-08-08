@@ -38,4 +38,25 @@ export const roles = {
     productComments: ['create', 'read', 'update', 'update:own', 'delete', 'delete:own', 'moderate'],
     ...adminAc.statements,
   }),
+  SUPER_ADMIN: ac.newRole({
+    posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
+
+    brands: ['create', 'update', 'delete'],
+
+    categories: ['create', 'update', 'delete'],
+
+    comments: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
+
+    products: ['create', 'read', 'update', 'delete'],
+
+    contacts: ['read', 'delete'],
+
+    reviews: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
+
+    wishlist: ['create', 'read', 'delete', 'delete:own'],
+
+    productComments: ['create', 'read', 'update', 'update:own', 'delete', 'delete:own', 'moderate'],
+
+    ...adminAc.statements,
+  }),
 };

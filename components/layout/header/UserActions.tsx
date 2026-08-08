@@ -27,6 +27,8 @@ interface UserActionsProps {
 export function UserActions({ session }: UserActionsProps) {
   const user = session?.user;
   const isAdmin = user?.role === 'ADMIN';
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const isAdminOrSuper = isAdmin || isSuperAdmin;
 
   const [openSearch, setOpenSearch] = useState(false);
 
@@ -66,9 +68,11 @@ export function UserActions({ session }: UserActionsProps) {
                 <Avatar
                   className={cn(
                     'size-9 transition-all',
-                    isAdmin
-                      ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-background group-hover:ring-emerald-400'
-                      : 'ring-1 ring-gray-200 group-hover:ring-gray-300 dark:ring-gray-700 dark:group-hover:ring-gray-600'
+                    isSuperAdmin
+                      ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-background group-hover:ring-yellow-400'
+                      : isAdmin
+                        ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-background group-hover:ring-emerald-400'
+                        : 'ring-1 ring-gray-200 group-hover:ring-gray-300 dark:ring-gray-700 dark:group-hover:ring-gray-600'
                   )}
                 >
                   <AvatarImage src={user.image ?? ''} alt={user.name} />
@@ -91,7 +95,8 @@ export function UserActions({ session }: UserActionsProps) {
                 حساب کاربری
               </DropdownMenuLabel>
 
-              {isAdmin && (
+              {/* نمایش لینک داشبورد برای ادمین و سوپرادمین */}
+              {isAdminOrSuper && (
                 <DropdownMenuItem asChild>
                   <Link href="/admin/dashboard">داشبورد</Link>
                 </DropdownMenuItem>

@@ -13,7 +13,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (session.user.role !== 'ADMIN') {
+    if (!['ADMIN', 'SUPER_ADMIN'].includes(session.user.role)) {
       logger.warn('GET /api/blog/admin - Forbidden', { userId: session.user.id });
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
