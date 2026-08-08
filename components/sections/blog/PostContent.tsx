@@ -102,11 +102,11 @@ export function PostContent({ post }: Props) {
 
           ${
             author.role === 'SUPER_ADMIN'
-              ? 'text-yellow-500 hover:text-yellow-400'
+              ? 'text-primary hover:text-primary/80'
               : author.role === 'ADMIN'
                 ? 'text-emerald-500 hover:text-emerald-400'
                 : author.role === 'USER'
-                  ? 'text-orange-500 hover:text-orange-400'
+                  ? 'text-muted-foreground hover:text-foreground'
                   : 'text-foreground hover:text-primary'
           }
         `}

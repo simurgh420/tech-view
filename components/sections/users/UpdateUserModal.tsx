@@ -3,9 +3,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-
-import { UserWithRole } from 'better-auth/plugins';
-
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,6 +15,7 @@ import { Input } from '@/components/ui/input';
 
 import { updateAdminUserAction } from '@/services/action/user/updateAdminUserAction';
 import { useNotify } from '@/hooks/useNotify';
+import { UserWithRole } from 'better-auth/plugins';
 
 type FormValues = {
   name: string;
@@ -70,7 +68,6 @@ export function UpdateUserModal({ user }: { user: UserWithRole }) {
             <Input {...register('name')} placeholder="نام" />
 
             <Input {...register('email')} placeholder="ایمیل" type="email" />
-
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 انصراف

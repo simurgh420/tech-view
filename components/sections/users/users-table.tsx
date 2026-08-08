@@ -69,7 +69,7 @@ export function UsersTable({ users, currentUserId, currentUserRole }: UsersTable
           <TableBody>
             {filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
                   کاربری با این مشخصات یافت نشد.
                 </TableCell>
               </TableRow>
