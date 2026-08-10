@@ -1,18 +1,33 @@
-import { bestSellers } from '@/components/sections/dummy/dummyBestSellers';
-import { BestSellerCard } from './BestSellerCard';
+import { getBestSellerProducts } from '@/services/products/db/queries';
+import { logger } from '@/lib/logger';
+import { ProductSection } from '../ProductSection';
 
-export function BestSellers() {
+async function getSafeBestSellers() {
+  try {
+    const products = await getBestSellerProducts(8);
+
+    return products.length > 0 ? products : null;
+  } catch (error) {
+    logger.error('BestSellers section failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+    });
+
+    return null;
+  }
+}
+
+export default async function BestSellers() {
+  const products = await getSafeBestSellers();
+
+  if (!products) return null;
+
   return (
-    <section className="mt-10">
-      <div className="rounded-2xl shadow-lg px-6 py-10">
-        <h2 className="text-2xl font-bold mb-8">Best Sellers</h2>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {bestSellers.map(product => (
-            <BestSellerCard key={product.title} {...product} />
-          ))}
-        </div>
-      </div>
-    </section>
+    <ProductSection
+      title="پرفروش‌ترین‌ها"
+      description="محبوب‌ترین انتخاب‌های کاربران"
+      href="/products?sort=best-selling"
+      products={products}
+      //scroll   این پراپ برای موقع ک محصولات بالا 4 تا بشن اسکرول اضافه میکنه به اون قسمت
+    />
   );
 }

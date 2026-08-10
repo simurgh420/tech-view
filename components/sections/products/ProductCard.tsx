@@ -125,7 +125,6 @@ export default function ProductCard({
           >
             %{formatPrice(product.discountPercentage)}
           </span>
-
         )}
 
         <div className="absolute end-2 top-2 z-10">
@@ -174,23 +173,23 @@ export default function ProductCard({
 
         {/* امتیاز و ارسال */}
         <div className="flex items-center justify-between">
-          <StarRatingDisplay value={rating} size={9} />
+          {rating > 0 ? <StarRatingDisplay value={rating} size={9} /> : <span />}
 
           <div
             className="
-              flex
-              items-center
-              gap-1
-              rounded-full
-              bg-emerald-50
-              px-2
-              py-1
-              text-[11px]
-              font-medium
-              text-emerald-600
-              dark:bg-emerald-950/40
-              dark:text-emerald-400
-            "
+      flex
+      items-center
+      gap-1
+      rounded-full
+      bg-emerald-50
+      px-2
+      py-1
+      text-[11px]
+      font-medium
+      text-emerald-600
+      dark:bg-emerald-950/40
+      dark:text-emerald-400
+    "
           >
             <Zap size={11} fill="currentColor" />
             <span>{fastShippingLabel}</span>

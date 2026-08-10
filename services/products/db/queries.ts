@@ -1,6 +1,6 @@
 // services/products/db/queries.ts
 import prisma from '@/services/db/client';
-import { productIncludes, productWithReviews } from '../productIncludes';
+import { homeProductSelect, productIncludes, productWithReviews } from '../productIncludes';
 import { logger } from '@/lib/logger';
 import { formatProduct } from '../utils/formatProduct';
 
@@ -256,6 +256,102 @@ export async function getFilteredProducts(filters: {
       error: error instanceof Error ? error.message : 'Unknown',
       duration: Date.now() - startTime,
     });
+    throw error;
+  }
+}
+export async function getBestSellerProducts(limit = 8) {
+  const startTime = Date.now();
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        status: 'PUBLISHED',
+      },
+      orderBy: {
+        rating: 'desc',
+      },
+      take: limit,
+      select: homeProductSelect,
+    });
+
+    logger.info('getBestSellerProducts success', {
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+
+    return products;
+  } catch (error) {
+    logger.error('getBestSellerProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+
+    throw error;
+  }
+}
+
+export async function getNewArrivalProducts(limit = 10) {
+  const startTime = Date.now();
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        status: 'PUBLISHED',
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+      select: homeProductSelect,
+    });
+
+    logger.info('getNewArrivalProducts success', {
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+
+    return products;
+  } catch (error) {
+    logger.error('getNewArrivalProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+
+    throw error;
+  }
+}
+
+export async function getDiscountedProducts(limit = 10) {
+  const startTime = Date.now();
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        status: 'PUBLISHED',
+        isDiscounted: true,
+        discountPrice: {
+          not: null,
+        },
+      },
+      orderBy: {
+        discountPrice: 'asc',
+      },
+      take: limit,
+      select: homeProductSelect,
+    });
+
+    logger.info('getDiscountedProducts success', {
+      count: products.length,
+      duration: Date.now() - startTime,
+    });
+
+    return products;
+  } catch (error) {
+    logger.error('getDiscountedProducts failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+
     throw error;
   }
 }
