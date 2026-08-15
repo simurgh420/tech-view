@@ -39,6 +39,7 @@
     "checkout",
     "Search",
     "Hook",
-    "Admin"
+    "Admin",
+    "reports"
   ]
 }

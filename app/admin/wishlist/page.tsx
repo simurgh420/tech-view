@@ -12,7 +12,6 @@ import { AdminWishlistPageClient } from '@/components/admin/wishlist/AdminWishli
 export default async function AdminWishlistPage() {
   const queryClient = getQueryClient();
 
-  // Prefetch لیست تمام آیتم‌های ویش‌لیست
   await queryClient.prefetchQuery({
     queryKey: adminWishlistKeys.all,
     queryFn: fetchAdminWishlistApi,
