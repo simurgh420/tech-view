@@ -87,7 +87,7 @@ export function QuickActions() {
             <Link
               key={action.href}
               href={action.href}
-              className="group flex min-h-[150px] flex-col justify-between rounded-xl border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-muted/50 hover:shadow-sm"
+              className="group flex min-h-37.5 flex-col justify-between rounded-xl border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-muted/50 hover:shadow-sm"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className={`rounded-xl p-2.5 ${action.className}`}>

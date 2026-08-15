@@ -55,7 +55,7 @@ function CustomTooltip({
 function EmptyChartState() {
   return (
     <div
-      className="relative h-[320px] w-full overflow-hidden rounded-xl border border-dashed bg-muted/10"
+      className="relative h-80 w-full overflow-hidden rounded-xl border border-dashed bg-muted/10"
       title="داده‌ای برای نمایش وجود ندارد"
     >
       {/* Decorative empty chart */}
@@ -129,7 +129,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
       {!hasData ? (
         <EmptyChartState />
       ) : (
-        <div className="h-[320px] w-full">
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={data}
