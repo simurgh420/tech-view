@@ -5,7 +5,7 @@ import { ShieldCheck } from 'lucide-react';
 
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
-import { getDashboardStats } from '@/services/reports/db/queries';
+import { getDashboardOverview } from '@/services/reports/db/dashboard';
 import {
   DashboardStats,
   QuickActions,
@@ -27,7 +27,7 @@ export default async function AdminDashboard() {
     redirect('/forbidden');
   }
 
-  const dashboard = await getDashboardStats();
+  const dashboard = await getDashboardOverview();
 
   return (
     <div

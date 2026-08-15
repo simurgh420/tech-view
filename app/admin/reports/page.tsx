@@ -4,17 +4,12 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import {
-  DollarSign,
-  ShoppingCart,
-  Users,
-  Package,
-} from 'lucide-react';
+import { DollarSign, ShoppingCart, Users, Package } from 'lucide-react';
 
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { getDashboardStats } from '@/services/reports/db/queries';
+import { getDashboardOverview } from '@/services/reports/db/dashboard';
 import { formatPrice } from '@/lib/formatPrice';
 
 const STATUS_LABELS: Record<string, string> = {
@@ -26,20 +21,15 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING:
-    'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400',
+  PENDING: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400',
 
-  PAID:
-    'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',
+  PAID: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',
 
-  SHIPPED:
-    'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400',
+  SHIPPED: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400',
 
-  DELIVERED:
-    'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400',
+  DELIVERED: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400',
 
-  CANCELED:
-    'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400',
+  CANCELED: 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400',
 };
 
 function StatCard({
@@ -59,20 +49,13 @@ function StatCard({
     <Card className="border-border/60 shadow-sm">
       <CardContent className="flex items-center gap-4 p-6">
         <div className={`rounded-xl p-3 ${iconBgClassName}`}>
-          <Icon
-            className={`size-6 ${iconClassName}`}
-            aria-hidden="true"
-          />
+          <Icon className={`size-6 ${iconClassName}`} aria-hidden="true" />
         </div>
 
         <div>
-          <p className="text-sm text-muted-foreground">
-            {label}
-          </p>
+          <p className="text-sm text-muted-foreground">{label}</p>
 
-          <p className="text-2xl font-bold">
-            {value}
-          </p>
+          <p className="text-2xl font-bold">{value}</p>
         </div>
       </CardContent>
     </Card>
@@ -106,24 +89,14 @@ export default async function AdminReportsPage() {
     redirect('/unauthorized');
   }
 
-  if (
-    session.user.role !== 'ADMIN' &&
-    session.user.role !== 'SUPER_ADMIN'
-  ) {
+  if (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN') {
     redirect('/forbidden');
   }
 
-  const dashboard = await getDashboardStats();
+  const dashboard = await getDashboardOverview();
 
-  const {
-    revenue,
-    revenueGrowth,
-    orders,
-    ordersGrowth,
-    users,
-    usersGrowth,
-    products,
-  } = dashboard.stats;
+  const { revenue, revenueGrowth, orders, ordersGrowth, users, usersGrowth, products } =
+    dashboard.stats;
 
   return (
     <div
@@ -135,9 +108,7 @@ export default async function AdminReportsPage() {
         <Breadcrumb />
 
         <div>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            گزارش‌ها
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">گزارش‌ها</h1>
 
           <p className="mt-2 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             نمای کلی عملکرد فروشگاه در ۳۰ روز اخیر.
@@ -188,57 +159,33 @@ export default async function AdminReportsPage() {
         <CardContent className="p-6">
           <div className="grid gap-6 sm:grid-cols-3">
             <div>
-              <p className="text-sm text-muted-foreground">
-                رشد فروش
-              </p>
+              <p className="text-sm text-muted-foreground">رشد فروش</p>
 
-              <p
-                className={`mt-2 text-2xl font-bold ${getGrowthClass(
-                  revenueGrowth,
-                )}`}
-              >
+              <p className={`mt-2 text-2xl font-bold ${getGrowthClass(revenueGrowth)}`}>
                 {formatGrowth(revenueGrowth)}
               </p>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                نسبت به ۳۰ روز قبل
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground">نسبت به ۳۰ روز قبل</p>
             </div>
 
             <div>
-              <p className="text-sm text-muted-foreground">
-                رشد سفارش‌ها
-              </p>
+              <p className="text-sm text-muted-foreground">رشد سفارش‌ها</p>
 
-              <p
-                className={`mt-2 text-2xl font-bold ${getGrowthClass(
-                  ordersGrowth,
-                )}`}
-              >
+              <p className={`mt-2 text-2xl font-bold ${getGrowthClass(ordersGrowth)}`}>
                 {formatGrowth(ordersGrowth)}
               </p>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                نسبت به ۳۰ روز قبل
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground">نسبت به ۳۰ روز قبل</p>
             </div>
 
             <div>
-              <p className="text-sm text-muted-foreground">
-                رشد کاربران
-              </p>
+              <p className="text-sm text-muted-foreground">رشد کاربران</p>
 
-              <p
-                className={`mt-2 text-2xl font-bold ${getGrowthClass(
-                  usersGrowth,
-                )}`}
-              >
+              <p className={`mt-2 text-2xl font-bold ${getGrowthClass(usersGrowth)}`}>
                 {formatGrowth(usersGrowth)}
               </p>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                نسبت به ۳۰ روز قبل
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground">نسبت به ۳۰ روز قبل</p>
             </div>
           </div>
         </CardContent>
@@ -248,13 +195,9 @@ export default async function AdminReportsPage() {
       <Card className="border-border/60 shadow-sm">
         <CardContent className="p-6">
           <div className="mb-5">
-            <h2 className="text-lg font-semibold">
-              آخرین سفارش‌ها
-            </h2>
+            <h2 className="text-lg font-semibold">آخرین سفارش‌ها</h2>
 
-            <p className="mt-1 text-sm text-muted-foreground">
-              آخرین سفارش‌های ثبت‌شده در سیستم
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">آخرین سفارش‌های ثبت‌شده در سیستم</p>
           </div>
 
           {dashboard.recentOrders.length === 0 ? (
@@ -263,12 +206,10 @@ export default async function AdminReportsPage() {
             </p>
           ) : (
             <div className="space-y-2">
-              {dashboard.recentOrders.map((order) => {
-                const statusClass =
-                  STATUS_COLORS[order.status] ?? 'bg-muted text-muted-foreground';
+              {dashboard.recentOrders.map(order => {
+                const statusClass = STATUS_COLORS[order.status] ?? 'bg-muted text-muted-foreground';
 
-                const statusLabel =
-                  STATUS_LABELS[order.status] ?? order.status;
+                const statusLabel = STATUS_LABELS[order.status] ?? order.status;
 
                 return (
                   <div
@@ -276,9 +217,7 @@ export default async function AdminReportsPage() {
                     className="flex flex-col gap-3 rounded-lg border border-border/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className="truncate font-medium">
-                        {order.userName}
-                      </span>
+                      <span className="truncate font-medium">{order.userName}</span>
 
                       <span
                         className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusClass}`}
@@ -288,13 +227,9 @@ export default async function AdminReportsPage() {
                     </div>
 
                     <div className="flex items-center justify-between gap-4 sm:justify-end">
-                      <span className="text-xs text-muted-foreground">
-                        #{order.id}
-                      </span>
+                      <span className="text-xs text-muted-foreground">#{order.id}</span>
 
-                      <span className="font-semibold">
-                        {formatPrice(order.total)} تومان
-                      </span>
+                      <span className="font-semibold">{formatPrice(order.total)} تومان</span>
                     </div>
                   </div>
                 );
