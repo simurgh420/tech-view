@@ -130,7 +130,12 @@ export default function ProductCard({
         <div className="absolute end-2 top-2 z-10">
           <WishlistButton
             productId={product.id}
-            className="bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm dark:bg-neutral-900/80 dark:hover:bg-neutral-900"
+            className="
+      bg-white/80
+      hover:bg-white
+      dark:bg-neutral-900/80
+      dark:hover:bg-neutral-900
+    "
           />
         </div>
       </div>

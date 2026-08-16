@@ -1,9 +1,10 @@
-// components/wishlist/WishlistButton.tsx
 'use client';
 
 import { Heart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
 import { useCheckWishlist, useToggleWishlistByProduct } from '@/hooks/useWishlist';
+
+import { useNotify } from '@/hooks/useNotify';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -12,32 +13,66 @@ interface Props {
 }
 
 export function WishlistButton({ productId, className }: Props) {
-  const { data, isLoading } = useCheckWishlist(productId);
-  const { mutate: toggle, isPending } = useToggleWishlistByProduct();
+  const notify = useNotify();
 
-  const isInWishlist = data?.inWishlist ?? false;
+  const { data: wishlistStatus, isLoading } = useCheckWishlist(productId);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleWishlist = useToggleWishlistByProduct();
+
+  const isWishlisted = wishlistStatus?.inWishlist ?? false;
+
+  const disabled = isLoading || toggleWishlist.isPending;
+
+  const handleToggleWishlist = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    toggle({ productId, exists: isInWishlist });
+
+    toggleWishlist.mutate(
+      {
+        productId,
+        exists: isWishlisted,
+      },
+      {
+        onError: () => {
+          notify.error('برای افزودن به علاقه‌مندی‌ها ابتدا وارد شوید');
+        },
+      }
+    );
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className={cn('relative', className)}
-      onClick={handleClick}
-      disabled={isLoading || isPending}
-      title={isInWishlist ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
+    <button
+      type="button"
+      onClick={handleToggleWishlist}
+      aria-label={isWishlisted ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
+      disabled={disabled}
+      className={cn(
+        `
+          flex
+          h-8
+          w-8
+          items-center
+          justify-center
+          rounded-full
+          bg-background/80
+          shadow-sm
+          backdrop-blur-md
+          transition-all
+          duration-300
+          hover:scale-110
+          disabled:cursor-not-allowed
+          disabled:opacity-60
+        `,
+        className
+      )}
     >
       <Heart
+        size={15}
         className={cn(
-          'h-5 w-5 transition-all',
-          isInWishlist ? 'fill-red-500 text-red-500 scale-110' : 'text-muted-foreground'
+          'transition-colors duration-200',
+          isWishlisted ? 'fill-red-600 text-red-600' : 'text-foreground'
         )}
       />
-    </Button>
+    </button>
   );
 }

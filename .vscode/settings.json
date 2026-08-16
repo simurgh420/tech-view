@@ -15,7 +15,8 @@
     "TECHVIEW",
     "Unban",
     "undislike",
-    "usecases"
+    "usecases",
+    "Wishlisted"
   ],
   "atlascode.enableHttpsTunnel": true,
   "atlascode.enableCurlLogging": true,

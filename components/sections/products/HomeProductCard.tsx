@@ -1,10 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart } from 'lucide-react';
-
 import { StarRatingDisplay } from '@/components/ui/star-rating-input';
 import { formatPrice } from '@/lib/formatPrice';
 import { HomeProduct } from '@/services/products/productIncludes';
+import { WishlistButton } from '../wishlist/WishlistButton';
 
 type Props = {
   product: HomeProduct;
@@ -12,7 +11,6 @@ type Props = {
 
 export default function HomeProductCard({ product }: Props) {
   const rating = Number(product.rating) || 0;
-
   const price = product.price.toString();
   const discountPrice = product.discountPrice?.toString() ?? null;
   const discountPercentage = Number(product.discountPercentage) || 0;
@@ -20,99 +18,105 @@ export default function HomeProductCard({ product }: Props) {
     product.isDiscounted &&
     product.discountPrice !== null &&
     Number(product.discountPrice) < Number(product.price);
+
   return (
     <Link
       href={`/products/${product.slug}`}
       dir="rtl"
       className="
-  group
-  relative
-  flex
-  h-full
-  flex-col
-  overflow-hidden
-  rounded-2xl
-  border
-  border-border
-  transition-[transform,box-shadow,border-color]
-  duration-500
-  ease-[cubic-bezier(0.22,1,0.36,1)]
-  hover:-translate-y-1
-  hover:border-primary/30
-  hover:shadow-xl
-  hover:shadow-primary/5
-"
+        group
+        relative
+        flex
+        h-full
+        flex-col
+        overflow-hidden
+        rounded-2xl
+        border
+        border-border
+        transition-[transform,box-shadow,border-color]
+        duration-500
+        ease-[cubic-bezier(0.22,1,0.36,1)]
+        hover:-translate-y-1
+        hover:border-primary/30
+        hover:shadow-xl
+        hover:shadow-primary/5
+      "
     >
-      {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-muted/20">
+      <div className="relative aspect-square overflow-hidden bg-[radial-gradient(ellipse_at_50%_35%,rgba(220,38,38,0.07),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_50%_35%,rgba(220,38,38,0.12),transparent_70%)]">
         <Image
           src={product.thumbnail || '/placeholder.jpg'}
           alt={product.title}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 260px"
           className="
-  object-contain
-  p-5
-  transition-transform
-  duration-700
-  ease-[cubic-bezier(0.22,1,0.36,1)]
-  group-hover:scale-[1.06]
-"
+            object-contain
+            p-5
+            transition-transform
+            duration-700
+            ease-[cubic-bezier(0.22,1,0.36,1)]
+            group-hover:scale-[1.06]
+          "
         />
 
         {/* Discount */}
         {hasDiscount && discountPercentage > 0 && (
           <span
             className="
-      absolute
-      start-3
-      top-3
-      rounded-full
-      bg-destructive
-      px-2.5
-      py-1
-      text-[11px]
-      font-bold
-      text-destructive-foreground
-    "
+              absolute
+              start-3
+              top-3
+              rounded-full
+              bg-destructive
+              px-2.5
+              py-1
+              text-[11px]
+              font-bold
+              text-destructive-foreground
+              shadow-sm
+            "
           >
             {discountPercentage}٪
           </span>
         )}
+
+        <div className="absolute end-3 top-3">
+          <WishlistButton productId={product.id} />
+        </div>
+
         {/* Hover action */}
         <div
           className="
-    pointer-events-none
-    absolute
-    inset-x-4
-    bottom-4
-    translate-y-3
-    opacity-0
-    transition-all
-    duration-500
-    ease-[cubic-bezier(0.22,1,0.36,1)]
-    group-hover:translate-y-0
-    group-hover:opacity-100
-  "
+            pointer-events-none
+            absolute
+            inset-x-4
+            bottom-4
+            translate-y-3
+            opacity-0
+            transition-all
+            duration-500
+            ease-[cubic-bezier(0.22,1,0.36,1)]
+            group-hover:translate-y-0
+            group-hover:opacity-100
+          "
         >
           <div
             className="
-      rounded-xl
-      bg-background/95
-      px-4
-      py-2.5
-      text-center
-      text-xs
-      font-semibold
-      text-foreground
-      shadow-lg
-      shadow-black/5
-      backdrop-blur-md
-      transition-all
-      duration-300
-      group-hover:bg-primary
-      group-hover:text-primary-foreground
-    "
+              rounded-xl
+              bg-background/95
+              px-4
+              py-2.5
+              text-center
+              text-xs
+              font-semibold
+              text-foreground
+              shadow-lg
+              shadow-black/5
+              backdrop-blur-md
+              transition-all
+              duration-300
+              group-hover:bg-primary
+              group-hover:text-primary-foreground
+            "
           >
             مشاهده محصول
           </div>
@@ -130,9 +134,9 @@ export default function HomeProductCard({ product }: Props) {
             font-medium
             leading-5
             text-foreground
-          transition-colors
-           duration-500
-           roup-hover:text-primary
+            transition-colors
+            duration-500
+            group-hover:text-primary
           "
         >
           {product.title}
@@ -152,26 +156,15 @@ export default function HomeProductCard({ product }: Props) {
         {/* Price */}
         <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <span
-            className="
-              text-base
-              font-bold
-              tracking-tight
-              text-foreground
-            "
+            className={`text-base font-bold tracking-tight ${
+              hasDiscount ? 'text-red-600 dark:text-red-400' : 'text-foreground'
+            }`}
           >
             {formatPrice(hasDiscount ? (discountPrice ?? price) : price)}
           </span>
 
           {hasDiscount && (
-            <span
-              className="
-                text-xs
-                text-muted-foreground
-                line-through
-              "
-            >
-              {formatPrice(price)}
-            </span>
+            <span className="text-xs text-muted-foreground line-through">{formatPrice(price)}</span>
           )}
         </div>
       </div>
