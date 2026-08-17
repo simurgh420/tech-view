@@ -204,8 +204,8 @@ export function AdminProductTable() {
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-2xl" dir="rtl">
-                            <DialogHeader>
-                              <DialogTitle className="text-right">
+                            <DialogHeader className="pt-2">
+                              <DialogTitle className="text-right tracking-wide">
                                 بازخوردهای محصول «{product.title}»
                               </DialogTitle>
                               <DialogDescription className="text-right">
