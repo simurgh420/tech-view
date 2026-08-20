@@ -37,7 +37,7 @@ export function FaqSidebar({ categories }: { categories: FAQCategory[] }) {
             key={category.id}
             href={`#${category.id}`}
             className={`
-              rounded-sm border-r-2 pr-3 text-sm transition-colors
+              rounded-sm border-s-2 ps-3 text-sm transition-colors
               ${
                 activeId === category.id
                   ? 'border-primary text-primary font-medium'

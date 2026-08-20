@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -11,7 +13,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { useState } from 'react';
 
 type ConfirmDialogProps = {
   trigger: React.ReactNode;
@@ -31,6 +32,7 @@ export function ConfirmDialog({
   onConfirm,
 }: ConfirmDialogProps) {
   const [loading, setLoading] = useState(false);
+
   const handleConfirm = async () => {
     try {
       setLoading(true);
@@ -39,16 +41,21 @@ export function ConfirmDialog({
       setLoading(false);
     }
   };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+
+      <AlertDialogContent dir="rtl" className="text-right">
+        <AlertDialogHeader className="text-right">
+          <AlertDialogTitle className="text-right">{title}</AlertDialogTitle>
+
+          <AlertDialogDescription className="text-right">{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}> {cancelText} </AlertDialogCancel>
+
+        <AlertDialogFooter dir="rtl">
+          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
+
           <AlertDialogAction onClick={handleConfirm} disabled={loading}>
             {loading ? 'در حال حذف…' : confirmText}
           </AlertDialogAction>

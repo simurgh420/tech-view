@@ -29,7 +29,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
 
           bg-background
 
-          p-0
+          p-2
 
           shadow-2xl
         "

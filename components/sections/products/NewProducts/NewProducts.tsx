@@ -1,41 +1,33 @@
-'use client';
-import { newProducts } from '@/components/sections/dummy/dummyNewProducts';
-import { ProductCard } from './NewProductCard';
-import Link from 'next/link';
-import { useHorizontalScroll } from '@/hooks/useHorizontalScroll';
+import { getNewArrivalProducts } from '@/services/products/db/queries';
+import { logger } from '@/lib/logger';
+import { ProductSection } from '../ProductSection';
 
-export function NewProducts() {
-  const { scrollRef } = useHorizontalScroll();
+async function getSafeNewArrivals() {
+  try {
+    const products = await getNewArrivalProducts(10);
+
+    return products.length > 0 ? products : null;
+  } catch (error) {
+    logger.error('NewProducts section failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+    });
+
+    return null;
+  }
+}
+
+export default async function NewProducts() {
+  const products = await getSafeNewArrivals();
+
+  if (!products) return null;
 
   return (
-    <section>
-      <div className="rounded-2xl px-6 py-10 shadow-lg">
-        {/* عنوان و دکمه */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h2 className="text-2xl font-bold">New Products</h2>
-          <Link
-            href="/products/new"
-            className="text-sm font-medium text-[#179BD7] px-4 py-2 rounded-md hover:text-blue-600 transition"
-          >
-            View all &gt;
-          </Link>
-        </div>
-
-        {/* لیست محصولات */}
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto scrollbar-hide px-2"
-          style={{ scrollBehavior: 'smooth' }}
-        >
-          <div className="flex gap-6 min-h-full w-max">
-            {newProducts.map(product => (
-              <div key={product.title} className="min-w-50 shrink-0">
-                <ProductCard {...product} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
+    <ProductSection
+      title="تازه‌واردها"
+      description="جدیدترین محصولات فروشگاه"
+      href="/products?sort=newest"
+      products={products}
+      //scroll   این پراپ برای موقع ک محصولات بالا 4 تا بشن اسکرول اضافه میکنه به اون قسمت
+    />
   );
 }

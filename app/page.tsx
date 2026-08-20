@@ -1,13 +1,13 @@
 import { PromoBanners } from '@/components/sections/products/banner/PromoBanner/PromoBanners';
 import { CategoriesSection } from '@/components/sections/categories/CategoriesSection';
 import { HeroSection } from '@/components/sections/hero/HeroSection';
-import { BestSellers } from '@/components/sections/products/BestSeller/BestSellers';
-import { NewProducts } from '@/components/sections/products/NewProducts/NewProducts';
-import { ProductsOnSale } from '@/components/sections/products/ProductsOnSale/ProductsOnSale';
 import { TopBrands } from '@/components/sections/products/TopBrands/TopBrands';
 import { ProductBanner } from '@/components/sections/products/banner/ProductBanner/ProductBanner';
 import { BlogSection } from '@/components/sections/blog/BlogSection';
 import { FeatureBar } from '@/components/sections/services/FeatureBar';
+import ProductsOnSale from '@/components/sections/products/ProductsOnSale/ProductsOnSale';
+import NewProducts from '@/components/sections/products/NewProducts/NewProducts';
+import BestSellers from '@/components/sections/products/BestSeller/BestSellers';
 
 export default function Home() {
   return (

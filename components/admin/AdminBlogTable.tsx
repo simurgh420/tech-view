@@ -190,7 +190,7 @@ export function AdminBlogTable() {
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-2xl" dir="rtl">
-                            <DialogHeader>
+                            <DialogHeader className="pt-2">
                               <DialogTitle className="text-right">
                                 نظرات پست «{post.title}»
                               </DialogTitle>
@@ -208,9 +208,9 @@ export function AdminBlogTable() {
                                 postComments.map(comment => (
                                   <div
                                     key={comment.id}
-                                    className="rounded-lg border bg-muted/30 p-3"
+                                    className="rounded-lg border bg-muted/30 p-4"
                                   >
-                                    <div className="mb-2 flex items-center justify-between gap-2">
+                                    <div className="mb-3 flex items-center justify-between gap-3">
                                       <div className="flex items-center gap-2">
                                         <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-muted">
                                           {comment.author?.image ? (
@@ -235,7 +235,7 @@ export function AdminBlogTable() {
                                         {formatAdminDate(comment.createdAt)}
                                       </span>
                                     </div>
-                                    <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-start justify-between gap-4">
                                       <p className="text-sm leading-6 text-foreground">
                                         {comment.content}
                                       </p>

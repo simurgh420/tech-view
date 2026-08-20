@@ -26,3 +26,23 @@ export const productWithReviews = {
     },
   },
 } satisfies Prisma.ProductInclude;
+
+export const homeProductSelect = {
+  id: true,
+  title: true,
+  slug: true,
+
+  price: true,
+  discountPrice: true,
+  discountPercentage: true,
+
+  isDiscounted: true,
+  rating: true,
+  reviewCount: true,
+
+  thumbnail: true,
+} satisfies Prisma.ProductSelect;
+
+export type HomeProduct = Prisma.ProductGetPayload<{
+  select: typeof homeProductSelect;
+}>;

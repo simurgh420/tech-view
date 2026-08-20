@@ -1,90 +1,71 @@
-// admin/dashboard/page.tsx
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Users, User, Tag, FolderTree, FileText, Package, Heart } from 'lucide-react';
-import { AdminDashboardCard } from '@/components/admin/AdminDashboardCard';
+import { ShieldCheck } from 'lucide-react';
+
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+
+import { getDashboardOverview } from '@/services/reports/db/dashboard';
+import {
+  DashboardStats,
+  QuickActions,
+  RecentOrders,
+  RevenueChart,
+} from '@/components/admin/dashboard';
 
 export default async function AdminDashboard() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   if (!session) {
     redirect('/unauthorized');
   }
 
+  // این قسمت را بعداً می‌توانیم به requireAdmin منتقل کنیم.
+  if (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN') {
+    redirect('/forbidden');
+  }
+
+  const dashboard = await getDashboardOverview();
+
   return (
-    <div className="container mx-auto max-w-6xl px-8 py-16 space-y-12" dir="rtl">
+    <div
+      dir="rtl"
+      className="container mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-12"
+    >
       {/* Header */}
-      <div className="space-y-6">
-        <div className="mb-2">
-          <Breadcrumb />
+      <div className="space-y-5">
+        <Breadcrumb />
+
+        <div className="flex items-center gap-3">
+          <div className="rounded-2xl bg-emerald-500/10 p-3">
+            <ShieldCheck
+              className="size-8 text-emerald-600 dark:text-emerald-400"
+              aria-hidden="true"
+            />
+          </div>
+
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">داشبورد مدیریت</h1>
+
+            <p className="mt-1 text-muted-foreground">خلاصه وضعیت فروشگاه و عملکرد سیستم</p>
+          </div>
         </div>
-        <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3">
-          <span className="text-green-600">🛡️</span>
-          <span>داشبورد مدیریت</span>
-        </h1>
-
-        <p className="text-lg leading-relaxed max-w-2xl">
-          به بخش مدیریت خوش آمدید. در اینجا می‌توانید کاربران را مدیریت کنید و پروفایل خود را ویرایش
-          کنید.
-        </p>
-
-        <div className="border-b pt-4" />
       </div>
 
-      {/* Cards Section */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <AdminDashboardCard
-          href="/admin/dashboard/users"
-          title="مدیریت کاربران"
-          description="مشاهده، ویرایش و حذف کاربرهای سیستم"
-          icon={Users}
-        />
-        <AdminDashboardCard
-          href="/admin/blogs"
-          title="بلاگ"
-          description="مدیریت پست‌ها و نظرات کاربران روی آن‌ها"
-          icon={FileText}
-          iconClassName="text-blue-600"
-        />
-        <AdminDashboardCard
-          href="/admin/products"
-          title="محصولات"
-          description="مدیریت محصولات، ریویوها و دیدگاه‌های آن‌ها"
-          icon={Package}
-          iconClassName="text-emerald-600"
-        />
-        <AdminDashboardCard
-          href="/admin/categories"
-          title="دسته‌بندی‌ها"
-          description="ساخت و مدیریت دسته‌بندی‌های محصولات"
-          icon={FolderTree}
-          iconClassName="text-cyan-600"
-        />
-        <AdminDashboardCard
-          href="/admin/brands"
-          title="برندها"
-          description="ساخت و مدیریت برندهای محصولات"
-          icon={Tag}
-          iconClassName="text-violet-600"
-        />
-        <AdminDashboardCard
-          href="/admin/wishlist"
-          title="علاقه‌مندی‌ها"
-          description="مدیریت آیتم‌های ذخیره‌شده کاربران"
-          icon={Heart}
-          iconClassName="text-pink-600"
-        />
-        <AdminDashboardCard
-          href="/profile"
-          title="پروفایل"
-          description="ویرایش اطلاعات شخصی و تغییر رمز عبور"
-          icon={User}
-          iconClassName="text-purple-600"
-        />
+      {/* Stats */}
+      <DashboardStats stats={dashboard.stats} />
+
+      {/* Main analytics */}
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(360px,1fr)]">
+        <RevenueChart data={dashboard.revenueByDay} />
+
+        <RecentOrders orders={dashboard.recentOrders} />
       </div>
+
+      {/* Quick actions */}
+      <QuickActions />
     </div>
   );
 }
