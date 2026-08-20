@@ -18,9 +18,6 @@ export default function FAQPage() {
       <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-[240px_1fr]">
         {/* Sidebar */}
         <FaqSidebar categories={faqData} />
-
-        {/* FAQ Content — قبلاً اینجا [direction:ltr] بود که کل محتوای
-            فارسی رو زوری چپ‌به‌راست می‌کرد؛ حذف شد */}
         <div>
           {faqData.map(category => (
             <section key={category.id} id={category.id} className="mb-10 scroll-mt-28">

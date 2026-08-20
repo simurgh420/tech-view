@@ -13,7 +13,7 @@ const COLUMNS = [
   {
     title: 'اطلاعات',
     links: [
-      { label: 'روش خرید', href: '/how-it-works' },
+      { label: 'روش خرید', href: '/how-to-buy' },
       { label: 'تعهدات ما', href: '/promises' },
       { label: 'سوالات متداول', href: '/faq' },
       { label: 'تماس با ما', href: '/contact' },
