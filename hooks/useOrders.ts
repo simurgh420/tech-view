@@ -21,6 +21,7 @@ export function useGetUserOrders() {
   return useQuery({
     queryKey: orderKeys.all,
     queryFn: getUserOrdersApi,
+    staleTime: 60 * 1000,
   });
 }
 
