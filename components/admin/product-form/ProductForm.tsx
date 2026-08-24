@@ -47,7 +47,7 @@ export function ProductForm({
       brandSlug: initialValues?.brandSlug ?? '',
       categorySlug: initialValues?.categorySlug ?? '',
       stockQuantity: initialValues?.stockQuantity ?? 0,
-      specifications: initialValues?.specifications ?? [{ group: 'مشخصات عمومی', items: [] }],
+      specifications: initialValues?.specifications ?? [],
       thumbnail: initialValues?.thumbnail ?? undefined,
       keyFeatures: initialValues?.keyFeatures ?? [],
       colors: initialValues?.colors ?? [],

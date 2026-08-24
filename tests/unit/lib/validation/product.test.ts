@@ -25,17 +25,45 @@ describe('Product Validation Schemas', () => {
     it('should accept optional fields', () => {
       const withOptional = {
         ...validInput,
+
         discountPrice: 120000,
+
         thumbnail: new File([''], 'test.jpg'),
+
         images: [new File([''], 'img1.jpg'), 'https://example.com/img2.jpg'],
+
         keyFeatures: ['کیفیت بالا', 'طراحی زیبا'],
-        colors: [{ name: 'قرمز', hex: '#FF0000' }],
-        variants: [{ ram: '8GB', storage: '256GB' }],
-        specifications: [{ group: 'پردازنده', items: [{ label: 'مدل', value: 'Intel' }] }],
+
+        colors: [
+          {
+            name: 'قرمز',
+            hex: '#FF0000',
+          },
+        ],
+
+        variants: [
+          {
+            ram: '8GB',
+            storage: '256GB',
+          },
+        ],
+
+        specifications: [
+          {
+            attributeId: 'processor-model',
+            value: 'Intel',
+          },
+          {
+            attributeId: 'processor-brand',
+            value: 'Intel',
+          },
+        ],
+
         isFeatured: true,
         isNew: false,
         status: 'PUBLISHED',
       };
+
       expect(productFormSchema.safeParse(withOptional).success).toBe(true);
     });
 

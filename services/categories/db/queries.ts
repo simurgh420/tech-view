@@ -51,3 +51,78 @@ export async function getCategoryBySlug(slug: string) {
     throw error;
   }
 }
+export async function getCategoryAttributesAdmin(slug: string) {
+  const startTime = Date.now();
+
+  try {
+    const category = await prisma.category.findUnique({
+      where: {
+        slug,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!category) {
+      logger.info('getCategoryAttributesAdmin: category not found', {
+        slug,
+        duration: Date.now() - startTime,
+      });
+
+      return null;
+    }
+
+    const categoryAttributes = await prisma.categoryAttribute.findMany({
+      where: {
+        categoryId: category.id,
+      },
+      orderBy: {
+        order: 'asc',
+      },
+      include: {
+        attribute: {
+          include: {
+            options: {
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const result = categoryAttributes.map(categoryAttribute => ({
+      attributeId: categoryAttribute.attributeId,
+
+      key: categoryAttribute.attribute.key,
+
+      label: categoryAttribute.attribute.label,
+
+      type: categoryAttribute.attribute.type,
+
+      unit: categoryAttribute.attribute.unit,
+
+      isRequired: categoryAttribute.isRequired,
+
+      options: categoryAttribute.attribute.options.map(option => option.value),
+    }));
+
+    logger.info('getCategoryAttributesAdmin success', {
+      slug,
+      count: result.length,
+      duration: Date.now() - startTime,
+    });
+
+    return result;
+  } catch (error) {
+    logger.error('getCategoryAttributesAdmin failed', {
+      slug,
+      error: error instanceof Error ? error.message : 'Unknown',
+      duration: Date.now() - startTime,
+    });
+
+    throw error;
+  }
+}

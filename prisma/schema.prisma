@@ -87,6 +87,7 @@ model Category {
   children            Category[] @relation("CategoryHierarchy")
   products            Product[]
   subCategoryProducts Product[]  @relation("SubCategoryProducts")
+  attributes          CategoryAttribute[]
 
   @@index([isActive])
   @@index([parentId])
@@ -147,11 +148,14 @@ model ProductSpecification {
   key       String
   value     String
   groupName String?
+  attributeId String?
+  attribute   Attribute? @relation(fields: [attributeId], references: [id])
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, key, value])
   @@index([key, value])
   @@index([productId, key])
+  @@index([attributeId])
 }
 model ProductPrice {
   id        String    @id @default(cuid())
@@ -166,6 +170,59 @@ model ProductPrice {
   @@index([productId, currency, type])
 }
 
+enum AttributeType {
+  TEXT     // متن آزاد، غیرقابل فیلتر معمولا (مثلا توضیح دوربین)
+  NUMBER   // عدد قابل مرتب‌سازی/رنج (مثلا رم، حافظه)
+  BOOLEAN  // دارد/ندارد
+  ENUM     // یکی از چند مقدار از پیش تعریف‌شده (مثلا رنگ، شبکه)
+}
+
+model Attribute {
+  id        String              @id @default(cuid())
+  key       String              @unique   // ثابت، انگلیسی، هرگز تغییر نمی‌کنه: "processor", "ram", ...
+  label     String                        // لیبل فارسی نمایشی: "پردازنده"
+  type      AttributeType       @default(TEXT)
+  unit      String?                       // "GB", "mAh", "Hz", ...
+  order     Int                 @default(0)
+  isActive  Boolean             @default(true)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  options            AttributeOption[]
+  categoryAttributes CategoryAttribute[]
+  specifications     ProductSpecification[]
+
+  @@index([isActive])
+}
+
+// فقط برای type = ENUM استفاده می‌شه: لیست مقادیر مجاز
+// مثلا برای Attribute با key="network": ["4G", "5G", "3G"]
+model AttributeOption {
+  id          String    @id @default(cuid())
+  attributeId String
+  value       String
+  order       Int       @default(0)
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeId, value])
+}
+
+// مشخص می‌کنه کدوم Attribute برای کدوم دسته‌بندی معتبره
+// و آیا در پنل فیلتر سایت نمایش داده بشه یا نه
+model CategoryAttribute {
+  id           String    @id @default(cuid())
+  categoryId   String
+  attributeId  String
+  isFilterable Boolean   @default(true)   // معادل همون enabled فعلی توی کد
+  isRequired   Boolean   @default(false)  // آیا در فرم ثبت محصول اجباریه
+  order        Int       @default(0)
+  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attribute    Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, attributeId])
+  @@index([categoryId])
+  @@index([attributeId])
+}
 model Review {
   id        String   @id @default(cuid())
   productId String

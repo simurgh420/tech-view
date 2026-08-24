@@ -1,4 +1,3 @@
-// components/product/specs/SpecsRow.tsx
 type Props = {
   label: string;
   value: string | number;
