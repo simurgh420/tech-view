@@ -1,6 +1,12 @@
 // hooks/useCategoryAttributes.ts
+
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { fetchCategoryAttributesApi } from '@/services/categories/api/queries';
+
+// --------------------------------------------------
+// Types
+// --------------------------------------------------
 
 export type AttributeType = 'TEXT' | 'NUMBER' | 'BOOLEAN' | 'ENUM';
 
@@ -14,16 +20,28 @@ export interface CategoryAttributeOption {
   options: string[];
 }
 
-export function useCategoryAttributes(categorySlug: string) {
+// --------------------------------------------------
+// Query Keys
+// --------------------------------------------------
+
+export const categoryAttributeKeys = {
+  all: ['category-attributes'] as const,
+
+  byCategory: (categorySlug: string) => ['category-attributes', categorySlug] as const,
+};
+
+// --------------------------------------------------
+// Queries
+// --------------------------------------------------
+
+export function useGetCategoryAttributes(categorySlug: string) {
   return useQuery<CategoryAttributeOption[]>({
-    queryKey: ['category-attributes', categorySlug],
-    queryFn: async () => {
-      const res = await axios.get<CategoryAttributeOption[]>(
-        `/api/admin/categories/${categorySlug}/attributes`
-      );
-      return res.data;
-    },
-    enabled: !!categorySlug,
+    queryKey: categoryAttributeKeys.byCategory(categorySlug),
+
+    queryFn: () => fetchCategoryAttributesApi(categorySlug),
+
+    enabled: Boolean(categorySlug),
+
     staleTime: 1000 * 60 * 10,
   });
 }

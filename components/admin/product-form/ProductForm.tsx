@@ -63,9 +63,7 @@ export function ProductForm({
     <Form {...form}>
       <form
         data-testid="product-form"
-        onSubmit={form.handleSubmit(onSubmit, errors => {
-          console.error('❌ خطاهای اعتبارسنجی فرم:', JSON.stringify(errors, null, 2));
-        })}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-10"
         dir="rtl"
       >

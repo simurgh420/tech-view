@@ -1,41 +1,97 @@
-// src/app/api/admin/categories/[slug]/attributes/route.ts
+// app/api/admin/categories/[slug]/attributes/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/services/db/client';
+import { headers } from 'next/headers';
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+import { auth } from '@/lib/auth';
+import { logger } from '@/lib/logger';
+import { getCategoryAttributesAdmin } from '@/services/categories/db/queries';
+
+export async function GET(
+  _req: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const startTime = Date.now();
+
   try {
-    const { slug } = await params;
+    // --------------------------------------------------
+    // Authentication
+    // --------------------------------------------------
 
-    const category = await prisma.category.findUnique({ where: { slug } });
-    if (!category) {
-      return NextResponse.json({ error: 'دسته‌بندی پیدا نشد' }, { status: 404 });
-    }
-
-    const categoryAttributes = await prisma.categoryAttribute.findMany({
-      where: { categoryId: category.id },
-      orderBy: { order: 'asc' },
-      include: {
-        attribute: {
-          include: {
-            options: { orderBy: { order: 'asc' } },
-          },
-        },
-      },
+    const session = await auth.api.getSession({
+      headers: await headers(),
     });
 
-    const result = categoryAttributes.map(ca => ({
-      attributeId: ca.attributeId,
-      key: ca.attribute.key,
-      label: ca.attribute.label,
-      type: ca.attribute.type,
-      unit: ca.attribute.unit,
-      isRequired: ca.isRequired,
-      options: ca.attribute.options.map(o => o.value),
-    }));
+    if (!session?.user) {
+      logger.warn('GET /api/admin/categories/[slug]/attributes - Unauthorized');
 
-    return NextResponse.json(result);
+      return NextResponse.json(
+        {
+          error: 'Unauthorized',
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    // --------------------------------------------------
+    // Params
+    // --------------------------------------------------
+
+    const { slug } = await params;
+
+    // --------------------------------------------------
+    // Query
+    // --------------------------------------------------
+
+    const attributes = await getCategoryAttributesAdmin(slug);
+
+    // --------------------------------------------------
+    // Not found
+    // --------------------------------------------------
+
+    if (!attributes) {
+      logger.warn(`GET /api/admin/categories/${slug}/attributes - Category not found`);
+
+      return NextResponse.json(
+        {
+          error: 'Not found',
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    // --------------------------------------------------
+    // Success
+    // --------------------------------------------------
+
+    logger.info(`GET /api/admin/categories/${slug}/attributes - Success`, {
+      count: attributes.length,
+      duration: Date.now() - startTime,
+    });
+
+    return NextResponse.json(attributes);
   } catch (error) {
-    console.error('GET /api/admin/categories/[slug]/attributes failed', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    logger.error('GET /api/admin/categories/[slug]/attributes failed', {
+      error: error instanceof Error ? error.message : 'Unknown',
+
+      duration: Date.now() - startTime,
+    });
+
+    return NextResponse.json(
+      {
+        error: 'Failed to fetch category attributes',
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

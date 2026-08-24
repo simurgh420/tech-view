@@ -12,13 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCategoryAttributes } from '@/hooks/useCategoryAttributes';
+import { useGetCategoryAttributes } from '@/hooks/useCategoryAttributes';
 
 type Props = { control: Control<ProductFormType> };
 
 export function SpecificationsField({ control }: Props) {
   const categorySlug = useWatch({ control, name: 'categorySlug' });
-  const { data: attributes, isLoading } = useCategoryAttributes(categorySlug ?? '');
+  const { data: attributes, isLoading } = useGetCategoryAttributes(categorySlug ?? '');
 
   const { fields, replace } = useFieldArray({
     control,
