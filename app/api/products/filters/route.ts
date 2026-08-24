@@ -1,9 +1,7 @@
+// app/api/products/filters/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/services/db/client';
 import { logger } from '@/lib/logger';
-import { normalizeRawKey } from '@/lib/normalizeFilterKey';
-import { normalizeFilterValue } from '@/lib/normalizeFilterValue';
-import { ALLOWED_FILTER_KEYS, RAW_KEY_ALIASES, VALUE_ALIASES } from '@/config/roductFilters';
 
 export async function GET(req: NextRequest) {
   const startTime = Date.now();
@@ -17,12 +15,38 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'categorySlug required' }, { status: 400 });
     }
 
-    // ⚠️ چون کلیدهای خام غیرقابل‌پیش‌بینی‌ان (ایموجی، دونقطه، ...)
-    // دیگه در سطح دیتابیس با key فیلتر نمی‌کنیم؛ همه‌ی specs همون
-    // دسته رو می‌گیریم و نرمال‌سازی/فیلتر رو در جاوااسکریپت انجام می‌دیم.
-    const specs = await prisma.productSpecification.groupBy({
-      by: ['key', 'value'],
+    const category = await prisma.category.findUnique({
+      where: { slug: categorySlug },
+      select: { id: true },
+    });
+
+    if (!category) {
+      return NextResponse.json({ error: 'دسته‌بندی پیدا نشد' }, { status: 404 });
+    }
+
+    // ✅ لیست attribute های قابل‌فیلتر همین دسته‌بندی، به ترتیب order
+    const categoryAttributes = await prisma.categoryAttribute.findMany({
       where: {
+        categoryId: category.id,
+        isFilterable: true,
+      },
+      orderBy: { order: 'asc' },
+      include: { attribute: true },
+    });
+
+    if (categoryAttributes.length === 0) {
+      const response = NextResponse.json({});
+      response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=600');
+      return response;
+    }
+
+    const attributeIds = categoryAttributes.map(ca => ca.attributeId);
+
+    // ✅ گروه‌بندی مستقیم روی attributeId - سریع و دقیق، بدون نیاز به نرمال‌سازی runtime
+    const specs = await prisma.productSpecification.groupBy({
+      by: ['attributeId', 'value'],
+      where: {
+        attributeId: { in: attributeIds },
         product: {
           category: { slug: categorySlug },
           status: 'PUBLISHED',
@@ -30,44 +54,31 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    const attributeById = new Map(categoryAttributes.map(ca => [ca.attributeId, ca]));
+
     const result: Record<string, { label: string; values: string[] }> = {};
-    const unmatchedKeys = new Set<string>();
 
     for (const spec of specs) {
-      const normalizedKey = normalizeRawKey(spec.key);
-      const canonicalKey = RAW_KEY_ALIASES[normalizedKey];
+      if (!spec.attributeId) continue;
 
-      if (!canonicalKey) {
-        unmatchedKeys.add(spec.key);
-        continue;
+      const ca = attributeById.get(spec.attributeId);
+      if (!ca) continue; // احتیاط اضافه (نباید پیش بیاد چون همون attributeIds رو فیلتر کردیم)
+
+      const key = ca.attribute.key;
+
+      if (!result[key]) {
+        result[key] = { label: ca.attribute.label, values: [] };
       }
-
-      const cfg = ALLOWED_FILTER_KEYS[canonicalKey];
-      if (!cfg || !cfg.enabled) continue;
-
-      const normalizedValue = normalizeFilterValue(canonicalKey, spec.value, VALUE_ALIASES);
-
-      if (!result[canonicalKey]) {
-        result[canonicalKey] = { label: cfg.label, values: [] };
-      }
-      if (!result[canonicalKey].values.includes(normalizedValue)) {
-        result[canonicalKey].values.push(normalizedValue);
+      if (!result[key].values.includes(spec.value)) {
+        result[key].values.push(spec.value);
       }
     }
 
-    // کلیدهای ناشناخته رو لاگ کن تا بعداً به RAW_KEY_ALIASES اضافه‌شون کنید
-    if (unmatchedKeys.size > 0) {
-      logger.warn('GET /api/products/filters - Unmatched spec keys', {
-        categorySlug,
-        unmatchedKeys: Array.from(unmatchedKeys),
-      });
-    }
-
+    // مرتب‌سازی کلیدها بر اساس order دسته‌بندی، مقادیر بر اساس الفبا
+    const orderByAttrId = new Map(categoryAttributes.map(ca => [ca.attribute.key, ca.order]));
     const sortedResult = Object.fromEntries(
       Object.entries(result)
-        .sort(
-          ([a], [b]) => (ALLOWED_FILTER_KEYS[a].order ?? 99) - (ALLOWED_FILTER_KEYS[b].order ?? 99)
-        )
+        .sort(([a], [b]) => (orderByAttrId.get(a) ?? 99) - (orderByAttrId.get(b) ?? 99))
         .map(([key, val]) => [key, { ...val, values: val.values.sort() }])
     );
 

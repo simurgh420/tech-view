@@ -12,20 +12,21 @@ type ProductInput =
       include: typeof productWithReviews;
     }>;
 
+// ✅ تایپ گروه رو جدا تعریف می‌کنیم تا داخل Map<...> پیچیده نشه
+type SpecGroup = {
+  group: string;
+  items: {
+    label: string;
+    value: string;
+    attributeId: string | null; // ✅ اضافه شد
+  }[];
+};
 export function formatProduct<T extends ProductInput>(raw: T): Product {
-  const specsMap = new Map<
-    string,
-    {
-      group: string;
-      items: {
-        label: string;
-        value: string;
-      }[];
-    }
-  >();
+  const specsMap: Map<string, SpecGroup> = new Map();
 
   for (const spec of raw.specifications) {
-    const groupName = spec.groupName ?? 'سایر';
+    const label = spec.attribute?.label ?? spec.key;
+    const groupName = 'مشخصات فنی';
 
     if (!specsMap.has(groupName)) {
       specsMap.set(groupName, {
@@ -35,8 +36,9 @@ export function formatProduct<T extends ProductInput>(raw: T): Product {
     }
 
     specsMap.get(groupName)!.items.push({
-      label: spec.key,
+      label,
       value: spec.value,
+      attributeId: spec.attributeId, // ✅ اضافه شد
     });
   }
 
@@ -65,7 +67,6 @@ export function formatProduct<T extends ProductInput>(raw: T): Product {
 
     keyFeatures: raw.keyFeatures,
 
-    // چون این دو فیلد Json هستند
     colors: raw.colors as Product['colors'],
     variants: raw.variants as Product['variants'],
 

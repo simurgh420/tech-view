@@ -4,7 +4,12 @@ export const productIncludes = {
   brand: true,
   category: true,
   subCategory: true,
-  specifications: true,
+
+  specifications: {
+    include: {
+      attribute: true,
+    },
+  },
 } satisfies Prisma.ProductInclude;
 
 export const productWithReviews = {

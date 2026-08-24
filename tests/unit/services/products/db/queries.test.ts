@@ -256,14 +256,36 @@ describe('Products DB Queries', () => {
 
     it('should apply specs filter using specifications.some', async () => {
       await getFilteredProducts({
-        specs: { color: 'red', ram: '8GB' },
+        specs: {
+          color: 'red',
+          ram: '8GB',
+        },
       });
+
       expect(prisma.product.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             AND: [
-              { specifications: { some: { key: 'color', value: 'red' } } },
-              { specifications: { some: { key: 'ram', value: '8GB' } } },
+              {
+                specifications: {
+                  some: {
+                    attribute: {
+                      key: 'color',
+                    },
+                    value: 'red',
+                  },
+                },
+              },
+              {
+                specifications: {
+                  some: {
+                    attribute: {
+                      key: 'ram',
+                    },
+                    value: '8GB',
+                  },
+                },
+              },
             ],
           }),
         })

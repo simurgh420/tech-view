@@ -2,12 +2,14 @@
 export type SpecsItem = {
   label: string;
   value: string | number;
+  attributeId: string | null; // ✅ برای بازسازی فرم ویرایش لازمه
 };
 
 export type SpecsGroup = {
   group: string;
   items: SpecsItem[];
 };
+
 export interface ProductReview {
   id: string;
   rating: number;
@@ -34,12 +36,13 @@ export type ProductPayload = {
   keyFeatures: string[];
   colors: { name: string; hex: string }[];
   variants: { ram: string; storage: string }[];
-  specifications?: { group: string; items: { label: string; value: string | number }[] }[];
+  specifications?: { attributeId: string; value: string }[]; // ✅ ساختار جدید payload
   isFeatured: boolean;
   isNew: boolean;
   publishedAt?: string | null;
   status?: 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
 };
+
 export type AdminProductItem = {
   id: string;
   title: string;
@@ -69,7 +72,7 @@ export type Product = {
   keyFeatures: string[];
   colors: { name: string; hex: string }[];
   variants: { ram: string; storage: string }[];
-  specifications: { group: string; items: { label: string; value: string }[] }[];
+  specifications: SpecsGroup[]; // ✅ تمیز شد، از همون تایپ بالا استفاده می‌کنه
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   rating: string | null;
   reviewCount: number;

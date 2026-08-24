@@ -198,12 +198,16 @@ export async function getFilteredProducts(filters: {
     // فیلتر مشخصات با استفاده از رابطه specifications (AND بین چند شرط)
     if (specs && Object.keys(specs).length > 0) {
       where.AND = [];
-      for (const [key, value] of Object.entries(specs)) {
+
+      for (const [attributeKey, value] of Object.entries(specs)) {
         where.AND.push({
           specifications: {
             some: {
-              key: key,
-              value: value,
+              attribute: {
+                key: attributeKey,
+              },
+
+              value,
             },
           },
         });

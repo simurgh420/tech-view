@@ -1,13 +1,14 @@
-// components/product/specs/SpecsSection.tsx
 'use client';
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+
 import SpecsRow from './SpecsRow';
 
 type Props = {
   title: string;
   items: {
+    attributeId: string | null;
     label: string;
     value: string | number;
   }[];
@@ -33,8 +34,8 @@ export default function SpecsSection({ title, items }: Props) {
     >
       <button
         type="button"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open} // اضافه‌شده برای دسترسی‌پذیری
+        onClick={() => setOpen(prev => !prev)}
+        aria-expanded={open}
         className="
           flex
           w-full
@@ -73,10 +74,12 @@ export default function SpecsSection({ title, items }: Props) {
 
       {open && (
         <div className="px-5 pb-2">
-          {' '}
-          {/* کمی پدینگ برای زیبایی محتوای داخل */}
-          {items.map(item => (
-            <SpecsRow key={`${item.label}-${item.value}`} label={item.label} value={item.value} />
+          {items.map((item, index) => (
+            <SpecsRow
+              key={`${item.attributeId ?? 'spec'}-${item.label}-${index}`}
+              label={item.label}
+              value={item.value}
+            />
           ))}
         </div>
       )}

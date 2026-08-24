@@ -47,7 +47,7 @@ export function ProductForm({
       brandSlug: initialValues?.brandSlug ?? '',
       categorySlug: initialValues?.categorySlug ?? '',
       stockQuantity: initialValues?.stockQuantity ?? 0,
-      specifications: initialValues?.specifications ?? [{ group: 'مشخصات عمومی', items: [] }],
+      specifications: initialValues?.specifications ?? [],
       thumbnail: initialValues?.thumbnail ?? undefined,
       keyFeatures: initialValues?.keyFeatures ?? [],
       colors: initialValues?.colors ?? [],
@@ -63,7 +63,9 @@ export function ProductForm({
     <Form {...form}>
       <form
         data-testid="product-form"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, errors => {
+          console.error('❌ خطاهای اعتبارسنجی فرم:', JSON.stringify(errors, null, 2));
+        })}
         className="space-y-10"
         dir="rtl"
       >

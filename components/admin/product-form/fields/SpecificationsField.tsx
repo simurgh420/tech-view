@@ -1,110 +1,126 @@
 'use client';
 
-import { useFieldArray, Control } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFieldArray, useWatch, Control } from 'react-hook-form';
 import { ProductFormType } from '@/lib/validation/product';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useCategoryAttributes } from '@/hooks/useCategoryAttributes';
 
 type Props = { control: Control<ProductFormType> };
 
 export function SpecificationsField({ control }: Props) {
-  const { fields, append, remove } = useFieldArray({
+  const categorySlug = useWatch({ control, name: 'categorySlug' });
+  const { data: attributes, isLoading } = useCategoryAttributes(categorySlug ?? '');
+
+  const { fields, replace } = useFieldArray({
     control,
     name: 'specifications',
+    keyName: 'fieldId',
   });
 
+  useEffect(() => {
+    if (!attributes) return;
+
+    const existingByAttrId = new Map(fields.map(f => [f.attributeId, f.value]));
+
+    replace(
+      attributes.map(attr => ({
+        attributeId: attr.attributeId,
+        value: existingByAttrId.get(attr.attributeId) ?? '',
+      }))
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attributes]);
+
+  if (!categorySlug) {
+    return (
+      <div className="space-y-2">
+        <FormLabel>مشخصات فنی</FormLabel>
+        <p className="text-sm text-muted-foreground">
+          اول یک دسته‌بندی انتخاب کنید تا مشخصات مربوط به آن نمایش داده شود.
+        </p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <FormLabel>مشخصات فنی</FormLabel>
+        <p className="text-sm text-muted-foreground">در حال بارگذاری مشخصات...</p>
+      </div>
+    );
+  }
+
+  if (!attributes || attributes.length === 0) {
+    return (
+      <div className="space-y-2">
+        <FormLabel>مشخصات فنی</FormLabel>
+        <p className="text-sm text-muted-foreground">
+          هیچ مشخصه‌ای برای این دسته‌بندی تعریف نشده است.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <FormLabel>مشخصات فنی</FormLabel>
 
-      {fields.map((group, groupIndex) => (
-        <div key={group.id} className="border p-4 rounded-lg space-y-4">
-          {/* نام گروه */}
-          <FormField
-            control={control}
-            name={`specifications.${groupIndex}.group`}
-            render={({ field }) => (
-              <FormItem>
-                <Input placeholder="نام گروه (مثلاً: پردازنده)" {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {fields.map((field, index) => {
+          const attr = attributes.find(a => a.attributeId === field.attributeId);
+          if (!attr) return null;
 
-          {/* آیتم‌ها */}
-          <ItemsField control={control} groupIndex={groupIndex} />
+          return (
+            <FormField
+              key={field.fieldId}
+              control={control}
+              name={`specifications.${index}.value`}
+              render={({ field: formField }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-normal text-muted-foreground">
+                    {attr.label}
+                    {attr.unit && ` (${attr.unit})`}
+                    {attr.isRequired && <span className="text-destructive"> *</span>}
+                  </FormLabel>
 
-          <Button type="button" variant="destructive" size="sm" onClick={() => remove(groupIndex)}>
-            حذف گروه
-          </Button>
-        </div>
-      ))}
+                  {attr.type === 'ENUM' || attr.type === 'BOOLEAN' ? (
+                    <Select value={formField.value} onValueChange={formField.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="انتخاب کنید" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(attr.type === 'BOOLEAN' ? ['دارد', 'ندارد'] : attr.options).map(opt => (
+                          <SelectItem key={opt} value={opt}>
+                            {opt}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      type={attr.type === 'NUMBER' ? 'number' : 'text'}
+                      placeholder={`مقدار ${attr.label}`}
+                      {...formField}
+                    />
+                  )}
 
-      <Button
-        type="button"
-        variant="secondary"
-        size="sm"
-        onClick={() => append({ group: '', items: [] })}
-      >
-        افزودن گروه جدید
-      </Button>
-    </div>
-  );
-}
-
-function ItemsField({
-  control,
-  groupIndex,
-}: {
-  control: Control<ProductFormType>;
-  groupIndex: number;
-}) {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `specifications.${groupIndex}.items`,
-  });
-
-  return (
-    <div className="space-y-3">
-      {fields.map((item, itemIndex) => (
-        <div key={item.id} className="flex items-center gap-2">
-          <FormField
-            control={control}
-            name={`specifications.${groupIndex}.items.${itemIndex}.label`}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <Input placeholder="عنوان ویژگی" {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name={`specifications.${groupIndex}.items.${itemIndex}.value`}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <Input placeholder="مقدار" {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="button" variant="destructive" size="sm" onClick={() => remove(itemIndex)}>
-            حذف
-          </Button>
-        </div>
-      ))}
-
-      <Button
-        type="button"
-        variant="secondary"
-        size="sm"
-        onClick={() => append({ label: '', value: '' })}
-      >
-        افزودن ویژگی جدید
-      </Button>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -12,17 +12,14 @@ const variantSchema = z.object({
   storage: z.string().min(1, 'حافظه الزامی است'),
 });
 
-const specGroupSchema = z.object({
-  group: z.string().min(1, 'عنوان گروه مشخصات الزامی است'),
-  items: z.array(
-    z.object({
-      label: z.string().min(1),
-      value: z.string().min(1),
-    })
-  ),
+const specItemSchema = z.object({
+  attributeId: z.string().min(1, 'شناسه مشخصه الزامی است'),
+  value: z.string(),
 });
+
 const imagePathSchema = z.string().startsWith('/uploads/', 'مسیر تصویر معتبر نیست');
 export const productStatusSchema = z.enum(ProductStatus);
+
 // ------------------ Client form schema ------------------
 export const productFormSchema = z.object({
   title: z.string().min(3, 'عنوان حداقل ۳ کاراکتر باشد'),
@@ -37,7 +34,7 @@ export const productFormSchema = z.object({
   keyFeatures: z.array(z.string()).optional(),
   colors: z.array(colorSchema).optional(),
   variants: z.array(variantSchema).optional(),
-  specifications: z.array(specGroupSchema).optional(),
+  specifications: z.array(specItemSchema).optional(),
   isFeatured: z.boolean().optional(),
   isNew: z.boolean().optional(),
   status: productStatusSchema.optional(),
@@ -56,7 +53,7 @@ export const createProductPayloadSchema = z.object({
   keyFeatures: z.array(z.string()).optional().default([]),
   colors: z.array(colorSchema).optional().default([]),
   variants: z.array(variantSchema).optional().default([]),
-  specifications: z.array(specGroupSchema).optional().default([]),
+  specifications: z.array(specItemSchema).optional().default([]),
   isFeatured: z.boolean().optional().default(false),
   isNew: z.boolean().optional().default(true),
   status: productStatusSchema.optional(),
@@ -66,6 +63,7 @@ export const createProductPayloadSchema = z.object({
 });
 
 export type CreateProductPayload = z.infer<typeof createProductPayloadSchema>;
+
 // ------------------ Server create schema ------------------
 export const createProductSchema = z.object({
   title: z.string().min(3, 'عنوان حداقل ۳ کاراکتر').max(200),
@@ -79,7 +77,7 @@ export const createProductSchema = z.object({
   keyFeatures: z.array(z.string()).optional().default([]),
   colors: z.array(colorSchema).optional().default([]),
   variants: z.array(variantSchema).optional().default([]),
-  specifications: z.array(specGroupSchema).optional().default([]),
+  specifications: z.array(specItemSchema).optional().default([]),
   isFeatured: z.boolean().optional().default(false),
   isNew: z.boolean().optional().default(true),
   status: productStatusSchema.optional(),
@@ -103,7 +101,7 @@ export const updateProductSchema = z.object({
   keyFeatures: z.array(z.string()).optional(),
   colors: z.array(colorSchema).optional(),
   variants: z.array(variantSchema).optional(),
-  specifications: z.array(specGroupSchema).optional(),
+  specifications: z.array(specItemSchema).optional(),
   isFeatured: z.boolean().optional(),
   isNew: z.boolean().optional(),
   status: productStatusSchema.optional(),
