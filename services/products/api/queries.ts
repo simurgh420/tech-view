@@ -1,5 +1,6 @@
 // services/products/api/queries.ts
 import { AdminProductItem, FiltersProduct, PaginatedResponse, Product } from '@/types/product';
+import type { ProductFiltersResponse } from '@/hooks/useProducts';
 import axios from 'axios';
 
 export async function fetchProductsApi(): Promise<Product[]> {
@@ -48,9 +49,12 @@ export async function fetchFilteredProductsApi(
   const res = await axios.get<PaginatedResponse<Product>>('/api/products', { params: sp });
   return res.data;
 }
+
 export async function fetchProductFiltersApi(
   categorySlug: string
-): Promise<Record<string, string[]>> {
-  const res = await axios.get(`/api/products/filters?categorySlug=${categorySlug}`);
+): Promise<ProductFiltersResponse> {
+  const res = await axios.get<ProductFiltersResponse>(
+    `/api/products/filters?categorySlug=${categorySlug}`
+  );
   return res.data;
 }

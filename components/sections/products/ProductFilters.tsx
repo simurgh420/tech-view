@@ -162,9 +162,13 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
 
         {/* فیلترهای پویا (مشخصات فنی) */}
         {specFilters &&
-          Object.entries(specFilters).map(([key, values]) => {
+          Object.entries(specFilters).map(([key, group]) => {
             const isOpen = openGroups.has(key);
             const activeValue = selectedSpecs[key];
+            const label = group.label ?? key;
+            const values = group.values ?? [];
+
+            if (values.length === 0) return null;
 
             return (
               <div key={key} className="px-3 py-2">
@@ -174,7 +178,7 @@ export default function ProductFilters({ onChange, initialCategorySlug, onClose 
                   className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm transition-colors hover:bg-white/5"
                 >
                   <span className="flex items-center gap-2 font-medium text-white">
-                    {key}
+                    {label}
                     {activeValue && (
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-normal text-primary">
                         {' '}

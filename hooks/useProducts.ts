@@ -20,6 +20,13 @@ import {
 } from '@/services/products/api/queries';
 import { CreateProductPayload, UpdateProductInput } from '@/lib/validation/product';
 
+// ✅ ساختار جدید خروجی /api/products/filters
+export interface ProductFilterGroup {
+  label: string;
+  values: string[];
+}
+export type ProductFiltersResponse = Record<string, ProductFilterGroup>;
+
 export const productKeys = {
   all: ['products'] as const,
   lists: () => [...productKeys.all, 'list'] as const,
@@ -100,7 +107,8 @@ export function useGetFeatured() {
 
 /** آپشن‌های فیلتر برای یک دسته‌بندی (رنگ، سایز، برند و ...) */
 export function useProductFilters(categorySlug: string) {
-  return useQuery<Record<string, string[]>>({
+  return useQuery<ProductFiltersResponse>({
+    // ✅ تایپ جدید، مطابق ساختار { label, values }
     queryKey: productKeys.filtersOf(categorySlug),
     queryFn: () => fetchProductFiltersApi(categorySlug),
     enabled: !!categorySlug,
