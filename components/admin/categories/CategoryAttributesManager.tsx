@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+
 import axios from 'axios';
 
-import { Check, ChevronsUpDown, ListFilter, Loader2, Plus, RefreshCw, Trash2 } from 'lucide-react';
+import { ListFilter, Loader2, Plus, RefreshCw, Trash2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import {
@@ -20,17 +22,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { cn } from '@/lib/utils';
@@ -43,9 +34,19 @@ import {
   useUpdateCategoryAttribute,
 } from '@/hooks/useCategoryAttributes';
 
+import { AttributeSelectorDialog } from './AttributeSelectorDialog';
+
+/* =========================================================
+   Props
+========================================================= */
+
 interface Props {
   categorySlug: string;
 }
+
+/* =========================================================
+   Type labels
+========================================================= */
 
 const TYPE_LABEL: Record<string, string> = {
   TEXT: 'متنی',
@@ -53,6 +54,10 @@ const TYPE_LABEL: Record<string, string> = {
   BOOLEAN: 'بله / خیر',
   ENUM: 'انتخابی',
 };
+
+/* =========================================================
+   Error helper
+========================================================= */
 
 function getApiErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
@@ -72,6 +77,10 @@ function getApiErrorMessage(error: unknown): string {
   return 'عملیات ذخیره‌سازی با خطا مواجه شد.';
 }
 
+/* =========================================================
+   Compact Toggle
+========================================================= */
+
 interface CompactToggleProps {
   label: string;
   checked: boolean;
@@ -89,7 +98,7 @@ function CompactToggle({ label, checked, disabled = false, onChange }: CompactTo
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cn(
-        'inline-flex h-8 min-w-[92px] items-center justify-between gap-2 rounded-lg border px-2.5 transition-all',
+        'inline-flex h-8 min-w-23 items-center justify-between gap-2 rounded-lg border px-2.5 transition-all',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
         checked ? 'border-primary/30 bg-primary/5' : 'border-border bg-muted/20 hover:bg-muted/40',
         disabled && 'cursor-not-allowed opacity-50'
@@ -97,7 +106,7 @@ function CompactToggle({ label, checked, disabled = false, onChange }: CompactTo
     >
       <span
         className={cn(
-          'text-xs font-medium whitespace-nowrap',
+          'whitespace-nowrap text-xs font-medium',
           checked ? 'text-foreground' : 'text-muted-foreground'
         )}
       >
@@ -113,13 +122,17 @@ function CompactToggle({ label, checked, disabled = false, onChange }: CompactTo
         <span
           className={cn(
             'absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-background shadow-sm transition-all',
-            checked ? 'right-0.5' : 'right-[18px]'
+            checked ? 'right-0.5' : 'right-4.5'
           )}
         />
       </span>
     </button>
   );
 }
+
+/* =========================================================
+   Error Banner
+========================================================= */
 
 function ErrorBanner({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
@@ -145,13 +158,25 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry?: () => vo
   );
 }
 
+/* =========================================================
+   Main Component
+========================================================= */
+
 export function CategoryAttributesManager({ categorySlug }: Props) {
+  /* =========================================================
+     Category attributes
+  ========================================================= */
+
   const {
     data: categoryAttributes = [],
     isLoading: isCategoryLoading,
     isError: isCategoryError,
     refetch: refetchCategoryAttributes,
   } = useGetCategoryAttributes(categorySlug);
+
+  /* =========================================================
+     All attributes
+  ========================================================= */
 
   const {
     data: availableAttributes = [],
@@ -160,17 +185,29 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
     refetch: refetchAvailableAttributes,
   } = useGetAdminAttributes();
 
+  /* =========================================================
+     Mutations
+  ========================================================= */
+
   const addMutation = useAddCategoryAttribute();
+
   const updateMutation = useUpdateCategoryAttribute();
+
   const deleteMutation = useDeleteCategoryAttribute();
 
-  const [selectedAttributeId, setSelectedAttributeId] = useState('');
+  /* =========================================================
+     UI state
+  ========================================================= */
 
-  const [comboOpen, setComboOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const [pendingUpdateKey, setPendingUpdateKey] = useState<string | null>(null);
+
+  /* =========================================================
+     Attributes not currently used by category
+  ========================================================= */
 
   const unusedAttributes = useMemo(() => {
     const usedIds = new Set(categoryAttributes.map(attribute => attribute.attributeId));
@@ -178,32 +215,45 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
     return availableAttributes.filter(attribute => !usedIds.has(attribute.id));
   }, [availableAttributes, categoryAttributes]);
 
-  const selectedAttribute = useMemo(
-    () => unusedAttributes.find(attribute => attribute.id === selectedAttributeId),
-    [unusedAttributes, selectedAttributeId]
-  );
+  /* =========================================================
+     Mutation error
+  ========================================================= */
 
   const mutationError = addMutation.error ?? updateMutation.error ?? deleteMutation.error;
 
-  async function handleAdd() {
-    if (!selectedAttributeId) {
+  /* =========================================================
+     Add multiple attributes
+  ========================================================= */
+
+  async function handleAddAttributes(attributeIds: string[]) {
+    if (attributeIds.length === 0) {
       return;
     }
 
     try {
-      await addMutation.mutateAsync({
-        categorySlug,
-        attributeId: selectedAttributeId,
-        isRequired: false,
-        isFilterable: false,
-      });
 
-      setSelectedAttributeId('');
-      setComboOpen(false);
+      for (const attributeId of attributeIds) {
+        await addMutation.mutateAsync({
+          categorySlug,
+          attributeId,
+          isRequired: false,
+          isFilterable: false,
+        });
+      }
+
+      setAddDialogOpen(false);
     } catch {
-      // Error is handled by mutation state.
+      /*
+       * Mutation error is displayed by ErrorBanner.
+       *
+       * Dialog stays open so user can retry.
+       */
     }
   }
+
+  /* =========================================================
+     Update category attribute
+  ========================================================= */
 
   async function handleToggle(id: string, field: 'isRequired' | 'isFilterable', value: boolean) {
     const key = `${id}:${field}`;
@@ -219,11 +269,17 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
         },
       });
     } catch {
-      // Error is handled by mutation state.
+      /*
+       * Error handled by mutation state.
+       */
     } finally {
       setPendingUpdateKey(null);
     }
   }
+
+  /* =========================================================
+     Delete attribute
+  ========================================================= */
 
   async function handleConfirmDelete() {
     if (!pendingDeleteId) {
@@ -240,9 +296,15 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
 
       setPendingDeleteId(null);
     } catch {
-      // Keep dialog open so error can be seen.
+      /*
+       * Keep dialog open so the error can be seen.
+       */
     }
   }
+
+  /* =========================================================
+     Loading
+  ========================================================= */
 
   if (isCategoryLoading) {
     return (
@@ -272,9 +334,15 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
     );
   }
 
+  /* =========================================================
+     Render
+  ========================================================= */
+
   return (
     <div dir="rtl" className="w-full space-y-4">
-      {/* Errors */}
+      {/* =====================================================
+          Errors
+      ====================================================== */}
 
       {isCategoryError && (
         <ErrorBanner
@@ -296,94 +364,47 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
           Add Attribute
       ====================================================== */}
 
-      <Card className="overflow-visible">
+      <Card className="overflow-hidden">
         <CardHeader className="border-b border-border/60 px-5 py-4">
-          <div>
-            <CardTitle className="text-sm font-semibold">افزودن مشخصه فنی</CardTitle>
+          <CardTitle className="text-sm font-semibold">افزودن مشخصه فنی</CardTitle>
 
-            <p className="mt-1 text-xs text-muted-foreground">
-              مشخصه‌ای را که می‌خواهید برای این دسته فعال شود انتخاب کنید.
-            </p>
-          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            یک یا چند مشخصه را برای این دسته‌بندی فعال کنید.
+          </p>
         </CardHeader>
 
         <CardContent className="p-4">
-          <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Popover open={comboOpen} onOpenChange={setComboOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={comboOpen}
-                  disabled={isAttributesLoading}
-                  className="h-10 min-w-0 flex-1 justify-between rounded-lg px-3 text-sm font-normal"
-                >
-                  <span className="truncate">
-                    {selectedAttribute
-                      ? `${selectedAttribute.label} — ${selectedAttribute.key}`
-                      : 'جستجو و انتخاب مشخصه...'}
-                  </span>
-
-                  <ChevronsUpDown className="ml-2 size-4 shrink-0 text-muted-foreground" />
-                </Button>
-              </PopoverTrigger>
-
-              <PopoverContent align="start" className="w-[--radix-popover-trigger-width] p-0">
-                <Command>
-                  <CommandInput placeholder="جستجوی مشخصه..." className="h-10" />
-
-                  <CommandList>
-                    <CommandEmpty className="py-6 text-xs">
-                      {unusedAttributes.length === 0
-                        ? 'همه مشخصه‌ها اضافه شده‌اند'
-                        : 'موردی پیدا نشد'}
-                    </CommandEmpty>
-
-                    <CommandGroup className="p-1.5">
-                      {unusedAttributes.map(attribute => (
-                        <CommandItem
-                          key={attribute.id}
-                          value={`${attribute.label} ${attribute.key}`}
-                          onSelect={() => {
-                            setSelectedAttributeId(attribute.id);
-                            setComboOpen(false);
-                          }}
-                          className="rounded-md"
-                        >
-                          <Check
-                            className={cn(
-                              'ml-2 size-4 shrink-0',
-                              selectedAttributeId === attribute.id ? 'opacity-100' : 'opacity-0'
-                            )}
-                          />
-
-                          <span className="min-w-0 flex-1 truncate text-sm">{attribute.label}</span>
-
-                          <span className="text-[11px] text-muted-foreground">{attribute.key}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-
-            <Button
-              type="button"
-              disabled={!selectedAttributeId || addMutation.isPending}
-              onClick={() => void handleAdd()}
-              className="h-10 rounded-lg px-5 sm:min-w-24"
-            >
-              {addMutation.isPending ? (
+          <Button
+            type="button"
+            disabled={isAttributesLoading || unusedAttributes.length === 0}
+            onClick={() => setAddDialogOpen(true)}
+            className="h-10 w-full rounded-lg sm:w-auto sm:min-w-40"
+          >
+            {isAttributesLoading ? (
+              <>
                 <Loader2 className="ml-2 size-4 animate-spin" />
-              ) : (
+                در حال دریافت...
+              </>
+            ) : (
+              <>
                 <Plus className="ml-2 size-4" />
-              )}
 
-              {addMutation.isPending ? 'در حال افزودن...' : 'افزودن'}
-            </Button>
-          </div>
+                {unusedAttributes.length === 0 ? 'همه مشخصه‌ها اضافه شده‌اند' : 'افزودن مشخصه'}
+              </>
+            )}
+          </Button>
+
+          {/* =================================================
+              Attribute Selector
+          ================================================== */}
+
+          <AttributeSelectorDialog
+            open={addDialogOpen}
+            onOpenChange={setAddDialogOpen}
+            attributes={unusedAttributes}
+            isSubmitting={addMutation.isPending}
+            onSubmit={handleAddAttributes}
+          />
         </CardContent>
       </Card>
 
@@ -415,7 +436,9 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
 
               <p className="text-sm font-medium">هنوز مشخصه‌ای برای این دسته ثبت نشده است.</p>
 
-              <p className="mt-1 text-xs text-muted-foreground">از بخش بالا یک مشخصه اضافه کنید.</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                از بخش بالا یک یا چند مشخصه اضافه کنید.
+              </p>
             </div>
           ) : (
             <div>
@@ -429,12 +452,15 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
                     key={attribute.id}
                     className={cn(
                       'flex flex-col gap-3',
-                      'border-b border-border/60 px-5 py-4 last:border-b-0',
-                      'transition-colors hover:bg-muted/[0.025]',
+                      'border-b border-border/60 px-5 py-4',
+                      'last:border-b-0',
+                      'transition-colors hover:bg-muted/2.5',
                       'md:flex-row md:items-center md:gap-5'
                     )}
                   >
-                    {/* Attribute info */}
+                    {/* =================================================
+                          Attribute info
+                      ================================================== */}
 
                     <div className="min-w-0 flex-1">
                       <div className="flex min-w-0 items-center gap-2">
@@ -454,6 +480,7 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
                         {attribute.unit && (
                           <>
                             <span>•</span>
+
                             <span>{attribute.unit}</span>
                           </>
                         )}
@@ -461,13 +488,16 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
                         {attribute.options?.length > 0 && (
                           <>
                             <span>•</span>
+
                             <span>{attribute.options.length} گزینه</span>
                           </>
                         )}
                       </div>
                     </div>
 
-                    {/* Settings */}
+                    {/* =================================================
+                          Settings
+                      ================================================== */}
 
                     <div className="flex shrink-0 items-center gap-2">
                       <CompactToggle
@@ -487,7 +517,9 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
                       />
                     </div>
 
-                    {/* Single delete button */}
+                    {/* =================================================
+                          Delete
+                      ================================================== */}
 
                     <Button
                       type="button"
@@ -513,7 +545,7 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
       </Card>
 
       {/* =====================================================
-          Delete confirmation
+          Delete Confirmation
       ====================================================== */}
 
       <AlertDialog
@@ -524,11 +556,11 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
           }
         }}
       >
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent dir="rtl" className="max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>حذف این مشخصه؟</AlertDialogTitle>
+            <AlertDialogTitle className="text-right">حذف این مشخصه؟</AlertDialogTitle>
 
-            <AlertDialogDescription className="leading-6">
+            <AlertDialogDescription className="text-right leading-6">
               این مشخصه فقط از این دسته‌بندی حذف می‌شود و در سایر دسته‌بندی‌ها باقی خواهد ماند.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -541,6 +573,7 @@ export function CategoryAttributesManager({ categorySlug }: Props) {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={event => {
                 event.preventDefault();
+
                 void handleConfirmDelete();
               }}
             >

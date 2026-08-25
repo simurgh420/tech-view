@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FolderTree, ListTree, Plus } from 'lucide-react';
+import { FolderTree, Plus } from 'lucide-react';
 
 import CategoryList from '@/components/sections/categories/CategoryList';
 import { Button } from '@/components/ui/button';
