@@ -37,11 +37,12 @@ export default function EditCategoryPage() {
   return (
     <div className="container mx-auto max-w-3xl space-y-8 px-8 py-16" dir="rtl">
       <Card className="border-border/60 shadow-sm">
-        <CardHeader className="flex-row items-center gap-3 space-y-0 border-b border-border/60  px-6 py-5">
-          <div className="rounded-xl bg-primary/10 p-2 text-primary">
+        <CardHeader className="flex flex-row items-center gap-3 border-b border-border/60 px-6 py-5">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <FolderTree className="size-5" />
           </div>
-          <CardTitle className="text-lg">ویرایش دسته‌بندی</CardTitle>
+
+          <CardTitle className="text-lg leading-none">ویرایش دسته‌بندی</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           {isLoading ? (

@@ -5,7 +5,7 @@ const statements = {
   ...defaultStatements,
   posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
   brands: ['create', 'update', 'delete'],
-  categories: ['create', 'update', 'delete'],
+  categories: ['create', 'read', 'update', 'delete'],
   comments: ['create', 'read', 'update', 'update:own', 'delete:own', 'delete'],
   contacts: ['read', 'delete'],
   products: ['create', 'read', 'update', 'delete'],
@@ -29,7 +29,7 @@ export const roles = {
   ADMIN: ac.newRole({
     posts: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     brands: ['create', 'update', 'delete'],
-    categories: ['create', 'update', 'delete'],
+    categories: ['create', 'read', 'update', 'delete'],
     comments: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
     products: ['create', 'read', 'update', 'delete'],
     contacts: ['read', 'delete'],
@@ -43,7 +43,7 @@ export const roles = {
 
     brands: ['create', 'update', 'delete'],
 
-    categories: ['create', 'update', 'delete'],
+    categories: ['create', 'read', 'update', 'delete'],
 
     comments: ['create', 'read', 'update', 'delete', 'update:own', 'delete:own'],
 
