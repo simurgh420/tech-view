@@ -1,6 +1,6 @@
 // services/categories/api/queries.ts
 import { Category } from '@/app/generated/prisma/client';
-import { CategoryAttributeOption } from '@/hooks/useCategoryAttributes';
+import { AdminAttribute, CategoryAttributeOption } from '@/types/category';
 import axios from 'axios';
 
 export async function fetchCategoriesApi(): Promise<Category[]> {
@@ -18,6 +18,11 @@ export async function fetchCategoryAttributesApi(
   const response = await axios.get<CategoryAttributeOption[]>(
     `/api/admin/categories/${categorySlug}/attributes`
   );
+
+  return response.data;
+}
+export async function fetchAdminAttributesApi(): Promise<AdminAttribute[]> {
+  const response = await axios.get<AdminAttribute[]>('/api/admin/attributes');
 
   return response.data;
 }

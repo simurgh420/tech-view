@@ -4,8 +4,8 @@ import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { createCategorySchema } from '@/lib/validation/category';
 import { createCategory } from '@/services/categories/db/mutations';
-import { getCategories } from '@/services/categories/db/queries';
 import { logger } from '@/lib/logger';
+import { getCategories } from '@/services/categories/db/queries';
 
 export async function GET() {
   const startTime = Date.now();
