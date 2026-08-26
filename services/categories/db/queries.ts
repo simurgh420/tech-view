@@ -139,6 +139,7 @@ export async function getCategoryAttributesAdmin(slug: string) {
       label: categoryAttribute.attribute.label,
       type: categoryAttribute.attribute.type,
       unit: categoryAttribute.attribute.unit,
+      category: categoryAttribute.attribute.category, // 👈 اضافه شد
       isRequired: categoryAttribute.isRequired,
       isFilterable: categoryAttribute.isFilterable,
       order: categoryAttribute.order,

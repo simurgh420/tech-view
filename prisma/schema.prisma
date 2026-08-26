@@ -181,6 +181,7 @@ model Attribute {
   isActive           Boolean                @default(true)
   createdAt          DateTime               @default(now())
   updatedAt          DateTime               @updatedAt
+  category           AttributeCategory @default(other)
   options            AttributeOption[]
   categoryAttributes CategoryAttribute[]
   specifications     ProductSpecification[]
@@ -468,4 +469,14 @@ enum CommentStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum AttributeCategory {
+  mobile
+  computer
+  display
+  audio
+  gaming
+  accessories
+  other
 }
