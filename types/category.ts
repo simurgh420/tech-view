@@ -1,5 +1,6 @@
 // types/category.ts
 
+import { AttributeCategory } from '@/app/generated/prisma/enums';
 import { CreateCategoryInput, EditCategoryInput } from '@/lib/validation/category';
 
 export interface CategoryPayload {
@@ -32,7 +33,10 @@ export type CategoryFormProps =
       parents?: { id: string; title: string }[];
       slug?: string;
     };
+
 export type AttributeType = 'TEXT' | 'NUMBER' | 'BOOLEAN' | 'ENUM';
+
+export type AttributeCategoryId = AttributeCategory;
 
 export interface CategoryAttributeOption {
   id: string;
@@ -41,6 +45,7 @@ export interface CategoryAttributeOption {
   label: string;
   type: AttributeType;
   unit: string | null;
+  category: AttributeCategoryId; // 👈 اضافه شد
   isRequired: boolean;
   isFilterable: boolean;
   order: number;
@@ -53,6 +58,7 @@ export interface AdminAttribute {
   label: string;
   type: AttributeType;
   unit: string | null;
+  category: AttributeCategoryId; // 👈 اضافه شد
   options: Array<{
     id: string;
     value: string;

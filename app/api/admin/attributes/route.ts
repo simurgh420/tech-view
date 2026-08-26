@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import {  NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
@@ -47,7 +47,7 @@ async function authorize(permissionName: 'read' | 'update') {
 // GET — لیست کامل مشخصات قابل استفاده
 // =====================================================
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const startTime = Date.now();
 
   try {

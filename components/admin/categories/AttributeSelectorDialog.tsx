@@ -1,3 +1,4 @@
+// AttributeSelectorDialog.tsx
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -5,7 +6,7 @@ import { createPortal } from 'react-dom';
 import { Check, Search, X, ArrowRight, CheckSquare, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CATEGORIES, getCategory, type AttributeSelectorItem } from './attribute-category';
+import { CATEGORIES, getCategoryMeta, type AttributeSelectorItem } from './attribute-category';
 
 interface AttributeSelectorDialogProps {
   open: boolean;
@@ -41,11 +42,17 @@ export function AttributeSelectorDialog({
   const [activeCategory, setActiveCategory] = useState('all');
 
   useEffect(() => {
+    if (!open) return;
+
     document.body.style.overflow = 'hidden';
+
     return () => {
       document.body.style.overflow = 'auto';
+      setSearch('');
+      setSelectedIds([]);
+      setActiveCategory('all');
     };
-  }, []);
+  }, [open]);
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
@@ -53,7 +60,7 @@ export function AttributeSelectorDialog({
     const query = search.trim().toLocaleLowerCase();
 
     return attributes.filter(attribute => {
-      if (activeCategory !== 'all' && getCategory(attribute) !== activeCategory) {
+      if (activeCategory !== 'all' && attribute.category !== activeCategory) {
         return false;
       }
       if (!query) return true;
@@ -195,6 +202,7 @@ export function AttributeSelectorDialog({
                 onClick={() => setActiveCategory(cat.id)}
                 className={cn(
                   'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-medium transition-all shrink-0 border',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
                   isActive
                     ? `${cat.border} ${cat.bg} ${cat.color} shadow-sm`
                     : 'border-border/60 bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground'
@@ -224,9 +232,7 @@ export function AttributeSelectorDialog({
           </div>
           <div className="flex flex-wrap gap-1.5 max-h-17.5 overflow-y-auto custom-scrollbar">
             {selectedAttributes.map(attribute => {
-              const cat =
-                CATEGORIES.find(c => c.id === getCategory(attribute)) ??
-                CATEGORIES[CATEGORIES.length - 1];
+              const cat = getCategoryMeta(attribute.category);
               return (
                 <div
                   key={attribute.id}
@@ -270,9 +276,9 @@ export function AttributeSelectorDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredAttributes.map(attribute => {
               const selected = selectedSet.has(attribute.id);
-              const cat =
-                CATEGORIES.find(c => c.id === getCategory(attribute)) ??
-                CATEGORIES[CATEGORIES.length - 1];
+              const cat = getCategoryMeta(attribute.category);
+              const Icon = cat.icon;
+
               return (
                 <button
                   key={attribute.id}
@@ -280,61 +286,64 @@ export function AttributeSelectorDialog({
                   disabled={isSubmitting}
                   onClick={() => toggleAttribute(attribute.id)}
                   className={cn(
-                    'group relative flex flex-col justify-between gap-3 rounded-xl border p-4 text-right transition-all duration-200',
+                    'group relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-xl border p-4 text-right transition-all duration-200',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                     selected
-                      ? 'border-primary bg-linear-to-br from-primary/5 to-primary/10 shadow-md ring-2 ring-primary/20'
-                      : 'border-border/60 bg-card hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5',
+                      ? 'border-primary bg-primary/4 shadow-sm ring-1 ring-primary/25'
+                      : 'border-border/60 bg-card hover:border-primary/40 hover:shadow-sm hover:-translate-y-0.5',
                     'border-r-4',
-                    cat.border
+                    cat.border,
+                    isSubmitting && 'cursor-not-allowed opacity-60'
                   )}
                 >
-                  <div className="flex items-start justify-between gap-2 w-full">
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className={cn('shrink-0 rounded-lg p-1.5', cat.bg, cat.color)}>
-                        {(() => {
-                          const Icon = cat.icon;
-                          return <Icon className="size-3.5" />;
-                        })()}
-                      </span>
-                      <span className="text-sm font-bold truncate leading-snug">
-                        {attribute.label}
-                      </span>
-                    </div>
-                    <div
+                  {/* ردیف بالا: آیکون دسته + چک‌باکس */}
+                  <div className="flex items-start justify-between gap-2">
+                    <span
+                      className={cn('inline-flex shrink-0 rounded-lg p-1.5', cat.bg, cat.color)}
+                    >
+                      <Icon className="size-3.5" />
+                    </span>
+
+                    <span
                       className={cn(
-                        'flex size-5 shrink-0 items-center justify-center rounded border transition-colors mt-0.5',
+                        'flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors',
                         selected
                           ? 'border-primary bg-primary text-primary-foreground'
                           : 'border-input bg-background group-hover:border-primary/50'
                       )}
                     >
-                      {selected && <Check className="size-3.5 stroke-3" />}
-                    </div>
+                      {selected && <Check className="size-3 stroke-3" />}
+                    </span>
                   </div>
 
-                  <div className="flex items-center justify-between w-full pt-2 border-t border-border/50 text-[11px]">
+                  {/* عنوان با ارتفاع ثابت برای هم‌ترازی گرید */}
+                  <p className="line-clamp-2 min-h-9.5 text-sm font-bold leading-snug">
+                    {attribute.label}
+                  </p>
+
+                  {/* نوار پایینی: کلید + واحد + نوع */}
+                  <div className="flex flex-wrap items-center gap-1.5 border-t border-border/50 pt-2.5 text-[11px]">
                     <span
                       dir="ltr"
-                      className="font-mono text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded truncate max-w-27.5"
+                      className="rounded bg-muted/60 px-1.5 py-0.5 font-mono text-muted-foreground"
                     >
                       {attribute.key}
                     </span>
 
-                    <div className="flex items-center gap-1.5">
-                      {attribute.unit && (
-                        <span className="text-muted-foreground bg-background border px-1.5 py-0.5 rounded text-[10px]">
-                          {attribute.unit}
-                        </span>
-                      )}
-                      <span
-                        className={cn(
-                          'inline-flex items-center rounded px-2 py-0.5 text-[10px] font-semibold border',
-                          TYPE_STYLE[attribute.type] ?? 'bg-muted text-muted-foreground'
-                        )}
-                      >
-                        {TYPE_LABEL[attribute.type] ?? attribute.type}
+                    {attribute.unit && (
+                      <span className="rounded border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                        {attribute.unit}
                       </span>
-                    </div>
+                    )}
+
+                    <span
+                      className={cn(
+                        'mr-auto inline-flex items-center rounded px-2 py-0.5 text-[10px] font-semibold border',
+                        TYPE_STYLE[attribute.type] ?? 'bg-muted text-muted-foreground'
+                      )}
+                    >
+                      {TYPE_LABEL[attribute.type] ?? attribute.type}
+                    </span>
                   </div>
                 </button>
               );

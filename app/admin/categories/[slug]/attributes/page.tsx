@@ -24,29 +24,21 @@ interface Props {
 export default async function CategoryAttributesPage({ params }: Props) {
   const { slug } = await params;
 
-  const [category] = await Promise.all([
-    prisma.category.findUnique({
-      where: { slug },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        _count: {
-          select: { attributes: true }, // اگه اسم relation فرق داره اصلاح کن
-        },
+  const category = await prisma.category.findUnique({
+    where: { slug },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      _count: {
+        select: { attributes: true },
       },
-    }),
-
-    prisma.category.findMany({
-      orderBy: { title: 'asc' },
-      select: { id: true, title: true, slug: true },
-    }),
-  ]);
+    },
+  });
 
   if (!category) {
     notFound();
   }
-
   return (
     <div className="container mx-auto space-y-6 py-8">
       <Breadcrumb>
