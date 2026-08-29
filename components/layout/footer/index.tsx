@@ -1,6 +1,5 @@
 import { FooterBrand } from './FooterBrand';
 import { FooterColumns } from './FooterColumns';
-import { FooterNewsletter } from './FooterNewsletter';
 import { FooterBottom } from './FooterBottom';
 
 export function Footer() {
@@ -14,13 +13,8 @@ export function Footer() {
           </div>
 
           {/* ستون‌های لینک */}
-          <div className="lg:col-span-5 lg:border-e lg:border-border lg:px-8">
+          <div className="lg:col-span-8 lg:ps-8">
             <FooterColumns />
-          </div>
-
-          {/* خبرنامه */}
-          <div className="lg:col-span-3 lg:ps-8">
-            <FooterNewsletter />
           </div>
         </div>
       </div>
