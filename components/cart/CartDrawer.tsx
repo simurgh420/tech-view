@@ -1,8 +1,6 @@
 // components/cart/CartDrawer.tsx
 'use client';
 
-import { useEffect } from 'react';
-import { useNotify } from '@/hooks/useNotify';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { CartSkeleton } from './CartSkeleton';
 import { CartError } from './CartError';
@@ -14,12 +12,7 @@ import { useGetCartItems } from '@/hooks/useCart';
 
 export function CartDrawer() {
   const { isOpen, close } = useCartUI();
-  const notify = useNotify();
   const { data, isLoading, isError } = useGetCartItems();
-
-  useEffect(() => {
-    if (isError) notify.error('خطا در دریافت سبد خرید');
-  }, [isError, notify]);
 
   const items = data ?? [];
 

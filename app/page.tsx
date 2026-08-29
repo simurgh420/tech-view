@@ -8,6 +8,7 @@ import { FeatureBar } from '@/components/sections/services/FeatureBar';
 import ProductsOnSale from '@/components/sections/products/ProductsOnSale/ProductsOnSale';
 import NewProducts from '@/components/sections/products/NewProducts/NewProducts';
 import BestSellers from '@/components/sections/products/BestSeller/BestSellers';
+import { Reveal } from '@/components/shared/Reveal';
 
 export default function Home() {
   return (
@@ -16,23 +17,41 @@ export default function Home() {
         {/* Hero Section */}
         <HeroSection />
         {/* Categories Section */}
-        <CategoriesSection />
+        <Reveal>
+          <CategoriesSection />
+        </Reveal>
         {/* Products On Sale */}
-        <ProductsOnSale />
+        <Reveal>
+          <ProductsOnSale />
+        </Reveal>
         {/* NewProducts */}
-        <NewProducts />
+        <Reveal>
+          <NewProducts />
+        </Reveal>
         {/* Banners */}
-        <PromoBanners />
+        <Reveal>
+          <PromoBanners />
+        </Reveal>
         {/* Best Sellers */}
-        <BestSellers />
+        <Reveal>
+          <BestSellers />
+        </Reveal>
         {/* Top Brands */}
-        <TopBrands />
+        <Reveal>
+          <TopBrands />
+        </Reveal>
         {/* Product Banner */}
-        <ProductBanner />
+        <Reveal>
+          <ProductBanner />
+        </Reveal>
         {/* Blog Section */}
-        <BlogSection />
+        <Reveal>
+          <BlogSection />
+        </Reveal>
         {/* Feature Bar */}
-        <FeatureBar />
+        <Reveal>
+          <FeatureBar />
+        </Reveal>
       </div>
     </main>
   );

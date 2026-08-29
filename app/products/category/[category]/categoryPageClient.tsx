@@ -2,7 +2,6 @@
 
 import { ProductEmptyState } from '@/components/sections/products/empty-state';
 import ProductCard from '@/components/sections/products/ProductCard';
-import ProductFilters from '@/components/sections/products/ProductFilters';
 import ProductFiltersResponsive from '@/components/sections/products/ProductFiltersResponsive';
 import SortMenu from '@/components/sections/products/SortMenu';
 import { SkeletonCard } from '@/components/ui/skeleton';

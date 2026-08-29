@@ -6,19 +6,19 @@ const cards = [
 
 export function ContactCards() {
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+    <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12" dir="rtl">
       {cards.map((item, i) => (
         <div
           key={i}
           className="
-            p-6 rounded-2xl border border-white/10 
-            hover:border-white/20 hover:scale-[1.02]
-            transition bg-gray-700
+            rounded-2xl border border-border bg-card p-6
+            shadow-sm transition-all duration-300
+            hover:-translate-y-1 hover:border-primary/30 hover:shadow-md
           "
         >
-          <div className="text-3xl mb-3">{item.icon}</div>
-          <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-          <p className="text-gray-400 mt-1">{item.desc}</p>
+          <div className="mb-3 text-3xl">{item.icon}</div>
+          <h3 className="text-lg font-semibold text-card-foreground">{item.title}</h3>
+          <p className="mt-1 text-muted-foreground">{item.desc}</p>
         </div>
       ))}
     </section>

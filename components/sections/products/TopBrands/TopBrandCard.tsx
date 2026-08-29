@@ -10,7 +10,7 @@ interface Props {
 export function TopBrandCard({ name, logo, slug }: Props) {
   return (
     <Link
-      href={`/brands/${slug}`}
+      href={`/products/brand/${slug}`}
       className="
         group
         flex

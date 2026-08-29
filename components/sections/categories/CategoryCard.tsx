@@ -9,7 +9,7 @@ interface Props {
 
 export function CategoryCard({ title, image, slug }: Props) {
   return (
-    <Link href={`/products/${slug}`} className="group block">
+    <Link href={`/products/category/${slug}`} className="group block">
       <div className="flex flex-col items-center text-center rounded-lg shadow-sm p-4 transition-all duration-300">
         <Image
           src={image}
