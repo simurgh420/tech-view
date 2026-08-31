@@ -9,17 +9,20 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.brandfetch.io',
         pathname: '**',
       },
-      {
-        protocol: 'https',
-        hostname: 'localhost',
-        port: '3000',
-      },
     ],
   },
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: '/api/files/:path*',
+      },
+    ];
   },
 };
 
