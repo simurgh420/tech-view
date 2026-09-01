@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { CalendarDays, ChevronLeft, ClipboardList, Package, ShoppingBag } from 'lucide-react';
 
-import { useGetUserOrders } from '@/hooks/useOrders';
+import { useGetUserOrders, useCancelOrder } from '@/hooks/useOrders';
+import { useNotify } from '@/hooks/useNotify';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 type OrderStatus = {
   label: string;
@@ -36,7 +38,8 @@ const statusMap: Record<string, OrderStatus> = {
     className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
   },
 
-  CANCELLED: {
+  CANCELED: {
+    // ✅ اصلاح شد: قبلاً CANCELLED (دو L) بود و هیچ‌وقت match نمی‌شد
     label: 'لغو شده',
     className: 'bg-destructive/10 text-destructive',
   },
@@ -63,11 +66,29 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+// ✅ فقط سفارش‌هایی که هنوز ارسال نشدن قابل لغو هستن
+function isCancelable(status: string) {
+  return status === 'PENDING';
+}
+
 export default function OrdersPageClient() {
   const { data, isPending, isError, error } = useGetUserOrders();
+  const { mutate: cancelOrder, isPending: isCanceling } = useCancelOrder();
+  const notify = useNotify();
 
   const orders = Array.isArray(data) ? data : [];
 
+  const handleCancel = (orderId: string) => {
+    cancelOrder(orderId, {
+      onSuccess: () => {
+        notify.success('سفارش با موفقیت لغو شد ✅');
+      },
+      onError: (err: any) => {
+        const message = err?.response?.data?.error ?? 'خطا در لغو سفارش';
+        notify.error(message);
+      },
+    });
+  };
 
   if (isPending) {
     return (
@@ -153,7 +174,7 @@ export default function OrdersPageClient() {
                 </div>
 
                 {/* Price + details */}
-                <div className="flex items-center justify-between gap-5 border-t pt-4 lg:min-w-[320px] lg:justify-end lg:border-t-0 lg:pt-0">
+                <div className="flex items-center justify-between gap-3 border-t pt-4 lg:min-w-[320px] lg:justify-end lg:border-t-0 lg:pt-0">
                   <div>
                     <p className="text-xs text-muted-foreground">مبلغ سفارش</p>
 
@@ -164,13 +185,34 @@ export default function OrdersPageClient() {
                     </p>
                   </div>
 
-                  <Link
-                    href={`/orders/${order.id}`}
-                    className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg border bg-background px-4 text-sm font-medium transition-colors hover:bg-muted"
-                  >
-                    جزئیات سفارش
-                    <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    {isCancelable(order.status) && (
+                      <ConfirmDialog
+                        trigger={
+                          <button
+                            type="button"
+                            disabled={isCanceling}
+                            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/5 px-4 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                          >
+                            لغو سفارش
+                          </button>
+                        }
+                        title="لغو سفارش"
+                        description="آیا مطمئن هستید می‌خواهید این سفارش را لغو کنید؟ این عملیات قابل بازگشت نیست."
+                        confirmText="بله، لغو کن"
+                        cancelText="انصراف"
+                        onConfirm={() => handleCancel(order.id)}
+                      />
+                    )}
+
+                    <Link
+                      href={`/orders/${order.id}`}
+                      className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg border bg-background px-4 text-sm font-medium transition-colors hover:bg-muted"
+                    >
+                      جزئیات سفارش
+                      <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </article>
