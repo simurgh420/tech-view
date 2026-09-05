@@ -7,7 +7,10 @@ export async function isValidEmailDomain(email: string): Promise<boolean> {
   if (!domain) return false;
 
   try {
-    const records = await dns.resolveMx(domain);
+    const records = await Promise.race([
+      dns.resolveMx(domain),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('DNS timeout')), 3000)),
+    ]);
     return records && records.length > 0;
   } catch {
     return false;
