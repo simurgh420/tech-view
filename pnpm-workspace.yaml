@@ -1,6 +1,9 @@
 packages:
   - .
-
+overrides:
+  '@tiptap/core': '3.31.0'
+  '@tiptap/pm': '3.31.0'
+  '@tiptap/react': '3.31.0'
 allowBuilds:
   '@prisma/engines': false
   argon2: false

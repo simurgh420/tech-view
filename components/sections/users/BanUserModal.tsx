@@ -79,7 +79,10 @@ export function BanUserModal({ userId }: { userId: string }) {
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input {...register('reason')} placeholder="دلیل بن" />
+            <Input
+              {...register('reason', { required: true, minLength: 3 })}
+              placeholder="دلیل بن"
+            />
 
             <Controller
               control={control}
