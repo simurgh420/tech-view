@@ -1,6 +1,22 @@
+<div dir="rtl" align="right">
+
 # 🛍️ TechView
 
 فروشگاه اینترنتی محصولات تکنولوژی ساخته‌شده با **Next.js 16**، **React 19**، **Prisma 7** و **PostgreSQL**. این پروژه شامل فروشگاه کامل (محصولات، سبد خرید، سفارش‌ها، نظرات و امتیازدهی)، بخش بلاگ، پنل مدیریت (ادمین) و سیستم احراز هویت کاربران است.
+
+🔗 **لینک سایت:** [tech-view.vercel.app](YOUR_LIVE_URL_HERE)
+
+</div>
+
+## 🖼️ تصاویر پروژه
+
+<p align="center">
+  <img src="public/img/main.png" alt="صفحه اصلی TechView" width="80%" />
+  <br /><br />
+  <img src="public/img/blog.png" alt="بخش بلاگ TechView" width="80%" />
+</p>
+
+<div dir="rtl" align="right">
 
 ---
 
@@ -40,6 +56,8 @@
 
 ## 🧰 تکنولوژی‌های استفاده‌شده
 
+</div>
+
 | بخش | تکنولوژی |
 |---|---|
 | فریم‌ورک | [Next.js 16](https://nextjs.org/) (App Router) |
@@ -61,6 +79,8 @@
 | تست | Vitest + Testing Library + MSW |
 | لینت / فرمت | ESLint + Prettier + Husky + lint-staged |
 
+<div dir="rtl" align="right">
+
 ---
 
 ## ✅ پیش‌نیازها
@@ -73,9 +93,13 @@
 
 نصب pnpm در صورت نیاز:
 
+</div>
+
 ```bash
 npm install -g pnpm
 ```
+
+<div dir="rtl" align="right">
 
 ---
 
@@ -83,36 +107,56 @@ npm install -g pnpm
 
 1. کلون کردن پروژه:
 
+</div>
+
 ```bash
 git clone <repository-url>
 cd tech-view
 ```
 
+<div dir="rtl" align="right">
+
 2. نصب پکیج‌ها:
+
+</div>
 
 ```bash
 pnpm install
 ```
 
+<div dir="rtl" align="right">
+
 3. ساخت فایل `.env` بر اساس بخش [متغیرهای محیطی](#-متغیرهای-محیطی-environment-variables)
 
 4. اجرای مایگریشن‌های دیتابیس:
+
+</div>
 
 ```bash
 pnpm prisma:migrate
 ```
 
+<div dir="rtl" align="right">
+
 5. تولید Prisma Client:
+
+</div>
 
 ```bash
 pnpm prisma:generate
 ```
 
+<div dir="rtl" align="right">
+
 6. اجرای پروژه در حالت توسعه:
+
+</div>
 
 ```bash
 pnpm dev
 ```
+
+<div dir="rtl" align="right">
 
 پروژه روی آدرس [http://localhost:3000](http://localhost:3000) در دسترس خواهد بود.
 
@@ -121,6 +165,8 @@ pnpm dev
 ## 🔐 متغیرهای محیطی (Environment Variables)
 
 یک فایل `.env` در ریشه پروژه بسازید. بر اساس پکیج‌های استفاده‌شده (Prisma/PostgreSQL، NextAuth/Better Auth، Nodemailer) موارد زیر مورد نیاز است — مقادیر را متناسب با محیط خودتان تنظیم کنید:
+
+</div>
 
 ```env
 # --- دیتابیس ---
@@ -142,6 +188,8 @@ EMAIL_FROM="no-reply@example.com"
 UPLOAD_DIR="public/uploads"
 ```
 
+<div dir="rtl" align="right">
+
 > ⚠️ **توجه**: مقادیر دقیق متغیرهای محیطی را بر اساس کدهای موجود در پوشه‌های `services/auth`، `services/action/user` و `services/upload` بررسی و تکمیل کنید، چون نام دقیق برخی متغیرها ممکن است در کد پروژه متفاوت باشد.
 
 ---
@@ -152,33 +200,51 @@ UPLOAD_DIR="public/uploads"
 
 ### تولید Prisma Client
 
+</div>
+
 ```bash
 pnpm prisma:generate
 ```
+
+<div dir="rtl" align="right">
 
 خروجی کلاینت در مسیر `app/generated/prisma` قرار می‌گیرد.
 
 ### اجرای مایگریشن‌ها (Production)
 
+</div>
+
 ```bash
 pnpm prisma:migrate
 ```
 
+<div dir="rtl" align="right">
+
 ### ساخت مایگریشن جدید در محیط توسعه
+
+</div>
 
 ```bash
 npx prisma migrate dev --name your_migration_name
 ```
 
+<div dir="rtl" align="right">
+
 ### مشاهده دیتابیس با Prisma Studio
+
+</div>
 
 ```bash
 npx prisma studio
 ```
 
+<div dir="rtl" align="right">
+
 ---
 
 ## 📜 اسکریپت‌های موجود
+
+</div>
 
 | اسکریپت | توضیح |
 |---|---|
@@ -192,9 +258,13 @@ npx prisma studio
 | `pnpm prisma:migrate` | اجرای مایگریشن‌های دیتابیس در Production |
 | `pnpm prepare` | فعال‌سازی Husky (git hooks) |
 
+<div dir="rtl" align="right">
+
 ---
 
 ## 🗂️ ساختار پروژه
+
+</div>
 
 ```
 tech-view/
@@ -234,6 +304,8 @@ tech-view/
 └── components.json            # تنظیمات shadcn/ui
 ```
 
+<div dir="rtl" align="right">
+
 > ساختار هر دامنه (`services/<domain>`) معمولاً شامل دو زیرپوشه است:
 > - `api/` → کوئری/میوتیشن‌های سمت کلاینت (React Query)
 > - `db/` → کوئری/میوتیشن‌های مستقیم روی دیتابیس (Prisma)
@@ -263,6 +335,8 @@ tech-view/
 
 پروژه از **Vitest** به همراه **Testing Library** و **MSW** (برای موک کردن API) استفاده می‌کند.
 
+</div>
+
 ```bash
 # اجرای همه تست‌ها
 pnpm test
@@ -270,6 +344,8 @@ pnpm test
 # اجرای تست‌ها در حالت watch
 pnpm test --watch
 ```
+
+<div dir="rtl" align="right">
 
 تست‌ها در مسیرهای زیر قرار دارند:
 - `tests/unit/hooks` — تست هوک‌های React Query
@@ -289,21 +365,33 @@ pnpm test --watch
 2. اتصال به یک دیتابیس PostgreSQL (مثل [Neon](https://neon.tech))
 3. اجرای دستور build:
 
+</div>
+
 ```bash
 pnpm build
 ```
 
+<div dir="rtl" align="right">
+
 4. اجرای مایگریشن‌ها روی دیتابیس Production:
+
+</div>
 
 ```bash
 pnpm prisma:migrate
 ```
 
+<div dir="rtl" align="right">
+
 5. اجرای پروژه:
+
+</div>
 
 ```bash
 pnpm start
 ```
+
+<div dir="rtl" align="right">
 
 ---
 
@@ -326,3 +414,5 @@ pnpm start
 ---
 
 <p align="center">ساخته‌شده با ❤️ با استفاده از Next.js و Prisma</p>
+
+</div>
