@@ -266,6 +266,7 @@ export default function Editor({ value, onChange, slug }: Props) {
       emitUpdate: false,
     });
     lastEmittedRef.current = value || '';
+    prevImagesRef.current = extractImageSrcs(value || '');
   }, [value, editor]);
 
   if (!editor) return null;
