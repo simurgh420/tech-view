@@ -1,17 +1,16 @@
-// components/sections/hero/HeroSection.tsx
 import { HeroImage } from './HeroImage';
 import { HeroText } from './HeroText';
 
 export function HeroSection() {
   return (
     <section className="relative w-full overflow-hidden py-10 md:py-20">
-      {/* Glow Background - پشت کل هیرو (متن + عکس) */}
+      {/* Glow Background - هماهنگ با برندینگ قرمز/صورتی سایت */}
       <div
         className="
           pointer-events-none absolute left-1/2 top-1/2
           h-125 w-125 -translate-x-1/2 -translate-y-1/2
           rounded-full
-          bg-linear-to-br from-purple-600/40 via-blue-600/30 to-indigo-700/40
+          bg-linear-to-br from-rose-600/40 via-pink-600/25 to-red-700/30
           blur-[120px]
           animate-pulse-slow
         "

@@ -1,4 +1,3 @@
-// components/sections/hero/HeroImage.tsx
 'use client';
 
 import Image from 'next/image';
@@ -47,7 +46,12 @@ export function HeroImage() {
                   width={728}
                   height={443}
                   sizes="(min-width: 768px) 50vw, 100vw"
-                  className="h-auto w-full rounded-xl drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.03]"
+                  className="
+                    h-auto w-full
+                    mask-[radial-gradient(ellipse_at_center,black_60%,transparent_100%)]
+                    transition-transform duration-500
+                    group-hover:scale-[1.03]
+                  "
                   priority={i === 0}
                 />
               </Link>
