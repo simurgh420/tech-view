@@ -9,7 +9,7 @@ import { logger } from '@/lib/logger';
 import { sanitizeUrl } from '@/lib/utils';
 import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
+import { uploadImage, deleteImage } from '@/services/upload/api/images';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
@@ -40,31 +40,29 @@ export function EditBlogPageClient({ slug, blog }: EditBlogFormProps) {
   });
 
   async function handleSubmit(data: BlogFormType) {
-    // ۱. شروع با مقدار معتبر از دیتابیس
     let imageUrl: string | null = null;
 
-    // ۲. کاربر یک فایل جدید انتخاب کرده
     if (data.coverImageUrl instanceof File) {
-      // حذف تصویر قدیمی (در صورت وجود)
       if (blog.coverImageUrl) {
-        await axios.post('/api/images/delete', { imagePath: blog.coverImageUrl }).catch(() => {});
+        await deleteImage(blog.coverImageUrl).catch(() => {});
       }
-      const formData = new FormData();
-      formData.append('file', data.coverImageUrl);
-      formData.append('folder', `blogs/${slug}/cover`);
-      formData.append('baseName', data.title);
-      const res = await axios.post('/api/images/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      imageUrl = sanitizeUrl(res.data?.imageUrl);
+
+      const uploadedImageUrl = await uploadImage(
+        data.coverImageUrl,
+        `blogs/${slug}/cover`,
+        data.title
+      );
+
+      imageUrl = sanitizeUrl(uploadedImageUrl);
     } else {
       imageUrl = sanitizeUrl(data.coverImageUrl);
 
       if (data.coverImageUrl === undefined && blog.coverImageUrl) {
-        await axios.post('/api/images/delete', { imagePath: blog.coverImageUrl }).catch(() => {});
+        await deleteImage(blog.coverImageUrl).catch(() => {});
         imageUrl = null;
       }
     }
+
     updateMutation.mutate(
       {
         title: data.title,

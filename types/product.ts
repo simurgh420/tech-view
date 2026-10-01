@@ -6,6 +6,8 @@ export type SpecsItem = {
 };
 
 export type SpecsGroup = {
+  value(value: any): unknown;
+  attributeId: boolean;
   group: string;
   items: SpecsItem[];
 };

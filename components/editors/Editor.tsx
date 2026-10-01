@@ -64,7 +64,8 @@ import {
 
 import 'reactjs-tiptap-editor/style.css';
 import { EditorContent, useEditor } from '@tiptap/react';
-import axios from 'axios';
+import { deleteImage, uploadImage } from '@/services/upload/api/images';
+import { logger } from '@/lib/logger';
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
   let timeout: ReturnType<typeof setTimeout>;
@@ -76,9 +77,9 @@ function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
 
 const deleteImageRequest = async (imageUrl: string) => {
   try {
-    await axios.post('/api/images/delete', { imagePath: imageUrl });
-  } catch (err) {
-    console.error('Error deleting image:', err);
+    await deleteImage(imageUrl);
+  } catch (error: any) {
+    logger.error(error);
   }
 };
 
@@ -188,14 +189,7 @@ export default function Editor({ value, onChange, slug }: Props) {
       Link,
       Image.configure({
         async upload(file: File) {
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('folder', `blogs/${slug}/editor`);
-          formData.append('baseName', file.name);
-          const res = await axios.post('/api/images/upload', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
-          return res.data.imageUrl as string;
+          return uploadImage(file, `blogs/${slug}/editor`, file.name);
         },
       }),
       Video.configure({
