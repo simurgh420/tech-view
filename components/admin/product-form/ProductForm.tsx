@@ -1,9 +1,10 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { UseFormReturn } from 'react-hook-form';
+
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+
 import { TitleField } from './fields/TitleField';
 import { DescriptionField } from './fields/DescriptionField';
 import { PriceField } from './fields/PriceField';
@@ -17,48 +18,28 @@ import { ColorsField } from './fields/ColorsField';
 import { VariantsField } from './fields/VariantsField';
 import { SpecificationsField } from './fields/SpecificationsField';
 import { GalleryField } from './fields/GalleryField';
-import { productFormSchema, ProductFormType } from '@/lib/validation/product';
 
-type Brand = { slug: string; name: string };
-type Category = { slug: string; title: string };
+import { ProductFormType } from '@/lib/validation/product';
+
+type Brand = {
+  slug: string;
+  name: string;
+};
+
+type Category = {
+  slug: string;
+  title: string;
+};
 
 type Props = {
-  initialValues?: Partial<ProductFormType>;
-  onSubmit: (data: ProductFormType) => void;
+  form: UseFormReturn<ProductFormType>;
+  onSubmit: (data: ProductFormType) => void | Promise<void>;
   isLoading?: boolean;
   brands?: Brand[];
   categories?: Category[];
 };
 
-export function ProductForm({
-  initialValues,
-  onSubmit,
-  isLoading,
-  brands = [],
-  categories = [],
-}: Props) {
-  const form = useForm<ProductFormType>({
-    resolver: zodResolver(productFormSchema),
-    defaultValues: {
-      title: initialValues?.title ?? '',
-      description: initialValues?.description ?? '',
-      price: initialValues?.price ?? 0,
-      discountPrice: initialValues?.discountPrice ?? null,
-      brandSlug: initialValues?.brandSlug ?? '',
-      categorySlug: initialValues?.categorySlug ?? '',
-      stockQuantity: initialValues?.stockQuantity ?? 0,
-      specifications: initialValues?.specifications ?? [],
-      thumbnail: initialValues?.thumbnail ?? undefined,
-      keyFeatures: initialValues?.keyFeatures ?? [],
-      colors: initialValues?.colors ?? [],
-      variants: initialValues?.variants ?? [],
-      images: initialValues?.images ?? [],
-      isFeatured: initialValues?.isFeatured ?? false,
-      isNew: initialValues?.isNew ?? true,
-      status: initialValues?.status ?? 'PUBLISHED',
-    },
-  });
-
+export function ProductForm({ form, onSubmit, isLoading, brands = [], categories = [] }: Props) {
   return (
     <Form {...form}>
       <form
@@ -80,6 +61,7 @@ export function ProductForm({
         <VariantsField control={form.control} />
         <SpecificationsField control={form.control} />
         <GalleryField control={form.control} />
+        
         <Button type="submit" className="w-full" disabled={!!isLoading}>
           {isLoading ? 'در حال ذخیره...' : 'ثبت محصول'}
         </Button>

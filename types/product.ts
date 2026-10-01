@@ -1,8 +1,9 @@
 // types/product.ts
+
 export type SpecsItem = {
   label: string;
   value: string | number;
-  attributeId: string | null; // ✅ برای بازسازی فرم ویرایش لازمه
+  attributeId: string | null;
 };
 
 export type SpecsGroup = {
