@@ -10,13 +10,7 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
 
-const links = [
-  { href: '/', label: 'خانه' },
-  // محصولات در MegaMenu هندل می‌شود
-  { href: '/blog', label: 'بلاگ' },
-  { href: '/faq', label: 'سوالات' },
-  { href: '/contact', label: 'تماس با ما' },
-];
+import { navLinks as links } from './navItems';
 
 export function NavLinks() {
   const pathname = usePathname();
@@ -35,7 +29,7 @@ export function NavLinks() {
   };
 
   return (
-    <NavigationMenu dir="rtl" className="hidden md:flex z-50">
+    <NavigationMenu dir="rtl" className="hidden lg:flex z-50">
       <NavigationMenuList className="gap-2">
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
