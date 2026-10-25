@@ -18,7 +18,7 @@ export function CartButton() {
       {count > 0 && (
         <span
           className="
-            absolute -top-1 -end-1 flex h-5 min-w-5 items-center justify-center
+            absolute -top-1 -inset-e-1 flex h-5 min-w-5 items-center justify-center
             rounded-full bg-red-600 px-1.5 text-xs font-semibold text-white shadow-md
           "
         >

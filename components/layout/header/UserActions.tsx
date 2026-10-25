@@ -37,13 +37,17 @@ export function UserActions({ session }: UserActionsProps) {
       {/* Search Modal */}
       <SearchModal open={openSearch} onClose={() => setOpenSearch(false)} />
 
-      <div className="flex items-center gap-4">
-        <ModeToggle />
+      <div className="flex items-center gap-1 sm:gap-3 lg:gap-4">
+        {/* تغییر تم: روی موبایل داخل منوی کشویی قرار دارد */}
+        <div className="hidden lg:block">
+          <ModeToggle />
+        </div>
 
         {/* Search Button */}
         <HeaderIconButton aria-label="جستجو" onClick={() => setOpenSearch(true)}>
           <Search className="size-5 text-gray-700 dark:text-gray-200" />
         </HeaderIconButton>
+
         {/* Cart */}
         <CartButton />
 
@@ -53,9 +57,10 @@ export function UserActions({ session }: UserActionsProps) {
             <Button
               size="sm"
               variant="ghost"
-              className="rounded-full px-5 py-2 text-sm font-medium shadow-sm transition-all hover:text-red-600 hover:shadow dark:hover:text-red-400"
+              className="rounded-full px-3 py-2 text-sm font-medium shadow-sm transition-all hover:text-red-600 hover:shadow sm:px-5 dark:hover:text-red-400"
             >
-              ورود / ثبت‌نام
+              <span className="sm:hidden">ورود</span>
+              <span className="hidden sm:inline">ورود / ثبت‌نام</span>
             </Button>
           </Link>
         )}
@@ -90,7 +95,8 @@ export function UserActions({ session }: UserActionsProps) {
                   </AvatarFallback>
                 </Avatar>
 
-                <span className="text-sm font-medium text-gray-700 transition-colors group-hover:text-gray-900 dark:text-gray-200 dark:group-hover:text-white">
+                {/* اسم کاربر: فقط از اندازه sm به بالا */}
+                <span className="hidden text-sm font-medium text-gray-700 transition-colors group-hover:text-gray-900 sm:inline dark:text-gray-200 dark:group-hover:text-white">
                   {user.name}
                 </span>
               </button>
@@ -114,7 +120,7 @@ export function UserActions({ session }: UserActionsProps) {
                 <Link href="/wishlist">علاقه‌مندی‌ها</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/profile"> پروفایل</Link>
+                <Link href="/profile">پروفایل</Link>
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
