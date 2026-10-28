@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ChevronLeft, ListTree } from 'lucide-react';
+import {  ListTree } from 'lucide-react';
 
 import prisma from '@/services/db/client';
 import { Badge } from '@/components/ui/badge';
