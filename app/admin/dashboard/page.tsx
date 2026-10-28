@@ -30,10 +30,7 @@ export default async function AdminDashboard() {
   const dashboard = await getDashboardOverview();
 
   return (
-    <div
-      dir="rtl"
-      className="container mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-12"
-    >
+    <div dir="rtl" className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       {/* Header */}
       <div className="space-y-5">
         <Breadcrumb />

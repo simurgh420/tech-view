@@ -26,7 +26,7 @@ export default async function AdminProductsPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-7xl px-6 py-10" dir="rtl">
+    <div className="mx-auto max-w-8xl px-6 py-8 sm:px-10 sm:py-10" dir="rtl">
       <div className="mb-2">
         <Breadcrumb />
       </div>

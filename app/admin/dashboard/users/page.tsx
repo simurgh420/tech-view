@@ -63,10 +63,10 @@ export default async function UsersPage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 px-4 py-8 sm:px-6 sm:py-10">
       {/* Header */}
       <div className="space-y-3 p-2">
-        <h1 className="text-4xl font-bold tracking-tight text-right">مدیریت کاربران</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-right">مدیریت کاربران</h1>
 
         <p className="text-lg leading-relaxed text-muted-foreground text-right">
           در این بخش می‌توانید کاربران را مدیریت کنید، نقش‌ها را تغییر دهید و دسترسی‌ها را کنترل

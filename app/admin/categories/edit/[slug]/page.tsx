@@ -35,7 +35,7 @@ export default function EditCategoryPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-3xl space-y-8 px-8 py-16" dir="rtl">
+    <div className="mx-auto max-w-3xl space-y-8 px-6 py-8 sm:px-8 sm:py-10" dir="rtl">
       <Card className="border-border/60 shadow-sm">
         <CardHeader className="flex flex-row items-center gap-3 border-b border-border/60 px-6 py-5">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
