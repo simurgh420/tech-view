@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getAdminProducts } from '@/services/products/db/queries';
+import { getAdminProducts } from '@/features/products/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

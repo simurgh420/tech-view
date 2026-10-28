@@ -2,9 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createReviewSchema } from '@/lib/validation/review';
-import { createReview } from '@/services/reviews/db/mutations';
-import { getReviewsByProductSlug } from '@/services/reviews/db/queries';
+import { createReviewSchema } from '@/features/reviews/schemas/review';
+import { createReview } from '@/features/reviews/server/mutations';
+import { getReviewsByProductSlug } from '@/features/reviews/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {

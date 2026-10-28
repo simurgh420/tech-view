@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getAllCommentsWithPost } from '@/services/comments/db/queries';
+import { getAllCommentsWithPost } from '@/features/comments/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

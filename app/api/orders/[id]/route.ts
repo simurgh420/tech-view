@@ -4,8 +4,8 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { getOrderByIdDB } from '@/services/orders/db/queries';
-import { cancelOrderDB } from '@/services/orders/db/mutations';
+import { getOrderByIdDB } from '@/features/orders/server/queries';
+import { cancelOrderDB } from '@/features/orders/server/mutations';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const startTime = Date.now();

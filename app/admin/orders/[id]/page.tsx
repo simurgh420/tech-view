@@ -3,8 +3,8 @@ import { headers } from 'next/headers';
 import { redirect, notFound } from 'next/navigation';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient } from '@/lib/query/query-client';
-import { adminOrderKeys } from '@/hooks/useOrders';
-import { getAdminOrderByIdDB } from '@/services/orders/db/queries';
+import { adminOrderKeys } from '@/features/orders/hooks/useOrders';
+import { getAdminOrderByIdDB } from '@/features/orders/server/queries';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 import AdminOrderDetailClientPage from './AdminOrderDetailClientPage';
 

@@ -3,10 +3,11 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient } from '@/lib/query/query-client';
-import { AdminOrderTable } from '@/components/admin/AdminOrderTable';
-import { getAdminOrdersDB } from '@/services/orders/db/queries';
-import { adminOrderKeys } from '@/hooks/useOrders';
+
+import { getAdminOrdersDB } from '@/features/orders/server/queries';
+import { adminOrderKeys } from '@/features/orders/hooks/useOrders';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import { AdminOrderTable } from '@/features/orders/components/AdminOrderTable';
 
 export default async function AdminOrdersPage() {
   const session = await auth.api.getSession({ headers: await headers() });

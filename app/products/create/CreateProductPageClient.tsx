@@ -4,19 +4,23 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 
-import { ProductForm } from '@/components/admin/product-form/ProductForm';
+import { ProductForm } from '@/features/admin/components/product-form/ProductForm';
 
-import { useGetBrands } from '@/hooks/useBrands';
-import { useGetCategories } from '@/hooks/useCategories';
+import { useGetBrands } from '@/features/brands/hooks/useBrands';
+import { useGetCategories } from '@/features/category/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
-import { useCreateProduct } from '@/hooks/useProducts';
+import { useCreateProduct } from '@/features/products/hooks/useProducts';
 
 import { logger } from '@/lib/logger';
 import { toSlug } from '@/lib/slug-common';
 
-import { CreateProductPayload, ProductFormType, productFormSchema } from '@/lib/validation/product';
+import {
+  CreateProductPayload,
+  ProductFormType,
+  productFormSchema,
+} from '@/features/products/schemas/product';
 
-import { uploadImage } from '@/services/upload/api/images';
+import { uploadImage } from '@/features/upload/client/images';
 
 const defaultValues: ProductFormType = {
   title: '',

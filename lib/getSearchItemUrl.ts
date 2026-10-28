@@ -1,4 +1,4 @@
-import { NormalizedSearchResult } from '@/types/search';
+import { NormalizedSearchResult } from '@/features/search/types/search';
 import { ROUTES } from './searchRoutes';
 
 const SEARCH_ROUTES = {

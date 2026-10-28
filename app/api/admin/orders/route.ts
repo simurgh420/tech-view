@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { getAdminOrdersDB } from '@/services/orders/db/queries';
+import { getAdminOrdersDB } from '@/features/orders/server/queries';
 
 export async function GET() {
   const startTime = Date.now();

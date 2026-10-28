@@ -1,6 +1,6 @@
 // app/api/products/category/[slug]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getProductsByCategory } from '@/services/products/db/queries';
+import { getProductsByCategory } from '@/features/products/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FolderTree, Plus } from 'lucide-react';
 
-import CategoryList from '@/components/sections/categories/CategoryList';
+import CategoryList from '@/features/category/components/CategoryList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {

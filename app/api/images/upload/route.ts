@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { uploadImage } from '@/services/upload/uploadImage';
+import { uploadImage } from '@/features/upload/server/uploadImage';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {  ListTree } from 'lucide-react';
 
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 import { Badge } from '@/components/ui/badge';
 import {
   Breadcrumb,
@@ -13,7 +13,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-import { CategoryAttributesManager } from '@/components/admin/categories/CategoryAttributesManager';
+import { CategoryAttributesManager } from '@/features/admin/components/categories/CategoryAttributesManager';
 
 interface Props {
   params: Promise<{

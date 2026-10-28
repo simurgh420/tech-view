@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { auth } from '@/lib/auth';
-import { getAllCommentsWithPost } from '@/services/comments/db/queries';
+import { getAllCommentsWithPost } from '@/features/comments/server/queries';
 import { GET } from '@/app/api/comments/route';
 
 vi.mock('next/headers', () => ({
@@ -16,7 +16,7 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/comments/db/queries', () => ({
+vi.mock('@/features/comments/server/queries', () => ({
   getAllCommentsWithPost: vi.fn(),
 }));
 

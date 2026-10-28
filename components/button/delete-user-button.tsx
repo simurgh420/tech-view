@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
 
-import { deleteUserAction } from '@/services/action/user/deleteUserAction';
+import { deleteUserAction } from '@/features/users/action/deleteUserAction';
 import { useNotify } from '@/hooks/useNotify';
 
 interface DeleteUserButtonProps {

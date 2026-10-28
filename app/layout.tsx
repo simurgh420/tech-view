@@ -6,7 +6,7 @@ import { Footer } from '@/components/layout/footer';
 import { Providers } from './providers';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import { CartDrawer } from '@/components/cart/CartDrawer';
+import { CartDrawer } from '@/features/cart/components/CartDrawer';
 
 export const metadata: Metadata = {
   title: 'Tech-view',

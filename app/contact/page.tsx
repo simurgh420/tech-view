@@ -1,7 +1,7 @@
-import { ContactCards } from '@/components/sections/contact/ContactCards';
-import { ContactForm } from '@/components/sections/contact/ContactForm';
-import { ContactHeader } from '@/components/sections/contact/ContactHeader';
-import { ContactInfo } from '@/components/sections/contact/ContactInfo';
+import { ContactCards } from '@/features/contact/components/ContactCards';
+import { ContactForm } from '@/features/contact/components/ContactForm';
+import { ContactHeader } from '@/features/contact/components/ContactHeader';
+import { ContactInfo } from '@/features/contact/components/ContactInfo';
 
 export default function ContactPage() {
   return (

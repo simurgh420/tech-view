@@ -1,13 +1,13 @@
 // app/admin/wishlist/page.tsx
 import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { fetchAdminWishlistApi } from '@/services/wishlist/api/admin';
+import { fetchAdminWishlistApi } from '@/features/wishlist/client/admin';
 import { getQueryClient } from '@/lib/query/query-client';
-import { adminWishlistKeys } from '@/hooks/useAdmin/useAdminWishlist';
+import { adminWishlistKeys } from '@/features/admin/hooks/useAdminWishlist';
 import { Heart } from 'lucide-react';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
-import { AdminWishlistTableSkeleton } from '@/components/admin/wishlist/AdminWishlistTableSkeleton';
-import { AdminWishlistPageClient } from '@/components/admin/wishlist/AdminWishlistPageClient';
+import { AdminWishlistTableSkeleton } from '@/features/admin/components/wishlist/AdminWishlistTableSkeleton';
+import { AdminWishlistPageClient } from '@/features/admin/components/wishlist/AdminWishlistPageClient';
 
 export default async function AdminWishlistPage() {
   const queryClient = getQueryClient();

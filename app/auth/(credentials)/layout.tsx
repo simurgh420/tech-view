@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { AuthVisual } from '@/components/sections/auth/AuthVisual';
-import { AuthTabs } from '@/components/sections/auth/AuthTabs';
-import { AuthPageTransition } from '@/components/sections/auth/AuthPageTransition';
+import { AuthVisual } from '@/features/auth/components/AuthVisual';
+import { AuthTabs } from '@/features/auth/components/AuthTabs';
+import { AuthPageTransition } from '@/features/auth/components/AuthPageTransition';
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (

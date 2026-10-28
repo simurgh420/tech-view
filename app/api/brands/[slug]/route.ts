@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { getBrandBySlug } from '@/services/brands/db/queries';
-import { updateBrandBySlug, deleteBrandBySlug } from '@/services/brands/db/mutations';
+import { getBrandBySlug } from '@/features/brands/server/queries';
+import { updateBrandBySlug, deleteBrandBySlug } from '@/features/brands/server/mutations';
 import { auth } from '@/lib/auth';
-import { editBrandSchema } from '@/lib/validation/brand';
+import { editBrandSchema } from '@/features/brands/schemas/brand';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {

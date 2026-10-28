@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { UsersTable } from '@/components/sections/users/users-table';
+import { UsersTable } from '@/features/users/components/users-table';
 import { auth } from '@/lib/auth';
 
 export default async function UsersPage() {

@@ -1,11 +1,11 @@
 // app/wishlist/page.tsx
 import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { fetchWishlistApi } from '@/services/wishlist/api/queries';
+import { fetchWishlistApi } from '@/features/wishlist/client/queries';
 import { getQueryClient } from '@/lib/query/query-client';
-import { wishlistKeys } from '@/hooks/useWishlist';
+import { wishlistKeys } from '@/features/wishlist/hooks/useWishlist';
 import WishlistError from './WishlistError';
-import { WishlistSkeleton } from '@/components/sections/wishlist/WishlistSkeleton';
+import { WishlistSkeleton } from '@/features/wishlist/components/WishlistSkeleton';
 import { WishlistPageClient } from './WishlistPageClient';
 
 export default async function WishlistPage() {

@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from '@/components/sections/auth/reset-password-form';
+import { ResetPasswordForm } from '@/features/auth/components/reset-password-form';
 import { ReturnButton } from '@/components/button/return-button';
 import { redirect } from 'next/navigation';
 

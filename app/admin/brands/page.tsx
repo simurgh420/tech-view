@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Tag, Plus } from 'lucide-react';
-import BrandLogos from '@/components/sections/brand/BrandLogos';
+import BrandLogos from '@/features/brands/components/BrandLogos';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 

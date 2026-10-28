@@ -1,6 +1,6 @@
-import { LoginForm } from '@/components/sections/auth/LoginForm';
+import { LoginForm } from '@/features/auth/components/LoginForm';
 import { SignInOauthButton } from '@/components/button/sign-in-oauth-button';
-import { AuthDivider } from '@/components/sections/auth/AuthDivider';
+import { AuthDivider } from '@/features/auth/components/AuthDivider';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';

@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Shield, ShieldCheck, UserCog, Loader2 } from 'lucide-react';
 
-import type { UserRole } from '@/types/user';
-import { setUserRoleAction } from '@/services/action/user/setUserRoleAction';
+import type { UserRole } from '@/features/users/types/user';
+import { setUserRoleAction } from '@/features/users/action/setUserRoleAction';
 import { useNotify } from '@/hooks/useNotify';
 
 import {

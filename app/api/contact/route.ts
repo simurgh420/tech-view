@@ -3,10 +3,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createContact } from '@/services/contact/db/mutations';
-import { getContacts } from '@/services/contact/db/queries';
+import { createContact } from '@/features/contact/server/mutations';
+import { getContacts } from '@/features/contact/server/queries';
 import { logger } from '@/lib/logger';
-import { contactSchema } from '@/lib/validation/contact';
+import { contactSchema } from '@/features/contact/schemas/contact';
 
 export async function GET() {
   const startTime = Date.now();

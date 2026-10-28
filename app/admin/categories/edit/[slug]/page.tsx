@@ -1,11 +1,11 @@
 'use client';
 
 import { FolderTree } from 'lucide-react';
-import { CategoryForm } from '@/components/sections/categories/CategoryForm';
+import { CategoryForm } from '@/features/category/components/CategoryForm';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useGetCategory, useUpdateCategory } from '@/hooks/useCategories';
+import { useGetCategory, useUpdateCategory } from '@/features/category/hooks/useCategories';
 import { useNotify } from '@/hooks/useNotify';
-import { EditCategoryInput } from '@/lib/validation/category';
+import { EditCategoryInput } from '@/features/category/schemas/category';
 import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 

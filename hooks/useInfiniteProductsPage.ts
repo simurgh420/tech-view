@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useGetInfiniteProducts } from '@/hooks/useProducts';
+import { useGetInfiniteProducts } from '@/features/products/hooks/useProducts';
 import { buildFiltersQueryString, parseSpecsFromURL } from '@/lib/url-helpers';
-import { FiltersProduct } from '@/types/product';
+import { FiltersProduct } from '@/features/products/types/product';
 
 type FixedFilters = Partial<Pick<FiltersProduct, 'categorySlug' | 'brandSlug'>>;
 

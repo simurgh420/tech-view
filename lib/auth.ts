@@ -3,14 +3,13 @@ import { nextCookies } from 'better-auth/next-js';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware, APIError } from 'better-auth/api';
 import { admin, customSession } from 'better-auth/plugins';
-
 import { normalizeName } from '@/lib/utils';
 import { ac, roles } from '@/lib/permissions';
-import prisma from '@/services/db/client';
-import { sendEmailAction } from '@/services/action/user/sendEmailAction';
 import { hashPassword, verifyPassword } from './auth/hash';
-import { isValidEmailDomain } from '@/services/action/validation/isValidEmailDomain';
 import { canManageUser } from './role-rank';
+import prisma from '@/features/prisma-adapter/client';
+import { sendEmailAction } from '@/features/users/action/sendEmailAction';
+import { isValidEmailDomain } from '@/features/auth/action/isValidEmailDomain';
 
 const ADMIN_USER_TARGET_PATHS = new Set([
   '/admin/set-role',

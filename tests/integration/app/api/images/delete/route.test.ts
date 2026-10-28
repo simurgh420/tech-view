@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/images/delete/route';
 import { auth } from '@/lib/auth';
-import { deleteImage } from '@/services/upload/deleteImage';
+import { deleteImage } from '@/features/upload/server/deleteImage';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -16,7 +16,7 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/upload/deleteImage', () => ({
+vi.mock('@/features/upload/server/deleteImage', () => ({
   deleteImage: vi.fn(),
 }));
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/reviews/admin/route';
 import { auth } from '@/lib/auth';
-import { getAllReviewsAdmin } from '@/services/reviews/db/queries';
+import { getAllReviewsAdmin } from '@/features/reviews/server/queries';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -16,7 +16,7 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/reviews/db/queries', () => ({
+vi.mock('@/features/reviews/server/queries', () => ({
   getAllReviewsAdmin: vi.fn(),
 }));
 

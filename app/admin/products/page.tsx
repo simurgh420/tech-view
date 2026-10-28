@@ -3,9 +3,9 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient } from '@/lib/query/query-client';
-import { AdminProductTable } from '@/components/admin/AdminProductTable';
-import { fetchAdminProductsApi } from '@/services/products/api/queries';
-import { adminProductKeys } from '@/hooks/useProducts';
+import { AdminProductTable } from '@/features/admin/components/AdminProductTable';
+import { fetchAdminProductsApi } from '@/features/products/client/queries';
+import { adminProductKeys } from '@/features/products/hooks/useProducts';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
 export default async function AdminProductsPage() {

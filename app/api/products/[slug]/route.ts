@@ -2,9 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getProductBySlug } from '@/services/products/db/queries';
-import { deleteProduct, updateProduct } from '@/services/products/db/mutations';
-import { updateProductSchema } from '@/lib/validation/product';
+import { getProductBySlug } from '@/features/products/server/queries';
+import { deleteProduct, updateProduct } from '@/features/products/server/mutations';
+import { updateProductSchema } from '@/features/products/schemas/product';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {

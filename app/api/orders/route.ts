@@ -5,10 +5,10 @@ import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
-import { checkoutSchema } from '@/lib/validation/checkout';
-import { createOrderDB } from '@/services/orders/db/mutations';
-import { getUserOrdersDB } from '@/services/orders/db/queries';
-import { getCartForCheckout } from '@/services/cart/db/queries';
+import { checkoutSchema } from '@/features/checkout/schemas/checkout';
+import { createOrderDB } from '@/features/orders/server/mutations';
+import { getUserOrdersDB } from '@/features/orders/server/queries';
+import { getCartForCheckout } from '@/features/cart/server/queries';
 
 export async function POST(req: Request) {
   const startTime = Date.now();

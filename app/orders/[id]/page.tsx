@@ -5,8 +5,8 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 import { auth } from '@/lib/auth';
 import { getQueryClient } from '@/lib/query/query-client';
-import { orderKeys } from '@/hooks/useOrders';
-import { getOrderByIdDB } from '@/services/orders/db/queries';
+import { orderKeys } from '@/features/orders/hooks/useOrders';
+import { getOrderByIdDB } from '@/features/orders/server/queries';
 import OrderDetailClientPage from './OrderDetailClientPage';
 
 type PageProps = {

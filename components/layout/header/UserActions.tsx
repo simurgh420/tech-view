@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogoutButton } from '@/components/button/LogoutButton';
-import { SearchModal } from '@/components/sections/search/SearchModal';
+import { SearchModal } from '@/features/search/components/SearchModal';
 import { ModeToggle } from '@/components/ui/theme-toggle';
 import { HeaderIconButton } from './Headericonbutton';
 import { cn } from '@/lib/utils';

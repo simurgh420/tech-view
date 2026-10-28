@@ -3,8 +3,8 @@ import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import { DELETE } from '@/app/api/wishlist/[id]/route';
 
-import { getWishlistItemById } from '@/services/wishlist/db/queries';
-import { removeFromWishlist } from '@/services/wishlist/db/mutations';
+import { getWishlistItemById } from '@/features/wishlist/server/queries';
+import { removeFromWishlist } from '@/features/wishlist/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -19,11 +19,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/wishlist/db/queries', () => ({
+vi.mock('@/features/wishlist/server/queries', () => ({
   getWishlistItemById: vi.fn(),
 }));
 
-vi.mock('@/services/wishlist/db/mutations', () => ({
+vi.mock('@/features/wishlist/server/mutations', () => ({
   removeFromWishlist: vi.fn(),
 }));
 

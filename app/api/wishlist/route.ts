@@ -2,12 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { wishlistItemSchema } from '@/lib/validation/wishlist';
+import { wishlistItemSchema } from '@/features/wishlist/schemas/wishlist';
 import {
   addToWishlist,
   deleteWishlistItemByUserAndProduct,
-} from '@/services/wishlist/db/mutations';
-import { getWishlist } from '@/services/wishlist/db/queries';
+} from '@/features/wishlist/server/mutations';
+import { getWishlist } from '@/features/wishlist/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generateUniqueSlug } from '@/lib/server/slug';
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 import { toSlug } from '@/lib/slug-common';
 
-vi.mock('@/services/db/client', () => ({
+vi.mock('@/features/prisma-adapter/client', () => ({
   default: {
     blogPost: {
       findFirst: vi.fn(),

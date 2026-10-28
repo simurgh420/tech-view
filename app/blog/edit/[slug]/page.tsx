@@ -1,7 +1,7 @@
 // app/(whatever)/blog/edit//[slug]page.tsx
 
 import { auth } from '@/lib/auth';
-import { getPostBySlug } from '@/services/blog/db/queries';
+import { getPostBySlug } from '@/features/blog/server/queries';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { EditBlogPageClient } from './EditBlogPageClient';

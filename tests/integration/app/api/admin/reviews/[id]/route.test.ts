@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, DELETE } from '@/app/api/reviews/admin/[id]/route';
 import { auth } from '@/lib/auth';
-import { getReviewByIdAdmin } from '@/services/reviews/db/queries';
-import { deleteReview } from '@/services/reviews/db/mutations';
+import { getReviewByIdAdmin } from '@/features/reviews/server/queries';
+import { deleteReview } from '@/features/reviews/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -18,11 +18,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/reviews/db/queries', () => ({
+vi.mock('@/features/reviews/server/queries', () => ({
   getReviewByIdAdmin: vi.fn(),
 }));
 
-vi.mock('@/services/reviews/db/mutations', () => ({
+vi.mock('@/features/reviews/server/mutations', () => ({
   deleteReview: vi.fn(),
 }));
 

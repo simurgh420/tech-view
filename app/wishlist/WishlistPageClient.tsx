@@ -1,13 +1,13 @@
 // components/wishlist/WishlistPageClient.tsx
 'use client';
 
-import { useGetWishlist } from '@/hooks/useWishlist';
-import { useRemoveFromWishlist } from '@/hooks/useWishlist';
+import { useGetWishlist } from '@/features/wishlist/hooks/useWishlist';
+import { useRemoveFromWishlist } from '@/features/wishlist/hooks/useWishlist';
 import { useNotify } from '@/hooks/useNotify';
 import { Button } from '@/components/ui/button';
 import { HeartCrack } from 'lucide-react';
 import Link from 'next/link';
-import { WishlistItemCard } from '@/components/sections/wishlist/WishlistItemCard';
+import { WishlistItemCard } from '@/features/wishlist/components/WishlistItemCard';
 
 export function WishlistPageClient() {
   const { data: items = [], isLoading, isError } = useGetWishlist();

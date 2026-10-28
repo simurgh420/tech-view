@@ -1,13 +1,13 @@
 // app/products/[slug]/ProductPageClient.tsx
 'use client';
 
-import ProductBreadcrumb from '@/components/sections/products/breadcrumb/ProductBreadcrumb';
-import ProductGallery from '@/components/sections/products/gallery/ProductGallery';
-import ProductInfo from '@/components/sections/products/info/ProductInfo';
-import ProductPriceBox from '@/components/sections/products/price/ProductPriceBox';
-import ProductTabs from '@/components/sections/products/tabs/ProductTabs';
+import ProductBreadcrumb from '@/features/products/components/breadcrumb/ProductBreadcrumb';
+import ProductGallery from '@/features/products/components/gallery/ProductGallery';
+import ProductInfo from '@/features/products/components/info/ProductInfo';
+import ProductPriceBox from '@/features/products/components/price/ProductPriceBox';
+import ProductTabs from '@/features/products/components/tabs/ProductTabs';
 import { SkeletonProductDetail } from '@/components/ui/skeleton';
-import { useGetProduct } from '@/hooks/useProducts';
+import { useGetProduct } from '@/features/products/hooks/useProducts';
 
 type ProductPageClientProps = {
   slug: string;

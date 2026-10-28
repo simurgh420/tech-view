@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
-import { getProductBySlug } from '@/services/products/db/queries';
+import { getProductBySlug } from '@/features/products/server/queries';
 import { SkeletonProductDetail } from '@/components/ui/skeleton';
 import ProductPageClient from './ProductPageClient';
 import ProductError from './ProductError';

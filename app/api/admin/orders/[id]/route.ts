@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { getAdminOrderByIdDB, updateOrderStatusDB } from '@/services/orders/db/queries';
+import { getAdminOrderByIdDB, updateOrderStatusDB } from '@/features/orders/server/queries';
 import { OrderStatus } from '@/app/generated/prisma/enums';
 import { z } from 'zod';
 

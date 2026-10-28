@@ -2,9 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createProductCommentSchema } from '@/lib/validation/productComment';
-import { createComment } from '@/services/productComments/db/mutations';
-import { getCommentsByProductSlug } from '@/services/productComments/db/queries';
+import { createProductCommentSchema } from '@/features/product-comments/schemas/productComment';
+import { createComment } from '@/features/product-comments/server/mutations';
+import { getCommentsByProductSlug } from '@/features/product-comments/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {

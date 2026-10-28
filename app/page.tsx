@@ -1,13 +1,13 @@
-import { PromoBanners } from '@/components/sections/products/banner/PromoBanner/PromoBanners';
-import { CategoriesSection } from '@/components/sections/categories/CategoriesSection';
-import { HeroSection } from '@/components/sections/hero/HeroSection';
-import { TopBrands } from '@/components/sections/products/TopBrands/TopBrands';
-import { ProductBanner } from '@/components/sections/products/banner/ProductBanner/ProductBanner';
-import { BlogSection } from '@/components/sections/blog/BlogSection';
+import { PromoBanners } from '@/features/products/components/banner/PromoBanner/PromoBanners';
+import { CategoriesSection } from '@/features/category/components/CategoriesSection';
+import { HeroSection } from '@/features/hero/components/HeroSection';
+import { TopBrands } from '@/features/products/components/TopBrands/TopBrands';
+import { ProductBanner } from '@/features/products/components/banner/ProductBanner/ProductBanner';
+import { BlogSection } from '@/features/blog/components/BlogSection';
 import { FeatureBar } from '@/components/sections/services/FeatureBar';
-import ProductsOnSale from '@/components/sections/products/ProductsOnSale/ProductsOnSale';
-import NewProducts from '@/components/sections/products/NewProducts/NewProducts';
-import BestSellers from '@/components/sections/products/BestSeller/BestSellers';
+import ProductsOnSale from '@/features/products/components/ProductsOnSale/ProductsOnSale';
+import NewProducts from '@/features/products/components/NewProducts/NewProducts';
+import BestSellers from '@/features/products/components/BestSeller/BestSellers';
 import { Reveal } from '@/components/shared/Reveal';
 
 export default function Home() {

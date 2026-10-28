@@ -1,5 +1,5 @@
-import { dbSearch } from '@/services/search/db/queries';
-import { normalizeSearchResults } from '@/services/search/searchNormalizer';
+import { dbSearch } from '@/features/search/server/queries';
+import { normalizeSearchResults } from '@/features/search/server/searchNormalizer';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {

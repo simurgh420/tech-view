@@ -2,14 +2,14 @@
 
 'use client';
 
-import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
-import { useUpdateBlog } from '@/hooks/useBlogs';
+import { BlogForm } from '@/features/blog/components/BlogForm/BlogForm';
+import { useUpdateBlog } from '@/features/blog/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
 import { logger } from '@/lib/logger';
 import { sanitizeUrl } from '@/lib/utils';
-import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
+import { blogFormSchema, BlogFormType } from '@/features/blog/schemas/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { uploadImage, deleteImage } from '@/services/upload/api/images';
+import { uploadImage, deleteImage } from '@/features/upload/client/images';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 

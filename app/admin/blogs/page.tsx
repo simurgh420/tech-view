@@ -1,12 +1,12 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getAdminBlogPosts } from '@/services/blog/db/queries';
+import { getAdminBlogPosts } from '@/features/blog/server/queries';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient } from '@/lib/query/query-client';
-import { AdminBlogTable } from '@/components/admin/AdminBlogTable';
+import { AdminBlogTable } from '@/features/admin/components/AdminBlogTable';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
-import { blogKeys } from '@/hooks/useBlogs';
+import { blogKeys } from '@/features/blog/hooks/useBlogs';
 
 export default async function AdminBlogsPage() {
   const session = await auth.api.getSession({ headers: await headers() });

@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { PATCH, DELETE } from '@/app/api/cart/[id]/route';
 import { auth } from '@/lib/auth';
-import { updateCartItemQuantity, removeCartItem } from '@/services/cart/db/mutations';
-import { CartErrors } from '@/services/cart/constants';
+import { updateCartItemQuantity, removeCartItem } from '@/features/cart/server/mutations';
+import { CartErrors } from '@/features/cart/server/constants';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -17,7 +17,7 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/cart/db/mutations', () => ({
+vi.mock('@/features/cart/server/mutations', () => ({
   updateCartItemQuantity: vi.fn(),
   removeCartItem: vi.fn(),
 }));

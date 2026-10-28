@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { DELETE } from '@/app/api/wishlist/admin/clear/route';
 import { auth } from '@/lib/auth';
-import { clearWishlist } from '@/services/wishlist/db/mutations';
+import { clearWishlist } from '@/features/wishlist/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -17,7 +17,7 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/wishlist/db/mutations', () => ({
+vi.mock('@/features/wishlist/server/mutations', () => ({
   clearWishlist: vi.fn(),
 }));
 

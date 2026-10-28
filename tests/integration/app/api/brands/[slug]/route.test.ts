@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, PATCH, DELETE } from '@/app/api/brands/[slug]/route';
 import { auth } from '@/lib/auth';
-import { getBrandBySlug } from '@/services/brands/db/queries';
-import { updateBrandBySlug, deleteBrandBySlug } from '@/services/brands/db/mutations';
+import { getBrandBySlug } from '@/features/brands/server/queries';
+import { deleteBrandBySlug, updateBrandBySlug } from '@/features/brands/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -18,11 +18,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/brands/db/queries', () => ({
+vi.mock('@/features/brands/server/queries', () => ({
   getBrandBySlug: vi.fn(),
 }));
 
-vi.mock('@/services/brands/db/mutations', () => ({
+vi.mock('@/features/brands/server/mutations', () => ({
   updateBrandBySlug: vi.fn(),
   deleteBrandBySlug: vi.fn(),
 }));

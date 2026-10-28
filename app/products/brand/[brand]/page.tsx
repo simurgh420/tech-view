@@ -3,14 +3,14 @@
 import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
-import { getFilteredProducts } from '@/services/products/db/queries';
+import { getFilteredProducts } from '@/features/products/server/queries';
 import { SkeletonCard } from '@/components/ui/skeleton';
 import BrandProductsClientPage from './BrandPageClient';
 import BrandError from './BrandError';
 import { getQueryClient } from '@/lib/query/query-client';
-import { productKeys } from '@/hooks/useProducts';
+import { productKeys } from '@/features/products/hooks/useProducts';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
-import { FiltersProduct } from '@/types/product';
+import { FiltersProduct } from '@/features/products/types/product';
 
 type SearchParams = Record<string, string | string[] | undefined>;
 

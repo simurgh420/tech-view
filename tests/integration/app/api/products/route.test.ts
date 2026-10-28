@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/products/route';
 import { auth } from '@/lib/auth';
-import { getFilteredProducts } from '@/services/products/db/queries';
-import { createProduct } from '@/services/products/db/mutations';
+import { getFilteredProducts } from '@/features/products/server/queries';
+import { createProduct } from '@/features/products/server/mutations';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
 
 vi.mock('next/headers', () => ({
@@ -20,11 +20,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/products/db/queries', () => ({
+vi.mock('@/features/products/server/queries', () => ({
   getFilteredProducts: vi.fn(),
 }));
 
-vi.mock('@/services/products/db/mutations', () => ({
+vi.mock('@/features/products/server/mutations', () => ({
   createProduct: vi.fn(),
 }));
 

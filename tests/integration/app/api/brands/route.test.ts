@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/brands/route';
 import { auth } from '@/lib/auth';
-import { getBrands } from '@/services/brands/db/queries';
-import { createBrand } from '@/services/brands/db/mutations';
+import { getBrands } from '@/features/brands/server/queries';
+import { createBrand } from '@/features/brands/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -18,11 +18,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/brands/db/queries', () => ({
+vi.mock('@/features/brands/server/queries', () => ({
   getBrands: vi.fn(),
 }));
 
-vi.mock('@/services/brands/db/mutations', () => ({
+vi.mock('@/features/brands/server/mutations', () => ({
   createBrand: vi.fn(),
 }));
 

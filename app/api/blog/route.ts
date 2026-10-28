@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createBlogPayloadSchema, createBlogSchema } from '@/lib/validation/blog';
-import { createBlogPost } from '@/services/blog/db/mutations';
-import { getPublishedPosts } from '@/services/blog/db/queries';
+import { createBlogPayloadSchema, createBlogSchema } from '@/features/blog/schemas/blog';
+import { createBlogPost } from '@/features/blog/server/mutations';
+import { getPublishedPosts } from '@/features/blog/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {

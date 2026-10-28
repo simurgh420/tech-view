@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { getBrands } from '@/services/brands/db/queries';
-import { createBrand } from '@/services/brands/db/mutations';
+import { getBrands } from '@/features/brands/server/queries';
+import { createBrand } from '@/features/brands/server/mutations';
 import { auth } from '@/lib/auth';
-import { createBrandSchema } from '@/lib/validation/brand';
+import { createBrandSchema } from '@/features/brands/schemas/brand';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

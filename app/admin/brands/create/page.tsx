@@ -1,10 +1,10 @@
 'use client';
 
 import { Tag } from 'lucide-react';
-import { BrandForm } from '@/components/sections/brand/BrandForm';
-import { useCreateBrand } from '@/hooks/useBrands';
+import { BrandForm } from '@/features/brands/components/BrandForm';
+import { useCreateBrand } from '@/features/brands/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
-import { CreateBrandInput } from '@/lib/validation/brand';
+import { CreateBrandInput } from '@/features/brands/schemas/brand';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 

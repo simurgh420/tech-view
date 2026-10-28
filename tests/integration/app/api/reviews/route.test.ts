@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/reviews/route';
 import { auth } from '@/lib/auth';
-import { getReviewsByProductSlug } from '@/services/reviews/db/queries';
-import { createReview } from '@/services/reviews/db/mutations';
+import { getReviewsByProductSlug } from '@/features/reviews/server/queries';
+import { createReview } from '@/features/reviews/server/mutations';
 
 // موک کردن وابستگی‌ها
 vi.mock('next/headers', () => ({
@@ -19,11 +19,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/reviews/db/queries', () => ({
+vi.mock('@/features/reviews/server/queries', () => ({
   getReviewsByProductSlug: vi.fn(),
 }));
 
-vi.mock('@/services/reviews/db/mutations', () => ({
+vi.mock('@/features/reviews/server/mutations', () => ({
   createReview: vi.fn(),
 }));
 

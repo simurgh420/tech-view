@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getAdminBlogPosts } from '@/services/blog/db/queries';
+import { getAdminBlogPosts } from '@/features/blog/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

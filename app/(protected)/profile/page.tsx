@@ -1,4 +1,4 @@
-import { UpdateUserForm } from '@/components/sections/auth/update-user-form';
+import { UpdateUserForm } from '@/features/auth/components/update-user-form';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';

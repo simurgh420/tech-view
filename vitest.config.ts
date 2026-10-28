@@ -8,7 +8,7 @@ export default defineConfig({
     environment: 'jsdom', // برای تست کامپوننت‌های React
     globals: true, // اجازه استفاده از describe, it, expect بدون import
     setupFiles: ['./tests/setupTests.ts'], // فایل آماده‌سازی
-    include: ['tests/**/*.{test,spec}.{ts,tsx}'], // مسیر تست‌ها
+    include: ['tests/**/*.{test,spec}.{ts,tsx}', 'features/**/*.{test,spec}.{ts,tsx}'], // مسیر تست‌ها
   },
   resolve: {
     alias: {

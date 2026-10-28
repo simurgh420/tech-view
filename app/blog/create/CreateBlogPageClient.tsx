@@ -1,13 +1,13 @@
 'use client';
 
-import { BlogForm } from '@/components/sections/blog/BlogForm/BlogForm';
-import { useCreateBlog } from '@/hooks/useBlogs';
+import { BlogForm } from '@/features/blog/components/BlogForm/BlogForm';
+import { useCreateBlog } from '@/features/blog/hooks/useBlogs';
 import { useNotify } from '@/hooks/useNotify';
 import { logger } from '@/lib/logger';
 import { toSlug } from '@/lib/slug-common';
-import { blogFormSchema, BlogFormType } from '@/lib/validation/blog';
+import { blogFormSchema, BlogFormType } from '@/features/blog/schemas/blog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { uploadImage } from '@/services/upload/api/images';
+import { uploadImage } from '@/features/upload/client/images';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 

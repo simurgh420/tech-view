@@ -2,8 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { deleteReview } from '@/services/reviews/db/mutations';
-import { getReviewByIdAdmin } from '@/services/reviews/db/queries';
+import { deleteReview } from '@/features/reviews/server/mutations';
+import { getReviewByIdAdmin } from '@/features/reviews/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
