@@ -63,7 +63,7 @@ export default function HomeProductCard({ product }: Props) {
           <span
             className="
               absolute
-              start-3
+              inset-s-3
               top-3
               rounded-full
               bg-destructive
@@ -79,7 +79,7 @@ export default function HomeProductCard({ product }: Props) {
           </span>
         )}
 
-        <div className="absolute end-3 top-3">
+        <div className="absolute inset-e-3 top-3">
           <WishlistButton productId={product.id} />
         </div>
 
