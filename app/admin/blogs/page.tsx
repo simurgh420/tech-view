@@ -25,11 +25,11 @@ export default async function AdminBlogsPage() {
     queryFn: () => getAdminBlogPosts(),
   });
   return (
-    <div className="container mx-auto max-w-7xl px-6 py-10" dir="rtl">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12" dir="rtl">
       <div className="mb-2">
         <Breadcrumb />
       </div>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6">
         <div>
           <h1 className="text-2xl font-bold">مدیریت بلاگ</h1>
           <p className="mt-1 text-sm text-muted-foreground">

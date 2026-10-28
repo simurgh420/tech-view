@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function BrandsPage() {
   return (
-    <div className="container mx-auto max-w-6xl space-y-8 px-8 py-16" dir="rtl">
+    <div className=" mx-auto max-w-4xl space-y-8 px-6 py-10 sm:px-8 sm:py-14" dir="rtl">
       <Card className="overflow-hidden border-border/60 shadow-sm">
         <CardHeader className="border-b border-border/60 px-6 py-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
