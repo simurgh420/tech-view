@@ -1,11 +1,10 @@
+// features/reports/server/dashboard.ts
 import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
-
 
 import { getOrderSummary, getRecentOrders } from './orders';
 import { getDailyRevenue, getRevenueSummary } from './revenue';
 import { getUserSummary } from './users';
-
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -57,11 +56,11 @@ function buildRevenueSeries(
 
   const current = new Date(period.start);
 
-  current.setHours(0, 0, 0, 0);
+  current.setUTCHours(0, 0, 0, 0);
 
   const end = new Date(period.end);
 
-  end.setHours(0, 0, 0, 0);
+  end.setUTCHours(0, 0, 0, 0);
 
   while (current <= end) {
     const date = current.toISOString();
@@ -73,7 +72,7 @@ function buildRevenueSeries(
       revenue: revenueMap.get(key) ?? 0,
     });
 
-    current.setDate(current.getDate() + 1);
+    current.setUTCDate(current.getUTCDate() + 1);
   }
 
   return result;

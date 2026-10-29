@@ -12,9 +12,9 @@ export async function changePasswordAction(formData: FormData) {
 
   logger.info('ChangePasswordAction started');
 
-  const currentPassword = String(formData.get('currentPassword'));
+  const currentPassword = String(formData.get('currentPassword') ?? '');
 
-  const newPassword = String(formData.get('newPassword'));
+  const newPassword = String(formData.get('newPassword') ?? '');
   if (!currentPassword) {
     logger.warn('Missing currentPassword');
     return { success: false, error: 'رمز عبور فعلی را وارد کنید' };

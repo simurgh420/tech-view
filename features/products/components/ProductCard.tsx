@@ -111,7 +111,7 @@ export default function ProductCard({
           <span
             className="
                 absolute
-                start-2
+                inset-s-2
                 top-2
                 rounded-full
                 bg-red-600
@@ -127,7 +127,7 @@ export default function ProductCard({
           </span>
         )}
 
-        <div className="absolute end-2 top-2 z-10">
+        <div className="absolute inset-e-2 top-2 z-10">
           <WishlistButton
             productId={product.id}
             className="
