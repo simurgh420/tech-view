@@ -4,7 +4,7 @@
 import { CalendarDays, Mail, MapPin, Package, Phone, User } from 'lucide-react';
 import { formatPrice } from '@/lib/formatPrice';
 import { formatAdminDate } from '@/lib/admin-date';
-import { useGetAdminOrderById, useUpdateOrderStatus } from '@/hooks/useOrders';
+import { useGetAdminOrderById, useUpdateOrderStatus } from '@/features/orders/hooks/useOrders';
 import {
   Select,
   SelectContent,

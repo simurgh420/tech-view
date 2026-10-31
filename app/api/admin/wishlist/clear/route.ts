@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { clearWishlist } from '@/services/wishlist/db/mutations';
+import { clearWishlist } from '@/features/wishlist/server/mutations';
 import { logger } from '@/lib/logger';
 
 export async function DELETE(req: NextRequest) {

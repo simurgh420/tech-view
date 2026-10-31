@@ -4,16 +4,16 @@ import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 
-import { getCategoryAttributesAdmin } from '@/services/categories/db/queries';
+import { getCategoryAttributesAdmin } from '@/features/category/server/queries';
 
 import {
   addCategoryAttributeAdmin,
   updateCategoryAttributeAdmin,
   deleteCategoryAttributeAdmin,
   reorderCategoryAttributesAdmin,
-} from '@/services/categories/db/mutations';
+} from '@/features/category/server/mutations';
 
 type RouteContext = {
   params: Promise<{

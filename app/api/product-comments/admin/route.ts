@@ -1,6 +1,6 @@
 // app/api/product-comments/admin/route.ts
 import { NextResponse } from 'next/server';
-import { getAllCommentsAdmin } from '@/services/productComments/db/queries';
+import { getAllCommentsAdmin } from '@/features/product-comments/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

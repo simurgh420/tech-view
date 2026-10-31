@@ -1,8 +1,8 @@
 'use client';
 
-import { useGetBrands } from '@/hooks/useBrands';
-import { useGetCategories } from '@/hooks/useCategories';
-import { useGetProduct } from '@/hooks/useProducts';
+import { useGetBrands } from '@/features/brands/hooks/useBrands';
+import { useGetCategories } from '@/features/category/hooks/useCategories';
+import { useGetProduct } from '@/features/products/hooks/useProducts';
 
 import { Skeleton } from '@/components/ui/skeleton';
 

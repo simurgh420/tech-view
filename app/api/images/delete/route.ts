@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { deleteImage } from '@/services/upload/deleteImage';
+import { deleteImage } from '@/features/upload/server/deleteImage';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {

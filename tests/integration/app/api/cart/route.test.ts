@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST, DELETE } from '@/app/api/cart/route';
 import { auth } from '@/lib/auth';
-import { getCart } from '@/services/cart/db/queries';
-import { addCartItem, clearCart } from '@/services/cart/db/mutations';
-import { CartErrors } from '@/services/cart/constants';
+import { getCart } from '@/features/cart/server/queries';
+import { addCartItem, clearCart } from '@/features/cart/server/mutations';
+import { CartErrors } from '@/features/cart/server/constants';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -18,11 +18,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/cart/db/queries', () => ({
+vi.mock('@/features/cart/server/queries', () => ({
   getCart: vi.fn(),
 }));
 
-vi.mock('@/services/cart/db/mutations', () => ({
+vi.mock('@/features/cart/server/mutations', () => ({
   addCartItem: vi.fn(),
   clearCart: vi.fn(),
 }));

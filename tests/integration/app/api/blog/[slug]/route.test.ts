@@ -3,9 +3,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '@/app/api/blog/[slug]/route';
 import { auth } from '@/lib/auth';
-import { getPostBySlug } from '@/services/blog/db/queries';
-import { updatePost, deletePost } from '@/services/blog/db/mutations';
-import prisma from '@/services/db/client';
+import { getPostBySlug } from '@/features/blog/server/queries';
+import { updatePost, deletePost } from '@/features/blog/server/mutations';
+import prisma from '@/features/prisma-adapter/client';
 
 // Mock next/headers
 vi.mock('next/headers', () => ({
@@ -21,16 +21,16 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/blog/db/queries', () => ({
+vi.mock('@/features/blog/server/queries', () => ({
   getPostBySlug: vi.fn(),
 }));
 
-vi.mock('@/services/blog/db/mutations', () => ({
+vi.mock('@/features/blog/server/mutations', () => ({
   updatePost: vi.fn(),
   deletePost: vi.fn(),
 }));
 
-vi.mock('@/services/db/client', () => ({
+vi.mock('@/features/prisma-adapter/client', () => ({
   default: {
     blogPost: {
       findUnique: vi.fn(),

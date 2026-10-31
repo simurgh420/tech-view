@@ -2,8 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { deleteContact } from '@/services/contact/db/mutations';
-import { getContactById } from '@/services/contact/db/queries';
+import { deleteContact } from '@/features/contact/server/mutations';
+import { getContactById } from '@/features/contact/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

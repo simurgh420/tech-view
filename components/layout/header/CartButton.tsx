@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetCartItems } from '@/hooks/useCart';
+import { useGetCartItems } from '@/features/cart/hooks/useCart';
 import { useCartUI } from '@/stores/cart-ui.store';
 import { ShoppingCart } from 'lucide-react';
 import { HeaderIconButton } from './Headericonbutton';

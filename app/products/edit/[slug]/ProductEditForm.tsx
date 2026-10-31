@@ -6,17 +6,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useRouter } from 'next/navigation';
 
-import { ProductForm } from '@/components/admin/product-form/ProductForm';
+import { ProductForm } from '@/features/admin/components/product-form/ProductForm';
 
 import { useNotify } from '@/hooks/useNotify';
 
-import { useGetProduct, useUpdateProduct } from '@/hooks/useProducts';
+import { useGetProduct, useUpdateProduct } from '@/features/products/hooks/useProducts';
 
 import { logger } from '@/lib/logger';
 
-import { productFormSchema, ProductFormType, UpdateProductInput } from '@/lib/validation/product';
+import {
+  productFormSchema,
+  ProductFormType,
+  UpdateProductInput,
+} from '@/features/products/schemas/product';
 
-import { deleteImage, uploadImage } from '@/services/upload/api/images';
+import { deleteImage, uploadImage } from '@/features/upload/client/images';
 
 type ProductEditFormProps = {
   slug: string;

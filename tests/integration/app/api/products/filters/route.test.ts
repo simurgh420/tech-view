@@ -5,10 +5,10 @@ import { NextRequest } from 'next/server';
 
 import { GET } from '@/app/api/products/filters/route';
 
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
 
-vi.mock('@/services/db/client', () => ({
+vi.mock('@/features/prisma-adapter/client', () => ({
   default: {
     category: {
       findUnique: vi.fn(),

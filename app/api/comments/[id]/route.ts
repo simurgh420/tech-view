@@ -3,9 +3,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { updateCommentSchema } from '@/lib/validation/comment';
-import { deleteComment, updateComment } from '@/services/comments/db/mutations';
-import { getCommentById } from '@/services/comments/db/queries';
+import { updateCommentSchema } from '@/features/comments/schemas/comment';
+import { deleteComment, updateComment } from '@/features/comments/server/mutations';
+import { getCommentById } from '@/features/comments/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

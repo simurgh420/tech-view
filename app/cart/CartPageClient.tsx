@@ -1,12 +1,12 @@
 'use client';
 
-import { CartList } from '@/components/cart/CartList';
-import { CartEmpty } from '@/components/cart/CartEmpty';
-import { CartSkeleton } from '@/components/cart/CartSkeleton';
-import { CartError } from '@/components/cart/CartError';
+import { CartList } from '@/features/cart/components/CartList';
+import { CartEmpty } from '@/features/cart/components/CartEmpty';
+import { CartSkeleton } from '@/features/cart/components/CartSkeleton';
+import { CartError } from '@/features/cart/components/CartError';
 import { useNotify } from '@/hooks/useNotify';
-import { CartCheckout } from '@/components/cart/CartCheckout';
-import { useGetCartItems } from '@/hooks/useCart';
+import { CartCheckout } from '@/features/cart/components/CartCheckout';
+import { useGetCartItems } from '@/features/cart/hooks/useCart';
 
 export function CartPageClient() {
   const notify = useNotify();

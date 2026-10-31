@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST, DELETE } from '@/app/api/wishlist/route';
 import { auth } from '@/lib/auth';
-import { getWishlist } from '@/services/wishlist/db/queries';
+import { getWishlist } from '@/features/wishlist/server/queries';
 import {
   addToWishlist,
   deleteWishlistItemByUserAndProduct,
-} from '@/services/wishlist/db/mutations';
+} from '@/features/wishlist/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -21,11 +21,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/wishlist/db/queries', () => ({
+vi.mock('@/features/wishlist/server/queries', () => ({
   getWishlist: vi.fn(),
 }));
 
-vi.mock('@/services/wishlist/db/mutations', () => ({
+vi.mock('@/features/wishlist/server/mutations', () => ({
   addToWishlist: vi.fn(),
   deleteWishlistItemByUserAndProduct: vi.fn(),
 }));

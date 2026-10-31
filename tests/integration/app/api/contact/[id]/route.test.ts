@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, DELETE } from '@/app/api/contact/[id]/route';
 import { auth } from '@/lib/auth';
-import { getContactById } from '@/services/contact/db/queries';
-import { deleteContact } from '@/services/contact/db/mutations';
+import { getContactById } from '@/features/contact/server/queries';
+import { deleteContact } from '@/features/contact/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -18,11 +18,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/contact/db/queries', () => ({
+vi.mock('@/features/contact/server/queries', () => ({
   getContactById: vi.fn(),
 }));
 
-vi.mock('@/services/contact/db/mutations', () => ({
+vi.mock('@/features/contact/server/mutations', () => ({
   deleteContact: vi.fn(),
 }));
 

@@ -5,13 +5,13 @@ import { ShieldCheck } from 'lucide-react';
 
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
-import { getDashboardOverview } from '@/services/reports/db/dashboard';
+import { getDashboardOverview } from '@/features/reports/server/dashboard';
 import {
   DashboardStats,
   QuickActions,
   RecentOrders,
   RevenueChart,
-} from '@/components/admin/dashboard';
+} from '@/features/admin/components/dashboard';
 
 export default async function AdminDashboard() {
   const session = await auth.api.getSession({
@@ -30,10 +30,7 @@ export default async function AdminDashboard() {
   const dashboard = await getDashboardOverview();
 
   return (
-    <div
-      dir="rtl"
-      className="container mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-12"
-    >
+    <div dir="rtl" className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       {/* Header */}
       <div className="space-y-5">
         <Breadcrumb />

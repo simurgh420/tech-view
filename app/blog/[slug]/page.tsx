@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { dehydrate } from '@tanstack/react-query';
 import Hydrate from '@/components/providers/hydrate';
-import { PostContent } from '@/components/sections/blog/PostContent';
-import { Sidebar } from '@/components/sections/blog/Sidebar';
-import { CommentsSection } from '@/components/sections/comments/CommentsSection';
+import { PostContent } from '@/features/blog/components/PostContent';
+import { Sidebar } from '@/features/blog/components/Sidebar';
+import { CommentsSection } from '@/features/comments/components/CommentsSection';
 import { getQueryClient } from '@/lib/query/query-client';
-import { getPostBySlug } from '@/services/blog/db/queries';
-import { getCommentsByPostId } from '@/services/comments/db/queries';
+import { getPostBySlug } from '@/features/blog/server/queries';
+import { getCommentsByPostId } from '@/features/comments/server/queries';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
 type Props = {

@@ -1,4 +1,4 @@
-import { UpdateUserForm } from '@/components/sections/auth/update-user-form';
+import { UpdateUserForm } from '@/features/auth/components/update-user-form';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -28,7 +28,7 @@ export default async function ProfilePage() {
   const { name, image, phone } = session.user;
 
   return (
-    <div className="container mx-auto max-w-lg space-y-8 px-8 py-16" dir="rtl">
+    <div className="mx-auto max-w-xl space-y-6 px-4 py-8 sm:px-6 sm:py-12" dir="rtl">
       <div className="space-y-2">
         <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
           <span className="rounded-xl bg-primary/10 p-2 text-primary">
@@ -42,7 +42,7 @@ export default async function ProfilePage() {
       </div>
 
       <Card className="border-border/60 shadow-sm">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <UpdateUserForm name={name ?? ''} image={image ?? ''} phone={phone ?? ''} />
         </CardContent>
       </Card>

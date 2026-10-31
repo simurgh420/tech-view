@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ChevronLeft, ListTree } from 'lucide-react';
+import {  ListTree } from 'lucide-react';
 
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 import { Badge } from '@/components/ui/badge';
 import {
   Breadcrumb,
@@ -13,7 +13,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-import { CategoryAttributesManager } from '@/components/admin/categories/CategoryAttributesManager';
+import { CategoryAttributesManager } from '@/features/admin/components/categories/CategoryAttributesManager';
 
 interface Props {
   params: Promise<{
@@ -40,7 +40,7 @@ export default async function CategoryAttributesPage({ params }: Props) {
     notFound();
   }
   return (
-    <div className="container mx-auto space-y-6 py-8">
+    <div className="container mx-auto space-y-6 px-6 py-8 sm:px-8 sm:py-10">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -65,7 +65,7 @@ export default async function CategoryAttributesPage({ params }: Props) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between" dir="rtl">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border bg-muted">
             <ListTree className="h-5 w-5 text-muted-foreground" />
@@ -82,14 +82,6 @@ export default async function CategoryAttributesPage({ params }: Props) {
             </p>
           </div>
         </div>
-
-        <Link
-          href="/admin/categories"
-          className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          بازگشت به لیست دسته‌بندی‌ها
-          <ChevronLeft className="h-4 w-4" />
-        </Link>
       </div>
 
       <CategoryAttributesManager categorySlug={category.slug} />

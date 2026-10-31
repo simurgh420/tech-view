@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/images/upload/route';
 import { auth } from '@/lib/auth';
-import { uploadImage } from '@/services/upload/uploadImage';
+import { uploadImage } from '@/features/upload/server/uploadImage';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -16,7 +16,7 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/upload/uploadImage', () => ({
+vi.mock('@/features/upload/server/uploadImage', () => ({
   uploadImage: vi.fn(),
 }));
 

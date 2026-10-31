@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/categories/route';
 import { auth } from '@/lib/auth';
-import { getCategories } from '@/services/categories/db/queries';
-import { createCategory } from '@/services/categories/db/mutations';
+import { getCategories } from '@/features/category/server/queries';
+import { createCategory } from '@/features/category/server/mutations';
 
 vi.mock('next/headers', () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -18,11 +18,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/categories/db/queries', () => ({
+vi.mock('@/features/category/server/queries', () => ({
   getCategories: vi.fn(),
 }));
 
-vi.mock('@/services/categories/db/mutations', () => ({
+vi.mock('@/features/category/server/mutations', () => ({
   createCategory: vi.fn(),
 }));
 

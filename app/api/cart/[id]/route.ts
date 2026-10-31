@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { updateQuantitySchema } from '@/lib/validation/cart';
-import { CartErrors } from '@/services/cart/constants';
-import { removeCartItem, updateCartItemQuantity } from '@/services/cart/db/mutations';
+import { updateQuantitySchema } from '@/features/cart/schemas/cart';
+import { CartErrors } from '@/features/cart/server/constants';
+import { removeCartItem, updateCartItemQuantity } from '@/features/cart/server/mutations';
 import { logger } from '@/lib/logger';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

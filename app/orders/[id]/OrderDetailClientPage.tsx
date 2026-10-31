@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { CalendarDays, ChevronRight, MapPin, Package, Phone, User } from 'lucide-react';
 
-import { useGetOrderById } from '@/hooks/useOrders';
+import { useGetOrderById } from '@/features/orders/hooks/useOrders';
 import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react';
 
 type OrderStatus = {
@@ -131,20 +131,47 @@ export default function OrderDetailClientPage({ orderId }: Props) {
           </h2>
 
           <div className="divide-y">
-            {order.items.map((item: { id: Key | null | undefined; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; quantity: number; price: number; }) => (
-              <div key={item.id} className="flex items-center justify-between gap-4 py-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{item.title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {item.quantity.toLocaleString('fa-IR')} عدد × {formatPrice(item.price)} تومان
+            {order.items.map(
+              (item: {
+                id: Key | null | undefined;
+                title:
+                  | string
+                  | number
+                  | bigint
+                  | boolean
+                  | ReactElement<unknown, string | JSXElementConstructor<any>>
+                  | Iterable<ReactNode>
+                  | ReactPortal
+                  | Promise<
+                      | string
+                      | number
+                      | bigint
+                      | boolean
+                      | ReactPortal
+                      | ReactElement<unknown, string | JSXElementConstructor<any>>
+                      | Iterable<ReactNode>
+                      | null
+                      | undefined
+                    >
+                  | null
+                  | undefined;
+                quantity: number;
+                price: number;
+              }) => (
+                <div key={item.id} className="flex items-center justify-between gap-4 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">{item.title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {item.quantity.toLocaleString('fa-IR')} عدد × {formatPrice(item.price)} تومان
+                    </p>
+                  </div>
+                  <p className="shrink-0 text-sm font-semibold">
+                    {formatPrice(item.price * item.quantity)}
+                    <span className="mr-1 text-xs font-normal text-muted-foreground">تومان</span>
                   </p>
                 </div>
-                <p className="shrink-0 text-sm font-semibold">
-                  {formatPrice(item.price * item.quantity)}
-                  <span className="mr-1 text-xs font-normal text-muted-foreground">تومان</span>
-                </p>
-              </div>
-            ))}
+              )
+            )}
           </div>
 
           <div className="mt-4 flex items-center justify-between border-t pt-4">

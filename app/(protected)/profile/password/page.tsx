@@ -1,4 +1,4 @@
-import { ChangePasswordForm } from '@/components/sections/auth/change-password-form';
+import { ChangePasswordForm } from '@/features/auth/components/change-password-form';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';

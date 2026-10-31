@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/products/category/[slug]/route';
-import { getProductsByCategory } from '@/services/products/db/queries';
+import { getProductsByCategory } from '@/features/products/server/queries';
 import { logger } from '@/lib/logger';
 
-vi.mock('@/services/products/db/queries', () => ({
+vi.mock('@/features/products/server/queries', () => ({
   getProductsByCategory: vi.fn(),
 }));
 

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FolderTree, Plus } from 'lucide-react';
 
-import CategoryList from '@/components/sections/categories/CategoryList';
+import CategoryList from '@/features/category/components/CategoryList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -15,7 +15,7 @@ import {
 
 export default function CategoriesPage() {
   return (
-    <div className="container mx-auto max-w-6xl space-y-6 px-8 py-16" dir="rtl">
+    <div className="mx-auto max-w-6xl space-y-6 px-6 py-8 sm:px-8 sm:py-10" dir="rtl">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -49,7 +49,7 @@ export default function CategoriesPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button asChild size="sm" className="gap-2">
+              <Button asChild size="sm">
                 <Link href="/admin/categories/create">
                   <Plus className="size-4" />
                   دسته‌بندی جدید

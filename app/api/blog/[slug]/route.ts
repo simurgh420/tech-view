@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { updateBlogSchema } from '@/lib/validation/blog';
-import { deletePost, updatePost } from '@/services/blog/db/mutations';
-import { getPostBySlug } from '@/services/blog/db/queries';
-import prisma from '@/services/db/client';
+import { updateBlogSchema } from '@/features/blog/schemas/blog';
+import { deletePost, updatePost } from '@/features/blog/server/mutations';
+import { getPostBySlug } from '@/features/blog/server/queries';
+import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
 
 // GET ─ دریافت یک پست

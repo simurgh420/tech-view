@@ -4,7 +4,7 @@ import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
-import { getAllAttributesAdmin } from '@/services/attributes/db/queries';
+import { getAllAttributesAdmin } from '@/features/products/server/attributes/queries';
 
 async function authorize(permissionName: 'read' | 'update') {
   const requestHeaders = await headers();

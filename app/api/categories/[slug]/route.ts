@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { editCategorySchema } from '@/lib/validation/category';
-import { deleteCategory, updateCategory } from '@/services/categories/db/mutations';
-import { getCategoryBySlug } from '@/services/categories/db/queries';
+import { editCategorySchema } from '@/features/category/schemas/category';
+import { deleteCategory, updateCategory } from '@/features/category/server/mutations';
+import { getCategoryBySlug } from '@/features/category/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {

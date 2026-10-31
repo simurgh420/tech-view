@@ -1,6 +1,6 @@
 // app/api/products/filters/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {

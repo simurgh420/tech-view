@@ -64,7 +64,7 @@ import {
 
 import 'reactjs-tiptap-editor/style.css';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { deleteImage, uploadImage } from '@/services/upload/api/images';
+import { deleteImage, uploadImage } from '@/features/upload/client/images';
 import { logger } from '@/lib/logger';
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {

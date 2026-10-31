@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { addCartItemSchema } from '@/lib/validation/cart';
-import { CartErrors } from '@/services/cart/constants';
-import { addCartItem, clearCart } from '@/services/cart/db/mutations';
-import { getCart } from '@/services/cart/db/queries';
+import { addCartItemSchema } from '@/features/cart/schemas/cart';
+import { CartErrors } from '@/features/cart/server/constants';
+import { addCartItem, clearCart } from '@/features/cart/server/mutations';
+import { getCart } from '@/features/cart/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

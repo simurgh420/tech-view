@@ -2,9 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { updateReviewSchema } from '@/lib/validation/review';
-import { deleteReview, updateReview } from '@/services/reviews/db/mutations';
-import { getReviewById } from '@/services/reviews/db/queries';
+import { updateReviewSchema } from '@/features/reviews/schemas/review';
+import { deleteReview, updateReview } from '@/features/reviews/server/mutations';
+import { getReviewById } from '@/features/reviews/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

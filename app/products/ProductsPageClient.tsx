@@ -1,11 +1,11 @@
 'use client';
 
-import { ProductEmptyState } from '@/components/sections/products/empty-state';
-import ProductCard from '@/components/sections/products/ProductCard';
-import ProductFiltersResponsive from '@/components/sections/products/ProductFiltersResponsive';
-import SortMenu from '@/components/sections/products/SortMenu';
+import { ProductEmptyState } from '@/features/products/components/empty-state';
+import ProductCard from '@/features/products/components/ProductCard';
+import ProductFiltersResponsive from '@/features/products/components/ProductFiltersResponsive';
+import SortMenu from '@/features/products/components/SortMenu';
 import { SkeletonCard } from '@/components/ui/skeleton';
-import { useInfiniteProductsPage } from '@/hooks/useInfiniteProductsPage';
+import { useInfiniteProductsPage } from '@/features/products/hooks/useInfiniteProductsPage';
 
 export default function ProductsPageClient() {
   const {

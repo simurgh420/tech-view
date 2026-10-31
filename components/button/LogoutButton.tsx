@@ -1,6 +1,6 @@
 'use client';
 
-import { logoutAction } from '@/services/action/user/logout';
+import { logoutAction } from '@/features/users/action/logout';
 import { useRouter } from 'next/navigation';
 
 interface LogoutButtonProps {
@@ -14,7 +14,7 @@ export function LogoutButton({ className }: LogoutButtonProps) {
     <button
       onClick={async () => {
         await logoutAction();
-        router.refresh(); //
+        router.refresh();
       }}
       className={className}
     >

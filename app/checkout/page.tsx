@@ -1,9 +1,9 @@
 // app/checkout/page.tsx
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { getCartForCheckout } from '@/services/cart/db/queries';
-import { CheckoutPageClient } from '@/components/checkout/CheckoutPageClient';
+import { getCartForCheckout } from '@/features/cart/server/queries';
 import { headers } from 'next/headers';
+import { CheckoutPageClient } from '@/features/checkout/components/CheckoutPageClient';
 
 export default async function CheckoutPage() {
   const session = await auth.api.getSession({
@@ -20,5 +20,10 @@ export default async function CheckoutPage() {
     redirect('/cart');
   }
 
-  return <CheckoutPageClient user={session.user} items={cart.items} />;
+  return (
+    <CheckoutPageClient
+      user={session.user}
+      items={cart.items as Parameters<typeof CheckoutPageClient>[0]['items']}
+    />
+  );
 }

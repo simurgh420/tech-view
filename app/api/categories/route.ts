@@ -2,10 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createCategorySchema } from '@/lib/validation/category';
-import { createCategory } from '@/services/categories/db/mutations';
+import { createCategorySchema } from '@/features/category/schemas/category';
+import { createCategory } from '@/features/category/server/mutations';
 import { logger } from '@/lib/logger';
-import { getCategories } from '@/services/categories/db/queries';
+import { getCategories } from '@/features/category/server/queries';
 
 export async function GET() {
   const startTime = Date.now();

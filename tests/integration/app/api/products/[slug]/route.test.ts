@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, PATCH, DELETE } from '@/app/api/products/[slug]/route';
 import { auth } from '@/lib/auth';
-import { getProductBySlug } from '@/services/products/db/queries';
-import { updateProduct, deleteProduct } from '@/services/products/db/mutations';
+import { getProductBySlug } from '@/features/products/server/queries';
+import { updateProduct, deleteProduct } from '@/features/products/server/mutations';
 import { logger } from '@/lib/logger';
 
 vi.mock('next/headers', () => ({
@@ -19,11 +19,11 @@ vi.mock('@/lib/auth', () => ({
   },
 }));
 
-vi.mock('@/services/products/db/queries', () => ({
+vi.mock('@/features/products/server/queries', () => ({
   getProductBySlug: vi.fn(),
 }));
 
-vi.mock('@/services/products/db/mutations', () => ({
+vi.mock('@/features/products/server/mutations', () => ({
   updateProduct: vi.fn(),
   deleteProduct: vi.fn(),
 }));

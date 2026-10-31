@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getAllReviewsAdmin } from '@/services/reviews/db/queries';
+import { getAllReviewsAdmin } from '@/features/reviews/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET() {

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { CalendarDays, ChevronLeft, ClipboardList, Package, ShoppingBag } from 'lucide-react';
 
-import { useGetUserOrders, useCancelOrder } from '@/hooks/useOrders';
+import { useGetUserOrders, useCancelOrder } from '@/features/orders/hooks/useOrders';
 import { useNotify } from '@/hooks/useNotify';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 

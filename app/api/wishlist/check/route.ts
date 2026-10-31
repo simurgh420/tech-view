@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { isProductInWishlist } from '@/services/wishlist/db/queries';
+import { isProductInWishlist } from '@/features/wishlist/server/queries';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {

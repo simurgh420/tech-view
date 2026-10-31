@@ -1,8 +1,8 @@
 import { faqData } from './data';
 
-import { FaqBanner } from '@/components/sections/faq/faq-banner';
-import { FaqSidebar } from '@/components/sections/faq/faq-sidebar';
-import { FaqAccordion } from '@/components/sections/faq/faq-accordion';
+import { FaqBanner } from '@/features/faq/components/faq-banner';
+import { FaqSidebar } from '@/features/faq/components/faq-sidebar';
+import { FaqAccordion } from '@/features/faq/components/faq-accordion';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
 export default function FAQPage() {

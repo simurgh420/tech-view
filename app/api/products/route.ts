@@ -2,9 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { getFilteredProducts } from '@/services/products/db/queries';
-import { createProduct } from '@/services/products/db/mutations';
-import { createProductPayloadSchema } from '@/lib/validation/product';
+import { getFilteredProducts } from '@/features/products/server/queries';
+import { createProduct } from '@/features/products/server/mutations';
+import { createProductPayloadSchema } from '@/features/products/schemas/product';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
 import { logger } from '@/lib/logger';
 

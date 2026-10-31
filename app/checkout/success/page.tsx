@@ -1,8 +1,9 @@
 import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
-import { getOrderByIdDB } from '@/services/orders/db/queries';
-import { SuccessPageClient } from '@/components/checkout/SuccessPageClient';
+import { getOrderByIdDB } from '@/features/orders/server/queries';
 import { headers } from 'next/headers';
+import { SuccessPageClient } from '@/features/checkout/components/SuccessPageClient';
+import type { ComponentProps } from 'react';
 
 type SuccessPageProps = {
   searchParams: {
@@ -21,5 +22,9 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const order = await getOrderByIdDB(orderId, session.user.id);
   if (!order) notFound();
 
-  return <SuccessPageClient order={order} />;
+  return (
+    <SuccessPageClient
+      order={order as ComponentProps<typeof SuccessPageClient>['order']}
+    />
+  );
 }

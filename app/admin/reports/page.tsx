@@ -9,7 +9,7 @@ import { DollarSign, ShoppingCart, Users, Package } from 'lucide-react';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { getDashboardOverview } from '@/services/reports/db/dashboard';
+import { getDashboardOverview } from '@/features/reports/server/dashboard';
 import { formatPrice } from '@/lib/formatPrice';
 
 const STATUS_LABELS: Record<string, string> = {

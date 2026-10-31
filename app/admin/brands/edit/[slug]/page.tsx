@@ -1,11 +1,11 @@
 'use client';
 
 import { Tag } from 'lucide-react';
-import { BrandForm } from '@/components/sections/brand/BrandForm';
+import { BrandForm } from '@/features/brands/components/BrandForm';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useGetBrand, useUpdateBrand } from '@/hooks/useBrands';
+import { useGetBrand, useUpdateBrand } from '@/features/brands/hooks/useBrands';
 import { useNotify } from '@/hooks/useNotify';
-import { UpdateBrandInput } from '@/lib/validation/brand';
+import { UpdateBrandInput } from '@/features/brands/schemas/brand';
 import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -35,9 +35,9 @@ export default function EditBrandPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-3xl space-y-8 px-8 py-16" dir="rtl">
-      <Card className="border-border/60  shadow-sm">
-        <CardHeader className="flex-row items-center gap-3 space-y-0 border-b border-border/60 px-6 py-5">
+    <div className="mx-auto max-w-3xl space-y-8 px-4 py-6 sm:px-6 sm:py-8" dir="rtl">
+      <Card className="border-border/60 shadow-sm">
+        <CardHeader className="flex  flex-row items-center gap-3 space-y-0 border-b border-border/60  px-2 py-3">
           <div className="rounded-xl bg-primary/10 p-2 text-primary">
             <Tag className="size-5" />
           </div>

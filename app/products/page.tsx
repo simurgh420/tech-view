@@ -7,11 +7,11 @@ import { SkeletonCard } from '@/components/ui/skeleton';
 import ProductsPageClient from './ProductsPageClient';
 import ProductsError from './ProductsError';
 
-import { getFilteredProducts } from '@/services/products/db/queries';
+import { getFilteredProducts } from '@/features/products/server/queries';
 import { parseSpecsFromURL } from '@/lib/url-helpers';
-import { FiltersProduct } from '@/types/product';
+import { FiltersProduct } from '@/features/products/types/product';
 import { getQueryClient } from '@/lib/query/query-client';
-import { productKeys } from '@/hooks/useProducts';
+import { productKeys } from '@/features/products/hooks/useProducts';
 
 type SearchParams = Record<string, string | string[] | undefined>;
 

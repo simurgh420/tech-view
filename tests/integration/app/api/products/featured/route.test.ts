@@ -1,10 +1,10 @@
 // tests/integration/app/api/products/featured/route.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/products/featured/route';
-import { getFeaturedProducts } from '@/services/products/db/queries';
+import { getFeaturedProducts } from '@/features/products/server/queries';
 import { logger } from '@/lib/logger';
 
-vi.mock('@/services/products/db/queries', () => ({
+vi.mock('@/features/products/server/queries', () => ({
   getFeaturedProducts: vi.fn(),
 }));
 

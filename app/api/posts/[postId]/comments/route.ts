@@ -2,10 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { createCommentSchema } from '@/lib/validation/comment';
-import { createComment } from '@/services/comments/db/mutations';
-import { getCommentsByPostId } from '@/services/comments/db/queries';
-import prisma from '@/services/db/client';
+import { createCommentSchema } from '@/features/comments/schemas/comment';
+import { createComment } from '@/features/comments/server/mutations';
+import { getCommentsByPostId } from '@/features/comments/server/queries';
+import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ postId: string }> }) {

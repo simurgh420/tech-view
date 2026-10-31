@@ -2,12 +2,12 @@
 
 import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
-import { BlogHero } from '@/components/sections/blog/BlogHero';
-import { BlogGrid } from '@/components/sections/blog/BlogGrid';
-import { FeaturedPost } from '@/components/sections/blog/FeaturedPost';
+import { BlogHero } from '@/features/blog/components/BlogHero';
+import { BlogGrid } from '@/features/blog/components/BlogGrid';
+import { FeaturedPost } from '@/features/blog/components/FeaturedPost';
 import { Pagination } from '@/components/ui/pagination';
-import { getPublishedPosts } from '@/services/blog/db/queries';
-import { BlogSidebar } from '@/components/sections/blog/sidebar/BlogSidebar';
+import { getPublishedPosts } from '@/features/blog/server/queries';
+import { BlogSidebar } from '@/features/blog/components/sidebar/BlogSidebar';
 
 export const revalidate = 3600;
 

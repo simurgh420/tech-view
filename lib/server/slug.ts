@@ -1,6 +1,6 @@
 // src/lib/server/slug.ts
 
-import prisma from '@/services/db/client';
+import prisma from '@/features/prisma-adapter/client';
 
 export async function generateUniqueSlug(baseSlug: string, excludeId?: string): Promise<string> {
   let slug = baseSlug;
