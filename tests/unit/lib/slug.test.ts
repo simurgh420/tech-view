@@ -133,11 +133,18 @@ describe('lib/server/slug › generateUniqueSlug', () => {
   });
 
   describe('محدودیت تعداد تلاش', () => {
-    it('should still succeed on the 50th attempt (suffix -49)', async () => {
-      takeSlugs(takenUpTo('my-post', 49)); // base + -1..-48
+    it('should succeed on the 49th attempt (suffix -48)', async () => {
+      takeSlugs(takenUpTo('my-post', 48)); // base + -1..-47
 
       expect(await generateUniqueSlug('my-post')).toBe('my-post-48');
       expect(findFirst).toHaveBeenCalledTimes(49);
+    });
+
+    it('should succeed on the last allowed attempt (the 50th, suffix -49)', async () => {
+      takeSlugs(takenUpTo('my-post', 49)); // base + -1..-48
+
+      expect(await generateUniqueSlug('my-post')).toBe('my-post-49');
+      expect(findFirst).toHaveBeenCalledTimes(50);
     });
 
     it('should succeed with the last allowed candidate, my-post-49', async () => {
