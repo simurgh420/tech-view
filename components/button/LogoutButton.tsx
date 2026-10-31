@@ -14,7 +14,7 @@ export function LogoutButton({ className }: LogoutButtonProps) {
     <button
       onClick={async () => {
         await logoutAction();
-        router.refresh(); //
+        router.refresh();
       }}
       className={className}
     >

@@ -26,7 +26,10 @@ vi.mock('@/lib/logger', () => ({
 
 import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
-import { DELETED_COMMENT_PLACEHOLDER, MAX_COMMENT_DEPTH } from '@/lib/constants/comments';
+import {
+  DELETED_COMMENT_PLACEHOLDER,
+  MAX_COMMENT_DEPTH,
+} from '@/features/product-comments/server/comments';
 import { createComment, updateComment, deleteComment } from './mutations';
 import { commentInclude, ProductCommentErrors } from './constants';
 

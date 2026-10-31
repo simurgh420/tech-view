@@ -1,8 +1,7 @@
 import { Prisma } from '@/app/generated/prisma/client';
 import prisma from '@/features/prisma-adapter/client';
 import { logger } from '@/lib/logger';
-import { MAX_COMMENT_DEPTH } from '@/lib/constants/comments';
-
+import { MAX_COMMENT_DEPTH } from '@/features/product-comments/server/comments';
 
 import {
   CommentNode,
