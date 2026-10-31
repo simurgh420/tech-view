@@ -5,7 +5,7 @@ import ProductCard from '@/features/products/components/ProductCard';
 import ProductFiltersResponsive from '@/features/products/components/ProductFiltersResponsive';
 import SortMenu from '@/features/products/components/SortMenu';
 import { SkeletonCard } from '@/components/ui/skeleton';
-import { useInfiniteProductsPage } from '@/hooks/useInfiniteProductsPage';
+import { useInfiniteProductsPage } from '@/features/products/hooks/useInfiniteProductsPage';
 
 export default function ProductsPageClient() {
   const {
