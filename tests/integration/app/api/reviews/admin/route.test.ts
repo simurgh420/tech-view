@@ -1,0 +1,198 @@
+//tests/unit/api/reviews/admin/route.test.ts
+
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { headers } from 'next/headers';
+
+import { auth } from '@/lib/auth';
+import { getAllReviewsAdmin } from '@/features/reviews/server/queries';
+import { logger } from '@/lib/logger';
+import { GET } from '@/app/api/reviews/admin/route';
+
+vi.mock('next/headers', () => ({
+  headers: vi.fn(),
+}));
+
+vi.mock('@/lib/auth', () => ({
+  auth: {
+    api: {
+      getSession: vi.fn(),
+      userHasPermission: vi.fn(),
+    },
+  },
+}));
+
+vi.mock('@/features/reviews/server/queries', () => ({
+  getAllReviewsAdmin: vi.fn(),
+}));
+
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
+const mockHeaders = new Headers();
+
+const mockReviews = [
+  {
+    id: 'review-1',
+    rating: 5,
+    comment: 'Excellent product',
+  },
+  {
+    id: 'review-2',
+    rating: 4,
+    comment: 'Good product',
+  },
+];
+
+describe('GET /api/reviews/admin', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    vi.mocked(headers).mockResolvedValue(mockHeaders as never);
+
+    vi.mocked(auth.api.getSession).mockResolvedValue({
+      user: { id: 'admin-1' },
+    } as never);
+
+    vi.mocked(auth.api.userHasPermission).mockResolvedValue({
+      success: true,
+    } as never);
+
+    vi.mocked(getAllReviewsAdmin).mockResolvedValue(mockReviews as never);
+  });
+
+  describe('Authentication', () => {
+    it('should return 401 when user is not authenticated', async () => {
+      vi.mocked(auth.api.getSession).mockResolvedValueOnce(null as never);
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(body).toEqual({
+        error: 'Unauthorized',
+      });
+
+      expect(auth.api.userHasPermission).not.toHaveBeenCalled();
+      expect(getAllReviewsAdmin).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Authorization', () => {
+    it('should return 403 when permission check has an error', async () => {
+      vi.mocked(auth.api.userHasPermission).mockResolvedValueOnce({
+        success: false,
+        error: new Error('Permission check failed'),
+      } as never);
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(body).toEqual({
+        error: 'Forbidden',
+      });
+
+      expect(getAllReviewsAdmin).not.toHaveBeenCalled();
+    });
+
+    it('should return 403 when user does not have permission', async () => {
+      vi.mocked(auth.api.userHasPermission).mockResolvedValueOnce({
+        success: false,
+      } as never);
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(body).toEqual({
+        error: 'Forbidden',
+      });
+
+      expect(getAllReviewsAdmin).not.toHaveBeenCalled();
+    });
+
+    it('should check permission for the current user', async () => {
+      await GET();
+
+      expect(auth.api.userHasPermission).toHaveBeenCalledWith({
+        headers: mockHeaders,
+        body: {
+          userId: 'admin-1',
+          permissions: {
+            reviews: ['read'],
+          },
+        },
+      });
+    });
+  });
+
+  describe('Successful response', () => {
+    it('should return reviews with status 200', async () => {
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body).toEqual(mockReviews);
+
+      expect(getAllReviewsAdmin).toHaveBeenCalledTimes(1);
+      expect(logger.info).toHaveBeenCalledWith(
+        'GET /api/reviews/admin succeeded',
+        expect.objectContaining({
+          count: 2,
+        })
+      );
+    });
+
+    it('should return an empty array when there are no reviews', async () => {
+      vi.mocked(getAllReviewsAdmin).mockResolvedValueOnce([] as never);
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body).toEqual([]);
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should return 500 when fetching reviews fails', async () => {
+      vi.mocked(getAllReviewsAdmin).mockRejectedValueOnce(new Error('Database connection failed'));
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body).toEqual({
+        error: 'Internal server error',
+      });
+
+      expect(logger.error).toHaveBeenCalledWith(
+        'GET /api/reviews/admin failed',
+        expect.objectContaining({
+          error: 'Database connection failed',
+        })
+      );
+    });
+
+    it('should return 500 when session retrieval fails', async () => {
+      vi.mocked(auth.api.getSession).mockRejectedValueOnce(
+        new Error('Session service unavailable')
+      );
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body).toEqual({
+        error: 'Internal server error',
+      });
+
+      expect(getAllReviewsAdmin).not.toHaveBeenCalled();
+    });
+  });
+});
