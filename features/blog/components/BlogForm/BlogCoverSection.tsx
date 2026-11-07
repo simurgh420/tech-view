@@ -21,7 +21,12 @@ export function BlogCoverSection({
         <FormItem>
           <FormLabel>تصویر کاور</FormLabel>
           <FormControl>
-            <ImageUploader initialUrl={initialUrl} onChange={file => field.onChange(file)} />
+            <ImageUploader
+              initialUrl={initialUrl}
+              onChange={value => {
+                field.onChange(value === undefined ? initialUrl : value);
+              }}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

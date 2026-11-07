@@ -108,9 +108,15 @@ describe('useBrands hooks', () => {
   });
 
   describe('useCreateBrand', () => {
-    // اصلاح: اضافه کردن isActive که در تایپ الزامی است
-    const input = { name: 'New Brand', isActive: true };
-    const createdBrand = { id: '2', name: 'New Brand', slug: 'new-brand', isActive: true };
+    // اصلاح: اضافه کردن logo که در تایپ CreateBrandInput الزامی است
+    const input = { name: 'New Brand', logo: undefined, isActive: true };
+    const createdBrand = {
+      id: '2',
+      name: 'New Brand',
+      slug: 'new-brand',
+      logo: null,
+      isActive: true,
+    };
 
     it('should create brand and invalidate brands query', async () => {
       (mutations.createBrandRequestApi as any).mockResolvedValue(createdBrand);
