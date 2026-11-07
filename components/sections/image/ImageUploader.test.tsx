@@ -4,8 +4,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 
 vi.mock('next/image', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   default: ({ fill, unoptimized, ...props }: any) => (
-    // eslint-disable-next-line @next/next/no-img-element
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     <img {...props} />
   ),
 }));
